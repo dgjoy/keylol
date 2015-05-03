@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="ModelDesigning.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="ModelDesigningTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="ModelDesigning" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="ModelDesigningContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="IdentityUserRoles" EntityType="ModelDesigning.IdentityUserRole" />
+          <EntitySet Name="Users" EntityType="ModelDesigning.ApplicationUser" />
+          <EntitySet Name="IdentityUserClaims" EntityType="ModelDesigning.IdentityUserClaim" />
+          <EntitySet Name="Roles" EntityType="ModelDesigning.IdentityRole" />
+          <EntitySet Name="IdentityUserLogins" EntityType="ModelDesigning.IdentityUserLogin" />
+          <AssociationSet Name="IdentityRole_Users" Association="ModelDesigning.IdentityRole_Users">
+            <End Role="IdentityRole" EntitySet="Roles" />
+            <End Role="IdentityUserRole" EntitySet="IdentityUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="ApplicationUser_Roles" Association="ModelDesigning.ApplicationUser_Roles">
+            <End Role="ApplicationUser" EntitySet="Users" />
+            <End Role="IdentityUserRole" EntitySet="IdentityUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="ApplicationUser_Claims" Association="ModelDesigning.ApplicationUser_Claims">
+            <End Role="ApplicationUser" EntitySet="Users" />
+            <End Role="IdentityUserClaim" EntitySet="IdentityUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="ApplicationUser_Logins" Association="ModelDesigning.ApplicationUser_Logins">
+            <End Role="ApplicationUser" EntitySet="Users" />
+            <End Role="IdentityUserLogin" EntitySet="IdentityUserLogins" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="IdentityUserRole" a:ClrType="Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole, Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" xmlns:a="http://schemas.microsoft.com/ado/2013/11/edm/customannotation">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="IdentityRole" Relationship="ModelDesigning.IdentityRole_Users" FromRole="IdentityUserRole" ToRole="IdentityRole" />
+          <NavigationProperty Name="ApplicationUser" Relationship="ModelDesigning.ApplicationUser_Roles" FromRole="IdentityUserRole" ToRole="ApplicationUser" />
+        </EntityType>
+        <EntityType Name="ApplicationUser" a:ClrType="Keylol.Models.ApplicationUser, Keylol, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" xmlns:a="http://schemas.microsoft.com/ado/2013/11/edm/customannotation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Roles" Relationship="ModelDesigning.ApplicationUser_Roles" FromRole="ApplicationUser" ToRole="IdentityUserRole" />
+          <NavigationProperty Name="Claims" Relationship="ModelDesigning.ApplicationUser_Claims" FromRole="ApplicationUser" ToRole="IdentityUserClaim" />
+          <NavigationProperty Name="Logins" Relationship="ModelDesigning.ApplicationUser_Logins" FromRole="ApplicationUser" ToRole="IdentityUserLogin" />
+        </EntityType>
+        <EntityType Name="IdentityUserClaim" a:ClrType="Microsoft.AspNet.Identity.EntityFramework.IdentityUserClaim, Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" xmlns:a="http://schemas.microsoft.com/ado/2013/11/edm/customannotation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ApplicationUser" Relationship="ModelDesigning.ApplicationUser_Claims" FromRole="IdentityUserClaim" ToRole="ApplicationUser" />
+        </EntityType>
+        <EntityType Name="IdentityRole" a:ClrType="Microsoft.AspNet.Identity.EntityFramework.IdentityRole, Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" xmlns:a="http://schemas.microsoft.com/ado/2013/11/edm/customannotation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Users" Relationship="ModelDesigning.IdentityRole_Users" FromRole="IdentityRole" ToRole="IdentityUserRole" />
+        </EntityType>
+        <EntityType Name="IdentityUserLogin" a:ClrType="Microsoft.AspNet.Identity.EntityFramework.IdentityUserLogin, Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" xmlns:a="http://schemas.microsoft.com/ado/2013/11/edm/customannotation">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ApplicationUser" Relationship="ModelDesigning.ApplicationUser_Logins" FromRole="IdentityUserLogin" ToRole="ApplicationUser" />
+        </EntityType>
+        <Association Name="IdentityRole_Users">
+          <End Type="ModelDesigning.IdentityRole" Role="IdentityRole" Multiplicity="1" />
+          <End Type="ModelDesigning.IdentityUserRole" Role="IdentityUserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IdentityRole">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IdentityUserRole">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ApplicationUser_Roles">
+          <End Type="ModelDesigning.ApplicationUser" Role="ApplicationUser" Multiplicity="1" />
+          <End Type="ModelDesigning.IdentityUserRole" Role="IdentityUserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IdentityUserRole">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ApplicationUser_Claims">
+          <End Type="ModelDesigning.ApplicationUser" Role="ApplicationUser" Multiplicity="1" />
+          <End Type="ModelDesigning.IdentityUserClaim" Role="IdentityUserClaim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IdentityUserClaim">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ApplicationUser_Logins">
+          <End Type="ModelDesigning.ApplicationUser" Role="ApplicationUser" Multiplicity="1" />
+          <End Type="ModelDesigning.IdentityUserLogin" Role="IdentityUserLogin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IdentityUserLogin">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="ModelDesigning" />
+        <Alias Key="Target" Value="ModelDesigning.Store" />
+        <EntityContainerMapping CdmEntityContainer="ModelDesigningContainer" StorageEntityContainer="ModelDesigningTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
