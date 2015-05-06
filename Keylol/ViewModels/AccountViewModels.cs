@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Keylol.Models
+namespace Keylol.ViewModels
 {
     public class ExternalLoginConfirmationViewModel
     {
