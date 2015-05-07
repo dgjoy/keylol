@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models
 {
-    public class Like
+    public abstract class Like
     {
         public Like()
         {

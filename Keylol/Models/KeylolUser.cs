@@ -54,6 +54,7 @@ namespace Keylol.Models
         public virtual ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<Warning> SentWarnings { get; set; }
         public virtual ICollection<Warning> ReceivedWarnings { get; set; }
+        public virtual ICollection<NormalPoint> ModeratedPoints { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<KeylolUser> manager)
         {

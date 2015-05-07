@@ -4,16 +4,29 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models
 {
-    public class Article
+    public abstract class Piece
     {
-        public Article()
+        protected Piece()
         {
             Id = Guid.NewGuid().ToString();
             PublishTime = DateTime.Now;
-            LastEditTime = DateTime.Now;
         }
 
         public string Id { get; set; }
+        public DateTime PublishTime { get; set; }
+
+        [Required]
+        public virtual Point Principal { get; set; }
+
+        public virtual ICollection<Point> AttachedPoints { get; set; }
+    }
+
+    public class Article : Piece
+    {
+        public Article()
+        {
+            LastEditTime = DateTime.Now;
+        }
 
         [Required]
         [MaxLength(120)]
@@ -23,9 +36,7 @@ namespace Keylol.Models
         [MaxLength(300000)]
         public string Content { get; set; }
 
-        public DateTime PublishTime { get; set; }
         public DateTime LastEditTime { get; set; }
-        public virtual ICollection<Point> Points { get; set; }
         public virtual Article RecommendedArticle { get; set; }
         public virtual ICollection<Article> RecommendedByArticles { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
@@ -34,4 +45,6 @@ namespace Keylol.Models
         [Required]
         public virtual ArticleType Type { get; set; }
     }
+
+    public class Status : Piece {}
 }

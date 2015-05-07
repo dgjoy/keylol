@@ -21,8 +21,9 @@ namespace Keylol.Models
 
         public string Id { get; set; }
         public virtual ICollection<KeylolUser> Subscribers { get; set; }
-        public virtual ICollection<Article> Articles { get; set; }
+        public virtual ICollection<Piece> AttachedPieces { get; set; }
         public virtual ICollection<NormalPoint> AssociatedByNormalPoints { get; set; }
+        public virtual ICollection<Piece> OwnedPieces { get; set; }
     }
 
     public class NormalPoint : Point
@@ -41,6 +42,7 @@ namespace Keylol.Models
 
         public NormalPointType Type { get; set; }
         public virtual ICollection<Point> AssociatedToPoints { get; set; }
+        public virtual ICollection<KeylolUser> Moderators { get; set; }
     }
 
     public class ProfilePoint : Point

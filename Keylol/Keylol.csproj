@@ -196,13 +196,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201505061655194_Initial.cs" />
-    <Compile Include="Migrations\201505061655194_Initial.Designer.cs">
-      <DependentUpon>201505061655194_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201505071410362_Initial.cs" />
+    <Compile Include="Migrations\201505071410362_Initial.Designer.cs">
+      <DependentUpon>201505071410362_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
-    <Compile Include="Models\Article.cs" />
+    <Compile Include="Models\Piece.cs" />
     <Compile Include="Models\ArticleType.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Like.cs" />
@@ -292,8 +292,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201505061655194_Initial.resx">
-      <DependentUpon>201505061655194_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201505071410362_Initial.resx">
+      <DependentUpon>201505071410362_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

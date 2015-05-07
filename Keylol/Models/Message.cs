@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models
 {
-    public class Message
+    public abstract class Message
     {
         public Message()
         {
@@ -26,7 +26,7 @@ namespace Keylol.Models
         public virtual KeylolUser Sender { get; set; }
     }
 
-    public class SystemMessage : Message {}
+    public abstract class SystemMessage : Message {}
 
     public class SystemMessageWarningNotification : SystemMessage
     {
