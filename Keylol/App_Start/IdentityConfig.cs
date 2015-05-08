@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using Keylol.DAL;
+using Keylol.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using Keylol.Models;
 
 namespace Keylol
 {
@@ -37,11 +33,9 @@ namespace Keylol
     public class KeylolUserManager : UserManager<KeylolUser>
     {
         public KeylolUserManager(IUserStore<KeylolUser> store)
-            : base(store)
-        {
-        }
+            : base(store) {}
 
-        public static KeylolUserManager Create(IdentityFactoryOptions<KeylolUserManager> options, IOwinContext context) 
+        public static KeylolUserManager Create(IdentityFactoryOptions<KeylolUserManager> options, IOwinContext context)
         {
             var manager = new KeylolUserManager(new UserStore<KeylolUser>(context.Get<KeylolDbContext>()));
             // Configure validation logic for usernames
@@ -58,7 +52,7 @@ namespace Keylol
                 RequireNonLetterOrDigit = true,
                 RequireDigit = true,
                 RequireLowercase = true,
-                RequireUppercase = true,
+                RequireUppercase = true
             };
 
             // Configure user lockout defaults
@@ -82,7 +76,7 @@ namespace Keylol
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                manager.UserTokenProvider = 
+                manager.UserTokenProvider =
                     new DataProtectorTokenProvider<KeylolUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;
@@ -93,16 +87,15 @@ namespace Keylol
     public class KeylolSignInManager : SignInManager<KeylolUser, string>
     {
         public KeylolSignInManager(KeylolUserManager userManager, IAuthenticationManager authenticationManager)
-            : base(userManager, authenticationManager)
-        {
-        }
+            : base(userManager, authenticationManager) {}
 
         public override Task<ClaimsIdentity> CreateUserIdentityAsync(KeylolUser user)
         {
-            return user.GenerateUserIdentityAsync((KeylolUserManager)UserManager);
+            return user.GenerateUserIdentityAsync((KeylolUserManager) UserManager);
         }
 
-        public static KeylolSignInManager Create(IdentityFactoryOptions<KeylolSignInManager> options, IOwinContext context)
+        public static KeylolSignInManager Create(IdentityFactoryOptions<KeylolSignInManager> options,
+            IOwinContext context)
         {
             return new KeylolSignInManager(context.GetUserManager<KeylolUserManager>(), context.Authentication);
         }
