@@ -10,15 +10,16 @@ namespace Keylol
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                 "~/Scripts/angular.js",
                 "~/Scripts/angular-route.js",
-                "~/Scripts/angular-animate.js",
-                "~/Scripts/angular-ui/ui-bootstrap-tpls.js"));
+                "~/Scripts/angular-animate.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/angular-app").Include(
                 "~/Scripts/app/keylol-app.js",
-                "~/Scripts/app/test-controller.js"));
+                "~/Scripts/app/controllers/home-controller.js",
+                "~/Scripts/app/controllers/test-controller.js",
+                "~/Scripts/app/controllers/section/main-navigation-controller.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                "~/Content/bootstrap.css",
+                "~/Content/normalize.css",
                 "~/Content/site.css"));
         }
     }

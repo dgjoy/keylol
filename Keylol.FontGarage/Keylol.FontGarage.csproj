@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4D6BE600-2386-4739-8C5D-FB767B84F6EA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Keylol.FontGarage</RootNamespace>
+    <AssemblyName>Keylol.FontGarage</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FontGarage.cs" />
+    <Compile Include="OpenTypeFont.cs" />
+    <Compile Include="OpenTypeFontSerializer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SmartBitConverter.cs" />
+    <Compile Include="Table\BinaryDataTable.cs" />
+    <Compile Include="Table\CmapTable.cs" />
+    <Compile Include="Table\Cmap\Format0Subtable.cs" />
+    <Compile Include="Table\Cmap\Format6Subtable.cs" />
+    <Compile Include="Table\Cmap\Format4Subtable.cs" />
+    <Compile Include="Table\Cmap\CmapSubtable.cs" />
+    <Compile Include="Table\GlyfTable.cs" />
+    <Compile Include="Table\Glyf\CompositeGlyph.cs" />
+    <Compile Include="Table\Glyf\Glyph.cs" />
+    <Compile Include="Table\Glyf\SimpleGlyph.cs" />
+    <Compile Include="Table\HeadTable.cs" />
+    <Compile Include="Table\IOpenTypeFontTable.cs" />
+    <Compile Include="Table\LocaTable.cs" />
+    <Compile Include="Table\MaxpTable.cs" />
+    <Compile Include="Table\Maxp\Version05MaxpTable.cs" />
+    <Compile Include="Table\Maxp\Version10MaxpTable.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

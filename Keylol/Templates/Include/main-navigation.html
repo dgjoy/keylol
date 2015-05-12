@@ -1,0 +1,9 @@
+﻿<div class="section-main-navigation box-shodowed" ng-controller="MainNavigationController">
+    <div ng-repeat="category in categories">
+        <h1 class="labeled-heading">{{category.name}}</h1>
+        <ul class="list-inline">
+            <li ng-repeat="item in category.items" ng-style="{'margin-right': item.marginRight}"><a ng-href="{{item.url}}">{{item.name}}</a></li>
+        </ul>
+        <p ng-if="category.url"><a ng-href="{{category.url}}">全部</a></p>
+    </div>
+</div>

@@ -12,11 +12,15 @@
     ]);
     app.config([
         "$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
-            $routeProvider.when("/test", {
-                templateUrl: "Templates/test.html"
-            });
-
             $locationProvider.html5Mode(true);
+
+            $routeProvider.when("/", {
+                templateUrl: "Templates/home.html",
+                controller: "HomeController"
+            }).when("/test", {
+                templateUrl: "Templates/test.html",
+                controller: "TestController"
+            });
         }
     ]);
 
