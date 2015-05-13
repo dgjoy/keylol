@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Keylol.FontGarage.Table
 {
-    public enum LocaTableVersion
+    public enum LocaTableVersion : short
     {
-        Short,
-        Long
+        Short = 0,
+        Long = 1
     }
 
     public class LocaTable : IOpenTypeFontTable
@@ -25,9 +25,36 @@ namespace Keylol.FontGarage.Table
         /// </summary>
         public List<uint?> GlyphOffsets { get; set; }
 
-        public void Serialize(BinaryWriter writer)
+        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
-            throw new NotImplementedException();
+            writer.BaseStream.Position = startOffset;
+            var version = font.Get<HeadTable>().LocaTableVersion;
+            var repeat = 1;
+            foreach (var glyphOffset in GlyphOffsets)
+            {
+                if (glyphOffset == null)
+                    repeat++;
+                else
+                {
+                    for (var i = 0; i < repeat; i++)
+                    {
+                        switch (version)
+                        {
+                            case LocaTableVersion.Short:
+                                DataTypeConverter.WriteUShort(writer, (ushort) glyphOffset.Value);
+                                break;
+
+                            case LocaTableVersion.Long:
+                                DataTypeConverter.WriteULong(writer, glyphOffset.Value);
+                                break;
+
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    }
+                    repeat = 1;
+                }
+            }
         }
 
         public static LocaTable Deserialize(BinaryReader reader, long startOffset, ushort numberOfGlyphs,
@@ -36,21 +63,21 @@ namespace Keylol.FontGarage.Table
             var table = new LocaTable();
             reader.BaseStream.Position = startOffset;
 
-            table.GlyphOffsets.AddRange(Enumerable.Range(0, numberOfGlyphs + 1).Select<int, uint?>(i =>
+            table.GlyphOffsets.AddRange(Enumerable.Range(0, numberOfGlyphs).Select<int, uint?>(i =>
             {
                 var offset = ReadNextOffset(reader, version);
 
                 // Empty outline check
                 uint nextOffset = 0;
-                if (i != numberOfGlyphs) // Not last glyph
+                if (i != numberOfGlyphs - 1) // Not last glyph
                 {
                     // Peek next offset
                     var restorePosition = reader.BaseStream.Position;
                     nextOffset = ReadNextOffset(reader, version);
                     reader.BaseStream.Position = restorePosition;
                 }
-                if ((i != numberOfGlyphs && offset == nextOffset) ||
-                    (i == numberOfGlyphs && offset == glyfTableLength))
+                if ((i != numberOfGlyphs - 1 && offset == nextOffset) ||
+                    (i == numberOfGlyphs - 1 && offset == glyfTableLength))
                     return null;
 
                 return offset;
@@ -67,7 +94,7 @@ namespace Keylol.FontGarage.Table
                     return DataTypeConverter.ReadULong(reader);
 
                 case LocaTableVersion.Short:
-                    return (uint) (DataTypeConverter.ReadUShort(reader) * 2);
+                    return (uint) (DataTypeConverter.ReadUShort(reader)*2);
 
                 default:
                     throw new NotImplementedException();

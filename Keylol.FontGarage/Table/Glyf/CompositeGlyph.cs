@@ -39,17 +39,25 @@ namespace Keylol.FontGarage.Table.Glyf
         public short XMax { get; set; }
         public short YMax { get; set; }
 
-        public ComponentFlags Flags
-        {
-            get { return Components.First().Flags; }
-        }
-
         public List<GlyphComponent> Components { get; set; }
         public byte[] Instructions { get; set; }
 
-        public override void Serialize(BinaryWriter writer)
+        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
-            throw new NotImplementedException();
+            writer.BaseStream.Position = startOffset;
+            DataTypeConverter.WriteShort(writer, -1);
+            DataTypeConverter.WriteShort(writer, XMin);
+            DataTypeConverter.WriteShort(writer, YMin);
+            DataTypeConverter.WriteShort(writer, XMax);
+            DataTypeConverter.WriteShort(writer, YMax);
+            foreach (var component in Components)
+            {
+                DataTypeConverter.WriteUShort(writer, (ushort) component.Flags);
+                DataTypeConverter.WriteUShort(writer, component.GlyphId);
+                writer.Write(component.TransformationData);
+            }
+            DataTypeConverter.WriteUShort(writer, (ushort) Instructions.Length);
+            writer.Write(Instructions);
         }
 
         public static CompositeGlyph Deserialize(BinaryReader reader, long startOffset)
@@ -81,7 +89,7 @@ namespace Keylol.FontGarage.Table.Glyf
                 component.TransformationData = reader.ReadBytes(dataLength);
                 glyph.Components.Add(component);
             } while (glyph.Components.Last().Flags.HasFlag(ComponentFlags.MoreComponents));
-            if (glyph.Flags.HasFlag(ComponentFlags.WeHaveInstructions))
+            if (glyph.Components.Last().Flags.HasFlag(ComponentFlags.WeHaveInstructions))
             {
                 glyph.Instructions = reader.ReadBytes(DataTypeConverter.ReadUShort(reader));
             }
@@ -91,6 +99,7 @@ namespace Keylol.FontGarage.Table.Glyf
         public CompositeGlyph()
         {
             Components = new List<GlyphComponent>();
+            Instructions = new byte[0];
         }
     }
 }

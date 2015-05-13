@@ -14,6 +14,11 @@ namespace Keylol.FontGarage
         public string SfntVersion { get; set; }
         public List<IOpenTypeFontTable> Tables { get; set; }
 
+        public T Get<T>()
+        {
+            return Tables.OfType<T>().Single();
+        }
+
         public OpenTypeFont(string sfntVersion) : this()
         {
             SfntVersion = sfntVersion;

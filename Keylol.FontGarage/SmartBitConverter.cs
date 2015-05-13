@@ -163,7 +163,7 @@ namespace Keylol.FontGarage
             var i = BitConverter.ToUInt32(value, startIndex);
             return InternalEndian == ExternalEndian
                 ? i
-                : BitConverter.ToUInt32(BitConverter.GetBytes(i).Reverse().ToArray(), 0);
+                : (i << 24 | (i & 0x0000FF00) << 8 | (i & 0x00FF0000) >> 8 | i >> 24);
         }
 
         // Converts an array of bytes into an unsigned long.

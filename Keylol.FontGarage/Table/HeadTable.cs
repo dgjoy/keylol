@@ -28,9 +28,26 @@ namespace Keylol.FontGarage.Table
         public ushort LowestRecPpem { get; set; }
         public LocaTableVersion LocaTableVersion { get; set; }
 
-        public void Serialize(BinaryWriter writer)
+        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
-            throw new NotImplementedException();
+            writer.BaseStream.Position = startOffset;
+            DataTypeConverter.WriteFixed(writer, Version);
+            DataTypeConverter.WriteFixed(writer, FontRevision);
+            DataTypeConverter.WriteULong(writer, 0);
+            DataTypeConverter.WriteULong(writer, 0x5F0F3CF5u);
+            DataTypeConverter.WriteUShort(writer, Flags);
+            DataTypeConverter.WriteUShort(writer, UnitsPerEm);
+            DataTypeConverter.WriteLongDateTime(writer, CreateTime);
+            DataTypeConverter.WriteLongDateTime(writer, ModifyTime);
+            DataTypeConverter.WriteShort(writer, XMin);
+            DataTypeConverter.WriteShort(writer, YMin);
+            DataTypeConverter.WriteShort(writer, XMax);
+            DataTypeConverter.WriteShort(writer, YMax);
+            DataTypeConverter.WriteUShort(writer, MacStyle);
+            DataTypeConverter.WriteUShort(writer, LowestRecPpem);
+            DataTypeConverter.WriteShort(writer, 2);
+            DataTypeConverter.WriteShort(writer, (short) LocaTableVersion);
+            DataTypeConverter.WriteShort(writer, 0);
         }
 
         public static HeadTable Deserialize(BinaryReader reader, long startOffset)
@@ -52,9 +69,7 @@ namespace Keylol.FontGarage.Table
             table.MacStyle = DataTypeConverter.ReadUShort(reader);
             table.LowestRecPpem = DataTypeConverter.ReadUShort(reader);
             reader.BaseStream.Position += DataTypeLength.Short;
-            table.LocaTableVersion = DataTypeConverter.ReadShort(reader) == 0
-                ? LocaTableVersion.Short
-                : LocaTableVersion.Long;
+            table.LocaTableVersion = (LocaTableVersion) DataTypeConverter.ReadShort(reader);
 
             return table;
         }

@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Keylol.FontGarage.Table.Glyf
 {
-    public abstract class Glyph
+    public abstract class Glyph : IOpenTypeFontSerializable
     {
-        public abstract void Serialize(BinaryWriter writer);
+        public uint Id { get; set; }
+
+        public abstract void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font);
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Keylol.FontGarage;
 using Keylol.FontGarage.Table;
 using Keylol.FontGarage.Table.Cmap;
+using Keylol.FontGarage.Table.Glyf;
 using Environment = System.Environment;
 
 namespace Keylol.FontGarageCLI
@@ -17,34 +18,50 @@ namespace Keylol.FontGarageCLI
         private static void Main(string[] args)
         {
             var fontData = File.ReadAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                "arial.ttf"));
+                "Keylol FakeMTR Extended.otf"));
             var watch = Stopwatch.StartNew();
-            var serializer = new OpenTypeFontSerializer();
+            var serializer = new OpenTypeFontSerializer
+            {
+                EnableChecksum = false
+            };
             var font = serializer.Deserialize(new BinaryReader(new MemoryStream(fontData)));
-            //var font =
-            //    serializer.Deserialize(
-            //        new BinaryReader(
-            //            File.OpenRead(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-            //                "Keylol FakeMTR Extended.otf"))));
             watch.Stop();
 
-            Console.WriteLine("Parsing time: {0}ms", watch.ElapsedMilliseconds);
+            Console.WriteLine("Deserializing time: {0}ms", watch.ElapsedMilliseconds);
             Console.WriteLine("sfnt version: {0}", font.SfntVersion);
             Console.WriteLine("Tables: {0}", string.Join(", ", font.Tables.Select(t => t.Tag)));
-            Console.WriteLine("Cmap format-4 subtable character count: {0}",
+            Console.WriteLine("Cmap format-4 subtable (3, 1) character count: {0}",
                 font.Tables.OfType<CmapTable>()
                     .Single()
                     .Subtables.OfType<Format4Subtable>()
-                    .Single()
+                    .Single(
+                        subtable =>
+                            subtable.Environments.Exists(
+                                environment => environment.PlatformId == 3 && environment.EncodingId == 1))
                     .CharGlyphIdMap.Count());
             Console.WriteLine("Glyph count: {0}",
                 font.Tables.OfType<LocaTable>()
                     .Single()
                     .GlyphOffsets.Count());
-            Console.WriteLine("Non-empty glyph count: {0}",
+            Console.WriteLine("Non-empty glyph count: {0}\n",
                 font.Tables.OfType<GlyfTable>()
                     .Single()
                     .Glyphs.Count());
+
+            watch = Stopwatch.StartNew();
+            FontGarage.FontGarage.Subset(font, new List<uint> {0x5937, 0x21, 0x59D4});
+            watch.Stop();
+            Console.WriteLine("Subsetting time: {0}ms\n", watch.ElapsedMilliseconds);
+
+            watch = Stopwatch.StartNew();
+            var memoryStream = new MemoryStream();
+            serializer.Serialize(new BinaryWriter(memoryStream), font);
+            watch.Stop();
+            using (var file = File.OpenWrite(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "Generatede.otf")))
+                memoryStream.WriteTo(file);
+            Console.WriteLine("Serializing time: {0}ms", watch.ElapsedMilliseconds);
+
             Console.ReadKey();
         }
     }

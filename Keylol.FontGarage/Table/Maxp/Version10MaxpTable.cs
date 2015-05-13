@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Keylol.FontGarage.Table.Maxp
 {
-    public class Version10MaxpTable:MaxpTable
+    public class Version10MaxpTable : MaxpTable
     {
         public override string Version
         {
@@ -28,9 +28,24 @@ namespace Keylol.FontGarage.Table.Maxp
         public ushort MaxComponentElements { get; set; }
         public ushort MaxComponentDepth { get; set; }
 
-        public override void Serialize(BinaryWriter writer)
+        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
-            throw new NotImplementedException();
+            writer.BaseStream.Position = startOffset;
+            DataTypeConverter.WriteFixed(writer, Version);
+            DataTypeConverter.WriteUShort(writer, NumberOfGlyphs);
+            DataTypeConverter.WriteUShort(writer, MaxPoints);
+            DataTypeConverter.WriteUShort(writer, MaxContours);
+            DataTypeConverter.WriteUShort(writer, MaxCompositePoints);
+            DataTypeConverter.WriteUShort(writer, MaxCompositeContours);
+            DataTypeConverter.WriteUShort(writer, MaxZones);
+            DataTypeConverter.WriteUShort(writer, MaxTwilightPoints);
+            DataTypeConverter.WriteUShort(writer, MaxStorage);
+            DataTypeConverter.WriteUShort(writer, MaxFunctionDefs);
+            DataTypeConverter.WriteUShort(writer, MaxInstructionDefs);
+            DataTypeConverter.WriteUShort(writer, MaxStackElements);
+            DataTypeConverter.WriteUShort(writer, MaxSizeOfInstructions);
+            DataTypeConverter.WriteUShort(writer, MaxComponentElements);
+            DataTypeConverter.WriteUShort(writer, MaxComponentDepth);
         }
 
         public new static Version10MaxpTable Deserialize(BinaryReader reader, long startOffset)

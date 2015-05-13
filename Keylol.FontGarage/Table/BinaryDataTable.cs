@@ -10,9 +10,12 @@ namespace Keylol.FontGarage.Table
     public class BinaryDataTable : IOpenTypeFontTable
     {
         public string Tag { get; set; }
-        public void Serialize(BinaryWriter writer)
+        public byte[] Data { get; set; }
+
+        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
-            throw new NotImplementedException();
+            writer.BaseStream.Position = startOffset;
+            writer.Write(Data);
         }
 
         public static BinaryDataTable Deserialize(BinaryReader reader, long startOffset, uint length, string tag)
@@ -24,7 +27,5 @@ namespace Keylol.FontGarage.Table
                 Data = reader.ReadBytes((int) length)
             };
         }
-
-        public byte[] Data { get; set; }
     }
 }

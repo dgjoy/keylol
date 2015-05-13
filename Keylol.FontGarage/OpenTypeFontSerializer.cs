@@ -2,61 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Keylol.FontGarage.Table;
 
 namespace Keylol.FontGarage
 {
-    internal static class DataTypeLength
-    {
-        public const int UShort = 2;
-        public const int Short = 2;
-        public const int F2Dot14 = 2;
-        public const int ULong = 4;
-        public const int Fixed = 4;
-        public const int LongDateTime = 8;
-    }
-
-    internal static class DataTypeConverter
-    {
-        private static SmartBitConverter _bitConverter = new SmartBitConverter(Endian.BigEndian);
-
-        public static ushort ReadUShort(BinaryReader reader)
-        {
-            return _bitConverter.ToUInt16(reader.ReadBytes(DataTypeLength.UShort), 0);
-        }
-
-        public static short ReadShort(BinaryReader reader)
-        {
-            return _bitConverter.ToInt16(reader.ReadBytes(DataTypeLength.Short), 0);
-        }
-
-        public static uint ReadULong(BinaryReader reader)
-        {
-            return _bitConverter.ToUInt32(reader.ReadBytes(DataTypeLength.ULong), 0);
-        }
-
-        public static string ReadFixed(BinaryReader reader)
-        {
-            var bytes = reader.ReadBytes(DataTypeLength.Fixed);
-            var text = Encoding.ASCII.GetString(bytes);
-            if (text == "OTTO" || text == "true" || text == "typ1")
-                return text;
-            return string.Format("{0}.{1:X2}{2:X2}", _bitConverter.ToUInt16(bytes, 0), bytes[2], bytes[3]);
-        }
-
-        public static DateTime ReadLongDateTime(BinaryReader reader)
-        {
-            var seconds = _bitConverter.ToInt64(reader.ReadBytes(DataTypeLength.LongDateTime), 0);
-            return new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(seconds);
-        }
-    }
-
     public class OpenTypeFontSerializer
     {
+        private readonly string[] _supportedSfntVersions = {"1.0000", "OTTO", "true", "typ1"};
+
+        /// <summary>
+        /// Set to false will no longer calculate checksum to save time.
+        /// </summary>
+        public bool EnableChecksum { get; set; }
+
         private class TableDirectoryEntry
         {
-            private Dictionary<string, int> _tagPriorityMap = new Dictionary<string, int>
+            private readonly Dictionary<string, int> _tagPriorityMap = new Dictionary<string, int>
             {
                 {"loca", 100},
                 {"glyf", 200}
@@ -80,19 +41,93 @@ namespace Keylol.FontGarage
             }
         }
 
-        public void Serialize(BinaryWriter writer, OpenTypeFont font) {}
+        private static uint CalculateChecksum(BinaryReader reader, long startOffset, uint length)
+        {
+            uint checksum = 0;
+            reader.BaseStream.Position = startOffset;
+            var checkCount = (length + 3) / 4;
+            for (var i = 0; i < checkCount; i++)
+            {
+                checksum += DataTypeConverter.ReadULong(reader);
+            }
+            return checksum;
+        }
+
+        public void Serialize(BinaryWriter writer, OpenTypeFont font)
+        {
+            DataTypeConverter.WriteFixed(writer, font.SfntVersion);
+            DataTypeConverter.WriteUShort(writer, (ushort) font.Tables.Count);
+            {
+                var pow = Math.Floor(Math.Log(font.Tables.Count, 2));
+                var searchRange = Math.Pow(2, pow)*16;
+                DataTypeConverter.WriteUShort(writer, (ushort) searchRange);
+                DataTypeConverter.WriteUShort(writer, (ushort) pow);
+                DataTypeConverter.WriteUShort(writer, (ushort) (font.Tables.Count*16 - searchRange));
+            }
+            var startOffsetOfCurrentTableEntry = writer.BaseStream.Position;
+            var startOffsetOfCurrentTableData = startOffsetOfCurrentTableEntry +
+                                                4*DataTypeLength.ULong*font.Tables.Count;
+            font.Tables.Sort((table1, table2) => String.Compare(table1.Tag, table2.Tag, StringComparison.Ordinal));
+            var reader = new BinaryReader(writer.BaseStream);
+            long headChecksumOffset = 0;
+            foreach (var table in font.Tables)
+            {
+                table.Serialize(writer, startOffsetOfCurrentTableData, font);
+
+                // Calculate length
+                var endOffset = writer.BaseStream.Position;
+                var actualLength = endOffset - startOffsetOfCurrentTableData;
+
+                // 4k padding
+                if (endOffset%4 != 0)
+                {
+                    var zeroCount = 4 - endOffset%4;
+                    for (var i = 0; i < zeroCount; i++)
+                    {
+                        writer.Write((byte) 0);
+                    }
+                    endOffset = writer.BaseStream.Position;
+                }
+
+                // Calculate checksum
+                uint checksum = 0;
+                if (EnableChecksum)
+                {
+                    checksum = CalculateChecksum(reader, startOffsetOfCurrentTableData, (uint) actualLength);
+                    if (table is HeadTable)
+                    {
+                        headChecksumOffset = startOffsetOfCurrentTableData + DataTypeLength.Fixed*2;
+                    }
+                }
+
+                // Write table info to the directory
+                writer.BaseStream.Position = startOffsetOfCurrentTableEntry;
+                DataTypeConverter.WriteTag(writer, table.Tag);
+                DataTypeConverter.WriteULong(writer, checksum); // checksum
+                DataTypeConverter.WriteULong(writer, (uint) startOffsetOfCurrentTableData);
+                DataTypeConverter.WriteULong(writer, (uint) actualLength);
+
+                // Set offsets for next table
+                startOffsetOfCurrentTableEntry = writer.BaseStream.Position;
+                startOffsetOfCurrentTableData = endOffset;
+            }
+
+            // Calculate checksum for the entire font
+            if (EnableChecksum)
+            {
+                var entireChecksum = 0xB1B0AFBA - CalculateChecksum(reader, 0, (uint) reader.BaseStream.Length);
+                writer.BaseStream.Position = headChecksumOffset;
+                DataTypeConverter.WriteULong(writer, entireChecksum);
+            }
+        }
 
         public OpenTypeFont Deserialize(BinaryReader reader)
         {
-            return Deserialize(reader, reader.BaseStream.Position);
-        }
-
-        public OpenTypeFont Deserialize(BinaryReader reader, long startOffset)
-        {
             var font = new OpenTypeFont();
-            reader.BaseStream.Position = startOffset;
 
             font.SfntVersion = DataTypeConverter.ReadFixed(reader);
+            if (!_supportedSfntVersions.Contains(font.SfntVersion))
+                throw new NotSupportedException("Bad sfnt version.");
 
             // Table directory
             var numberOfTables = DataTypeConverter.ReadUShort(reader);
@@ -102,7 +137,7 @@ namespace Keylol.FontGarage
             for (var i = 0; i < numberOfTables; i++)
             {
                 var entry = new TableDirectoryEntry();
-                entry.Tag = Encoding.ASCII.GetString(reader.ReadBytes(DataTypeLength.ULong)).Trim();
+                entry.Tag = DataTypeConverter.ReadTag(reader);
                 reader.BaseStream.Position += DataTypeLength.ULong; // checksum
                 entry.Offset = DataTypeConverter.ReadULong(reader);
                 entry.Length = DataTypeConverter.ReadULong(reader);
@@ -129,9 +164,9 @@ namespace Keylol.FontGarage
 
                     case "loca":
                         tableToAdd = LocaTable.Deserialize(reader, entry.Offset,
-                            font.Tables.OfType<MaxpTable>().Single().NumberOfGlyphs,
+                            font.Get<MaxpTable>().NumberOfGlyphs,
                             entryList.Values.Single(e => e.Tag == "glyf").Length,
-                            font.Tables.OfType<HeadTable>().Single().LocaTableVersion);
+                            font.Get<HeadTable>().LocaTableVersion);
                         break;
 
                     case "glyf":
@@ -147,6 +182,11 @@ namespace Keylol.FontGarage
             }
 
             return font;
+        }
+
+        public OpenTypeFontSerializer()
+        {
+            EnableChecksum = true;
         }
     }
 }

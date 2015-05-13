@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypeConverter.cs" />
     <Compile Include="FontGarage.cs" />
     <Compile Include="OpenTypeFont.cs" />
     <Compile Include="OpenTypeFontSerializer.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Table\Glyf\Glyph.cs" />
     <Compile Include="Table\Glyf\SimpleGlyph.cs" />
     <Compile Include="Table\HeadTable.cs" />
+    <Compile Include="Table\IOpenTypeFontSerializable.cs" />
     <Compile Include="Table\IOpenTypeFontTable.cs" />
     <Compile Include="Table\LocaTable.cs" />
     <Compile Include="Table\MaxpTable.cs" />

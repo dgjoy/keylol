@@ -19,9 +19,42 @@ namespace Keylol.FontGarage.Table
 
         public List<Cmap.CmapSubtable> Subtables;
 
-        public void Serialize(BinaryWriter writer)
+        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
-            throw new NotImplementedException();
+            writer.BaseStream.Position = startOffset;
+            DataTypeConverter.WriteUShort(writer, Version);
+            var environments = Subtables.SelectMany(subtable => subtable.Environments).ToList();
+            DataTypeConverter.WriteUShort(writer, (ushort) environments.Count);
+            var startOffsetOfCurrentEntry = writer.BaseStream.Position;
+            var startOffsetOfCurrentSubtable = writer.BaseStream.Position +
+                                               environments.Count*
+                                               (DataTypeLength.UShort + DataTypeLength.UShort + DataTypeLength.ULong);
+
+            foreach (var subtable in Subtables)
+            {
+                // 4k padding
+                if (startOffsetOfCurrentSubtable % 4 != 0)
+                {
+                    startOffsetOfCurrentSubtable += (4 - startOffsetOfCurrentSubtable%4);
+                }
+
+                subtable.Serialize(writer, startOffsetOfCurrentSubtable, font);
+
+                var endOffset = writer.BaseStream.Position;
+
+                // Write subtable info in entry list
+                writer.BaseStream.Position = startOffsetOfCurrentEntry;
+                foreach (var environment in subtable.Environments)
+                {
+                    DataTypeConverter.WriteUShort(writer, environment.PlatformId);
+                    DataTypeConverter.WriteUShort(writer, environment.EncodingId);
+                    DataTypeConverter.WriteULong(writer, (uint) (startOffsetOfCurrentSubtable - startOffset));
+                }
+
+                // Set offsets for next subtable
+                startOffsetOfCurrentEntry = writer.BaseStream.Position;
+                startOffsetOfCurrentSubtable = writer.BaseStream.Position = endOffset;
+            }
         }
 
         public static CmapTable Deserialize(BinaryReader reader, long startOffset)

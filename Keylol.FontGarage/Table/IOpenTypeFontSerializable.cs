@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Keylol.FontGarage.Table
 {
-    public interface IOpenTypeFontTable : IOpenTypeFontSerializable
+    public interface IOpenTypeFontSerializable
     {
-        string Tag { get; }
+        void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font);
     }
 }

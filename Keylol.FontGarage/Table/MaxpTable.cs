@@ -15,7 +15,7 @@ namespace Keylol.FontGarage.Table
             get { return "maxp"; }
         }
 
-        public abstract void Serialize(BinaryWriter writer);
+        public abstract void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font);
 
         public abstract string Version { get; }
         public ushort NumberOfGlyphs { get; set; }

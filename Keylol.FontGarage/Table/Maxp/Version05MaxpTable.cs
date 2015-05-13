@@ -14,9 +14,11 @@ namespace Keylol.FontGarage.Table.Maxp
             get { return "0.5000"; }
         }
 
-        public override void Serialize(BinaryWriter writer)
+        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
-            throw new NotImplementedException();
+            writer.BaseStream.Position = startOffset;
+            DataTypeConverter.WriteFixed(writer, Version);
+            DataTypeConverter.WriteUShort(writer, NumberOfGlyphs);
         }
 
         public new static Version05MaxpTable Deserialize(BinaryReader reader, long startOffset)
