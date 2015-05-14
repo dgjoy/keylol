@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.FontGarage.Table.Glyf
 {
@@ -34,11 +32,16 @@ namespace Keylol.FontGarage.Table.Glyf
 
     public class CompositeGlyph : Glyph
     {
+        public CompositeGlyph()
+        {
+            Components = new List<GlyphComponent>();
+            Instructions = new byte[0];
+        }
+
         public short XMin { get; set; }
         public short YMin { get; set; }
         public short XMax { get; set; }
         public short YMax { get; set; }
-
         public List<GlyphComponent> Components { get; set; }
         public byte[] Instructions { get; set; }
 
@@ -72,9 +75,11 @@ namespace Keylol.FontGarage.Table.Glyf
 
             do
             {
-                var component = new GlyphComponent();
-                component.Flags = (ComponentFlags) DataTypeConverter.ReadUShort(reader);
-                component.GlyphId = DataTypeConverter.ReadUShort(reader);
+                var component = new GlyphComponent
+                {
+                    Flags = (ComponentFlags) DataTypeConverter.ReadUShort(reader),
+                    GlyphId = DataTypeConverter.ReadUShort(reader)
+                };
                 var dataLength = 0;
                 if (component.Flags.HasFlag(ComponentFlags.Arg1And2AreWords))
                     dataLength += DataTypeLength.UShort*2;
@@ -90,16 +95,8 @@ namespace Keylol.FontGarage.Table.Glyf
                 glyph.Components.Add(component);
             } while (glyph.Components.Last().Flags.HasFlag(ComponentFlags.MoreComponents));
             if (glyph.Components.Last().Flags.HasFlag(ComponentFlags.WeHaveInstructions))
-            {
                 glyph.Instructions = reader.ReadBytes(DataTypeConverter.ReadUShort(reader));
-            }
             return glyph;
-        }
-
-        public CompositeGlyph()
-        {
-            Components = new List<GlyphComponent>();
-            Instructions = new byte[0];
         }
     }
 }

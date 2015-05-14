@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Keylol.FontGarage.Table.Maxp;
 
 namespace Keylol.FontGarage.Table
 {
     public abstract class MaxpTable : IOpenTypeFontTable
     {
+        public abstract string Version { get; }
+        public ushort NumberOfGlyphs { get; internal set; }
+
         public string Tag
         {
             get { return "maxp"; }
         }
 
         public abstract void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font);
-
-        public abstract string Version { get; }
-        public ushort NumberOfGlyphs { get; set; }
 
         public static MaxpTable Deserialize(BinaryReader reader, long startOffset)
         {

@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.FontGarage.Table
 {
     public class HeadTable : IOpenTypeFontTable
     {
-        public string Tag
-        {
-            get { return "head"; }
-        }
-
         public string Version { get; set; }
         public string FontRevision { get; set; }
         public ushort Flags { get; set; }
@@ -27,6 +18,11 @@ namespace Keylol.FontGarage.Table
         public ushort MacStyle { get; set; }
         public ushort LowestRecPpem { get; set; }
         public LocaTableVersion LocaTableVersion { get; set; }
+
+        public string Tag
+        {
+            get { return "head"; }
+        }
 
         public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {

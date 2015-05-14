@@ -10,46 +10,23 @@ namespace Keylol.FontGarage
     {
         private readonly string[] _supportedSfntVersions = {"1.0000", "OTTO", "true", "typ1"};
 
+        public OpenTypeFontSerializer()
+        {
+            EnableChecksum = true;
+        }
+
         /// <summary>
-        /// Set to false will no longer calculate checksum to save time.
+        ///     Set to false will no longer calculate checksum to save time.
         /// </summary>
         public bool EnableChecksum { get; set; }
-
-        private class TableDirectoryEntry
-        {
-            private readonly Dictionary<string, int> _tagPriorityMap = new Dictionary<string, int>
-            {
-                {"loca", 100},
-                {"glyf", 200}
-            };
-
-            public string Tag { get; set; }
-            public uint Offset { get; set; }
-            public uint Length { get; set; }
-
-            public int Priority
-            {
-                get { return _tagPriorityMap.ContainsKey(Tag) ? _tagPriorityMap[Tag] : 0; }
-            }
-        }
-
-        private class TableDirectoryEntryPriorityComparer : IComparer<int>
-        {
-            public int Compare(int x, int y)
-            {
-                return x > y ? 1 : -1;
-            }
-        }
 
         private static uint CalculateChecksum(BinaryReader reader, long startOffset, uint length)
         {
             uint checksum = 0;
             reader.BaseStream.Position = startOffset;
-            var checkCount = (length + 3) / 4;
+            var checkCount = (length + 3)/4;
             for (var i = 0; i < checkCount; i++)
-            {
                 checksum += DataTypeConverter.ReadULong(reader);
-            }
             return checksum;
         }
 
@@ -70,9 +47,21 @@ namespace Keylol.FontGarage
             font.Tables.Sort((table1, table2) => String.Compare(table1.Tag, table2.Tag, StringComparison.Ordinal));
             var reader = new BinaryReader(writer.BaseStream);
             long headChecksumOffset = 0;
+            long hheaNumOfHMetricsOffset = 0;
             foreach (var table in font.Tables)
             {
                 table.Serialize(writer, startOffsetOfCurrentTableData, font);
+
+                // A hack to update NumberOfHMetrics in hhea table
+                if (table is HheaTable)
+                    hheaNumOfHMetricsOffset = writer.BaseStream.Position - DataTypeLength.UShort;
+                if (table is HmtxTable)
+                {
+                    var restorePosition = writer.BaseStream.Position;
+                    writer.BaseStream.Position = hheaNumOfHMetricsOffset;
+                    DataTypeConverter.WriteUShort(writer, font.Get<HheaTable>().NumberOfHMetrics);
+                    writer.BaseStream.Position = restorePosition;
+                }
 
                 // Calculate length
                 var endOffset = writer.BaseStream.Position;
@@ -83,9 +72,7 @@ namespace Keylol.FontGarage
                 {
                     var zeroCount = 4 - endOffset%4;
                     for (var i = 0; i < zeroCount; i++)
-                    {
                         writer.Write((byte) 0);
-                    }
                     endOffset = writer.BaseStream.Position;
                 }
 
@@ -95,9 +82,7 @@ namespace Keylol.FontGarage
                 {
                     checksum = CalculateChecksum(reader, startOffsetOfCurrentTableData, (uint) actualLength);
                     if (table is HeadTable)
-                    {
                         headChecksumOffset = startOffsetOfCurrentTableData + DataTypeLength.Fixed*2;
-                    }
                 }
 
                 // Write table info to the directory
@@ -113,7 +98,7 @@ namespace Keylol.FontGarage
             }
 
             // Calculate checksum for the entire font
-            if (EnableChecksum)
+            if (EnableChecksum && headChecksumOffset > 0)
             {
                 var entireChecksum = 0xB1B0AFBA - CalculateChecksum(reader, 0, (uint) reader.BaseStream.Length);
                 writer.BaseStream.Position = headChecksumOffset;
@@ -123,9 +108,7 @@ namespace Keylol.FontGarage
 
         public OpenTypeFont Deserialize(BinaryReader reader)
         {
-            var font = new OpenTypeFont();
-
-            font.SfntVersion = DataTypeConverter.ReadFixed(reader);
+            var font = new OpenTypeFont {SfntVersion = DataTypeConverter.ReadFixed(reader)};
             if (!_supportedSfntVersions.Contains(font.SfntVersion))
                 throw new NotSupportedException("Bad sfnt version.");
 
@@ -136,8 +119,7 @@ namespace Keylol.FontGarage
                 new TableDirectoryEntryPriorityComparer());
             for (var i = 0; i < numberOfTables; i++)
             {
-                var entry = new TableDirectoryEntry();
-                entry.Tag = DataTypeConverter.ReadTag(reader);
+                var entry = new TableDirectoryEntry {Tag = DataTypeConverter.ReadTag(reader)};
                 reader.BaseStream.Position += DataTypeLength.ULong; // checksum
                 entry.Offset = DataTypeConverter.ReadULong(reader);
                 entry.Length = DataTypeConverter.ReadULong(reader);
@@ -165,13 +147,21 @@ namespace Keylol.FontGarage
                     case "loca":
                         tableToAdd = LocaTable.Deserialize(reader, entry.Offset,
                             font.Get<MaxpTable>().NumberOfGlyphs,
-                            entryList.Values.Single(e => e.Tag == "glyf").Length,
                             font.Get<HeadTable>().LocaTableVersion);
                         break;
 
                     case "glyf":
                         tableToAdd = GlyfTable.Deserialize(reader, entry.Offset, entry.Length,
-                            font.Tables.OfType<LocaTable>().Single());
+                            font.Get<LocaTable>());
+                        break;
+
+                    case "hhea":
+                        tableToAdd = HheaTable.Deserialize(reader, entry.Offset);
+                        break;
+
+                    case "hmtx":
+                        tableToAdd = HmtxTable.Deserialize(reader, entry.Offset, font.Get<HheaTable>().NumberOfHMetrics,
+                            font.Get<MaxpTable>().NumberOfGlyphs);
                         break;
 
                     default:
@@ -184,9 +174,31 @@ namespace Keylol.FontGarage
             return font;
         }
 
-        public OpenTypeFontSerializer()
+        private class TableDirectoryEntry
         {
-            EnableChecksum = true;
+            private readonly Dictionary<string, int> _tagPriorityMap = new Dictionary<string, int>
+            {
+                {"loca", 100},
+                {"glyf", 200},
+                {"hmtx", 300}
+            };
+
+            public string Tag { get; set; }
+            public uint Offset { get; set; }
+            public uint Length { get; set; }
+
+            public int Priority
+            {
+                get { return _tagPriorityMap.ContainsKey(Tag) ? _tagPriorityMap[Tag] : 0; }
+            }
+        }
+
+        private class TableDirectoryEntryPriorityComparer : IComparer<int>
+        {
+            public int Compare(int x, int y)
+            {
+                return x > y ? 1 : -1;
+            }
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Keylol.FontGarage.Table.Cmap
 {
@@ -39,7 +34,6 @@ namespace Keylol.FontGarage.Table.Cmap
             // Recover writer position
             writer.BaseStream.Position = startOffset + length;
         }
-
 
         public static Format0Subtable Deserialize(BinaryReader reader, long startOffset, ushort platformId,
             ushort encodingId)

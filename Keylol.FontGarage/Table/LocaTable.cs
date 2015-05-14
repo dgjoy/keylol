@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.FontGarage.Table
 {
@@ -15,15 +13,22 @@ namespace Keylol.FontGarage.Table
 
     public class LocaTable : IOpenTypeFontTable
     {
+        public LocaTable()
+        {
+            GlyphOffsets = new List<uint?>();
+        }
+
+        /// <summary>
+        ///     'null' represents no outline.
+        /// </summary>
+        public List<uint?> GlyphOffsets { get; set; }
+
+        internal uint GlyfTableLength { get; set; }
+
         public string Tag
         {
             get { return "loca"; }
         }
-
-        /// <summary>
-        /// 'null' represents no outline.
-        /// </summary>
-        public List<uint?> GlyphOffsets { get; set; }
 
         public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
@@ -37,28 +42,17 @@ namespace Keylol.FontGarage.Table
                 else
                 {
                     for (var i = 0; i < repeat; i++)
-                    {
-                        switch (version)
-                        {
-                            case LocaTableVersion.Short:
-                                DataTypeConverter.WriteUShort(writer, (ushort) glyphOffset.Value);
-                                break;
-
-                            case LocaTableVersion.Long:
-                                DataTypeConverter.WriteULong(writer, glyphOffset.Value);
-                                break;
-
-                            default:
-                                throw new NotImplementedException();
-                        }
-                    }
+                        WriteNextOffset(writer, glyphOffset.Value, version);
                     repeat = 1;
                 }
             }
+            WriteNextOffset(writer, GlyfTableLength, version);
+
+            font.Get<MaxpTable>().NumberOfGlyphs = (ushort) GlyphOffsets.Count;
         }
 
         public static LocaTable Deserialize(BinaryReader reader, long startOffset, ushort numberOfGlyphs,
-            uint glyfTableLength, LocaTableVersion version)
+            LocaTableVersion version)
         {
             var table = new LocaTable();
             reader.BaseStream.Position = startOffset;
@@ -67,21 +61,18 @@ namespace Keylol.FontGarage.Table
             {
                 var offset = ReadNextOffset(reader, version);
 
+                // Peek next offset
+                var restorePosition = reader.BaseStream.Position;
+                var nextOffset = ReadNextOffset(reader, version);
+                reader.BaseStream.Position = restorePosition;
+
                 // Empty outline check
-                uint nextOffset = 0;
-                if (i != numberOfGlyphs - 1) // Not last glyph
-                {
-                    // Peek next offset
-                    var restorePosition = reader.BaseStream.Position;
-                    nextOffset = ReadNextOffset(reader, version);
-                    reader.BaseStream.Position = restorePosition;
-                }
-                if ((i != numberOfGlyphs - 1 && offset == nextOffset) ||
-                    (i == numberOfGlyphs - 1 && offset == glyfTableLength))
+                if (offset == nextOffset)
                     return null;
 
                 return offset;
             }));
+            table.GlyfTableLength = ReadNextOffset(reader, version);
 
             return table;
         }
@@ -101,9 +92,27 @@ namespace Keylol.FontGarage.Table
             }
         }
 
-        public LocaTable()
+        private static void WriteNextOffset(BinaryWriter writer, uint offset, LocaTableVersion version)
         {
-            GlyphOffsets = new List<uint?>();
+            switch (version)
+            {
+                case LocaTableVersion.Long:
+                    DataTypeConverter.WriteULong(writer, offset);
+                    break;
+
+                case LocaTableVersion.Short:
+                    DataTypeConverter.WriteUShort(writer, (ushort) (offset/2));
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        public void ChangeNumberOfGlyphs(int number)
+        {
+            GlyphOffsets = new List<uint?>(number);
+            GlyphOffsets.AddRange(Enumerable.Repeat<uint?>(null, number));
         }
     }
 }

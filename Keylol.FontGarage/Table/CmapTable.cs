@@ -1,23 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Keylol.FontGarage.Table.Cmap;
+using Environment = Keylol.FontGarage.Table.Cmap.Environment;
 
 namespace Keylol.FontGarage.Table
 {
     public class CmapTable : IOpenTypeFontTable
     {
-        public string Tag
+        public List<CmapSubtable> Subtables;
+
+        public CmapTable()
         {
-            get { return "cmap"; }
+            Version = 0;
+            Subtables = new List<CmapSubtable>();
         }
 
         public ushort Version { get; set; }
 
-        public List<Cmap.CmapSubtable> Subtables;
+        public string Tag
+        {
+            get { return "cmap"; }
+        }
 
         public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
@@ -33,10 +38,8 @@ namespace Keylol.FontGarage.Table
             foreach (var subtable in Subtables)
             {
                 // 4k padding
-                if (startOffsetOfCurrentSubtable % 4 != 0)
-                {
+                if (startOffsetOfCurrentSubtable%4 != 0)
                     startOffsetOfCurrentSubtable += (4 - startOffsetOfCurrentSubtable%4);
-                }
 
                 subtable.Serialize(writer, startOffsetOfCurrentSubtable, font);
 
@@ -74,12 +77,12 @@ namespace Keylol.FontGarage.Table
                 encodingIds[i] = DataTypeConverter.ReadUShort(reader);
                 offsets[i] = DataTypeConverter.ReadULong(reader);
             }
-            var offsetSubtableMap = new Dictionary<uint, Cmap.CmapSubtable>();
+            var offsetSubtableMap = new Dictionary<uint, CmapSubtable>();
             for (var i = 0; i < numberOfSubtables; i++)
             {
                 if (offsetSubtableMap.ContainsKey(offsets[i])) // Multiple map
                 {
-                    offsetSubtableMap[offsets[i]].Environments.Add(new Cmap.Environment
+                    offsetSubtableMap[offsets[i]].Environments.Add(new Environment
                     {
                         EncodingId = encodingIds[i],
                         PlatformId = platformIds[i]
@@ -89,21 +92,21 @@ namespace Keylol.FontGarage.Table
 
                 var subtableStartOffset = reader.BaseStream.Position = startOffset + offsets[i];
                 var format = DataTypeConverter.ReadUShort(reader);
-                Cmap.CmapSubtable subtable;
+                CmapSubtable subtable;
                 switch (format)
                 {
                     case 0:
-                        subtable = Cmap.Format0Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
+                        subtable = Format0Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
                             encodingIds[i]);
                         break;
 
                     case 4:
-                        subtable = Cmap.Format4Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
+                        subtable = Format4Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
                             encodingIds[i]);
                         break;
 
                     case 6:
-                        subtable = Cmap.Format6Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
+                        subtable = Format6Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
                             encodingIds[i]);
                         break;
 
@@ -114,12 +117,6 @@ namespace Keylol.FontGarage.Table
                 table.Subtables.Add(subtable);
             }
             return table;
-        }
-
-        public CmapTable()
-        {
-            Version = 0;
-            Subtables = new List<Cmap.CmapSubtable>();
         }
     }
 }

@@ -11,16 +11,16 @@ namespace Keylol.FontGarage
 
     public class SmartBitConverter
     {
+        public SmartBitConverter(Endian externalEndian)
+        {
+            ExternalEndian = externalEndian;
+        }
+
         public Endian ExternalEndian { get; set; }
 
         public static Endian InternalEndian
         {
             get { return BitConverter.IsLittleEndian ? Endian.LittleEndian : Endian.BigEndian; }
-        }
-
-        public SmartBitConverter(Endian externalEndian)
-        {
-            ExternalEndian = externalEndian;
         }
 
         // Converts a byte into an array of bytes with length one.
@@ -144,7 +144,6 @@ namespace Keylol.FontGarage
                 ? i
                 : BitConverter.ToInt64(BitConverter.GetBytes(i).Reverse().ToArray(), 0);
         }
-
 
         // Converts an array of bytes into an ushort.
         // 

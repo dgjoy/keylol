@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Keylol.FontGarage.Table.Glyf;
 
 namespace Keylol.FontGarage.Table
 {
     public class GlyfTable : IOpenTypeFontTable
     {
+        public GlyfTable()
+        {
+            Glyphs = new List<Glyph>();
+        }
+
+        public List<Glyph> Glyphs { get; set; }
+
         public string Tag
         {
             get { return "glyf"; }
         }
-
-        public List<Glyph> Glyphs { get; set; }
 
         public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {
@@ -37,9 +38,7 @@ namespace Keylol.FontGarage.Table
                 glyph.Serialize(writer, writer.BaseStream.Position, font);
             }
 
-            if (locaTable.GlyphOffsets.Count > 0 && locaTable.GlyphOffsets[locaTable.GlyphOffsets.Count - 1] == null)
-                locaTable.GlyphOffsets[locaTable.GlyphOffsets.Count - 1] =
-                    (uint) (writer.BaseStream.Position - startOffset);
+            locaTable.GlyfTableLength = (uint) (writer.BaseStream.Position - startOffset);
         }
 
         public static GlyfTable Deserialize(BinaryReader reader, long startOffset, uint length, LocaTable locaTable)
@@ -80,11 +79,6 @@ namespace Keylol.FontGarage.Table
             }
 
             return table;
-        }
-
-        public GlyfTable()
-        {
-            Glyphs = new List<Glyph>();
         }
     }
 }

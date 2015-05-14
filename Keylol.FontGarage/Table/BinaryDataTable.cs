@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Keylol.FontGarage.Table
 {
     public class BinaryDataTable : IOpenTypeFontTable
     {
-        public string Tag { get; set; }
         public byte[] Data { get; set; }
+        public string Tag { get; set; }
 
         public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
         {

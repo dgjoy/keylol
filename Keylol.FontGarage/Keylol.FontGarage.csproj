@@ -56,6 +56,8 @@
     <Compile Include="Table\Glyf\Glyph.cs" />
     <Compile Include="Table\Glyf\SimpleGlyph.cs" />
     <Compile Include="Table\HeadTable.cs" />
+    <Compile Include="Table\HheaTable.cs" />
+    <Compile Include="Table\HmtxTable.cs" />
     <Compile Include="Table\IOpenTypeFontSerializable.cs" />
     <Compile Include="Table\IOpenTypeFontTable.cs" />
     <Compile Include="Table\LocaTable.cs" />

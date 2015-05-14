@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 namespace Keylol.FontGarage.Table.Cmap
@@ -37,12 +36,11 @@ namespace Keylol.FontGarage.Table.Cmap
             // Set length
             var length = writer.BaseStream.Position - startOffset;
             writer.BaseStream.Position = lengthOffset;
-            DataTypeConverter.WriteUShort(writer, (ushort)length);
+            DataTypeConverter.WriteUShort(writer, (ushort) length);
 
             // Recover writer position
             writer.BaseStream.Position = startOffset + length;
         }
-
 
         public static Format6Subtable Deserialize(BinaryReader reader, long startOffset, ushort platformId,
             ushort encodingId)
@@ -55,9 +53,7 @@ namespace Keylol.FontGarage.Table.Cmap
             var firstCode = DataTypeConverter.ReadUShort(reader);
             var entryCount = DataTypeConverter.ReadUShort(reader);
             for (uint i = 0; i < entryCount; i++)
-            {
                 table.CharGlyphIdMap[firstCode + i] = DataTypeConverter.ReadUShort(reader);
-            }
 
             return table;
         }
