@@ -15,6 +15,7 @@ namespace Keylol.FontGarage.Table
         }
 
         public abstract void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font);
+        public abstract object DeepCopy();
 
         public static MaxpTable Deserialize(BinaryReader reader, long startOffset)
         {

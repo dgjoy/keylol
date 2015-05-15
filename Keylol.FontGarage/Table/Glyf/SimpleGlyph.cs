@@ -20,5 +20,12 @@ namespace Keylol.FontGarage.Table.Glyf
                 Data = reader.ReadBytes((int) length)
             };
         }
+
+        public override object DeepCopy()
+        {
+            var newGlyph = (SimpleGlyph) MemberwiseClone();
+            newGlyph.Data = (byte[]) Data.Clone();
+            return newGlyph;
+        }
     }
 }

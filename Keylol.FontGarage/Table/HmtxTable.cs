@@ -48,6 +48,13 @@ namespace Keylol.FontGarage.Table
             font.Get<HheaTable>().NumberOfHMetrics = (ushort) (wall + 1);
         }
 
+        public object DeepCopy()
+        {
+            var newTable = (HmtxTable) MemberwiseClone();
+            newTable.HorizontalMetrics = HorizontalMetrics.ToList();
+            return newTable;
+        }
+
         public static HmtxTable Deserialize(BinaryReader reader, long startOffset, ushort numberOfHorizontalMetrics,
             ushort numberOfGlyphs)
         {

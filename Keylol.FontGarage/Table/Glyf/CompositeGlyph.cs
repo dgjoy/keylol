@@ -23,11 +23,18 @@ namespace Keylol.FontGarage.Table.Glyf
         UnscaledComponentOffset = 1 << 12
     }
 
-    public class GlyphComponent
+    public class GlyphComponent : IDeepCopyable
     {
         public ComponentFlags Flags { get; set; }
         public ushort GlyphId { get; set; }
         public byte[] TransformationData { get; set; }
+
+        public object DeepCopy()
+        {
+            var newComponent = (GlyphComponent) MemberwiseClone();
+            newComponent.TransformationData = (byte[]) TransformationData.Clone();
+            return newComponent;
+        }
     }
 
     public class CompositeGlyph : Glyph
@@ -97,6 +104,14 @@ namespace Keylol.FontGarage.Table.Glyf
             if (glyph.Components.Last().Flags.HasFlag(ComponentFlags.WeHaveInstructions))
                 glyph.Instructions = reader.ReadBytes(DataTypeConverter.ReadUShort(reader));
             return glyph;
+        }
+
+        public override object DeepCopy()
+        {
+            var newGlyph = (CompositeGlyph) MemberwiseClone();
+            newGlyph.Components = Components.Select(component => (GlyphComponent) component.DeepCopy()).ToList();
+            newGlyph.Instructions = (byte[]) Instructions.Clone();
+            return newGlyph;
         }
     }
 }

@@ -21,5 +21,10 @@ namespace Keylol.FontGarage.Table.Maxp
             reader.BaseStream.Position = startOffset + DataTypeLength.Fixed;
             return new Version05MaxpTable {NumberOfGlyphs = DataTypeConverter.ReadUShort(reader)};
         }
+
+        public override object DeepCopy()
+        {
+            return MemberwiseClone();
+        }
     }
 }

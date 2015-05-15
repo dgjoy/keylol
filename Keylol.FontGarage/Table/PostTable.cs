@@ -34,6 +34,11 @@ namespace Keylol.FontGarage.Table
             DataTypeConverter.WriteULong(writer, MaxMemType1);
         }
 
+        public object DeepCopy()
+        {
+            return MemberwiseClone();
+        }
+
         public static PostTable Deserialize(BinaryReader reader, long startOffset)
         {
             reader.BaseStream.Position = startOffset;

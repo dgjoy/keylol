@@ -51,6 +51,13 @@ namespace Keylol.FontGarage.Table
             font.Get<MaxpTable>().NumberOfGlyphs = (ushort) GlyphOffsets.Count;
         }
 
+        public object DeepCopy()
+        {
+            var newTable = (LocaTable) MemberwiseClone();
+            newTable.GlyphOffsets = GlyphOffsets.ToList();
+            return newTable;
+        }
+
         public static LocaTable Deserialize(BinaryReader reader, long startOffset, ushort numberOfGlyphs,
             LocaTableVersion version)
         {

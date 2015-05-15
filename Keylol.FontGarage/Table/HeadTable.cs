@@ -46,6 +46,11 @@ namespace Keylol.FontGarage.Table
             DataTypeConverter.WriteShort(writer, 0);
         }
 
+        public object DeepCopy()
+        {
+            return MemberwiseClone();
+        }
+
         public static HeadTable Deserialize(BinaryReader reader, long startOffset)
         {
             var table = new HeadTable();

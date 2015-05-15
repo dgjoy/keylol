@@ -1,6 +1,11 @@
 ﻿namespace Keylol.FontGarage.Table
 {
-    public interface IOpenTypeFontTable : IOpenTypeFontSerializable
+    public interface IDeepCopyable
+    {
+        object DeepCopy();
+    }
+
+    public interface IOpenTypeFontTable : IOpenTypeFontSerializable, IDeepCopyable
     {
         string Tag { get; }
     }

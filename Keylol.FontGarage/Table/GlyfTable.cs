@@ -41,6 +41,13 @@ namespace Keylol.FontGarage.Table
             locaTable.GlyfTableLength = (uint) (writer.BaseStream.Position - startOffset);
         }
 
+        public object DeepCopy()
+        {
+            var newTable = (GlyfTable) MemberwiseClone();
+            newTable.Glyphs = Glyphs.Select(glyph => (Glyph) glyph.DeepCopy()).ToList();
+            return newTable;
+        }
+
         public static GlyfTable Deserialize(BinaryReader reader, long startOffset, uint length, LocaTable locaTable)
         {
             var table = new GlyfTable();

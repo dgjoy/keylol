@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTypeConverter.cs" />
-    <Compile Include="FontGarage.cs" />
     <Compile Include="OpenTypeFont.cs" />
     <Compile Include="OpenTypeFontSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

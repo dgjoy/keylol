@@ -13,6 +13,13 @@ namespace Keylol.FontGarage.Table
             writer.Write(Data);
         }
 
+        public object DeepCopy()
+        {
+            var newTable = (BinaryDataTable) MemberwiseClone();
+            newTable.Data = (byte[]) Data.Clone();
+            return newTable;
+        }
+
         public static BinaryDataTable Deserialize(BinaryReader reader, long startOffset, uint length, string tag)
         {
             reader.BaseStream.Position = startOffset;

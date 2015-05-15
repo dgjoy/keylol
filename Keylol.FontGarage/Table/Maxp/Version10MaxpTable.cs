@@ -64,5 +64,10 @@ namespace Keylol.FontGarage.Table.Maxp
                 MaxComponentDepth = DataTypeConverter.ReadUShort(reader)
             };
         }
+
+        public override object DeepCopy()
+        {
+            return MemberwiseClone();
+        }
     }
 }

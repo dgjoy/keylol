@@ -45,6 +45,11 @@ namespace Keylol.FontGarage.Table
             DataTypeConverter.WriteUShort(writer, NumberOfHMetrics);
         }
 
+        public object DeepCopy()
+        {
+            return MemberwiseClone();
+        }
+
         public static HheaTable Deserialize(BinaryReader reader, long startOffset)
         {
             var table = new HheaTable();

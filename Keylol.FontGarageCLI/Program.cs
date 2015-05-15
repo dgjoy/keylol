@@ -23,7 +23,6 @@ namespace Keylol.FontGarageCLI
             };
             var font = serializer.Deserialize(new BinaryReader(new MemoryStream(fontData)));
             watch.Stop();
-
             Console.WriteLine("Parsing time: {0}ms", watch.ElapsedMilliseconds);
             Console.WriteLine("sfnt version: {0}", font.SfntVersion);
             Console.WriteLine("Tables: {0}", string.Join(", ", font.Tables.Select(t => t.Tag)));
@@ -51,7 +50,7 @@ namespace Keylol.FontGarageCLI
             subset.AddRange(Enumerable.Range(0, 0x8888).Select(result => (uint) random.Next(0, 0xFFFF)));
             //new List<uint> {0x5937, 0x21, 0x59D4, 0x5C09, 0x6216, 0x978D}
             watch = Stopwatch.StartNew();
-            FontGarage.FontGarage.Subset(font, subset);
+            font.Subset(subset);
             watch.Stop();
             Console.WriteLine("Subsetting time: {0}ms\n", watch.ElapsedMilliseconds);
 

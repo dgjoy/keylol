@@ -9,14 +9,13 @@ namespace Keylol.FontGarage.Table
 {
     public class CmapTable : IOpenTypeFontTable
     {
-        public List<CmapSubtable> Subtables;
-
         public CmapTable()
         {
             Version = 0;
             Subtables = new List<CmapSubtable>();
         }
 
+        public List<CmapSubtable> Subtables { get; set; }
         public ushort Version { get; set; }
 
         public string Tag
@@ -58,6 +57,13 @@ namespace Keylol.FontGarage.Table
                 startOffsetOfCurrentEntry = writer.BaseStream.Position;
                 startOffsetOfCurrentSubtable = writer.BaseStream.Position = endOffset;
             }
+        }
+
+        public object DeepCopy()
+        {
+            var newTable = (CmapTable) MemberwiseClone();
+            newTable.Subtables = Subtables.Select(subtable => (CmapSubtable) subtable.DeepCopy()).ToList();
+            return newTable;
         }
 
         public static CmapTable Deserialize(BinaryReader reader, long startOffset)
