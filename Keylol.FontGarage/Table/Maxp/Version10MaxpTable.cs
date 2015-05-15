@@ -45,25 +45,24 @@ namespace Keylol.FontGarage.Table.Maxp
 
         public new static Version10MaxpTable Deserialize(BinaryReader reader, long startOffset)
         {
-            var table = new Version10MaxpTable();
             reader.BaseStream.Position = startOffset + DataTypeLength.Fixed;
-
-            table.NumberOfGlyphs = DataTypeConverter.ReadUShort(reader);
-            table.MaxPoints = DataTypeConverter.ReadUShort(reader);
-            table.MaxContours = DataTypeConverter.ReadUShort(reader);
-            table.MaxCompositePoints = DataTypeConverter.ReadUShort(reader);
-            table.MaxCompositeContours = DataTypeConverter.ReadUShort(reader);
-            table.MaxZones = DataTypeConverter.ReadUShort(reader);
-            table.MaxTwilightPoints = DataTypeConverter.ReadUShort(reader);
-            table.MaxStorage = DataTypeConverter.ReadUShort(reader);
-            table.MaxFunctionDefs = DataTypeConverter.ReadUShort(reader);
-            table.MaxInstructionDefs = DataTypeConverter.ReadUShort(reader);
-            table.MaxStackElements = DataTypeConverter.ReadUShort(reader);
-            table.MaxSizeOfInstructions = DataTypeConverter.ReadUShort(reader);
-            table.MaxComponentElements = DataTypeConverter.ReadUShort(reader);
-            table.MaxComponentDepth = DataTypeConverter.ReadUShort(reader);
-
-            return table;
+            return new Version10MaxpTable
+            {
+                NumberOfGlyphs = DataTypeConverter.ReadUShort(reader),
+                MaxPoints = DataTypeConverter.ReadUShort(reader),
+                MaxContours = DataTypeConverter.ReadUShort(reader),
+                MaxCompositePoints = DataTypeConverter.ReadUShort(reader),
+                MaxCompositeContours = DataTypeConverter.ReadUShort(reader),
+                MaxZones = DataTypeConverter.ReadUShort(reader),
+                MaxTwilightPoints = DataTypeConverter.ReadUShort(reader),
+                MaxStorage = DataTypeConverter.ReadUShort(reader),
+                MaxFunctionDefs = DataTypeConverter.ReadUShort(reader),
+                MaxInstructionDefs = DataTypeConverter.ReadUShort(reader),
+                MaxStackElements = DataTypeConverter.ReadUShort(reader),
+                MaxSizeOfInstructions = DataTypeConverter.ReadUShort(reader),
+                MaxComponentElements = DataTypeConverter.ReadUShort(reader),
+                MaxComponentDepth = DataTypeConverter.ReadUShort(reader)
+            };
         }
     }
 }

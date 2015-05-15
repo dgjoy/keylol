@@ -18,12 +18,8 @@ namespace Keylol.FontGarage.Table.Maxp
 
         public new static Version05MaxpTable Deserialize(BinaryReader reader, long startOffset)
         {
-            var table = new Version05MaxpTable();
             reader.BaseStream.Position = startOffset + DataTypeLength.Fixed;
-
-            table.NumberOfGlyphs = DataTypeConverter.ReadUShort(reader);
-
-            return table;
+            return new Version05MaxpTable {NumberOfGlyphs = DataTypeConverter.ReadUShort(reader)};
         }
     }
 }

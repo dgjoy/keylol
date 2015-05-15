@@ -164,6 +164,10 @@ namespace Keylol.FontGarage
                             font.Get<MaxpTable>().NumberOfGlyphs);
                         break;
 
+                    case "post":
+                        tableToAdd = PostTable.Deserialize(reader, entry.Offset);
+                        break;
+
                     default:
                         tableToAdd = BinaryDataTable.Deserialize(reader, entry.Offset, entry.Length, entry.Tag);
                         break;
