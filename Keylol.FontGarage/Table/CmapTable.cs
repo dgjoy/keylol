@@ -27,36 +27,39 @@ namespace Keylol.FontGarage.Table
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteUShort(writer, Version);
-            var environments = Subtables.SelectMany(subtable => subtable.Environments).ToList();
+            var environments =
+                Subtables.SelectMany(subtable => subtable.Environments)
+                    .OrderBy(environment => environment.PlatformId)
+                    .ThenBy(environment => environment.EncodingId)
+                    .ToList();
             DataTypeConverter.WriteUShort(writer, (ushort) environments.Count);
-            var startOffsetOfCurrentEntry = writer.BaseStream.Position;
-            var startOffsetOfCurrentSubtable = writer.BaseStream.Position +
-                                               environments.Count*
-                                               (DataTypeLength.UShort + DataTypeLength.UShort + DataTypeLength.ULong);
+            var startOffsetOfEnvironments = writer.BaseStream.Position;
+            writer.BaseStream.Position += environments.Count*
+                                          (DataTypeLength.UShort + DataTypeLength.UShort + DataTypeLength.ULong);
 
             foreach (var subtable in Subtables)
             {
                 // 4k padding
-                if (startOffsetOfCurrentSubtable%4 != 0)
-                    startOffsetOfCurrentSubtable += (4 - startOffsetOfCurrentSubtable%4);
+                if (writer.BaseStream.Position%4 != 0)
+                    writer.BaseStream.Position += (4 - writer.BaseStream.Position%4);
 
-                subtable.Serialize(writer, startOffsetOfCurrentSubtable, font);
+                subtable.Environments.ForEach(
+                    environment => environment.SubtableOffset = (uint) (writer.BaseStream.Position - startOffset));
 
-                var endOffset = writer.BaseStream.Position;
-
-                // Write subtable info in entry list
-                writer.BaseStream.Position = startOffsetOfCurrentEntry;
-                foreach (var environment in subtable.Environments)
-                {
-                    DataTypeConverter.WriteUShort(writer, environment.PlatformId);
-                    DataTypeConverter.WriteUShort(writer, environment.EncodingId);
-                    DataTypeConverter.WriteULong(writer, (uint) (startOffsetOfCurrentSubtable - startOffset));
-                }
-
-                // Set offsets for next subtable
-                startOffsetOfCurrentEntry = writer.BaseStream.Position;
-                startOffsetOfCurrentSubtable = writer.BaseStream.Position = endOffset;
+                subtable.Serialize(writer, writer.BaseStream.Position, font);
             }
+
+            var endOffset = writer.BaseStream.Position;
+            writer.BaseStream.Position = startOffsetOfEnvironments;
+            environments.ForEach(environment =>
+            {
+                DataTypeConverter.WriteUShort(writer, environment.PlatformId);
+                DataTypeConverter.WriteUShort(writer, environment.EncodingId);
+                DataTypeConverter.WriteULong(writer, (ushort) environment.SubtableOffset);
+            });
+
+            // Restore writer position
+            writer.BaseStream.Position = endOffset;
         }
 
         public object DeepCopy()
@@ -91,7 +94,8 @@ namespace Keylol.FontGarage.Table
                     offsetSubtableMap[offsets[i]].Environments.Add(new Environment
                     {
                         EncodingId = encodingIds[i],
-                        PlatformId = platformIds[i]
+                        PlatformId = platformIds[i],
+                        SubtableOffset = offsets[i]
                     });
                     continue;
                 }
@@ -102,23 +106,30 @@ namespace Keylol.FontGarage.Table
                 switch (format)
                 {
                     case 0:
-                        subtable = Format0Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
-                            encodingIds[i]);
+                        subtable = Format0Subtable.Deserialize(reader, subtableStartOffset);
                         break;
 
                     case 4:
-                        subtable = Format4Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
-                            encodingIds[i]);
+                        subtable = Format4Subtable.Deserialize(reader, subtableStartOffset);
                         break;
 
                     case 6:
-                        subtable = Format6Subtable.Deserialize(reader, subtableStartOffset, platformIds[i],
-                            encodingIds[i]);
+                        subtable = Format6Subtable.Deserialize(reader, subtableStartOffset);
+                        break;
+
+                    case 12:
+                        subtable = Format12Subtable.Deserialize(reader, subtableStartOffset);
                         break;
 
                     default:
                         throw new NotImplementedException();
                 }
+                subtable.Environments.Add(new Environment
+                {
+                    PlatformId = platformIds[i],
+                    EncodingId = encodingIds[i],
+                    SubtableOffset = offsets[i]
+                });
                 offsetSubtableMap[offsets[i]] = subtable;
                 table.Subtables.Add(subtable);
             }

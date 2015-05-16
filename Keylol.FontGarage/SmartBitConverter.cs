@@ -152,7 +152,7 @@ namespace Keylol.FontGarage
             var i = BitConverter.ToUInt16(value, startIndex);
             return InternalEndian == ExternalEndian
                 ? i
-                : BitConverter.ToUInt16(BitConverter.GetBytes(i).Reverse().ToArray(), 0);
+                : (ushort) (i << 8 | i >> 8);
         }
 
         // Converts an array of bytes into an uint.

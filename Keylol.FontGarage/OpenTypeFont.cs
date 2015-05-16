@@ -21,23 +21,23 @@ namespace Keylol.FontGarage
         public string SfntVersion { get; set; }
         public List<IOpenTypeFontTable> Tables { get; set; }
 
-        private static IEnumerable<uint> GlyphIdsTransitiveClosure(IEnumerable<uint> glyphIds, GlyfTable glyfTable,
+        private static IEnumerable<uint> GlyphIdsTransitiveClosure(ISet<uint> glyphIds, GlyfTable glyfTable,
             int depth = 0)
         {
             if (depth > 10)
                 throw new ArgumentOutOfRangeException("depth", "Too many composite redirects.");
 
-            var glyphIdSet = glyphIds.Distinct().ToList();
             var compositeGlyphs =
-                glyfTable.Glyphs.OfType<CompositeGlyph>().Where(glyph => glyphIdSet.Contains(glyph.Id)).ToList();
+                glyfTable.Glyphs.OfType<CompositeGlyph>().Where(glyph => glyphIds.Contains(glyph.Id)).ToList();
             if (!compositeGlyphs.Any())
-                return glyphIdSet;
+                return glyphIds;
 
-            return
-                glyphIdSet.Union(
-                    GlyphIdsTransitiveClosure(
+            glyphIds.UnionWith(
+                GlyphIdsTransitiveClosure(
+                    new HashSet<uint>(
                         compositeGlyphs.SelectMany(glyph => glyph.Components)
-                            .Select(component => (uint) component.GlyphId), glyfTable, depth + 1));
+                            .Select(component => (uint) component.GlyphId)), glyfTable, depth + 1));
+            return glyphIds;
         }
 
         /// <summary>
@@ -71,37 +71,31 @@ namespace Keylol.FontGarage
         ///     Step 10: voila!
         /// </summary>
         /// <param name="characters">Character set to keep in the new font.</param>
-        public void Subset(ICollection<uint> characters)
+        public void Subset(HashSet<uint> characters)
         {
             // Step 1
             for (uint i = 0; i <= 0x20; i++)
-            {
-                if (!characters.Contains(i))
-                    characters.Add(i);
-            }
+                characters.Add(i);
 
             // Step 2
             var cmapTable = Get<CmapTable>();
             cmapTable.Subtables.ForEach(subtable =>
             {
-                var newMap = new Dictionary<uint, uint>();
-                foreach (var character in characters.Where(character => subtable.CharGlyphIdMap.ContainsKey(character)))
-                    newMap[character] = subtable.CharGlyphIdMap[character];
-                subtable.CharGlyphIdMap = newMap;
+                subtable.CharGlyphIdMap =
+                    subtable.CharGlyphIdMap.Where(pair => characters.Contains(pair.Key))
+                        .ToDictionary(pair => pair.Key, pair => pair.Value);
             });
 
             // Step 3
             cmapTable.Subtables.RemoveAll(subtable => subtable.CharGlyphIdMap.Count == 0); // Remove empty subtable
 
             // Step 4
-            var pendingGlyphIds = new List<uint> {0, 1, 2, 3};
+            var pendingGlyphIds = new HashSet<uint> {0, 1, 2, 3};
 
             // Step 5 & Step 6
             var glyfTable = Get<GlyfTable>();
-            pendingGlyphIds =
-                GlyphIdsTransitiveClosure(
-                    pendingGlyphIds.Concat(cmapTable.Subtables.SelectMany(subtable => subtable.CharGlyphIdMap.Values)),
-                    glyfTable).OrderBy(u => u).ToList();
+            pendingGlyphIds.UnionWith(cmapTable.Subtables.SelectMany(subtable => subtable.CharGlyphIdMap.Values));
+            pendingGlyphIds = new HashSet<uint>(GlyphIdsTransitiveClosure(pendingGlyphIds, glyfTable).OrderBy(u => u));
 
             // Step 7
             glyfTable.Glyphs.RemoveAll(glyph => !pendingGlyphIds.Contains(glyph.Id));
@@ -136,7 +130,7 @@ namespace Keylol.FontGarage
                 pendingGlyphIds.Select(glyphId => hmtxTable.HorizontalMetrics[(int) glyphId]).ToList();
         }
 
-        public void SubsetTo(out OpenTypeFont newFont, ICollection<uint> characters)
+        public void SubsetTo(out OpenTypeFont newFont, HashSet<uint> characters)
         {
             newFont = DeepCopy();
             newFont.Subset(characters);

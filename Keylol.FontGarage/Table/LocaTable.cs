@@ -46,7 +46,8 @@ namespace Keylol.FontGarage.Table
                     repeat = 1;
                 }
             }
-            WriteNextOffset(writer, GlyfTableLength, version);
+            for (var i = 0; i < repeat; i++)
+                WriteNextOffset(writer, GlyfTableLength, version);
 
             font.Get<MaxpTable>().NumberOfGlyphs = (ushort) GlyphOffsets.Count;
         }

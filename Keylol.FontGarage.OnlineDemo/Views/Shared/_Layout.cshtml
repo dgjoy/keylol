@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - 字体分割引擎</title>
+    <base href="/">
+    @Styles.Render("~/bundles/css")
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("字体分割引擎", "Index", "Home", new {area = ""}, new {@class = "navbar-brand"})
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>@Html.ActionLink("Demo", "Index", "Home")</li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    @RenderBody()
+    <hr>
+    <footer>
+        <p>&copy; @DateTime.Now.Year - Lovingly made by Stackia ♥</p>
+    </footer>
+</div>
+
+@Scripts.Render("~/bundles/js")
+@RenderSection("scripts", false)
+</body>
+</html>

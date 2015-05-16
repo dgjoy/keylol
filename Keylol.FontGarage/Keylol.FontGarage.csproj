@@ -47,6 +47,7 @@
     <Compile Include="Table\BinaryDataTable.cs" />
     <Compile Include="Table\CmapTable.cs" />
     <Compile Include="Table\Cmap\Format0Subtable.cs" />
+    <Compile Include="Table\Cmap\Format12Subtable.cs" />
     <Compile Include="Table\Cmap\Format6Subtable.cs" />
     <Compile Include="Table\Cmap\Format4Subtable.cs" />
     <Compile Include="Table\Cmap\CmapSubtable.cs" />

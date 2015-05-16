@@ -42,11 +42,9 @@ namespace Keylol.FontGarage.Table.Cmap
             writer.BaseStream.Position = startOffset + length;
         }
 
-        public static Format6Subtable Deserialize(BinaryReader reader, long startOffset, ushort platformId,
-            ushort encodingId)
+        public static Format6Subtable Deserialize(BinaryReader reader, long startOffset)
         {
             var table = new Format6Subtable();
-            table.Environments.Add(new Environment {PlatformId = platformId, EncodingId = encodingId});
             reader.BaseStream.Position = startOffset + 2*DataTypeLength.UShort;
             table.Language = DataTypeConverter.ReadUShort(reader);
 

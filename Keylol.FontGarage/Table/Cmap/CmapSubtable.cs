@@ -4,10 +4,16 @@ using System.Linq;
 
 namespace Keylol.FontGarage.Table.Cmap
 {
-    public struct Environment
+    public class Environment : IDeepCopyable
     {
         public ushort PlatformId { get; set; }
         public ushort EncodingId { get; set; }
+        internal uint SubtableOffset { get; set; }
+
+        public object DeepCopy()
+        {
+            return MemberwiseClone();
+        }
     }
 
     public abstract class CmapSubtable : IOpenTypeFontSerializable, IDeepCopyable
@@ -26,7 +32,7 @@ namespace Keylol.FontGarage.Table.Cmap
         {
             var newTable = (CmapSubtable) MemberwiseClone();
             newTable.CharGlyphIdMap = CharGlyphIdMap.ToDictionary(pair => pair.Key, pair => pair.Value);
-            newTable.Environments = Environments.ToList();
+            newTable.Environments = Environments.Select(environment => (Environment) environment.DeepCopy()).ToList();
             return newTable;
         }
 

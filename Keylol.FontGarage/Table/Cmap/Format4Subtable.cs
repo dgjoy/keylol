@@ -28,7 +28,6 @@ namespace Keylol.FontGarage.Table.Cmap
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteUShort(writer, Format);
-            var lengthOffset = writer.BaseStream.Position;
             writer.BaseStream.Position += DataTypeLength.UShort;
             DataTypeConverter.WriteUShort(writer, Language);
 
@@ -91,18 +90,16 @@ namespace Keylol.FontGarage.Table.Cmap
 
             // Set length
             var length = glyphIdArrayOffset - startOffset;
-            writer.BaseStream.Position = lengthOffset;
+            writer.BaseStream.Position = startOffset + DataTypeLength.UShort;
             DataTypeConverter.WriteUShort(writer, (ushort) length);
 
             // Recover writer position
             writer.BaseStream.Position = startOffset + length;
         }
 
-        public static Format4Subtable Deserialize(BinaryReader reader, long startOffset, ushort platformId,
-            ushort encodingId)
+        public static Format4Subtable Deserialize(BinaryReader reader, long startOffset)
         {
             var table = new Format4Subtable();
-            table.Environments.Add(new Environment {PlatformId = platformId, EncodingId = encodingId});
             reader.BaseStream.Position = startOffset + 2*DataTypeLength.UShort;
             table.Language = DataTypeConverter.ReadUShort(reader);
 

@@ -52,19 +52,17 @@ namespace Keylol.FontGarage.Table
         {
             var table = new GlyfTable();
             reader.BaseStream.Position = startOffset;
-
-            var glyphOffsetToIdLookup =
-                locaTable.GlyphOffsets.Select((u, i) => new {Value = u, Index = i})
-                    .Where(arg => arg.Value != null)
-                    .ToDictionary(arg => arg.Value.Value, arg => arg.Index);
-            var glyphOffsets = locaTable.GlyphOffsets.Where(u => u != null).Select(u => u.Value).ToList();
+            var glyphOffsets =
+                locaTable.GlyphOffsets.Select((u, i) => new {GlyphId = i, Offset = u})
+                    .Where(glyph => glyph.Offset != null)
+                    .Select(pair => new {pair.GlyphId, Offset = pair.Offset.Value}).ToList();
 
             for (var i = 0; i < glyphOffsets.Count; i++)
             {
                 Glyph glyphToAdd;
 
                 // Peek number of contours
-                var glyphStartOffset = reader.BaseStream.Position = glyphOffsets[i] + startOffset;
+                var glyphStartOffset = reader.BaseStream.Position = glyphOffsets[i].Offset + startOffset;
                 var numberOfContours = DataTypeConverter.ReadShort(reader);
                 if (numberOfContours >= 0)
                 {
@@ -72,7 +70,7 @@ namespace Keylol.FontGarage.Table
                     if (i == glyphOffsets.Count - 1)
                         nextGlyphStartOffset = (uint) (startOffset + length);
                     else
-                        nextGlyphStartOffset = (uint) (glyphOffsets[i + 1] + startOffset);
+                        nextGlyphStartOffset = (uint) (glyphOffsets[i + 1].Offset + startOffset);
 
                     // TODO: Remove padded zeros
 
@@ -81,7 +79,7 @@ namespace Keylol.FontGarage.Table
                 }
                 else
                     glyphToAdd = CompositeGlyph.Deserialize(reader, glyphStartOffset);
-                glyphToAdd.Id = (uint) glyphOffsetToIdLookup[glyphOffsets[i]];
+                glyphToAdd.Id = (uint) glyphOffsets[i].GlyphId;
                 table.Glyphs.Add(glyphToAdd);
             }
 
