@@ -23,7 +23,7 @@ namespace Keylol.FontGarage.Table
             get { return "cmap"; }
         }
 
-        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteUShort(writer, Version);
@@ -46,7 +46,7 @@ namespace Keylol.FontGarage.Table
                 subtable.Environments.ForEach(
                     environment => environment.SubtableOffset = (uint) (writer.BaseStream.Position - startOffset));
 
-                subtable.Serialize(writer, writer.BaseStream.Position, font);
+                subtable.Serialize(writer, writer.BaseStream.Position, additionalInfo);
             }
 
             var endOffset = writer.BaseStream.Position;

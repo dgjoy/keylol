@@ -9,10 +9,11 @@ namespace Keylol.FontGarage.Table.Maxp
             get { return "0.5000"; }
         }
 
-        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public override void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteFixed(writer, Version);
+            NumberOfGlyphs = additionalInfo.NumberOfGlyphs;
             DataTypeConverter.WriteUShort(writer, NumberOfGlyphs);
         }
 

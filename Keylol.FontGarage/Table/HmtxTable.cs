@@ -24,7 +24,7 @@ namespace Keylol.FontGarage.Table
             get { return "hmtx"; }
         }
 
-        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             var wall = 0;
@@ -45,7 +45,7 @@ namespace Keylol.FontGarage.Table
                     DataTypeConverter.WriteShort(writer, HorizontalMetrics[i].LeftSideBearing);
             }
 
-            font.Get<HheaTable>().NumberOfHMetrics = (ushort) (wall + 1);
+            additionalInfo.NumberOfHMetrics = (ushort) (wall + 1);
         }
 
         public object DeepCopy()

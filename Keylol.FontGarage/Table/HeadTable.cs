@@ -24,7 +24,7 @@ namespace Keylol.FontGarage.Table
             get { return "head"; }
         }
 
-        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteFixed(writer, Version);
@@ -42,6 +42,7 @@ namespace Keylol.FontGarage.Table
             DataTypeConverter.WriteUShort(writer, MacStyle);
             DataTypeConverter.WriteUShort(writer, LowestRecPpem);
             DataTypeConverter.WriteShort(writer, 2);
+            LocaTableVersion = additionalInfo.LocaTableVersion;
             DataTypeConverter.WriteShort(writer, (short) LocaTableVersion);
             DataTypeConverter.WriteShort(writer, 0);
         }

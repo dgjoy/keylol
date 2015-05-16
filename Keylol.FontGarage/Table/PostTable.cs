@@ -19,7 +19,7 @@ namespace Keylol.FontGarage.Table
             get { return "post"; }
         }
 
-        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             // Force version 3.0, we will drop any glyph name strings in this table

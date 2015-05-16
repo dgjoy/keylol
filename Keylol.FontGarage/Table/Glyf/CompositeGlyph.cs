@@ -52,7 +52,7 @@ namespace Keylol.FontGarage.Table.Glyf
         public List<GlyphComponent> Components { get; set; }
         public byte[] Instructions { get; set; }
 
-        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public override void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteShort(writer, -1);

@@ -7,7 +7,7 @@ namespace Keylol.FontGarage.Table
         public byte[] Data { get; set; }
         public string Tag { get; set; }
 
-        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             writer.Write(Data);

@@ -24,7 +24,7 @@ namespace Keylol.FontGarage.Table.Cmap
             return true;
         }
 
-        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public override void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteUShort(writer, Format);

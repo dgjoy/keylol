@@ -23,10 +23,11 @@ namespace Keylol.FontGarage.Table.Maxp
         public ushort MaxComponentElements { get; set; }
         public ushort MaxComponentDepth { get; set; }
 
-        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public override void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteFixed(writer, Version);
+            NumberOfGlyphs = additionalInfo.NumberOfGlyphs;
             DataTypeConverter.WriteUShort(writer, NumberOfGlyphs);
             DataTypeConverter.WriteUShort(writer, MaxPoints);
             DataTypeConverter.WriteUShort(writer, MaxContours);

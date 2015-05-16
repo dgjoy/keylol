@@ -6,7 +6,7 @@ namespace Keylol.FontGarage.Table.Glyf
     {
         public byte[] Data { get; set; }
 
-        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public override void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             writer.Write(Data);

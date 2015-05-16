@@ -36,6 +36,6 @@ namespace Keylol.FontGarage.Table.Cmap
             return newTable;
         }
 
-        public abstract void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font);
+        public abstract void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo);
     }
 }

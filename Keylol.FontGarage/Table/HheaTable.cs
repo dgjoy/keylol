@@ -16,14 +16,14 @@ namespace Keylol.FontGarage.Table
         public short CaretSlopeRun { get; set; }
         public short CaretOffset { get; set; }
         public short MetricDataFormat { get; set; }
-        public ushort NumberOfHMetrics { get; internal set; }
+        public ushort NumberOfHMetrics { get; set; }
 
         public string Tag
         {
             get { return "hhea"; }
         }
 
-        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteFixed(writer, Version);
@@ -42,6 +42,7 @@ namespace Keylol.FontGarage.Table
             DataTypeConverter.WriteShort(writer, 0);
             DataTypeConverter.WriteShort(writer, 0);
             DataTypeConverter.WriteShort(writer, MetricDataFormat);
+            NumberOfHMetrics = additionalInfo.NumberOfHMetrics;
             DataTypeConverter.WriteUShort(writer, NumberOfHMetrics);
         }
 

@@ -12,7 +12,7 @@ namespace Keylol.FontGarage.Table.Cmap
 
         public ushort Language { get; set; }
 
-        public override void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public override void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
             DataTypeConverter.WriteUShort(writer, Format);

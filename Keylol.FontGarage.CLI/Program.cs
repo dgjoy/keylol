@@ -51,7 +51,7 @@ namespace Keylol.FontGarage.CLI
             var subset = new List<uint>();
             //subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(i => (uint) i));
             var random = new Random();
-            subset.AddRange(Enumerable.Range(0, 0x2FFFFF).Select(result => (uint) random.Next(0, 0x2FFFFF)));
+            subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(result => (uint)random.Next(0, 0xFFFF)));
             //new List<uint> {0x5937, 0x21, 0x59D4, 0x5C09, 0x6216, 0x978D}
             watch = Stopwatch.StartNew();
             font.Subset(new HashSet<uint>(subset));

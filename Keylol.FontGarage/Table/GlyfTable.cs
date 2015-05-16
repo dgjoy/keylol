@@ -19,14 +19,9 @@ namespace Keylol.FontGarage.Table
             get { return "glyf"; }
         }
 
-        public void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font)
+        public void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo)
         {
             writer.BaseStream.Position = startOffset;
-
-            // Reset loca table
-            var locaTable = font.Get<LocaTable>();
-            for (var i = 0; i < locaTable.GlyphOffsets.Count; i++)
-                locaTable.GlyphOffsets[i] = null;
 
             foreach (var glyph in Glyphs)
             {
@@ -34,11 +29,11 @@ namespace Keylol.FontGarage.Table
                 if (writer.BaseStream.Position%4 != 0)
                     writer.BaseStream.Position += (4 - writer.BaseStream.Position%4);
 
-                locaTable.GlyphOffsets[(int) glyph.Id] = (uint) (writer.BaseStream.Position - startOffset);
-                glyph.Serialize(writer, writer.BaseStream.Position, font);
+                additionalInfo.GlyphOffsets[glyph.Id] = (uint) (writer.BaseStream.Position - startOffset);
+                glyph.Serialize(writer, writer.BaseStream.Position, additionalInfo);
             }
 
-            locaTable.GlyfTableLength = (uint) (writer.BaseStream.Position - startOffset);
+            additionalInfo.GlyfTableLength = (uint) (writer.BaseStream.Position - startOffset);
         }
 
         public object DeepCopy()

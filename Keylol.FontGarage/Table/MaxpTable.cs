@@ -7,14 +7,14 @@ namespace Keylol.FontGarage.Table
     public abstract class MaxpTable : IOpenTypeFontTable
     {
         public abstract string Version { get; }
-        public ushort NumberOfGlyphs { get; internal set; }
+        public ushort NumberOfGlyphs { get; set; }
 
         public string Tag
         {
             get { return "maxp"; }
         }
 
-        public abstract void Serialize(BinaryWriter writer, long startOffset, OpenTypeFont font);
+        public abstract void Serialize(BinaryWriter writer, long startOffset, SerializationInfo additionalInfo);
         public abstract object DeepCopy();
 
         public static MaxpTable Deserialize(BinaryReader reader, long startOffset)
