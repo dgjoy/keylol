@@ -49,10 +49,10 @@ namespace Keylol.FontGarage.CLI
             Console.WriteLine("Deep copy time: {0}ms\n", watch.ElapsedMilliseconds);
 
             var subset = new List<uint>();
-            //subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(i => (uint) i));
-            var random = new Random();
-            subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(result => (uint)random.Next(0, 0xFFFF)));
-            //new List<uint> {0x5937, 0x21, 0x59D4, 0x5C09, 0x6216, 0x978D}
+            subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(i => (uint)i));
+            //var random = new Random();
+            //subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(result => (uint)random.Next(0, 0xFFFF)));
+            //var subset = new List<uint> {0x5937, 0x21, 0x59D4, 0x5C09, 0x6216, 0x978D};
             watch = Stopwatch.StartNew();
             font.Subset(new HashSet<uint>(subset));
             watch.Stop();
@@ -66,6 +66,13 @@ namespace Keylol.FontGarage.CLI
                 "Generated.otf"), FileMode.Create))
                 memoryStream.WriteTo(file);
             Console.WriteLine("Serializing time: {0}ms", watch.ElapsedMilliseconds);
+
+            watch = Stopwatch.StartNew();
+            using (var file = File.Open(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "Generated.woff"), FileMode.Create))
+                FontFormatConverter.SfntToWoff(new BinaryReader(memoryStream), new BinaryWriter(file));
+            watch.Stop();
+            Console.WriteLine("TTF to WOFF time: {0}ms", watch.ElapsedMilliseconds);
 
             Console.ReadKey();
         }

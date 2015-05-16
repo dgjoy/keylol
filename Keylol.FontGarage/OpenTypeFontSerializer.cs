@@ -63,7 +63,7 @@ namespace Keylol.FontGarage
                     Length = (uint) (writer.BaseStream.Position - startOffsetOfThisTable)
                 });
 
-                // 4k padding
+                // 4byte padding
                 if (writer.BaseStream.Position%4 != 0)
                 {
                     var zeroCount = 4 - writer.BaseStream.Position%4;

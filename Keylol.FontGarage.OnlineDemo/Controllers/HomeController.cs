@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 
 namespace Keylol.FontGarage.OnlineDemo.Controllers
 {
@@ -23,7 +24,7 @@ namespace Keylol.FontGarage.OnlineDemo.Controllers
             var identityHash = StringMd5(allChars);
             var path =
                 new FileInfo(Path.Combine(Server.MapPath("~/fonts/cache"),
-                    string.Format("{0}-{1}.ttf", fontName, identityHash)));
+                    string.Format("{0}-{1}.woff", fontName, identityHash)));
             var returnData =
                 new
                 {
@@ -52,14 +53,17 @@ namespace Keylol.FontGarage.OnlineDemo.Controllers
                     serializer.Serialize(new BinaryWriter(memoryStream), subset);
                     if (path.Directory != null) path.Directory.Create();
                     using (var fileStream = path.Open(FileMode.Create))
-                        memoryStream.WriteTo(fileStream);
+                    {
+                        FontFormatConverter.SfntToWoff(new BinaryReader(memoryStream), new BinaryWriter(fileStream),
+                            true);
+                    }
                 }
             }
 
             return Json(returnData);
         }
 
-        private string StringMd5(string inputString)
+        private static string StringMd5(string inputString)
         {
             var hashBytes = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(inputString));
             var sb = new StringBuilder();

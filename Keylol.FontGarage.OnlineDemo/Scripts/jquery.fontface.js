@@ -71,7 +71,7 @@
 						"@font-face {",
 							"\tfont-family: \"" + options.fontName + "\";",
 							//"\tsrc: local('☺'), url('" + options.fontFile + ".woff') format('woff'), url('" + options.fontFile + ".ttf') format('truetype'), url('" + options.fontFile + ".svg#" + fontfamily + "') format('svg');",
-                            "\tsrc: url('" + options.fontFile + ".ttf') format('truetype');",
+                            "\tsrc: url('" + options.fontFile + ".woff') format('woff');",
 							"\tfont-stretch: " + options.fontStretch + ";",
 							"\tfont-style: " + options.fontStyle + ";",
 							"\tfont-variant: " + options.fontVariant + ";",

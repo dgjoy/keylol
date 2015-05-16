@@ -39,7 +39,7 @@ namespace Keylol.FontGarage.Table
 
             foreach (var subtable in Subtables)
             {
-                // 4k padding
+                // 4byte padding
                 if (writer.BaseStream.Position%4 != 0)
                     writer.BaseStream.Position += (4 - writer.BaseStream.Position%4);
 
