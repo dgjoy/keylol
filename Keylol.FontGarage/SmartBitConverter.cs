@@ -11,14 +11,14 @@ namespace Keylol.FontGarage
 
     public class SmartBitConverter
     {
-        public SmartBitConverter(Endian externalEndian)
+        public SmartBitConverter(Endian endian)
         {
-            ExternalEndian = externalEndian;
+            Endian = endian;
         }
 
-        public Endian ExternalEndian { get; set; }
+        public Endian Endian { get; set; }
 
-        public static Endian InternalEndian
+        private static Endian InternalEndian
         {
             get { return BitConverter.IsLittleEndian ? Endian.LittleEndian : Endian.BigEndian; }
         }
@@ -32,7 +32,7 @@ namespace Keylol.FontGarage
         // Converts a char into an array of bytes with length two.
         public byte[] GetBytes(char value)
         {
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? BitConverter.GetBytes(value)
                 : BitConverter.GetBytes(value).Reverse().ToArray();
         }
@@ -41,25 +41,47 @@ namespace Keylol.FontGarage
         // two.
         public byte[] GetBytes(short value)
         {
-            return InternalEndian == ExternalEndian
-                ? BitConverter.GetBytes(value)
-                : BitConverter.GetBytes(value).Reverse().ToArray();
+            var bytes = new byte[2];
+            if (Endian == Endian.BigEndian)
+            {
+                bytes[0] = (byte) (value >> 8);
+                bytes[1] = (byte) value;
+            }
+            else
+            {
+                bytes[1] = (byte) (value >> 8);
+                bytes[0] = (byte) value;
+            }
+            return bytes;
         }
 
         // Converts an int into an array of bytes with length 
         // four.
         public byte[] GetBytes(int value)
         {
-            return InternalEndian == ExternalEndian
-                ? BitConverter.GetBytes(value)
-                : BitConverter.GetBytes(value).Reverse().ToArray();
+            var bytes = new byte[4];
+            if (Endian == Endian.BigEndian)
+            {
+                bytes[0] = (byte) (value >> 24);
+                bytes[1] = (byte) (value >> 16);
+                bytes[2] = (byte) (value >> 8);
+                bytes[3] = (byte) value;
+            }
+            else
+            {
+                bytes[3] = (byte) (value >> 24);
+                bytes[2] = (byte) (value >> 16);
+                bytes[1] = (byte) (value >> 8);
+                bytes[0] = (byte) value;
+            }
+            return bytes;
         }
 
         // Converts a long into an array of bytes with length 
         // eight.
         public byte[] GetBytes(long value)
         {
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? BitConverter.GetBytes(value)
                 : BitConverter.GetBytes(value).Reverse().ToArray();
         }
@@ -68,25 +90,47 @@ namespace Keylol.FontGarage
         // length two.
         public byte[] GetBytes(ushort value)
         {
-            return InternalEndian == ExternalEndian
-                ? BitConverter.GetBytes(value)
-                : BitConverter.GetBytes(value).Reverse().ToArray();
+            var bytes = new byte[2];
+            if (Endian == Endian.BigEndian)
+            {
+                bytes[0] = (byte) (value >> 8);
+                bytes[1] = (byte) value;
+            }
+            else
+            {
+                bytes[1] = (byte) (value >> 8);
+                bytes[0] = (byte) value;
+            }
+            return bytes;
         }
 
         // Converts an uint into an array of bytes with
         // length four.
         public byte[] GetBytes(uint value)
         {
-            return InternalEndian == ExternalEndian
-                ? BitConverter.GetBytes(value)
-                : BitConverter.GetBytes(value).Reverse().ToArray();
+            var bytes = new byte[4];
+            if (Endian == Endian.BigEndian)
+            {
+                bytes[0] = (byte) (value >> 24);
+                bytes[1] = (byte) (value >> 16);
+                bytes[2] = (byte) (value >> 8);
+                bytes[3] = (byte) value;
+            }
+            else
+            {
+                bytes[3] = (byte) (value >> 24);
+                bytes[2] = (byte) (value >> 16);
+                bytes[1] = (byte) (value >> 8);
+                bytes[0] = (byte) value;
+            }
+            return bytes;
         }
 
         // Converts an unsigned long into an array of bytes with
         // length eight.
         public byte[] GetBytes(ulong value)
         {
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? BitConverter.GetBytes(value)
                 : BitConverter.GetBytes(value).Reverse().ToArray();
         }
@@ -95,7 +139,7 @@ namespace Keylol.FontGarage
         // four.
         public byte[] GetBytes(float value)
         {
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? BitConverter.GetBytes(value)
                 : BitConverter.GetBytes(value).Reverse().ToArray();
         }
@@ -104,7 +148,7 @@ namespace Keylol.FontGarage
         // eight.
         public byte[] GetBytes(double value)
         {
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? BitConverter.GetBytes(value)
                 : BitConverter.GetBytes(value).Reverse().ToArray();
         }
@@ -113,7 +157,7 @@ namespace Keylol.FontGarage
         public char ToChar(byte[] value, int startIndex)
         {
             var c = BitConverter.ToChar(value, startIndex);
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? c
                 : BitConverter.ToChar(BitConverter.GetBytes(c).Reverse().ToArray(), 0);
         }
@@ -121,26 +165,30 @@ namespace Keylol.FontGarage
         // Converts an array of bytes into a short.  
         public short ToInt16(byte[] value, int startIndex)
         {
-            var i = BitConverter.ToInt16(value, startIndex);
-            return InternalEndian == ExternalEndian
-                ? i
-                : BitConverter.ToInt16(BitConverter.GetBytes(i).Reverse().ToArray(), 0);
+            if (Endian == Endian.BigEndian)
+                return (short) (value[startIndex++] << 8 | value[startIndex]);
+            return (short) (value[startIndex + 1] << 8 | value[startIndex]);
         }
 
         // Converts an array of bytes into an int.  
         public int ToInt32(byte[] value, int startIndex)
         {
-            var i = BitConverter.ToInt32(value, startIndex);
-            return InternalEndian == ExternalEndian
-                ? i
-                : BitConverter.ToInt32(BitConverter.GetBytes(i).Reverse().ToArray(), 0);
+            if (Endian == Endian.BigEndian)
+            {
+                return
+                    value[startIndex++] << 24 | value[startIndex++] << 16 | value[startIndex++] << 8 |
+                    value[startIndex];
+            }
+            return
+                value[startIndex++] | value[startIndex++] << 8 | value[startIndex++] << 16 |
+                value[startIndex] << 24;
         }
 
         // Converts an array of bytes into a long.  
         public long ToInt64(byte[] value, int startIndex)
         {
             var i = BitConverter.ToInt64(value, startIndex);
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? i
                 : BitConverter.ToInt64(BitConverter.GetBytes(i).Reverse().ToArray(), 0);
         }
@@ -149,20 +197,26 @@ namespace Keylol.FontGarage
         // 
         public ushort ToUInt16(byte[] value, int startIndex)
         {
-            var i = BitConverter.ToUInt16(value, startIndex);
-            return InternalEndian == ExternalEndian
-                ? i
-                : (ushort) (i << 8 | i >> 8);
+            if (Endian == Endian.BigEndian)
+                return (ushort) (value[startIndex++] << 8 | value[startIndex]);
+            return (ushort) (value[startIndex++] | value[startIndex] << 8);
         }
 
         // Converts an array of bytes into an uint.
         // 
         public uint ToUInt32(byte[] value, int startIndex)
         {
-            var i = BitConverter.ToUInt32(value, startIndex);
-            return InternalEndian == ExternalEndian
-                ? i
-                : (i << 24 | (i & 0x0000FF00) << 8 | (i & 0x00FF0000) >> 8 | i >> 24);
+            if (Endian == Endian.BigEndian)
+            {
+                return
+                    (uint)
+                        (value[startIndex++] << 24 | value[startIndex++] << 16 | value[startIndex++] << 8 |
+                         value[startIndex]);
+            }
+            return
+                (uint)
+                    (value[startIndex++] | value[startIndex++] << 8 | value[startIndex++] << 16 |
+                     value[startIndex] << 24);
         }
 
         // Converts an array of bytes into an unsigned long.
@@ -170,7 +224,7 @@ namespace Keylol.FontGarage
         public ulong ToUInt64(byte[] value, int startIndex)
         {
             var i = BitConverter.ToUInt64(value, startIndex);
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? i
                 : BitConverter.ToUInt64(BitConverter.GetBytes(i).Reverse().ToArray(), 0);
         }
@@ -179,7 +233,7 @@ namespace Keylol.FontGarage
         public float ToSingle(byte[] value, int startIndex)
         {
             var s = BitConverter.ToSingle(value, startIndex);
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? s
                 : BitConverter.ToSingle(BitConverter.GetBytes(s).Reverse().ToArray(), 0);
         }
@@ -188,7 +242,7 @@ namespace Keylol.FontGarage
         public double ToDouble(byte[] value, int startIndex)
         {
             var d = BitConverter.ToDouble(value, startIndex);
-            return InternalEndian == ExternalEndian
+            return InternalEndian == Endian
                 ? d
                 : BitConverter.ToDouble(BitConverter.GetBytes(d).Reverse().ToArray(), 0);
         }
