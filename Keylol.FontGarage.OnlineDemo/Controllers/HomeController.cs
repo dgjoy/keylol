@@ -4,13 +4,12 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
 
 namespace Keylol.FontGarage.OnlineDemo.Controllers
 {
     public class HomeController : Controller
     {
-        private static readonly Dictionary<string, OpenTypeFont> _loadedFonts = new Dictionary<string, OpenTypeFont>();
+        private static readonly Dictionary<string, OpenTypeFont> LoadedFonts = new Dictionary<string, OpenTypeFont>();
 
         public ActionResult Index()
         {
@@ -36,14 +35,14 @@ namespace Keylol.FontGarage.OnlineDemo.Controllers
             {
                 var serializer = new OpenTypeFontSerializer {EnableChecksum = false};
                 OpenTypeFont font;
-                if (!_loadedFonts.TryGetValue(fontName, out font))
+                if (!LoadedFonts.TryGetValue(fontName, out font))
                 {
                     var fontPath = Path.Combine(Server.MapPath("~/fonts"), string.Format("{0}.ttf", fontName));
                     if (!System.IO.File.Exists(fontPath))
                         return HttpNotFound();
                     font =
                         serializer.Deserialize(new BinaryReader(new MemoryStream(System.IO.File.ReadAllBytes(fontPath))));
-                    _loadedFonts[fontName] = font;
+                    LoadedFonts[fontName] = font;
                 }
 
                 using (var memoryStream = new MemoryStream())

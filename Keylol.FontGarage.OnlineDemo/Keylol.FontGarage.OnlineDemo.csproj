@@ -143,6 +143,10 @@
     <Content Include="fonts\msyh.ttf" />
     <Content Include="fonts\SourceHanSansSC.ttf" />
     <Content Include="fonts\TpldKhangXiDict.ttf" />
+    <Content Include="fonts\MFQingShu.ttf" />
+    <Content Include="fonts\MFDingDing.ttf" />
+    <Content Include="fonts\MFYueYuan.ttf" />
+    <Content Include="fonts\QXyingbixing.ttf" />
     <None Include="Properties\PublishProfiles\fontsubsetter.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Icon.png" />
