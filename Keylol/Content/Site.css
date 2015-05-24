@@ -160,7 +160,7 @@ a {
 /*#region Main Navigation Section */
 
 .section-main-navigation {
-    background-color: #ffffff;
+    background-color: white;
     padding-top: 6px;
     padding-bottom: 9px;
 }
@@ -191,5 +191,196 @@ a {
             padding-right: 10px;
             text-align: right;
         }
+
+/*#endregion */
+
+/*#region Recommended Points Section */
+
+.section-recommended-points {
+    background-color: white;
+}
+
+    .section-recommended-points .heading {
+        background-color: #11254a;
+        position: relative;
+    }
+
+        .section-recommended-points .heading:before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: -64px;
+            width: 59px;
+            height: 60px;
+            z-index: -1;
+            box-shadow: 0 0 2px #B8BABB;
+            transform: rotate(135deg);
+            transform-origin: bottom right;
+            background-color: #adafb0;
+        }
+
+        .section-recommended-points .heading img {
+            float: left;
+            margin-left: -5px;
+        }
+
+        .section-recommended-points .heading svg {
+            float: left;
+            width: 34px;
+            height: 34px;
+            margin: 13px 10px 13px 13px;
+        }
+
+        .section-recommended-points .heading p {
+            margin: 0;
+            color: white;
+        }
+
+            .section-recommended-points .heading p:first-of-type {
+                font-size: 14px;
+                padding-top: 12px;
+                padding-bottom: 2px;
+            }
+
+    .section-recommended-points .point {
+        margin-left: 20px;
+        padding: 10px 0;
+        border-bottom: 1px solid #000003;
+    }
+
+        .section-recommended-points .point:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-recommended-points .point p {
+            margin: 0;
+        }
+
+            .section-recommended-points .point p:first-of-type {
+                font-weight: bold;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                margin-right: 12px;
+                margin-bottom: 2px;
+            }
+
+/*#endregion */
+
+/*#region Banner Section */
+
+.section-banner {
+    background-color: white;
+    padding: 11px 0;
+}
+
+    .section-banner img {
+        margin: 0 auto;
+        width: 606px;
+        height: 172px;
+        display: block;
+    }
+
+/*#endregion */
+
+/*#region Timeline Section */
+
+/*#region Card & Card Line */
+
+.section-timeline .card {
+    position: relative;
+    padding-left: 31px;
+}
+
+    .section-timeline .card .card-line {
+        position: absolute;
+        height: 100%;
+        width: 17px;
+        left: 13px;
+    }
+
+        .section-timeline .card .card-line circle {
+            fill: white;
+            stroke: #11254a;
+            stroke-width: 2px;
+        }
+
+/*#endregion */
+
+/*#region Heading Title */
+
+.section-timeline .heading .title {
+    color: #11254a;
+    padding: 6px 0;
+    margin-left: 2px;
+}
+
+    .section-timeline .heading .title h1 {
+        font-size: 16px;
+        font-weight: normal;
+        margin: 0 0 1px;
+    }
+
+    .section-timeline .heading .title h2 {
+        font-size: 10px;
+        font-weight: normal;
+        margin: 0;
+    }
+
+.section-timeline .heading.inverse .title {
+    color: white;
+}
+
+/*#endregion */
+
+/*#region Heading Card Line */
+
+.section-timeline .heading .card-line rect {
+    fill: #11254a;
+}
+
+.section-timeline .heading.inverse .card-line circle {
+    fill: #11254a;
+    stroke: white;
+}
+
+.section-timeline .heading.inverse .card-line rect {
+    fill: white;
+}
+
+/*#endregion */
+
+/*#region Heading Layout */
+
+.section-timeline .heading .left-info,
+.section-timeline .heading .right-button {
+    background-color: white;
+}
+
+.section-timeline .heading.inverse .left-info,
+.section-timeline .heading.inverse .right-button {
+    background-color: #11254a;
+}
+
+.section-timeline .heading .left-info {
+    overflow: hidden;
+}
+
+.section-timeline .heading .right-button {
+    float: right;
+    width: 48px;
+    height: 48px;
+    margin-left: 15px;
+}
+
+    .section-timeline .heading .right-button img {
+        margin: 0 auto;
+        padding: 11px 0;
+        width: 26px;
+        height: 26px;
+        display: block;
+    }
+
+/*#endregion */
 
 /*#endregion */

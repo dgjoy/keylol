@@ -16,7 +16,9 @@ namespace Keylol
                 "~/Scripts/app/keylol-app.js",
                 "~/Scripts/app/controllers/home-controller.js",
                 "~/Scripts/app/controllers/test-controller.js",
-                "~/Scripts/app/controllers/section/main-navigation-controller.js"));
+                "~/Scripts/app/controllers/section/main-navigation-controller.js",
+                "~/Scripts/app/controllers/section/recommended-points-controller.js",
+                "~/Scripts/app/controllers/section/timeline-controller.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                 "~/Content/normalize.css",

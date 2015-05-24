@@ -1,0 +1,20 @@
+﻿<div class="section-recommended-points box-shodowed" ng-controller="RecommendedPointsController">
+    <div class="clearfix heading">
+        <img src="Content/Images/exit.png" alt="出 EXIT">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34">
+            <rect width="34" height="34" fill="#748a97"/>
+            <text fill="white" font-size="31" x="17" y="28" text-anchor="middle">P</text>
+        </svg>
+        <p>推荐据点</p>
+        <p>Points</p>
+    </div>
+    <div ng-repeat="point in recommendedPoints" class="point">
+        <p>
+            <a ng-href="{{point.url}}">{{point.name}}</a>
+        </p>
+        <p>
+            根据你已订阅的据点：<br>
+            「<a ng-href="{{point.by.url}}">{{point.by.name}}</a>」
+        </p>
+    </div>
+</div>

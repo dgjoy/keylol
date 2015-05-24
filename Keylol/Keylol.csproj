@@ -218,7 +218,10 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Images\edit-pen.png" />
+    <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\logo.svg" />
+    <Content Include="Content\Images\banner-keylol.svg" />
     <Content Include="Content\normalize.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -234,6 +237,8 @@
     <Content Include="Scripts\angular-route.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Scripts\app\controllers\section\main-navigation-controller.js" />
+    <Content Include="Scripts\app\controllers\section\recommended-points-controller.js" />
+    <Content Include="Scripts\app\controllers\section\timeline-controller.js" />
     <Content Include="Scripts\app\controllers\test-controller.js" />
     <Content Include="Scripts\app\controllers\home-controller.js" />
     <Content Include="Scripts\app\keylol-app.js" />
@@ -241,6 +246,8 @@
     <Content Include="Templates\home.html" />
     <Content Include="Templates\Include\main-navigation.html" />
     <Content Include="Templates\Include\logo.html" />
+    <Content Include="Templates\Include\recommended-points.html" />
+    <Content Include="Templates\Include\timeline.html" />
     <Content Include="Templates\test.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
