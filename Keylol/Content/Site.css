@@ -352,6 +352,11 @@ a {
 
 /*#region Heading Layout */
 
+.section-timeline .heading {
+    position: relative;
+    padding-right: 63px;
+}
+
 .section-timeline .heading .left-info,
 .section-timeline .heading .right-button {
     background-color: white;
@@ -367,18 +372,20 @@ a {
 }
 
 .section-timeline .heading .right-button {
-    float: right;
+    position: absolute;
+    right: 0;
     width: 48px;
-    height: 48px;
-    margin-left: 15px;
+    height: 100%;
 }
 
     .section-timeline .heading .right-button img {
-        margin: 0 auto;
-        padding: 11px 0;
         width: 26px;
         height: 26px;
-        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -13px;
+        margin-top: -13px;
     }
 
 /*#endregion */
