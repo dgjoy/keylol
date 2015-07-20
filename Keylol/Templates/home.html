@@ -1,18 +1,41 @@
-﻿<div class="container">
+﻿<style>
+    .section-banner {
+        height: 100%;
+        width: 100%;
+        min-height: 182px;
+        min-width: 616px;
+        background-color: white;
+        position: relative;
+    }
+
+        .section-banner img {
+            margin: 0 auto;
+            width: 606px;
+            height: 172px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -303px;
+            margin-top: -86px;
+        }
+</style>
+<div class="container">
     <div class="row">
         <div class="col-left">
-            <section ng-include="'Templates/Include/logo.html'"></section>
-            <section ng-include="'Templates/Include/main-navigation.html'"></section>
-            <section ng-include="'Templates/Include/recommended-points.html'"></section>
+            <section ng-include="'Templates/Sections/logo.html'" style="height: 92px"></section>
+            <section ng-include="'Templates/Sections/main-navigation.html'"></section>
+            <section ng-include="'Templates/Sections/recommended-points.html'"></section>
         </div>
         <div class="col-middle">
-            <section>
+            <section style="height: 194px">
                 <div class="section-banner box-shodowed">
                     <img src="Content/Images/banner-keylol.svg" alt="其乐 是一个没有沉余信息的玩家综合网络">
                 </div>
             </section>
-            <section ng-include="'Templates/Include/timeline.html'"></section>
+            <section ng-include="'Templates/Sections/timeline.html'"></section>
         </div>
-        <div class="col-right"></div>
+        <div class="col-right">
+            <section ng-include="'Templates/Sections/search-box.html'" style="height: 38px"></section>
+        </div>
     </div>
 </div>
