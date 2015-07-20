@@ -285,108 +285,108 @@ a {
     min-width: 554px;
 }
 
-/*#region Card & Card Line */
+    /*#region Card & Card Line */
 
-.section-timeline .card {
-    position: relative;
-    padding-left: 31px;
-}
-
-    .section-timeline .card .card-line {
-        position: absolute;
-        height: 100%;
-        width: 17px;
-        left: 13px;
+    .section-timeline .card {
+        position: relative;
+        padding-left: 31px;
     }
 
-        .section-timeline .card .card-line circle {
-            fill: white;
-            stroke: #11254a;
-            stroke-width: 2px;
-        }
-
-/*#endregion */
-
-/*#region Heading Layout */
-
-.section-timeline .heading {
-    position: relative;
-    padding-right: 63px;
-}
-
-    .section-timeline .heading .left-info,
-    .section-timeline .heading .right-button {
-        background-color: white;
-    }
-
-    .section-timeline .heading.inverse .left-info,
-    .section-timeline .heading.inverse .right-button {
-        background-color: #11254a;
-    }
-
-    .section-timeline .heading .left-info {
-        overflow: hidden;
-    }
-
-    .section-timeline .heading .right-button {
-        position: absolute;
-        right: 0;
-        width: 48px;
-        height: 100%;
-    }
-
-        .section-timeline .heading .right-button img {
-            width: 26px;
-            height: 26px;
+        .section-timeline .card .card-line {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            margin-left: -13px;
-            margin-top: -13px;
+            height: 100%;
+            width: 17px;
+            left: 13px;
         }
 
-/*#endregion */
+            .section-timeline .card .card-line circle {
+                fill: white;
+                stroke: #11254a;
+                stroke-width: 2px;
+            }
 
-/*#region Heading Title */
+    /*#endregion */
 
-.section-timeline .heading .title {
-    color: #11254a;
-    padding: 6px 0;
-    margin-left: 2px;
-}
+    /*#region Heading Layout */
 
-    .section-timeline .heading .title h1 {
-        font-size: 16px;
-        font-weight: normal;
-        margin: 0 0 1px;
+    .section-timeline .heading {
+        position: relative;
+        padding-right: 63px;
     }
 
-    .section-timeline .heading .title h2 {
-        font-size: 10px;
-        font-weight: normal;
-        margin: 0;
-    }
+        .section-timeline .heading .left-info,
+        .section-timeline .heading .right-button {
+            background-color: white;
+        }
 
-.section-timeline .heading.inverse .title {
-    color: white;
-}
+        .section-timeline .heading.inverse .left-info,
+        .section-timeline .heading.inverse .right-button {
+            background-color: #11254a;
+        }
 
-/*#endregion */
+        .section-timeline .heading .left-info {
+            overflow: hidden;
+        }
 
-/*#region Heading Card Line */
+        .section-timeline .heading .right-button {
+            position: absolute;
+            right: 0;
+            width: 48px;
+            height: 100%;
+        }
 
-.section-timeline .heading .card-line rect {
-    fill: #11254a;
-}
+            .section-timeline .heading .right-button img {
+                width: 26px;
+                height: 26px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-left: -13px;
+                margin-top: -13px;
+            }
 
-.section-timeline .heading.inverse .card-line circle {
-    fill: #11254a;
-    stroke: white;
-}
+        /*#endregion */
 
-.section-timeline .heading.inverse .card-line rect {
-    fill: white;
-}
+        /*#region Heading Title */
+
+        .section-timeline .heading .title {
+            color: #11254a;
+            padding: 6px 0;
+            margin-left: 2px;
+        }
+
+            .section-timeline .heading .title h1 {
+                font-size: 16px;
+                font-weight: normal;
+                margin: 0 0 1px;
+            }
+
+            .section-timeline .heading .title h2 {
+                font-size: 10px;
+                font-weight: normal;
+                margin: 0;
+            }
+
+        .section-timeline .heading.inverse .title {
+            color: white;
+        }
+
+        /*#endregion */
+
+        /*#region Heading Card Line */
+
+        .section-timeline .heading .card-line rect {
+            fill: #11254a;
+        }
+
+        .section-timeline .heading.inverse .card-line circle {
+            fill: #11254a;
+            stroke: white;
+        }
+
+        .section-timeline .heading.inverse .card-line rect {
+            fill: white;
+        }
 
 /*#endregion */
 
@@ -433,6 +433,67 @@ a {
             height: 15px;
             margin-left: -10px;
             margin-top: -7px;
+        }
+
+/*#endregion */
+
+/*#region Action Hub Section */
+
+.section-action-hub {
+    width: 300px;
+    height: 129px;
+    background-color: white;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+    .section-action-hub .name-settings {
+        padding: 2px 0;
+        margin-left: 65px;
+    }
+
+        .section-action-hub .name-settings h4 {
+            margin: 0;
+            line-height: 22px;
+            font-weight: normal;
+        }
+
+        .section-action-hub .name-settings .name {
+            font-size: 14px;
+        }
+
+        .section-action-hub .name-settings .settings-link a {
+            color: #333;
+        }
+
+    .section-action-hub .avatar-anchor {
+        float: left;
+    }
+
+        .section-action-hub .avatar-anchor img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+        }
+
+    .section-action-hub .links {
+        margin-top: 14px;
+    }
+
+        .section-action-hub .links li {
+            display: inline-block;
+            text-align: center;
+            width: 66px;
+        }
+
+        .section-action-hub .links h4 {
+            font-weight: normal;
+            margin: 0 0 6px;
+        }
+
+        .section-action-hub .links a {
+            font-size: 16px;
+            font-style: italic;
         }
 
 /*#endregion */

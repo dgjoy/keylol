@@ -245,6 +245,7 @@
     <Content Include="Scripts\app\keylol-app.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Templates\home.html" />
+    <Content Include="Templates\Sections\action-hub.html" />
     <Content Include="Templates\Sections\search-box.html" />
     <Content Include="Templates\Sections\main-navigation.html" />
     <Content Include="Templates\Sections\logo.html" />
