@@ -126,7 +126,6 @@ a {
 
 .section-logo {
     background-color: #11254a;
-    position: relative;
     height: 100%;
     width: 100%;
     min-height: 70px;
@@ -136,6 +135,12 @@ a {
     .section-logo a {
         display: block;
         text-decoration: none;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .section-logo .logo-content {
         width: 162px;
         position: absolute;
         top: 50%;
@@ -204,19 +209,19 @@ a {
 
 /*#endregion */
 
-/*#region Recommended Points Section */
+/*#region Point Recommendation Section */
 
-.section-recommended-points {
+.section-point-recommendation {
     background-color: white;
     width: 200px;
 }
 
-    .section-recommended-points .heading {
+    .section-point-recommendation .heading {
         background-color: #11254a;
         position: relative;
     }
 
-        .section-recommended-points .heading:before {
+        .section-point-recommendation .heading:before {
             content: "";
             display: block;
             position: absolute;
@@ -230,44 +235,44 @@ a {
             background-color: #adafb0;
         }
 
-        .section-recommended-points .heading img {
+        .section-point-recommendation .heading img {
             float: left;
             margin-left: -5px;
         }
 
-        .section-recommended-points .heading svg {
+        .section-point-recommendation .heading svg {
             float: left;
             width: 34px;
             height: 34px;
             margin: 13px 10px 13px 13px;
         }
 
-        .section-recommended-points .heading p {
+        .section-point-recommendation .heading p {
             margin: 0;
             color: white;
         }
 
-            .section-recommended-points .heading p:first-of-type {
+            .section-point-recommendation .heading p:first-of-type {
                 font-size: 14px;
                 padding-top: 12px;
                 padding-bottom: 2px;
             }
 
-    .section-recommended-points .point {
+    .section-point-recommendation .point {
         margin-left: 20px;
         padding: 10px 0;
         border-bottom: 1px solid #000003;
     }
 
-        .section-recommended-points .point:last-of-type {
+        .section-point-recommendation .point:last-of-type {
             border-bottom: none;
         }
 
-        .section-recommended-points .point p {
+        .section-point-recommendation .point p {
             margin: 0;
         }
 
-            .section-recommended-points .point p:first-of-type {
+            .section-point-recommendation .point p:first-of-type {
                 font-weight: bold;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -341,8 +346,7 @@ a {
                 position: absolute;
                 top: 50%;
                 left: 50%;
-                margin-left: -13px;
-                margin-top: -13px;
+                transform: translate(-50%, -50%);
             }
 
         /*#endregion */
@@ -494,6 +498,128 @@ a {
         .section-action-hub .links a {
             font-size: 16px;
             font-style: italic;
+        }
+
+/*#endregion */
+
+/*#region Ad Right Section */
+
+.section-ad-right {
+    height: 100%;
+    width: 100%;
+    min-height: 140px;
+    min-width: 269px;
+    background-color: white;
+    position: relative;
+}
+
+    .section-ad-right svg {
+        margin: 0 auto;
+        width: 256px;
+        height: 125px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+/*#endregion */
+
+/*#region Reading Recommendation Section */
+
+.section-reading-recommendation {
+    width: 100%;
+    min-width: 206px;
+    background-color: white;
+    padding-top: 6px;
+    padding-bottom: 9px;
+}
+
+    .section-reading-recommendation .article {
+        padding: 12px 15px;
+    }
+
+        .section-reading-recommendation .article h2 {
+            font-weight: normal;
+            font-size: 12px;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+            .section-reading-recommendation .article h2 span {
+                margin-right: 4px;
+                color: #748a97;
+            }
+
+        .section-reading-recommendation .article p {
+            margin: 7px 0;
+            max-height: 48px;
+            overflow: hidden;
+        }
+
+        .section-reading-recommendation .article footer {
+            text-align: right;
+            color: #748a97;
+        }
+
+            .section-reading-recommendation .article footer span {
+                margin-left: 15px;
+                display: none;
+            }
+
+                .section-reading-recommendation .article footer span:last-child {
+                    display: inline-block;
+                }
+
+        .section-reading-recommendation .article:hover footer span {
+            display: inline-block;
+        }
+
+/*#endregion */
+
+/*#region CuC Entrance Section */
+
+.section-cuc-entrance {
+    background-color: #252626;
+    height: 100%;
+    width: 100%;
+    min-height: 60px;
+    min-width: 300px;
+}
+
+    .section-cuc-entrance a {
+        display: block;
+        text-decoration: none;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .section-cuc-entrance .cuc-content {
+        width: 276px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .section-cuc-entrance img {
+        float: left;
+        width: 52px;
+        height: 46px;
+        margin-right: 2px;
+    }
+
+    .section-cuc-entrance p {
+        margin: 0;
+        color: #fefefe;
+    }
+
+        .section-cuc-entrance p:first-of-type {
+            font-size: 18px;
+            margin: 4px 0 2px;
         }
 
 /*#endregion */

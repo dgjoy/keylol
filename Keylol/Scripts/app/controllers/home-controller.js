@@ -2,9 +2,9 @@
     "use strict";
 
     keylolApp.controller("HomeController", [
-        "$rootScope", "$scope", function($rootScope, $scope) {
-            $rootScope.title = "其乐";
-            
+        "pageTitle", "$scope", function(pageTitle, $scope) {
+            pageTitle.set("其乐");
+
         }
     ]);
 })();

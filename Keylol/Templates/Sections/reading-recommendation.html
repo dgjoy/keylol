@@ -1,0 +1,13 @@
+﻿<div class="section-reading-recommendation box-shodowed" ng-controller="ReadingRecommendationController">
+    <h1 class="labeled-heading">阅读推荐</h1>
+    <div ng-repeat="article in recommendedArticles" class="article">
+        <h2>
+            <span ng-show="article.recommendedByKeylol">[其乐推荐]</span>
+            <a ng-href="{{article.url}}">{{article.title}}</a>
+        </h2>
+        <p>{{article.summary}}</p>
+        <footer>
+            <span>|>>| {{article.repostCount}}</span><span>[+1] {{article.likeCount}}</span><span>(...) {{article.commentCount}}</span>
+        </footer>
+    </div>
+</div>
