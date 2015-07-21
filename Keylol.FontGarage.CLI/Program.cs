@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Keylol.FontGarage.Table;
 using Keylol.FontGarage.Table.Cmap;
 using Environment = System.Environment;
@@ -12,6 +14,41 @@ namespace Keylol.FontGarage.CLI
     internal class Program
     {
         private static void Main()
+        {
+            SubsetKeylol();
+            Console.ReadKey();
+        }
+
+        private static void SubsetKeylol()
+        {
+            var phrases = new[]
+            {
+                "其乐",
+                "推荐据点",
+                "客务中心"
+            };
+
+            var fontData =
+                File.ReadAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                    "keylol-rail-sung-full.ttf"));
+            var serializer = new OpenTypeFontSerializer();
+            var font = serializer.Deserialize(new BinaryReader(new MemoryStream(fontData)));
+
+            var allChars = new string(string.Join("", phrases).ToCharArray().Distinct().OrderBy(c => c).ToArray());
+            var identityHash = StringMd5(allChars);
+
+            font.Subset(new HashSet<uint>(allChars.ToCharArray().Select(c => (uint) c)));
+
+            var memoryStream = new MemoryStream();
+            serializer.Serialize(new BinaryWriter(memoryStream), font);
+            var fileName = string.Format("keylol-rail-sung-{0}.woff", identityHash);
+            using (var file = File.Open(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                fileName), FileMode.Create))
+                FontFormatConverter.SfntToWoff(new BinaryReader(memoryStream), new BinaryWriter(file), true);
+            Console.WriteLine("{0} generated.", fileName);
+        }
+
+        private static void Benchmark()
         {
             var fontData = File.ReadAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 "SourceHanSansSC-Regular.ttf"));
@@ -49,7 +86,7 @@ namespace Keylol.FontGarage.CLI
             Console.WriteLine("Deep copy time: {0}ms\n", watch.ElapsedMilliseconds);
 
             var subset = new List<uint>();
-            subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(i => (uint)i));
+            subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(i => (uint) i));
             //var random = new Random();
             //subset.AddRange(Enumerable.Range(0, 0xFFFF).Select(result => (uint)random.Next(0, 0xFFFF)));
             //var subset = new List<uint> {0x5937, 0x21, 0x59D4, 0x5C09, 0x6216, 0x978D};
@@ -73,8 +110,15 @@ namespace Keylol.FontGarage.CLI
                 FontFormatConverter.SfntToWoff(new BinaryReader(memoryStream), new BinaryWriter(file));
             watch.Stop();
             Console.WriteLine("TTF to WOFF time: {0}ms", watch.ElapsedMilliseconds);
+        }
 
-            Console.ReadKey();
+        private static string StringMd5(string inputString)
+        {
+            var hashBytes = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(inputString));
+            var sb = new StringBuilder();
+            foreach (var b in hashBytes)
+                sb.Append(b.ToString("x2"));
+            return sb.ToString();
         }
     }
 }

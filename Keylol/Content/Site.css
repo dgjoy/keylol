@@ -1,9 +1,27 @@
-﻿/*#region Common HTML Elements */
+﻿/*#region Font Face */
+
+@font-face {
+    font-family: "Myriad Pro";
+    font-style: normal;
+    font-weight: normal;
+    src: url("./Fonts/myriadpro-regular.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Keylol Rail Sung";
+    font-style: normal;
+    font-weight: normal;
+    src: url("./Fonts/keylol-rail-sung-7e527aac444604711a10704ee9f21714.woff") format("woff");
+}
+
+/*#endregion */
+
+/*#region Common HTML Elements */
 
 body {
     color: #333;
     background-color: #eef1f3;
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, "Hiragino Sans GB", "Microsoft JhengHei", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
     font-size: 12px;
     min-width: 1220px;
     box-sizing: border-box;
@@ -60,6 +78,17 @@ a {
         margin-top: 20px;
         margin-bottom: 20px;
     }
+
+/*#endregion */
+
+/*#region Font Family Presets */
+
+.font-myriad-keylol {
+    font-family: "Myriad Pro", "Keylol Rail Sung";
+}
+
+.font-lisong {
+}
 
 /*#endregion */
 
@@ -161,8 +190,9 @@ a {
     }
 
         .section-logo p:first-of-type {
-            font-size: 24px;
-            margin-bottom: 7px;
+            font-size: 25px;
+            margin-top: 2px;
+            margin-bottom: 4px;
         }
 
         .section-logo p:nth-of-type(2) {
@@ -253,9 +283,9 @@ a {
         }
 
             .section-point-recommendation .heading p:first-of-type {
-                font-size: 14px;
-                padding-top: 12px;
-                padding-bottom: 2px;
+                font-size: 16px;
+                padding-top: 14px;
+                padding-bottom: 1px;
             }
 
     .section-point-recommendation .point {
@@ -557,6 +587,7 @@ a {
             margin: 7px 0;
             max-height: 48px;
             overflow: hidden;
+            line-height: 16px;
         }
 
         .section-reading-recommendation .article footer {
@@ -619,7 +650,7 @@ a {
 
         .section-cuc-entrance p:first-of-type {
             font-size: 18px;
-            margin: 4px 0 2px;
+            margin: 6px 0 2px;
         }
 
 /*#endregion */

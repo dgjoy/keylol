@@ -15,6 +15,7 @@ namespace Keylol.FontGarage
         /// </summary>
         /// <param name="reader">BinaryReader to read the sfnt data stream.</param>
         /// <param name="writer">BinaryWriter to write the woff data.</param>
+        /// <param name="compression">Set to true to compress data.</param>
         public static void SfntToWoff(BinaryReader reader, BinaryWriter writer, bool compression = false)
         {
             reader.BaseStream.Position = 0;
