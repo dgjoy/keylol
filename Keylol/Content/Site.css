@@ -654,3 +654,20 @@ a {
         }
 
 /*#endregion */
+
+/*#region Site Footer Section */
+
+.section-site-footer {
+    text-align: right;
+}
+
+    .section-site-footer .divider {
+        margin: 0 3px;
+    }
+
+    .section-site-footer,
+    .section-site-footer a {
+        color: #748a97;
+    }
+
+/*#endregion */
