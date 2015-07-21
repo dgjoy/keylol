@@ -253,6 +253,7 @@
     <Content Include="Templates\Sections\main-navigation.html" />
     <Content Include="Templates\Sections\logo.html" />
     <Content Include="Templates\Sections\point-recommendation.html" />
+    <Content Include="Templates\Sections\site-footer.html" />
     <Content Include="Templates\Sections\timeline.html" />
     <Content Include="Templates\test.html" />
     <Content Include="Web.config">
