@@ -1,25 +1,4 @@
-﻿<style>
-    .section-banner {
-        height: 100%;
-        width: 100%;
-        min-height: 182px;
-        min-width: 616px;
-        background-color: white;
-        position: relative;
-    }
-
-        .section-banner img {
-            margin: 0 auto;
-            width: 606px;
-            height: 172px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin-left: -303px;
-            margin-top: -86px;
-        }
-</style>
-<div class="container">
+﻿<div class="container">
     <div class="row">
         <div class="col-left">
             <section ng-include="'Templates/Sections/logo.html'" style="height: 92px"></section>
@@ -27,17 +6,13 @@
             <section ng-include="'Templates/Sections/point-recommendation.html'"></section>
         </div>
         <div class="col-middle">
-            <section style="height: 194px">
-                <div class="section-banner box-shodowed">
-                    <img src="Content/Images/banner-keylol.svg" alt="其乐 是一个没有沉余信息的玩家综合网络">
-                </div>
-            </section>
+            <section ng-include="'Templates/Sections/spotlight-banner.html'" style="height: 194px"></section>
             <section ng-include="'Templates/Sections/timeline.html'"></section>
         </div>
         <div class="col-right">
             <section ng-include="'Templates/Sections/search-box.html'" style="height: 38px"></section>
             <section ng-include="'Templates/Sections/action-hub.html'"></section>
-            <section ng-include="'Templates/Sections/ad-right.html'" style="height: 150px"></section>
+            <section ng-include="'Templates/Sections/ifs-right.html'" style="height: 150px"></section>
             <section ng-include="'Templates/Sections/reading-recommendation.html'"></section>
             <section ng-include="'Templates/Sections/cuc-entrance.html'" style="height: 60px"></section>
             <section ng-include="'Templates/Sections/site-footer.html'"></section>

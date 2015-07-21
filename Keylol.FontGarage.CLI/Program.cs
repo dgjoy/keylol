@@ -15,22 +15,26 @@ namespace Keylol.FontGarage.CLI
     {
         private static void Main()
         {
-            SubsetKeylol();
+            //SubsetFont("keylol-rail-sung-full.ttf", "keylol-rail-sung-", new[]
+            //{
+            //    "其乐",
+            //    "推荐据点",
+            //    "客务中心"
+            //});
+            SubsetFont("lisong-full.ttf", "lisong-", new[]
+            {
+                "讯息轨道",
+                "由你筛选的游戏讯息轨道",
+                "请无视游戏与艺术之间的空隙"
+            });
             Console.ReadKey();
         }
 
-        private static void SubsetKeylol()
+        private static void SubsetFont(string srcFileName, string dstFileNamePrefix, string[] phrases)
         {
-            var phrases = new[]
-            {
-                "其乐",
-                "推荐据点",
-                "客务中心"
-            };
-
             var fontData =
                 File.ReadAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "keylol-rail-sung-full.ttf"));
+                    srcFileName));
             var serializer = new OpenTypeFontSerializer();
             var font = serializer.Deserialize(new BinaryReader(new MemoryStream(fontData)));
 
@@ -41,10 +45,13 @@ namespace Keylol.FontGarage.CLI
 
             var memoryStream = new MemoryStream();
             serializer.Serialize(new BinaryWriter(memoryStream), font);
-            var fileName = string.Format("keylol-rail-sung-{0}.woff", identityHash);
+            var fileName = string.Format("{0}{1}.woff", dstFileNamePrefix, identityHash);
             using (var file = File.Open(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 fileName), FileMode.Create))
+            {
                 FontFormatConverter.SfntToWoff(new BinaryReader(memoryStream), new BinaryWriter(file), true);
+                //memoryStream.WriteTo(file);
+            }
             Console.WriteLine("{0} generated.", fileName);
         }
 

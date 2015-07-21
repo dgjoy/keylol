@@ -14,6 +14,13 @@
     src: url("./Fonts/keylol-rail-sung-7e527aac444604711a10704ee9f21714.woff") format("woff");
 }
 
+@font-face {
+    font-family: "LiSong";
+    font-style: normal;
+    font-weight: normal;
+    src: url("./Fonts/lisong-7e033ac239998bc66545a7c87aa19e1e.woff") format("woff");
+}
+
 /*#endregion */
 
 /*#region Common HTML Elements */
@@ -88,6 +95,7 @@ a {
 }
 
 .font-lisong {
+    font-family: LiSong;
 }
 
 /*#endregion */
@@ -385,14 +393,14 @@ a {
 
         .section-timeline .heading .title {
             color: #11254a;
-            padding: 6px 0;
+            padding: 7px 0;
             margin-left: 2px;
         }
 
             .section-timeline .heading .title h1 {
                 font-size: 16px;
                 font-weight: normal;
-                margin: 0 0 1px;
+                margin: 0 0 2px;
             }
 
             .section-timeline .heading .title h2 {
@@ -532,9 +540,9 @@ a {
 
 /*#endregion */
 
-/*#region Ad Right Section */
+/*#region IFS Right Section */
 
-.section-ad-right {
+.section-ifs-right {
     height: 100%;
     width: 100%;
     min-height: 140px;
@@ -543,7 +551,7 @@ a {
     position: relative;
 }
 
-    .section-ad-right svg {
+    .section-ifs-right svg {
         margin: 0 auto;
         width: 256px;
         height: 125px;
@@ -668,6 +676,30 @@ a {
     .section-site-footer,
     .section-site-footer a {
         color: #748a97;
+    }
+
+/*#endregion */
+
+/*#region Spotlight Banner Section */
+
+.section-spotlight-banner {
+    height: 100%;
+    width: 100%;
+    min-height: 182px;
+    min-width: 616px;
+    background-color: white;
+    position: relative;
+}
+
+    .section-spotlight-banner svg {
+        margin: 0 auto;
+        width: 606px;
+        height: 172px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -303px;
+        margin-top: -86px;
     }
 
 /*#endregion */

@@ -223,6 +223,7 @@
     <Content Include="Content\Images\cuc.png" />
     <Content Include="Content\Images\logo.svg" />
     <Content Include="Content\Images\banner-keylol.svg" />
+    <Content Include="Content\Images\mind-gap.png" />
     <Content Include="Content\Images\search-box-button.png" />
     <Content Include="Content\normalize.css" />
     <Content Include="favicon.ico" />
@@ -247,13 +248,14 @@
     <Content Include="Templates\home.html" />
     <Content Include="Templates\Sections\action-hub.html" />
     <Content Include="Templates\Sections\cuc-entrance.html" />
-    <Content Include="Templates\Sections\ad-right.html" />
+    <Content Include="Templates\Sections\ifs-right.html" />
     <Content Include="Templates\Sections\reading-recommendation.html" />
     <Content Include="Templates\Sections\search-box.html" />
     <Content Include="Templates\Sections\main-navigation.html" />
     <Content Include="Templates\Sections\logo.html" />
     <Content Include="Templates\Sections\point-recommendation.html" />
     <Content Include="Templates\Sections\site-footer.html" />
+    <Content Include="Templates\Sections\spotlight-banner.html" />
     <Content Include="Templates\Sections\timeline.html" />
     <Content Include="Templates\test.html" />
     <Content Include="Web.config">
@@ -293,10 +295,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Fonts\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="Content\Fonts\keylol-rail-sung-full.ttf" />
+    <Content Include="Content\Fonts\lisong-full.ttf" />
     <None Include="Project_Readme.html" />
     <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
     <Content Include="Scripts\angular.min.js.map" />
