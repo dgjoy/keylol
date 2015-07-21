@@ -222,7 +222,6 @@
     <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\cuc.png" />
     <Content Include="Content\Images\logo.svg" />
-    <Content Include="Content\Images\banner-keylol.svg" />
     <Content Include="Content\Images\mind-gap.png" />
     <Content Include="Content\Images\search-box-button.png" />
     <Content Include="Content\normalize.css" />
@@ -298,8 +297,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Content\Fonts\keylol-rail-sung-full.ttf" />
-    <Content Include="Content\Fonts\lisong-full.ttf" />
+    <None Include="Content\Fonts\keylol-rail-sung-full.ttf" />
+    <None Include="Content\Fonts\lisong-full.ttf" />
+    <Content Include="Content\Fonts\keylol-rail-sung-7e527aac444604711a10704ee9f21714.woff" />
+    <Content Include="Content\Fonts\lisong-7e033ac239998bc66545a7c87aa19e1e.woff" />
+    <None Include="Content\Fonts\myriadpro-regular-full.woff" />
+    <Content Include="Content\Fonts\myriadpro-regular.woff" />
     <None Include="Project_Readme.html" />
     <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
     <Content Include="Scripts\angular.min.js.map" />
@@ -326,7 +329,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>38328</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
