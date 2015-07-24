@@ -342,9 +342,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Content\Fonts\keylol-rail-sung-full.ttf" />
+    <Content Include="Content\Fonts\lisong-d22351abaa9e238f9e4f38b6fb1e5858.woff" />
     <None Include="Content\Fonts\lisong-full.ttf" />
     <Content Include="Content\Fonts\keylol-rail-sung-7e527aac444604711a10704ee9f21714.woff" />
-    <Content Include="Content\Fonts\lisong-7e033ac239998bc66545a7c87aa19e1e.woff" />
     <None Include="Content\Fonts\myriadpro-regular-full.woff" />
     <Content Include="Content\Fonts\myriadpro-regular.woff" />
     <None Include="JavaScriptEngineSwitcher.Configuration.xsd">

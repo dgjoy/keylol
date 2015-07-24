@@ -16,7 +16,7 @@
     </div>
     <div class="piece box-shodowed card" ng-repeat="piece in pieces">
         <svg xmlns="http://www.w3.org/2000/svg" class="card-line">
-            <rect x="6" width="5" height="100%"></rect>
+            <rect fill="{{randomColor[$index]}}" x="6" width="5" height="100%"></rect>
             <circle cx="8.5" cy="26" r="5"></circle>
         </svg>
         <div class="piece-heading">
@@ -30,37 +30,36 @@
                 <h4>{{piece.author.gamerTag}}</h4>
             </div>
             <h3 ng-switch="headingDisplayMode(piece)">
-                <span class="piece-type" ng-repeat="type in piece.types">{{type}}</span>
+                <span class="piece-type font-lisong" ng-repeat="type in piece.types">{{type}}</span>
                 <span ng-switch-when="source"><span ng-if="piece.source.repost">二次</span>推送至「<a ng-href="{{piece.source.url}}">{{piece.source.name}}</a>」社群据点</span>
                 <span ng-switch-default><a ng-href="{{piece.url}}">{{piece.title}}</a></span>
             </h3>
         </div>
-        <div class="piece-content box-shodowed-inset" ng-switch="contentDisplayMode(piece)">
+        <div class="piece-content clearfix box-shodowed-inset" ng-switch="contentDisplayMode(piece)">
             <div ng-switch-when="title-summary">
                 <h3>
-                    <a ng-href="piece.url">{{piece.title}}</a>
+                    <a ng-href="{{piece.url}}">{{piece.title}}</a>
                 </h3>
-                <p>{{piece.summary}}</p>
-            </div>
-            <div ng-switch-when="summary">
                 <p>{{piece.summary}}</p>
             </div>
             <div ng-switch-when="title-thumbnail">
-                <img ng-src="{{piece.thumbnails[0]}}" alt="预览图">
+                <img class="thumbnail" ng-src="{{piece.thumbnails[0]}}" alt="预览图">
                 <h3>
-                    <a ng-href="piece.url">{{piece.title}}</a>
+                    <a ng-href="{{piece.url}}">{{piece.title}}</a>
                 </h3>
                 <p>{{piece.summary}}</p>
             </div>
-            <div ng-switch-when="thumbnails">
-                <img ng-src="{{piece.thumbnails[0]}}" alt="预览图">
-                <h3>
-                    <a ng-href="piece.url">{{piece.title}}</a>
-                </h3>
-                <p>{{piece.summary}}</p>
-                <div>
-                    <img ng-repeat="thumbnail in piece.thumbnails track by $index" ng-src="{{thumbnail}}" alt="预览图">
+            <div ng-switch-when="thumbnails" ng-controller="ThumbnailSwitchController">
+                <img class="thumbnail" ng-src="{{piece.thumbnails[currentThumbnailIndex]}}" alt="预览图">
+                <p class="two-line">{{piece.summary}}</p>
+                <div class="thumbnail-candicates clearfix">
+                    <div ng-class="{selected: currentThumbnailIndex == $index}" class="frame" ng-repeat="thumbnail in piece.thumbnails track by $index">
+                        <img ng-src="{{thumbnail}}" alt="预览图" ng-mouseenter="changeCurrentThumbnail($index)">
+                    </div>
                 </div>
+            </div>
+            <div ng-switch-when="summary">
+                <p>{{piece.summary}}</p>
             </div>
         </div>
         <footer></footer>

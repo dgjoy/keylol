@@ -25,7 +25,8 @@ namespace Keylol.FontGarage.CLI
             {
                 "讯息轨道",
                 "由你筛选的游戏讯息轨道",
-                "请无视游戏与艺术之间的空隙"
+                "请无视游戏与艺术之间的空隙",
+                "评测好评差评模组资讯"
             });
             Console.ReadKey();
         }

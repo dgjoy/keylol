@@ -18,7 +18,7 @@
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-7e033ac239998bc66545a7c87aa19e1e.woff") format("woff");
+    src: url("./Fonts/lisong-d22351abaa9e238f9e4f38b6fb1e5858.woff") format("woff");
 }
 
 /*#endregion */
@@ -506,6 +506,12 @@ a {
                 text-overflow: ellipsis;
             }
 
+                .section-timeline .piece-heading .piece-author h4.username-full-height {
+                    line-height: 32px;
+                    height: 32px;
+                    margin-bottom: 0;
+                }
+
                 .section-timeline .piece-heading .piece-author h4:first-of-type {
                     margin-bottom: 2px;
                 }
@@ -516,7 +522,60 @@ a {
 
     .section-timeline .piece-content {
         margin-left: 9px;
+        padding: 8px 10px;
     }
+
+        .section-timeline .piece-content .thumbnail {
+            float: left;
+            width: 124px;
+            height: 72px;
+            margin-right: 9px;
+        }
+
+        .section-timeline .piece-content h3 {
+            font-size: 16px;
+            font-weight: normal;
+            margin: 0 0 1px 0;
+            padding-top: 1px;
+            line-height: 22px;
+            height: 22px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .section-timeline .piece-content p {
+            margin: 0;
+            line-height: 16px;
+            max-height: 48px;
+            overflow: hidden;
+        }
+
+            .section-timeline .piece-content p.two-line {
+                height: 32px;
+            }
+
+        .section-timeline .piece-content .thumbnail-candicates {
+            margin-top: 1px;
+            margin-bottom: -3px;
+        }
+
+            .section-timeline .piece-content .thumbnail-candicates .frame {
+                padding: 3px;
+                display: block;
+                float: left;
+                margin: 0 2px;
+            }
+
+                .section-timeline .piece-content .thumbnail-candicates .frame.selected {
+                    background-color: #11254a;
+                }
+
+            .section-timeline .piece-content .thumbnail-candicates img {
+                width: 62px;
+                height: 36px;
+                display: block;
+            }
 
 /*#endregion */
 
