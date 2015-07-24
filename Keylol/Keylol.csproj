@@ -258,6 +258,7 @@
     <None Include="ClearScript.V8\v8-x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="apple-touch-icon-180.png" />
     <Content Include="Content\Images\edit-pen.png" />
     <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\cuc.png" />
@@ -265,9 +266,9 @@
     <Content Include="Content\Images\mind-gap.png" />
     <Content Include="Content\Images\search-box-button.png" />
     <Content Include="Content\normalize.css" />
-    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\site.css" />
+    <Content Include="favicon.ico" />
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-mocks.js" />
