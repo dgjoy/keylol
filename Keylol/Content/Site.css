@@ -106,6 +106,10 @@ a {
     box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
 }
 
+.box-shodowed-inset {
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.50);
+}
+
 .labeled-heading {
     position: relative;
     line-height: 20px;
@@ -340,6 +344,7 @@ a {
             height: 100%;
             width: 17px;
             left: 13px;
+            top: 0;
         }
 
             .section-timeline .card .card-line circle {
@@ -350,7 +355,52 @@ a {
 
     /*#endregion */
 
-    /*#region Heading Layout */
+    /*#region Heading */
+
+    /*#region Title */
+
+    .section-timeline .heading .title {
+        color: #11254a;
+        padding: 7px 0;
+        margin-left: 2px;
+    }
+
+        .section-timeline .heading .title h1 {
+            font-size: 16px;
+            font-weight: normal;
+            margin: 0 0 2px;
+        }
+
+        .section-timeline .heading .title h2 {
+            font-size: 10px;
+            font-weight: normal;
+            margin: 0;
+        }
+
+    .section-timeline .heading.inverse .title {
+        color: white;
+    }
+
+    /*#endregion */
+
+    /*#region Card Line */
+
+    .section-timeline .heading .card-line rect {
+        fill: #11254a;
+    }
+
+    .section-timeline .heading.inverse .card-line circle {
+        fill: #11254a;
+        stroke: white;
+    }
+
+    .section-timeline .heading.inverse .card-line rect {
+        fill: white;
+    }
+
+    /*#endregion */
+
+    /*#region Layout */
 
     .section-timeline .heading {
         position: relative;
@@ -387,48 +437,88 @@ a {
                 transform: translate(-50%, -50%);
             }
 
-        /*#endregion */
+    /*#endregion */
 
-        /*#region Heading Title */
+    /*#endregion */
 
-        .section-timeline .heading .title {
-            color: #11254a;
-            padding: 7px 0;
-            margin-left: 2px;
+    /*#region Piece */
+
+    .section-timeline .piece {
+        background: white;
+        margin: 20px 0;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-right: 15px;
+    }
+
+    /*#region Heading */
+
+    .section-timeline .piece-heading {
+        margin-bottom: 10px;
+        margin-left: 2px;
+    }
+
+        .section-timeline .piece-heading h3 {
+            height: 32px;
+            line-height: 32px;
+            font-size: 12px;
+            font-weight: normal;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-            .section-timeline .heading .title h1 {
-                font-size: 16px;
-                font-weight: normal;
-                margin: 0 0 2px;
+        .section-timeline .piece-heading .piece-type {
+            font-size: 14px;
+            color: white;
+            background-color: #11254a;
+            padding: 2px;
+            margin-right: 5px;
+        }
+
+        .section-timeline .piece-heading .piece-author {
+            float: right;
+            width: 240px;
+        }
+
+            .section-timeline .piece-heading .piece-author .avatar-anchor {
+                float: right;
+                display: block;
+                margin-left: 6px;
             }
 
-            .section-timeline .heading .title h2 {
-                font-size: 10px;
+            .section-timeline .piece-heading .piece-author img {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                border: 2px solid #11254a;
+            }
+
+            .section-timeline .piece-heading .piece-author h4 {
+                line-height: 15px;
+                height: 15px;
                 font-weight: normal;
                 margin: 0;
+                text-align: right;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
-        .section-timeline .heading.inverse .title {
-            color: white;
-        }
+                .section-timeline .piece-heading .piece-author h4:first-of-type {
+                    margin-bottom: 2px;
+                }
 
-        /*#endregion */
+    /*#endregion */
 
-        /*#region Heading Card Line */
+    /*#region Content */
 
-        .section-timeline .heading .card-line rect {
-            fill: #11254a;
-        }
+    .section-timeline .piece-content {
+        margin-left: 9px;
+    }
 
-        .section-timeline .heading.inverse .card-line circle {
-            fill: #11254a;
-            stroke: white;
-        }
-
-        .section-timeline .heading.inverse .card-line rect {
-            fill: white;
-        }
+/*#endregion */
 
 /*#endregion */
 
