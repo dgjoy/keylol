@@ -1,11 +1,9 @@
 ﻿(function() {
     "use strict";
 
-    keylolApp.controller("HomeController", [
-        "pageTitle", "$scope", "ModalService", function(pageTitle, $scope, ModalService) {
-            pageTitle.set("其乐");
-
-            $scope.showRegistrationForm = function() {
+    keylolApp.controller("RegistrationController", [
+        "$scope", "ModalService", function ($scope, ModalService) {
+            $scope.showRegistrationForm = function () {
                 ModalService.showModal({
                     templateUrl: "Templates/Modal/registration.html",
                     controller: "RegistrationController"

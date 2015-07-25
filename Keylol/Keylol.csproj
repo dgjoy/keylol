@@ -272,10 +272,13 @@
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-mocks.js" />
+    <Content Include="Scripts\angular-modal-service.js" />
+    <Content Include="Scripts\angular-modal-service.min.js" />
     <Content Include="Scripts\angular-route.js" />
     <Content Include="Scripts\angular-route.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\controllers\modal\registration-controller.js" />
     <Content Include="Scripts\app\controllers\root-controller.js" />
     <Content Include="Scripts\app\controllers\section\main-navigation-controller.js" />
     <Content Include="Scripts\app\controllers\section\reading-recommendation-controller.js" />
@@ -283,10 +286,13 @@
     <Content Include="Scripts\app\controllers\section\timeline-controller.js" />
     <Content Include="Scripts\app\controllers\test-controller.js" />
     <Content Include="Scripts\app\controllers\home-controller.js" />
+    <Content Include="Scripts\app\directives\kl-modal.js" />
     <Content Include="Scripts\app\keylol-app.js" />
     <Content Include="Scripts\app\services\page-title-service.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Templates\home.html" />
+    <Content Include="Templates\Modal\_container.html" />
+    <Content Include="Templates\Modal\registration.html" />
     <Content Include="Templates\Sections\action-hub.html" />
     <Content Include="Templates\Sections\cuc-entrance.html" />
     <Content Include="Templates\Sections\ifs-right.html" />
@@ -333,6 +339,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Scripts\angular-modal-service.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

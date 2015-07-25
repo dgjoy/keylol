@@ -163,6 +163,38 @@ a {
 
 /*#endregion */
 
+/*#region Modal Window */
+
+kl-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+    kl-modal:last-of-type {
+        background-color: rgba(0, 0, 0, 0.65);
+    }
+
+.modal-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 90%;
+    max-width: 90%;
+    overflow: auto;
+}
+
+.modal-window {
+    background-color: #eef1f3;
+    box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
+    margin: 0 30px;
+}
+
+/*#endregion */
+
 /*#region Logo Section */
 
 .section-logo {
@@ -694,7 +726,7 @@ a {
 .section-ifs-right {
     height: 100%;
     width: 100%;
-    min-height: 140px;
+    min-height: 143px;
     min-width: 269px;
     background-color: white;
     position: relative;
@@ -703,7 +735,7 @@ a {
     .section-ifs-right svg {
         margin: 0 auto;
         width: 256px;
-        height: 125px;
+        height: 128px;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -834,7 +866,7 @@ a {
 .section-spotlight-banner {
     height: 100%;
     width: 100%;
-    min-height: 182px;
+    min-height: 185px;
     min-width: 616px;
     background-color: white;
     position: relative;
@@ -843,7 +875,7 @@ a {
     .section-spotlight-banner svg {
         margin: 0 auto;
         width: 606px;
-        height: 172px;
+        height: 175px;
         position: absolute;
         top: 50%;
         left: 50%;

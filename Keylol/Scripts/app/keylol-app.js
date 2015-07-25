@@ -4,11 +4,12 @@
     var app = angular.module("KeylolApp", [
         // Angular modules 
         "ngAnimate",
-        "ngRoute"
+        "ngRoute",
 
         // Custom modules
 
         // 3rd Party Modules
+        "angularModalService"
     ]);
     app.config([
         "$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
