@@ -1,5 +1,162 @@
-﻿<kl-modal position="center">
+﻿<kl-modal position="center" class="modal-registration">
     <div class="modal-window">
-        <div style="width: 800px; height: 1200px;"></div>
+        <img class="sample-bar-code" src="Content/Images/sample-bar-code.png" alt="条形码">
+        <div class="heading font-myriad-lisong">
+            <img src="Content/Images/logo-mono.svg" alt="Logo">
+            <h1>其乐自动化会员注册资料表单</h1>
+            <h2>Keylol Membership Application Form</h2>
+        </div>
+        <table>
+            <tr>
+                <td>
+                    <h3 class="font-myriad-lisong">连接游戏平台</h3>
+                    <h4>绑定至少一个以下平台的有效账号。</h4>
+                    <div class="platform">
+                        <a class="go-binding-anchor" href="test">
+                            <img src="Content/Images/steam-circle-mono.png" alt="绑定 Steam">
+                            <span>Steam</span>
+                        </a>
+                        <div class="pasted-card box-shodowed">
+                            <img class="needle" src="Content/Images/card-needle.png" alt="订书针">
+                            <div>
+                                <img src="/Content/Images/steam-circle.png" alt="Steam">
+                                <div>
+                                    <h5>已绑定 <a href="test">×</a></h5>
+                                    <h5>leeberun_os</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="platform">
+                        <a class="go-binding-anchor" href="test">
+                            <img src="Content/Images/psn-circle-mono.png" alt="绑定 Playstation Network">
+                            <span>Playstation Network</span>
+                        </a>
+                    </div>
+                    <div class="platform">
+                        <a class="go-binding-anchor" href="test">
+                            <img src="Content/Images/xbox-circle-mono.png" alt="绑定 Xbox Live">
+                            <span>Xbox Live</span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <colgroup>
+                <col style="width: 32%;">
+                <col style="width: 48%;">
+                <col style="width: 20%;">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td>
+                    <h3 class="font-myriad-lisong">昵称</h3>
+                    <h4>注册后无法更改，仅限拉丁字母、数字、汉字。</h4>
+                </td>
+                <td>
+                    <input type="text" name="UserName" tabindex="1">
+                </td>
+                <td rowspan="3" class="upload-avatar">
+                    <h3 class="font-myriad-lisong">账户头像</h3>
+                    <h4>用胶水贴上一张照片</h4>
+                    <button tabindex="4">胶水</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h3 class="font-myriad-lisong">登录口令</h3>
+                    <h4>拉丁字母、数字、字符，大小写敏感。</h4>
+                </td>
+                <td>
+                    <input type="password" name="Password" tabindex="2">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h3 class="font-myriad-lisong">确认登录口令</h3>
+                    <h4>再次输入你的登录口令，以避免输入失误。</h4>
+                </td>
+                <td>
+                    <input type="password" name="PasswordConfirmed" tabindex="3">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <colgroup>
+                <col style="width: 32%;">
+                <col style="width: 68%;">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td>
+                    <h3 class="font-myriad-lisong">电子邮箱</h3>
+                    <h4>用以找回账号、登录和接收订阅资讯。</h4>
+                </td>
+                <td>
+                    <input type="email" name="Email" tabindex="5">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h3 class="single-line font-myriad-lisong">邮件订阅</h3>
+                    <h4>订阅各种类型的资讯动态，其乐承诺不会通过邮件发送未曾订阅的商业信息。</h4>
+                    <div class="checkbox-group">
+                        <div>
+                            <input type="checkbox" name="EmailNotifyOnArticleReplied" id="email-notify-article-replied" tabindex="11"><label for="email-notify-article-replied">文章回复</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="EmailNotifyOnCommentReplied" id="email-notify-comment-replied" tabindex="12"><label for="email-notify-comment-replied">评论回复</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="EmailNotifyOnEditorRecommended" id="email-notify-editor-recommended" tabindex="13"><label for="email-notify-editor-recommended">编辑推荐</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="EmailNotifyOnUserMessageReceived" id="email-notify-user-message-received" tabindex="14"><label for="email-notify-user-message-received">站内私信</label>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <h3 class="single-line font-myriad-lisong">无障碍需求</h3>
+                    <h4>其乐会为身心障碍人士的各类无障碍需求提供最大程度的帮助。</h4>
+                    <div class="checkbox-group">
+                        <div>
+                            <input type="checkbox" name="ColorVisionDeficiency" id="color-vision-deficiency" tabindex="21"><label for="color-vision-deficiency">色感障碍</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="VisionImpairment" id="vision-impairment" tabindex="22"><label for="vision-impairment">视觉障碍</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="HearingImpairment" id="hearing-impairment" tabindex="23"><label for="hearing-impairment">听觉障碍</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="PhotosensitiveEpilepsy" id="photosensitive-epilepsy" tabindex="24"><label for="photosensitive-epilepsy">光敏性癫痫</label>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <button class="modal-confirm-button">
+            <img class="arrow-right" src="Content/Images/arrow-right.png" alt="下一步">
+            <img class="signature-pen" src="Content/Images/signature-pen.png" alt="提交"/>
+            <hgroup class="font-myriad-lisong">
+                <h1>提交注册申请</h1>
+                <h2>Submit the Application</h2>
+            </hgroup>
+        </button>
+        <div class="declaration font-myriad-lisong">
+            <h3 class="single-line">声明</h3>
+            <h4>Declaration</h4>
+            <p>
+                本人谨此声明以上输入准确无误，并授权「其乐」及关联社区基于以上输入为本人开通会员使用权。<br>
+                本人已悉知并同意在享用会员服务时遵循《其乐社区用户通用守则》以及所在地区的相关法律法规。
+            </p>
+        </div>
     </div>
 </kl-modal>

@@ -259,12 +259,25 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="apple-touch-icon-180.png" />
+    <Content Include="Content\Images\arrow-right.png" />
+    <Content Include="Content\Images\border-slash.png" />
+    <Content Include="Content\Images\exit-darker.png" />
     <Content Include="Content\Images\edit-pen.png" />
     <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\cuc.png" />
+    <Content Include="Content\Images\card-needle.png" />
+    <Content Include="Content\Images\logo-mono.svg" />
     <Content Include="Content\Images\logo.svg" />
     <Content Include="Content\Images\mind-gap.png" />
+    <Content Include="Content\Images\psn-circle-mono.png" />
+    <Content Include="Content\Images\psn-circle.png" />
     <Content Include="Content\Images\search-box-button.png" />
+    <Content Include="Content\Images\sample-bar-code.png" />
+    <Content Include="Content\Images\signature-pen.png" />
+    <Content Include="Content\Images\steam-circle-mono.png" />
+    <Content Include="Content\Images\steam-circle.png" />
+    <Content Include="Content\Images\xbox-circle-mono.png" />
+    <Content Include="Content\Images\xbox-circle.png" />
     <Content Include="Content\normalize.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\site.css" />
@@ -350,7 +363,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Content\Fonts\keylol-rail-sung-full.ttf" />
-    <Content Include="Content\Fonts\lisong-d22351abaa9e238f9e4f38b6fb1e5858.woff" />
+    <Content Include="Content\Fonts\lisong-28c68f205d871d952064990617ece150.woff" />
     <None Include="Content\Fonts\lisong-full.ttf" />
     <Content Include="Content\Fonts\keylol-rail-sung-7e527aac444604711a10704ee9f21714.woff" />
     <None Include="Content\Fonts\myriadpro-regular-full.woff" />

@@ -18,7 +18,7 @@
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-d22351abaa9e238f9e4f38b6fb1e5858.woff") format("woff");
+    src: url("./Fonts/lisong-28c68f205d871d952064990617ece150.woff") format("woff");
 }
 
 /*#endregion */
@@ -43,6 +43,16 @@ a {
     a:focus {
         text-decoration: underline;
     }
+
+input[type=checkbox], input[type=radio] {
+    vertical-align: middle;
+    position: relative;
+    bottom: 1px;
+}
+
+input[type=radio] {
+    bottom: 2px;
+}
 
 /*#endregion */
 
@@ -94,8 +104,8 @@ a {
     font-family: "Myriad Pro", "Keylol Rail Sung";
 }
 
-.font-lisong {
-    font-family: LiSong;
+.font-myriad-lisong {
+    font-family: "Myriad Pro", LiSong;
 }
 
 /*#endregion */
@@ -177,14 +187,49 @@ kl-modal {
         background-color: rgba(0, 0, 0, 0.65);
     }
 
-.modal-center {
+[class^=modal-position-] {
     position: absolute;
+    overflow: auto;
+}
+
+.modal-position-center {
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     max-height: 90%;
     max-width: 90%;
-    overflow: auto;
+    transform: translate(-50%, -50%);
+}
+
+.modal-position-top {
+    top: 12%;
+    left: 50%;
+    max-height: 86%;
+    max-width: 90%;
+    transform: translate(-50%, 0);
+}
+
+.modal-position-bottom {
+    bottom: 12%;
+    left: 50%;
+    max-height: 86%;
+    max-width: 90%;
+    transform: translate(-50%, 0);
+}
+
+.modal-position-left {
+    top: 50%;
+    left: 6%;
+    max-height: 90%;
+    max-width: 90%;
+    transform: translate(0, -50%);
+}
+
+.modal-position-right {
+    top: 50%;
+    right: 6%;
+    max-height: 90%;
+    max-width: 90%;
+    transform: translate(0, -50%);
 }
 
 .modal-window {
@@ -192,6 +237,72 @@ kl-modal {
     box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
     margin: 0 30px;
 }
+
+    /*#region Confirm Button */
+
+    .modal-window .modal-confirm-button {
+        float: right;
+        background-color: #11254a;
+        border: none;
+        text-align: right;
+        padding: 6px 19px;
+        height: 60px;
+        margin-right: -8px;
+        position: relative;
+    }
+
+        .modal-window .modal-confirm-button:after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 24px;
+            height: 60px;
+            z-index: -1;
+            box-shadow: 0 0 2px #B8BABB;
+            transform: rotate(315deg);
+            transform-origin: bottom right;
+            background-color: #adafb0;
+        }
+
+        .modal-window .modal-confirm-button img {
+            float: right;
+            margin-left: 18px;
+            position: relative;
+        }
+
+        .modal-window .modal-confirm-button .arrow-right {
+            width: 42px;
+            height: 34px;
+            top: 7px;
+        }
+
+        .modal-window .modal-confirm-button .signature-pen {
+            width: 30px;
+            height: 40px;
+            top: 4px;
+        }
+
+        .modal-window .modal-confirm-button hgroup {
+            float: right;
+            margin-left: 30px;
+        }
+
+            .modal-window .modal-confirm-button hgroup h1 {
+                color: white;
+                font-size: 18px;
+                margin: 4px 0;
+            }
+
+            .modal-window .modal-confirm-button hgroup h2 {
+                color: white;
+                font-size: 12px;
+                font-weight: normal;
+                margin: 4px 0;
+            }
+
+/*#endregion */
 
 /*#endregion */
 
@@ -882,5 +993,196 @@ kl-modal {
         margin-left: -303px;
         margin-top: -86px;
     }
+
+/*#endregion */
+
+/*#region Registration Modal Window */
+
+.modal-registration .modal-window {
+    padding: 14px;
+    width: 900px;
+}
+
+.modal-registration h1 {
+    font-size: 18px;
+    color: #11254a;
+    margin: 3px 0;
+}
+
+.modal-registration h2 {
+    font-size: 14px;
+    font-weight: normal;
+    margin: 3px 0;
+}
+
+.modal-registration h3 {
+    color: #11254a;
+    font-size: 14px;
+    margin: 2px 0;
+}
+
+    .modal-registration h3.single-line {
+        float: left;
+        margin-right: 8px;
+    }
+
+        .modal-registration h3.single-line + h4 {
+            position: relative;
+            top: 2px;
+        }
+
+.modal-registration h4 {
+    font-weight: normal;
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+.modal-registration .sample-bar-code {
+    width: 678px;
+    height: 20px;
+    margin: 0 auto;
+    display: block;
+}
+
+.modal-registration .heading {
+    margin: 28px 0;
+}
+
+    .modal-registration .heading img {
+        float: right;
+        width: 44px;
+        height: 44px;
+    }
+
+.modal-registration table {
+    margin: 28px 0;
+    width: 100%;
+}
+
+    .modal-registration table td {
+        border: 1px solid #11254a;
+        padding: 1px 3px;
+    }
+
+.modal-registration .platform {
+    float: left;
+    width: 33%;
+    margin: 10px 0 8px;
+    text-align: center;
+    position: relative;
+}
+
+    .modal-registration .platform .go-binding-anchor {
+        display: inline-block;
+        opacity: 0.25;
+    }
+
+        .modal-registration .platform .go-binding-anchor:hover {
+            text-decoration: none;
+            opacity: 1.0;
+        }
+
+        .modal-registration .platform .go-binding-anchor img {
+            width: 35px;
+            height: 35px;
+            vertical-align: middle;
+        }
+
+        .modal-registration .platform .go-binding-anchor span {
+            font-size: 14px;
+            color: #333;
+        }
+
+    .modal-registration .platform .pasted-card {
+        width: 262px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #fdfeeb;
+        border-image: url(/Content/Images/border-slash.png) 30 round;
+        border-width: 4px;
+        border-style: solid;
+        transform: rotate(-1deg);
+    }
+
+        .modal-registration .platform .pasted-card .needle {
+            position: absolute;
+            top: -3px;
+            left: 4px;
+        }
+
+        .modal-registration .platform .pasted-card > div {
+            display: inline-block;
+            margin: 6px 0 4px;
+        }
+
+        .modal-registration .platform .pasted-card div img {
+            float: left;
+            width: 35px;
+            height: 35px;
+            margin-right: 8px;
+        }
+
+        .modal-registration .platform .pasted-card div h5 {
+            font-size: 12px;
+            font-weight: normal;
+            margin: 2px 0;
+        }
+
+        .modal-registration .platform .pasted-card div a {
+            font-weight: bold;
+        }
+
+        .modal-registration .platform .pasted-card div div {
+            float: left;
+            text-align: left;
+            max-width: 192px;
+        }
+
+.modal-registration table input[type=text],
+.modal-registration table input[type=password],
+.modal-registration table input[type=email] {
+    background: none;
+    border: none;
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+.modal-registration .upload-avatar {
+    text-align: center;
+}
+
+    .modal-registration .upload-avatar button {
+        margin: 6px 0;
+    }
+
+.modal-registration .checkbox-group {
+    padding: 9px 0;
+}
+
+    .modal-registration .checkbox-group div {
+        display: inline;
+        margin: 0 12px;
+    }
+
+    .modal-registration .checkbox-group label {
+        padding-left: 6px;
+    }
+
+.modal-registration .declaration {
+    font-weight: bold;
+    max-width: 580px;
+}
+
+    .modal-registration .declaration h3.single-line + h4 {
+        top: 5px;
+    }
+
+.modal-registration .modal-window .modal-confirm-button {
+    margin-right: -22px;
+}
 
 /*#endregion */

@@ -9,7 +9,7 @@
                 <circle cx="8.5" cy="50%" r="5"></circle>
             </svg>
             <div class="title">
-                <h1 class="font-lisong">讯息轨道</h1>
+                <h1 class="font-myriad-lisong">讯息轨道</h1>
                 <h2>推送至已订阅据点的文章</h2>
             </div>
         </div>
@@ -30,7 +30,7 @@
                 <h4>{{piece.author.gamerTag}}</h4>
             </div>
             <h3 ng-switch="headingDisplayMode(piece)">
-                <span class="piece-type font-lisong" ng-repeat="type in piece.types">{{type}}</span>
+                <span class="piece-type font-myriad-lisong" ng-repeat="type in piece.types">{{type}}</span>
                 <span ng-switch-when="source"><span ng-if="piece.source.repost">二次</span>推送至「<a ng-href="{{piece.source.url}}">{{piece.source.name}}</a>」社群据点</span>
                 <span ng-switch-default><a ng-href="{{piece.url}}">{{piece.title}}</a></span>
             </h3>
