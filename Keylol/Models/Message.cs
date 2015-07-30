@@ -5,12 +5,7 @@ namespace Keylol.Models
 {
     public abstract class Message
     {
-        public Message()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         public virtual KeylolUser Receiver { get; set; }

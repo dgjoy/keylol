@@ -14,12 +14,7 @@ namespace Keylol.Models
 
     public abstract class Point
     {
-        public Point()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public virtual ICollection<KeylolUser> Subscribers { get; set; }
         public virtual ICollection<Piece> AttachedPieces { get; set; }
         public virtual ICollection<NormalPoint> AssociatedByNormalPoints { get; set; }

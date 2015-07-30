@@ -19,29 +19,9 @@ namespace Keylol.Models
     // You can add profile data for the user by adding more properties to your KeylolUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class KeylolUser : IdentityUser
     {
-        public KeylolUser()
-        {
-            RegisterTime = DateTime.Now;
-            LastVisitTime = DateTime.Now;
-            AutoShareOnAcquiringNewGame = true;
-            AutoShareOnPublishingReview = true;
-            AutoShareOnUnlockingAchievement = true;
-            AutoShareOnUploadingScreenshot = true;
-            AutoShareOnAddingFavorite = true;
-            EmailNotifyOnArticleReplied = true;
-            EmailNotifyOnCommentReplied = true;
-            EmailNotifyOnEditorRecommended = true;
-            EmailNotifyOnUserMessageReceived = true;
-            PreferedLanguageConversionMode = LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
-            ColorVisionDeficiency = false;
-            VisionImpairment = false;
-            HearingImpairment = false;
-            PhotosensitiveEpilepsy = false;
-        }
-
-        public DateTime RegisterTime { get; set; }
+        public DateTime RegisterTime { get; set; } = DateTime.Now;
         public string RegisterIp { get; set; }
-        public DateTime LastVisitTime { get; set; }
+        public DateTime LastVisitTime { get; set; } = DateTime.Now;
         public string LastVisitIp { get; set; }
         public virtual ICollection<Point> SubscribedPoints { get; set; }
 
@@ -70,25 +50,25 @@ namespace Keylol.Models
         public string GamerTag { get; set; }
 
         // Auto share options
-        public bool AutoShareOnAcquiringNewGame { get; set; }
-        public bool AutoShareOnPublishingReview { get; set; }
-        public bool AutoShareOnUnlockingAchievement { get; set; }
-        public bool AutoShareOnUploadingScreenshot { get; set; }
-        public bool AutoShareOnAddingFavorite { get; set; }
+        public bool AutoShareOnAcquiringNewGame { get; set; } = true;
+        public bool AutoShareOnPublishingReview { get; set; } = true;
+        public bool AutoShareOnUnlockingAchievement { get; set; } = true;
+        public bool AutoShareOnUploadingScreenshot { get; set; } = true;
+        public bool AutoShareOnAddingFavorite { get; set; } = true;
 
         // Email notification options
-        public bool EmailNotifyOnArticleReplied { get; set; }
-        public bool EmailNotifyOnCommentReplied { get; set; }
-        public bool EmailNotifyOnEditorRecommended { get; set; }
-        public bool EmailNotifyOnUserMessageReceived { get; set; }
+        public bool EmailNotifyOnArticleReplied { get; set; } = true;
+        public bool EmailNotifyOnCommentReplied { get; set; } = true;
+        public bool EmailNotifyOnEditorRecommended { get; set; } = true;
+        public bool EmailNotifyOnUserMessageReceived { get; set; } = true;
 
-        public LanguageConversionMode PreferedLanguageConversionMode { get; set; }
+        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } = LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
 
         // Accessibility demand
-        public bool ColorVisionDeficiency { get; set; }
-        public bool VisionImpairment { get; set; }
-        public bool HearingImpairment { get; set; }
-        public bool PhotosensitiveEpilepsy { get; set; }
+        public bool ColorVisionDeficiency { get; set; } = false;
+        public bool VisionImpairment { get; set; } = false;
+        public bool HearingImpairment { get; set; } = false;
+        public bool PhotosensitiveEpilepsy { get; set; } = false;
 
         #endregion
     }

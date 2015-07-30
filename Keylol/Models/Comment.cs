@@ -6,12 +6,7 @@ namespace Keylol.Models
 {
     public class Comment
     {
-        public Comment()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         [MaxLength(30000)]

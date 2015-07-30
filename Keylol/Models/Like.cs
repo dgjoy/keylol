@@ -5,12 +5,7 @@ namespace Keylol.Models
 {
     public abstract class Like
     {
-        public Like()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public DateTime Time { get; set; }
 
         [Required]

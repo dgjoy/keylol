@@ -14,12 +14,7 @@ namespace Keylol.Models
 
     public class ArticleType
     {
-        public ArticleType()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public ArticleTypeCategory Category { get; set; }
 
         [Required]

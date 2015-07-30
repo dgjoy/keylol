@@ -8,12 +8,10 @@ namespace Keylol.Models
     {
         protected Piece()
         {
-            Id = Guid.NewGuid().ToString();
-            PublishTime = DateTime.Now;
         }
 
-        public string Id { get; set; }
-        public DateTime PublishTime { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public DateTime PublishTime { get; set; } = DateTime.Now;
 
         [Required]
         public virtual Point Principal { get; set; }
