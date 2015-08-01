@@ -8,6 +8,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
 
 namespace Keylol
 {
@@ -91,7 +92,7 @@ namespace Keylol
 
         public override Task<ClaimsIdentity> CreateUserIdentityAsync(KeylolUser user)
         {
-            return user.GenerateUserIdentityAsync((KeylolUserManager) UserManager);
+            return user.GenerateUserIdentityAsync((KeylolUserManager) UserManager, CookieAuthenticationDefaults.AuthenticationType);
         }
 
         public static KeylolSignInManager Create(IdentityFactoryOptions<KeylolSignInManager> options,

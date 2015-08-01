@@ -33,13 +33,15 @@ namespace Keylol.Migrations
                 PasswordHash = hasher.HashPassword("test"),
                 Email = "jsq2627@gmail.com",
                 ProfilePoint = profilePoint,
+                SecurityStamp = "hahaha",
                 SubscribedPoints = new List<Point> {normalPoint},
                 ModeratedPoints = new List<NormalPoint> {normalPoint}
             };
             var articleType = new ArticleType
             {
                 Category = ArticleTypeCategory.Topic,
-                Name = "≤‚ ‘"
+                Name = "≤‚ ‘",
+                UrlFriendlyName = "test"
             };
             var article = new Article
             {

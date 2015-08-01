@@ -13,7 +13,7 @@ namespace Keylol.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201505071410362_Initial"; }
+            get { return "201508011833469_Initial"; }
         }
         
         string IMigrationMetadata.Source

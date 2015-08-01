@@ -203,6 +203,7 @@ namespace Keylol.Migrations
                         Id = c.String(nullable: false, maxLength: 128),
                         Category = c.Int(nullable: false),
                         Name = c.String(nullable: false, maxLength: 20),
+                        UrlFriendlyName = c.String(nullable: false, maxLength: 100),
                     })
                 .PrimaryKey(t => t.Id);
             

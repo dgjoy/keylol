@@ -222,14 +222,15 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\API\SampleController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201505071410362_Initial.cs" />
-    <Compile Include="Migrations\201505071410362_Initial.Designer.cs">
-      <DependentUpon>201505071410362_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201508011833469_Initial.cs" />
+    <Compile Include="Migrations\201508011833469_Initial.Designer.cs">
+      <DependentUpon>201508011833469_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Point.cs" />
     <Compile Include="Models\Warning.cs" />
+    <Compile Include="Provider\KeylolOAuthProvider.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\KeylolUser.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
@@ -379,8 +381,8 @@
     <Content Include="Scripts\angular-route.min.js.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201505071410362_Initial.resx">
-      <DependentUpon>201505071410362_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508011833469_Initial.resx">
+      <DependentUpon>201508011833469_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
