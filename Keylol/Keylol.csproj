@@ -52,8 +52,8 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BundleTransformer.Autoprefixer, Version=1.9.69.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
-      <HintPath>..\packages\BundleTransformer.Autoprefixer.1.9.69\lib\net40\BundleTransformer.Autoprefixer.dll</HintPath>
+    <Reference Include="BundleTransformer.Autoprefixer, Version=1.9.71.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
+      <HintPath>..\packages\BundleTransformer.Autoprefixer.1.9.71\lib\net40\BundleTransformer.Autoprefixer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="BundleTransformer.Core, Version=1.9.69.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
@@ -356,6 +356,9 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Scripts\angular-modal-service.min.js.map" />
+    <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\angular-animate.min.js.map" />
+    <Content Include="Scripts\angular-route.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -376,9 +379,6 @@
     </None>
     <None Include="Project_Readme.html" />
     <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
-    <Content Include="Scripts\angular.min.js.map" />
-    <Content Include="Scripts\angular-animate.min.js.map" />
-    <Content Include="Scripts\angular-route.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201508011833469_Initial.resx">
