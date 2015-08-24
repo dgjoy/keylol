@@ -120,6 +120,10 @@ input[type=radio] {
     box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.50);
 }
 
+.box-shodawed-glowed {
+    box-shadow: 0 0 1px rgba(0,0,0,0.35), 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
+}
+
 .labeled-heading {
     position: relative;
     line-height: 20px;
@@ -615,7 +619,7 @@ kl-modal[position=right] {
     .section-timeline .piece {
         padding-top: 30px;
         padding-bottom: 20px;
-        padding-right: 15px;
+        padding-right: 14px;
     }
 
     /*#region Heading */
@@ -679,21 +683,24 @@ kl-modal[position=right] {
     /*#region Content */
 
     .section-timeline .piece-content {
-        margin-left: 9px;
-        padding: 8px 10px;
+        background-color: white;
     }
 
         .section-timeline .piece-content .thumbnail {
             float: left;
-            width: 124px;
-            height: 72px;
+            width: 192px;
+            height: 108px;
             margin-right: 9px;
+        }
+
+        .section-timeline .piece-content .summary {
+            padding: 8px 10px;
         }
 
         .section-timeline .piece-content h3 {
             font-size: 16px;
             font-weight: normal;
-            margin: 0 0 1px 0;
+            margin: 0 0 5px 0;
             padding-top: 1px;
             line-height: 22px;
             height: 22px;
@@ -705,34 +712,12 @@ kl-modal[position=right] {
         .section-timeline .piece-content p {
             margin: 0;
             line-height: 16px;
-            max-height: 48px;
+            max-height: 64px;
             overflow: hidden;
         }
 
             .section-timeline .piece-content p.two-line {
                 height: 32px;
-            }
-
-        .section-timeline .piece-content .thumbnail-candicates {
-            margin-top: 1px;
-            margin-bottom: -3px;
-        }
-
-            .section-timeline .piece-content .thumbnail-candicates .frame {
-                padding: 3px;
-                display: block;
-                float: left;
-                margin: 0 2px;
-            }
-
-                .section-timeline .piece-content .thumbnail-candicates .frame.selected {
-                    background-color: #11254a;
-                }
-
-            .section-timeline .piece-content .thumbnail-candicates img {
-                width: 62px;
-                height: 36px;
-                display: block;
             }
 
 /*#endregion */

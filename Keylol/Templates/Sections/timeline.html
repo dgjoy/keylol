@@ -28,37 +28,18 @@
                     <a href="test">@{{piece.author.username}}</a>
                 </h4>
             </div>
-            <h3 ng-switch="headingDisplayMode(piece)">
+            <h3>
                 <span class="piece-type font-myriad-keylol" ng-repeat="type in piece.types">{{type}}</span>
-                <span ng-switch-when="source"><span ng-if="piece.source.repost">二次</span>推送至「<a ng-href="{{piece.source.url}}">{{piece.source.name}}</a>」社群据点</span>
-                <span ng-switch-default><a ng-href="{{piece.url}}">{{piece.title}}</a></span>
+                <span><a ng-href="{{source.url}}" ng-repeat="source in piece.sources">「{{source.name}}」</a></span>
             </h3>
         </div>
-        <div class="piece-content clearfix box-shodowed-inset" ng-switch="contentDisplayMode(piece)">
-            <div ng-switch-when="title-summary">
+        <div class="piece-content clearfix box-shodawed-glowed">
+            <img ng-if="piece.thumbnail" class="thumbnail" ng-src="{{piece.thumbnail}}" alt="预览图">
+            <div class="summary">
                 <h3>
                     <a ng-href="{{piece.url}}">{{piece.title}}</a>
                 </h3>
-                <p>{{piece.summary}}</p>
-            </div>
-            <div ng-switch-when="title-thumbnail">
-                <img class="thumbnail" ng-src="{{piece.thumbnails[0]}}" alt="预览图">
-                <h3>
-                    <a ng-href="{{piece.url}}">{{piece.title}}</a>
-                </h3>
-                <p>{{piece.summary}}</p>
-            </div>
-            <div ng-switch-when="thumbnails" ng-controller="ThumbnailSwitchController">
-                <img class="thumbnail" ng-src="{{piece.thumbnails[currentThumbnailIndex]}}" alt="预览图">
-                <p class="two-line">{{piece.summary}}</p>
-                <div class="thumbnail-candicates clearfix">
-                    <div ng-class="{selected: currentThumbnailIndex == $index}" class="frame" ng-repeat="thumbnail in piece.thumbnails track by $index">
-                        <img ng-src="{{thumbnail}}" alt="预览图" ng-mouseenter="changeCurrentThumbnail($index)">
-                    </div>
-                </div>
-            </div>
-            <div ng-switch-when="summary">
-                <p>{{piece.summary}}</p>
+                <p ng-class="{'two-line': !piece.thumbnail}">{{piece.summary}}</p>
             </div>
         </div>
         <footer></footer>

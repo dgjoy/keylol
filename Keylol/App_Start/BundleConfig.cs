@@ -18,9 +18,13 @@ namespace Keylol
             var vendorJsBundle = new CustomScriptBundle("~/bundles/angular");
             vendorJsBundle.Include(
                 "~/Scripts/angular.js",
+                "~/Scripts/i18n/angular-locale_zh.js",
                 "~/Scripts/angular-route.js",
                 "~/Scripts/angular-animate.js",
-                "~/Scripts/angular-modal-service.js");
+                "~/Scripts/angular-modal-service.js",
+                "~/Scripts/moment.js",
+                "~/Scripts/moment-local_zh-cn.js",
+                "~/Scripts/angular-moment.js");
             bundles.Add(vendorJsBundle);
 
             var appJsBundle = new CustomScriptBundle("~/bundles/angular-app");
