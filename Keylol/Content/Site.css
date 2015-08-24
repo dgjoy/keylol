@@ -265,6 +265,7 @@ kl-modal[position=right] {
 .modal-window {
     background-color: #eef1f3;
     box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
+    position: relative;
 }
 
     /*#region Confirm Button */
@@ -330,6 +331,61 @@ kl-modal[position=right] {
                 font-weight: normal;
                 margin: 4px 0;
             }
+
+    /*#endregion */
+
+    /*#region Exit Button */
+
+    .modal-window .modal-exit-button {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: -58px;
+        box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
+        cursor: pointer;
+    }
+
+        .modal-window .modal-exit-button svg {
+            width: 48px;
+            height: 48px;
+        }
+
+@keyframes exit-background-flash {
+    from {
+        fill: #088100;
+    }
+
+    to {
+        fill: white;
+    }
+}
+
+@keyframes exit-text-flash {
+    from {
+        fill: white;
+    }
+
+    to {
+        fill: #088100;
+    }
+}
+
+
+.modal-window .modal-exit-button.focused .background {
+    animation: exit-background-flash 150ms ease-in-out 6 alternate;
+}
+
+.modal-window .modal-exit-button.focused .text {
+    animation: exit-text-flash 150ms ease-in-out 6 alternate;
+}
+
+.modal-window .modal-exit-button:hover .background {
+    fill: white;
+}
+
+.modal-window .modal-exit-button:hover .text {
+    fill: #088100;
+}
 
 /*#endregion */
 
@@ -618,7 +674,6 @@ kl-modal[position=right] {
 
     .section-timeline .piece {
         padding-top: 30px;
-        padding-bottom: 20px;
         padding-right: 14px;
     }
 
@@ -719,6 +774,48 @@ kl-modal[position=right] {
             .section-timeline .piece-content p.two-line {
                 height: 32px;
             }
+
+    /*#endregion */
+
+    /*#region Footer */
+
+    .section-timeline .piece footer {
+        text-align: center;
+        color: #748a97;
+        height: 24px;
+        line-height: 24px;
+        margin-top: 6px;
+        visibility: hidden;
+    }
+
+        .section-timeline .piece footer .datetime {
+            float: left;
+        }
+
+        .section-timeline .piece footer .likes {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0 10px;
+        }
+
+        .section-timeline .piece footer .counts {
+            float: right;
+        }
+
+            .section-timeline .piece footer .counts span {
+                display: inline-block;
+                margin-left: 15px;
+            }
+
+                .section-timeline .piece footer .counts span:first-of-type {
+                    margin-left: 0;
+                }
+
+    .section-timeline .piece:hover footer {
+        visibility: visible;
+    }
 
 /*#endregion */
 
@@ -893,6 +990,8 @@ kl-modal[position=right] {
         .section-promoted-readings .article footer {
             text-align: right;
             color: #748a97;
+            height: 14px;
+            line-height: 14px;
         }
 
             .section-promoted-readings .article footer span {
@@ -900,10 +999,11 @@ kl-modal[position=right] {
                 display: none;
             }
 
-                .section-promoted-readings .article footer span:last-child {
-                    display: inline-block;
-                }
+        .section-promoted-readings .article:hover footer span.datetime {
+            display: none;
+        }
 
+        .section-promoted-readings .article footer span.datetime,
         .section-promoted-readings .article:hover footer span {
             display: inline-block;
         }
@@ -961,8 +1061,13 @@ kl-modal[position=right] {
     text-align: right;
 }
 
+    .section-site-footer p {
+        margin: 5px 0;
+    }
+
     .section-site-footer .divider {
         margin: 0 3px;
+        color: #c7cdd1;
     }
 
     .section-site-footer,

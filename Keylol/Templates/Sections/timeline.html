@@ -42,6 +42,10 @@
                 <p ng-class="{'two-line': !piece.thumbnail}">{{piece.summary}}</p>
             </div>
         </div>
-        <footer></footer>
+        <footer>
+            <span class="counts"><span>[+1] {{piece.likeCount}}</span><span>(···) {{piece.commentCount}}</span></span>
+            <span class="datetime" am-time-ago="piece.datetime"></span>
+            <span class="likes">Stackia、Lee. 赞了这篇文章</span>
+        </footer>
     </div>
 </div>

@@ -1,7 +1,8 @@
 ﻿<kl-modal position="center" class="modal-registration">
     <div class="modal-window">
-        <a href="" ng-click="cancel()" style="float: right">关闭</a>
-        <a href="" ng-click="showRegistrationForm()" style="float: right">重开</a>
+        <div class="modal-exit-button" ng-click="cancel()">
+            <div ng-include="'Content/Images/exit.svg'"></div>
+        </div>
         <img class="sample-bar-code" src="Content/Images/sample-bar-code.png" alt="条形码">
         <div class="heading font-myriad-lisong">
             <img src="Content/Images/logo-mono.svg" alt="Logo">

@@ -7,7 +7,8 @@
         </h2>
         <p>{{article.summary}}</p>
         <footer>
-            <span>|>>| {{article.repostCount}}</span><span>[+1] {{article.likeCount}}</span><span>(...) {{article.commentCount}}</span>
+            <span>[+1] {{article.likeCount}}</span><span>(...) {{article.commentCount}}</span>
+            <span class="datetime" am-time-ago="article.datetime"></span>
         </footer>
     </div>
 </div>

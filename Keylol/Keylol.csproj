@@ -48,6 +48,14 @@
       <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="AngularTemplates.Bundling, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AngularTemplates.Compile.1.0.0\lib\net40\AngularTemplates.Bundling.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AngularTemplates.Compile, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AngularTemplates.Compile.1.0.0\lib\net40\AngularTemplates.Compile.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
@@ -272,6 +280,7 @@
     <Content Include="Content\Images\logo-mono.svg" />
     <Content Include="Content\Images\logo.svg" />
     <Content Include="Content\Images\mind-gap.png" />
+    <Content Include="Content\Images\exit.svg" />
     <Content Include="Content\Images\psn-circle-mono.png" />
     <Content Include="Content\Images\psn-circle.png" />
     <Content Include="Content\Images\search-box-button.png" />
@@ -1122,10 +1131,10 @@
     <None Include="BundleTransformer.Configuration.xsd">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Content\Fonts\keylol-rail-sung-babc1164aa3845cc7ac16f107438cced.woff" />
     <None Include="Content\Fonts\keylol-rail-sung-full.ttf" />
-    <Content Include="Content\Fonts\lisong-28c68f205d871d952064990617ece150.woff" />
+    <Content Include="Content\Fonts\lisong-9afdc5c749c882c260c0cd6c0181e6bd.woff" />
     <None Include="Content\Fonts\lisong-full.ttf" />
-    <Content Include="Content\Fonts\keylol-rail-sung-7e527aac444604711a10704ee9f21714.woff" />
     <None Include="Content\Fonts\myriadpro-regular-full.woff" />
     <Content Include="Content\Fonts\myriadpro-regular.woff" />
     <None Include="JavaScriptEngineSwitcher.Configuration.xsd">

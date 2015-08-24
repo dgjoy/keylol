@@ -66,7 +66,7 @@
 					scrollDiv.className = 'modal-scrollbar-measure';
 					body.append(scrollDiv);
 					var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-					scrollDiv.remove();
+					angular.element(scrollDiv).remove();
 					return scrollbarWidth;
 				}
 				self.scrollbarWidth = self.measureScrollbar();
