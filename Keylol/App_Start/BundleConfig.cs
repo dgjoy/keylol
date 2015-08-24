@@ -1,4 +1,5 @@
-﻿using System.Web.Optimization;
+﻿using System;
+using System.Web.Optimization;
 using BundleTransformer.Core.Bundles;
 using BundleTransformer.Core.Orderers;
 using BundleTransformer.Core.Resolvers;
@@ -23,18 +24,7 @@ namespace Keylol
             bundles.Add(vendorJsBundle);
 
             var appJsBundle = new CustomScriptBundle("~/bundles/angular-app");
-            appJsBundle.Include(
-                "~/Scripts/app/keylol-app.js",
-                "~/Scripts/app/services/page-title-service.js",
-                "~/Scripts/app/directives/kl-modal.js",
-                "~/Scripts/app/controllers/root-controller.js",
-                "~/Scripts/app/controllers/home-controller.js",
-                "~/Scripts/app/controllers/test-controller.js",
-                "~/Scripts/app/controllers/modal/registration-controller.js",
-                "~/Scripts/app/controllers/section/main-navigation-controller.js",
-                "~/Scripts/app/controllers/section/point-recommendation-controller.js",
-                "~/Scripts/app/controllers/section/reading-recommendation-controller.js",
-                "~/Scripts/app/controllers/section/timeline-controller.js");
+            appJsBundle.IncludeDirectory("~/Scripts/app", "*.js", true);
             appJsBundle.Orderer = nullOrderer;
             bundles.Add(appJsBundle);
 

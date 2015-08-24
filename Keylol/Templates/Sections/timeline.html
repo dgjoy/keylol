@@ -8,29 +8,28 @@
                 <rect x="6" width="5" height="100%"></rect>
                 <circle cx="8.5" cy="50%" r="5"></circle>
             </svg>
-            <div class="title">
-                <h1 class="font-myriad-lisong">讯息轨道</h1>
-                <h2>推送至已订阅据点的文章</h2>
+            <div class="title font-myriad-keylol">
+                <h1>讯息轨道</h1>
+                <h2>Timeline</h2>
             </div>
         </div>
     </div>
-    <div class="piece box-shodowed card" ng-repeat="piece in pieces">
+    <div class="piece card" ng-repeat="piece in pieces">
         <svg xmlns="http://www.w3.org/2000/svg" class="card-line">
-            <rect fill="{{randomColor[$index]}}" x="6" width="5" height="100%"></rect>
-            <circle cx="8.5" cy="26" r="5"></circle>
+            <rect x="6" width="5" height="100%"></rect>
+            <circle cx="8.5" cy="46" r="5"></circle>
         </svg>
         <div class="piece-heading">
             <div class="piece-author">
                 <a class="avatar-anchor" href="test">
                     <img ng-src="{{piece.author.avatarUrl}}" alt="头像">
                 </a>
-                <h4 ng-class="{'username-full-height': !piece.author.gamerTag}">
+                <h4>
                     <a href="test">@{{piece.author.username}}</a>
                 </h4>
-                <h4>{{piece.author.gamerTag}}</h4>
             </div>
             <h3 ng-switch="headingDisplayMode(piece)">
-                <span class="piece-type font-myriad-lisong" ng-repeat="type in piece.types">{{type}}</span>
+                <span class="piece-type font-myriad-keylol" ng-repeat="type in piece.types">{{type}}</span>
                 <span ng-switch-when="source"><span ng-if="piece.source.repost">二次</span>推送至「<a ng-href="{{piece.source.url}}">{{piece.source.name}}</a>」社群据点</span>
                 <span ng-switch-default><a ng-href="{{piece.url}}">{{piece.title}}</a></span>
             </h3>

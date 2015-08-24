@@ -11,14 +11,14 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-7e527aac444604711a10704ee9f21714.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-babc1164aa3845cc7ac16f107438cced.woff") format("woff");
 }
 
 @font-face {
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-28c68f205d871d952064990617ece150.woff") format("woff");
+    src: url("./Fonts/lisong-9afdc5c749c882c260c0cd6c0181e6bd.woff") format("woff");
 }
 
 /*#endregion */
@@ -28,7 +28,7 @@
 body {
     color: #333;
     background-color: #eef1f3;
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, "Hiragino Sans GB", "Microsoft JhengHei", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, "Hiragino Sans GB", "Microsoft YaHei", "Microsoft JhengHei", "WenQuanYi Micro Hei", sans-serif;
     font-size: 12px;
     min-width: 1220px;
     box-sizing: border-box;
@@ -175,67 +175,92 @@ input[type=radio] {
 
 /*#region Modal Window */
 
+.body-modal-open {
+    overflow: hidden;
+}
+
+.modal-scrollbar-measure {
+    position: absolute;
+    top: -9999px;
+    width: 50px;
+    height: 50px;
+    overflow: scroll;
+}
+
 kl-modal {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    white-space: nowrap;
 }
+
+    kl-modal:after {
+        display: inline-block;
+        height: 100%;
+        margin-left: -.05em;
+        content: "";
+    }
 
     kl-modal:last-of-type {
         background-color: rgba(0, 0, 0, 0.65);
     }
 
 [class^=modal-position-] {
-    position: absolute;
-    overflow: auto;
+    display: inline-block;
+    text-align: left;
 }
 
-.modal-position-center {
-    top: 50%;
-    left: 50%;
-    max-height: 100%;
-    max-width: 90%;
-    transform: translate(-50%, -50%);
+kl-modal[position=center] {
+    text-align: center;
 }
 
-.modal-position-top {
-    top: 12%;
-    left: 50%;
-    max-height: 86%;
-    max-width: 90%;
-    transform: translate(-50%, 0);
+    .modal-position-center,
+    kl-modal[position=center]:after {
+        vertical-align: middle;
+    }
+
+kl-modal[position=top] {
+    text-align: center;
 }
 
-.modal-position-bottom {
-    bottom: 12%;
-    left: 50%;
-    max-height: 86%;
-    max-width: 90%;
-    transform: translate(-50%, 0);
+    .modal-position-top,
+    kl-modal[position=top]:after {
+        vertical-align: top;
+    }
+
+kl-modal[position=bottom] {
+    text-align: center;
 }
 
-.modal-position-left {
-    top: 50%;
-    left: 6%;
-    max-height: 100%;
-    max-width: 90%;
-    transform: translate(0, -50%);
+    .modal-position-bottom,
+    kl-modal[position=bottom]:after {
+        vertical-align: bottom;
+    }
+
+kl-modal[position=left] {
+    text-align: left;
 }
 
-.modal-position-right {
-    top: 50%;
-    right: 6%;
-    max-height: 100%;
-    max-width: 90%;
-    transform: translate(0, -50%);
+    .modal-position-left,
+    kl-modal[position=left]:after {
+        vertical-align: middle;
+    }
+
+kl-modal[position=right] {
+    text-align: right;
 }
+
+    .modal-position-right,
+    kl-modal[position=right]:after {
+        vertical-align: middle;
+    }
 
 .modal-window {
     background-color: #eef1f3;
     box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
-    margin: 0 30px;
 }
 
     /*#region Confirm Button */
@@ -394,19 +419,19 @@ kl-modal {
 
 /*#endregion */
 
-/*#region Point Recommendation Section */
+/*#region Promoted Points Section */
 
-.section-point-recommendation {
+.section-promoted-points {
     background-color: white;
     width: 200px;
 }
 
-    .section-point-recommendation .heading {
+    .section-promoted-points .heading {
         background-color: #11254a;
         position: relative;
     }
 
-        .section-point-recommendation .heading:before {
+        .section-promoted-points .heading:before {
             content: "";
             display: block;
             position: absolute;
@@ -420,44 +445,44 @@ kl-modal {
             background-color: #adafb0;
         }
 
-        .section-point-recommendation .heading img {
+        .section-promoted-points .heading img {
             float: left;
             margin-left: -5px;
         }
 
-        .section-point-recommendation .heading svg {
+        .section-promoted-points .heading svg {
             float: left;
             width: 34px;
             height: 34px;
             margin: 13px 10px 13px 13px;
         }
 
-        .section-point-recommendation .heading p {
+        .section-promoted-points .heading p {
             margin: 0;
             color: white;
         }
 
-            .section-point-recommendation .heading p:first-of-type {
+            .section-promoted-points .heading p:first-of-type {
                 font-size: 16px;
                 padding-top: 14px;
                 padding-bottom: 1px;
             }
 
-    .section-point-recommendation .point {
+    .section-promoted-points .point {
         margin-left: 20px;
         padding: 10px 0;
         border-bottom: 1px solid #000003;
     }
 
-        .section-point-recommendation .point:last-of-type {
+        .section-promoted-points .point:last-of-type {
             border-bottom: none;
         }
 
-        .section-point-recommendation .point p {
+        .section-promoted-points .point p {
             margin: 0;
         }
 
-            .section-point-recommendation .point p:first-of-type {
+            .section-promoted-points .point p:first-of-type {
                 font-weight: bold;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -488,6 +513,7 @@ kl-modal {
             width: 17px;
             left: 13px;
             top: 0;
+            fill: #11254a;
         }
 
             .section-timeline .card .card-line circle {
@@ -587,10 +613,8 @@ kl-modal {
     /*#region Piece */
 
     .section-timeline .piece {
-        background: white;
-        margin: 20px 0;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 30px;
+        padding-bottom: 20px;
         padding-right: 15px;
     }
 
@@ -602,8 +626,8 @@ kl-modal {
     }
 
         .section-timeline .piece-heading h3 {
-            height: 32px;
-            line-height: 32px;
+            height: 24px;
+            line-height: 24px;
             font-size: 12px;
             font-weight: normal;
             margin: 0;
@@ -622,25 +646,26 @@ kl-modal {
 
         .section-timeline .piece-heading .piece-author {
             float: right;
-            width: 240px;
+            width: 184px;
         }
 
             .section-timeline .piece-heading .piece-author .avatar-anchor {
                 float: right;
-                display: block;
                 margin-left: 6px;
             }
 
             .section-timeline .piece-heading .piece-author img {
-                width: 28px;
-                height: 28px;
+                width: 24px;
+                height: 24px;
+                box-sizing: border-box;
+                display: block;
                 border-radius: 50%;
                 border: 2px solid #11254a;
             }
 
             .section-timeline .piece-heading .piece-author h4 {
-                line-height: 15px;
-                height: 15px;
+                line-height: 24px;
+                height: 24px;
                 font-weight: normal;
                 margin: 0;
                 text-align: right;
@@ -648,16 +673,6 @@ kl-modal {
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-
-                .section-timeline .piece-heading .piece-author h4.username-full-height {
-                    line-height: 32px;
-                    height: 32px;
-                    margin-bottom: 0;
-                }
-
-                .section-timeline .piece-heading .piece-author h4:first-of-type {
-                    margin-bottom: 2px;
-                }
 
     /*#endregion */
 
@@ -855,9 +870,9 @@ kl-modal {
 
 /*#endregion */
 
-/*#region Reading Recommendation Section */
+/*#region Promoted Readings Section */
 
-.section-reading-recommendation {
+.section-promoted-readings {
     width: 100%;
     min-width: 206px;
     background-color: white;
@@ -865,11 +880,11 @@ kl-modal {
     padding-bottom: 9px;
 }
 
-    .section-reading-recommendation .article {
+    .section-promoted-readings .article {
         padding: 12px 15px;
     }
 
-        .section-reading-recommendation .article h2 {
+        .section-promoted-readings .article h2 {
             font-weight: normal;
             font-size: 12px;
             margin: 0;
@@ -878,33 +893,33 @@ kl-modal {
             text-overflow: ellipsis;
         }
 
-            .section-reading-recommendation .article h2 span {
+            .section-promoted-readings .article h2 span {
                 margin-right: 4px;
                 color: #748a97;
             }
 
-        .section-reading-recommendation .article p {
+        .section-promoted-readings .article p {
             margin: 7px 0;
             max-height: 48px;
             overflow: hidden;
             line-height: 16px;
         }
 
-        .section-reading-recommendation .article footer {
+        .section-promoted-readings .article footer {
             text-align: right;
             color: #748a97;
         }
 
-            .section-reading-recommendation .article footer span {
+            .section-promoted-readings .article footer span {
                 margin-left: 15px;
                 display: none;
             }
 
-                .section-reading-recommendation .article footer span:last-child {
+                .section-promoted-readings .article footer span:last-child {
                     display: inline-block;
                 }
 
-        .section-reading-recommendation .article:hover footer span {
+        .section-promoted-readings .article:hover footer span {
             display: inline-block;
         }
 
@@ -1184,5 +1199,36 @@ kl-modal {
 .modal-registration .modal-window .modal-confirm-button {
     margin-right: -22px;
 }
+
+/*#endregion */
+
+/*#region Reception Section */
+
+.section-reception {
+    background-color: white;
+    padding-top: 6px;
+    padding-bottom: 9px;
+}
+
+    .section-reception div {
+        margin-bottom: 18px;
+    }
+
+    .section-reception ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .section-reception ul li {
+            padding: 2px 10px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+    .section-reception a {
+        color: #000003;
+    }
 
 /*#endregion */

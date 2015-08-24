@@ -3,11 +3,6 @@
 
     keylolApp.controller("TimelineController", [
         "$scope", function ($scope) {
-            $scope.randomColor = [];
-            for (var i = 0; i < 100; i++) {
-                $scope.randomColor[i] = "#" + (Math.random() * 0xFFFFFF << 0).toString(16);
-            }
-
             $scope.headingDisplayMode = function(piece) {
                 if (piece.source)
                     return "source";

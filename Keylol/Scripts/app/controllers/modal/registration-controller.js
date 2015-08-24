@@ -6,6 +6,12 @@
 			$scope.cancel = function() {
 				close();
 			};
+			$scope.showRegistrationForm = function() {
+                ModalService.showModal({
+                    templateUrl: "Templates/Modal/registration.html",
+                    controller: "RegistrationController"
+                });
+            };
 		}
 	]);
 })();

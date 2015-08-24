@@ -1,7 +1,7 @@
 ﻿(function() {
     "use strict";
 
-    keylolApp.controller("PointRecommendationController", [
+    keylolApp.controller("PromotedPointsController", [
         "$scope", function($scope) {
             $scope.recommendedPoints = [
                 {
