@@ -19,10 +19,11 @@ namespace Keylol
 
             var vendorJsBundle = new CustomScriptBundle("~/bundles/vendor");
             vendorJsBundle.Include(
+                "~/Scripts/jquery-{version}.js",
                 "~/Scripts/angular.js",
                 "~/Scripts/i18n/angular-locale_zh.js",
                 "~/Scripts/angular-route.js",
-                "~/Scripts/angular-animate.js",
+                //"~/Scripts/angular-animate.js",
                 "~/Scripts/angular-modal-service.js",
                 "~/Scripts/moment.js",
                 "~/Scripts/moment-local_zh-cn.js",

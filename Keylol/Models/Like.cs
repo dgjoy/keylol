@@ -6,8 +6,8 @@ namespace Keylol.Models
     public abstract class Like
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public DateTime Time { get; set; }
-
+        public DateTime Time { get; set; } = DateTime.Now;
+        
         [Required]
         public virtual KeylolUser Operator { get; set; }
     }

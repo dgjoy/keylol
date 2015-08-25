@@ -224,32 +224,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\Geetest.cs" />
+    <Compile Include="App_Start\Extensions.cs" />
+    <Compile Include="App_Start\KeylolApiController.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\API\UserController.cs" />
     <Compile Include="Controllers\API\SampleController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508011833469_Initial.cs" />
-    <Compile Include="Migrations\201508011833469_Initial.Designer.cs">
-      <DependentUpon>201508011833469_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201508250530574_Initial.cs" />
+    <Compile Include="Migrations\201508250530574_Initial.Designer.cs">
+      <DependentUpon>201508250530574_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
-    <Compile Include="Models\Piece.cs" />
+    <Compile Include="Models\Entry.cs" />
     <Compile Include="Models\ArticleType.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Like.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Point.cs" />
-    <Compile Include="Models\Warning.cs" />
     <Compile Include="Provider\KeylolOAuthProvider.cs" />
+    <Compile Include="ViewModels\KeylolUserViewModel.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\KeylolUser.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
@@ -316,6 +319,7 @@
     <Content Include="Scripts\app\controllers\home-controller.js" />
     <Content Include="Scripts\app\directives\kl-modal.js" />
     <Content Include="Scripts\app\keylol-app.js" />
+    <Content Include="Scripts\app\services\utils.js" />
     <Content Include="Scripts\app\services\page-title-service.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
@@ -1061,6 +1065,11 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
+    <Content Include="Content\Fonts\keylol-rail-sung-4da40bfaf26d2174bb5e4a8bde28b37d.woff" />
+    <Content Include="Content\Fonts\lisong-d9b03844cd8ac4a41d6edda01dc7612e.woff" />
+    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\jquery-2.1.4.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\moment-local_zh-cn.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment-with-locales.min.js" />
@@ -1122,6 +1131,7 @@
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Scripts\angular-route.min.js.map" />
     <Content Include="Scripts\angular-moment.min.js.map" />
+    <Content Include="Scripts\jquery-2.1.4.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1131,9 +1141,7 @@
     <None Include="BundleTransformer.Configuration.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Content\Fonts\keylol-rail-sung-babc1164aa3845cc7ac16f107438cced.woff" />
     <None Include="Content\Fonts\keylol-rail-sung-full.ttf" />
-    <Content Include="Content\Fonts\lisong-9afdc5c749c882c260c0cd6c0181e6bd.woff" />
     <None Include="Content\Fonts\lisong-full.ttf" />
     <None Include="Content\Fonts\myriadpro-regular-full.woff" />
     <Content Include="Content\Fonts\myriadpro-regular.woff" />
@@ -1144,8 +1152,8 @@
     <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201508011833469_Initial.resx">
-      <DependentUpon>201508011833469_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508250530574_Initial.resx">
+      <DependentUpon>201508250530574_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

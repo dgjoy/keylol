@@ -20,20 +20,25 @@ namespace Keylol.Models
     public class KeylolUser : IdentityUser
     {
         public DateTime RegisterTime { get; set; } = DateTime.Now;
-        public string RegisterIp { get; set; }
-        public DateTime LastVisitTime { get; set; } = DateTime.Now;
-        public string LastVisitIp { get; set; }
-        public virtual ICollection<Point> SubscribedPoints { get; set; }
 
         [Required]
-        public virtual ProfilePoint ProfilePoint { get; set; }
+        [MaxLength(64)]
+        public string RegisterIp { get; set; }
 
+        public DateTime LastVisitTime { get; set; } = DateTime.Now;
+
+        [Required]
+        [MaxLength(64)]
+        public string LastVisitIp { get; set; }
+
+        public virtual ICollection<Point> SubscribedPoints { get; set; }
+        [Required]
+        public virtual ProfilePoint ProfilePoint { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Like> Likes { get; set; }
-        public virtual ICollection<UserMessage> SentMessages { get; set; }
         public virtual ICollection<Message> ReceivedMessages { get; set; }
-        public virtual ICollection<Warning> SentWarnings { get; set; }
-        public virtual ICollection<Warning> ReceivedWarnings { get; set; }
+        public virtual ICollection<UserMessage> SentUserMessages { get; set; }
+        public virtual ICollection<SystemMessageWarningNotification> SentWarnings { get; set; }
         public virtual ICollection<NormalPoint> ModeratedPoints { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<KeylolUser> manager, string authenticationType)
@@ -46,8 +51,9 @@ namespace Keylol.Models
 
         #region Preferences
 
-        [MaxLength(100)]
-        public string GamerTag { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [StringLength(100)]
+        public string GamerTag { get; set; } = string.Empty;
 
         // Auto share options
         public bool AutoShareOnAcquiringNewGame { get; set; } = true;

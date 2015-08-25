@@ -13,7 +13,7 @@ namespace Keylol.DAL
         public DbSet<Point> Points { get; set; }
         public DbSet<NormalPoint> NormalPoints { get; set; }
         public DbSet<ProfilePoint> ProfilePoints { get; set; }
-        public DbSet<Piece> Pieces { get; set; }
+        public DbSet<Entry> Entries { get; set; }
         public DbSet<Article> Articles { get; set; }
         public DbSet<ArticleType> ArticleTypes { get; set; }
         public DbSet<Status> Statuses { get; set; }
@@ -47,29 +47,27 @@ namespace Keylol.DAL
                 .WithMany(point => point.Subscribers)
                 .Map(t => t.ToTable("UserPointSubscriptions"));
             modelBuilder.Entity<NormalPoint>()
-                .HasMany(point => point.Moderators)
+                .HasMany(point => point.Staffs)
                 .WithMany(user => user.ModeratedPoints)
                 .Map(t => t.ToTable("PointModerators"));
             modelBuilder.Entity<NormalPoint>()
                 .HasMany(point => point.AssociatedToPoints)
-                .WithMany(point => point.AssociatedByNormalPoints)
+                .WithMany(point => point.AssociatedByPoints)
                 .Map(t => t.ToTable("PointAssociations"));
-            modelBuilder.Entity<Piece>()
-                .HasMany(piece => piece.AttachedPoints)
-                .WithMany(point => point.AttachedPieces)
-                .Map(t => t.ToTable("PiecePointPushes"));
+            modelBuilder.Entity<Entry>()
+                .HasMany(entry => entry.AttachedPoints)
+                .WithMany(point => point.Entries)
+                .Map(t => t.ToTable("EntryPointPushes"));
             modelBuilder.Entity<Comment>()
                 .HasMany(comment => comment.ReplyToComments)
                 .WithMany(comment => comment.RepliedByComments)
                 .Map(t => t.MapLeftKey("ByComment_Id")
                     .MapRightKey("ToComment_Id")
                     .ToTable("CommentReplies"));
+
             modelBuilder.Entity<KeylolUser>()
-                .HasMany(user => user.SentWarnings)
-                .WithRequired(warning => warning.Operator);
-            modelBuilder.Entity<KeylolUser>()
-                .HasMany(user => user.ReceivedWarnings)
-                .WithRequired(warning => warning.Target);
+                .HasRequired(user => user.ProfilePoint)
+                .WithRequiredPrincipal(point => point.User);
         }
 
         public static KeylolDbContext Create()

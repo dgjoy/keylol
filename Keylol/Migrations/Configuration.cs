@@ -15,44 +15,44 @@ namespace Keylol.Migrations
 
         protected override void Seed(KeylolDbContext context)
         {
-            var hasher = new PasswordHasher();
-            var profilePoint = new ProfilePoint
-            {
-                OwnedPieces = new List<Piece>()
-            };
-            var normalPoint = new NormalPoint
-            {
-                Name = "²âÊÔ¾Ýµã",
-                AlternativeName = "Test Point",
-                UrlFriendlyName = "test-point",
-                Type = NormalPointType.Game
-            };
-            var user = new KeylolUser
-            {
-                UserName = "stackia",
-                PasswordHash = hasher.HashPassword("test"),
-                Email = "jsq2627@gmail.com",
-                ProfilePoint = profilePoint,
-                SecurityStamp = "hahaha",
-                SubscribedPoints = new List<Point> {normalPoint},
-                ModeratedPoints = new List<NormalPoint> {normalPoint}
-            };
-            var articleType = new ArticleType
-            {
-                Category = ArticleTypeCategory.Topic,
-                Name = "²âÊÔ",
-                UrlFriendlyName = "test"
-            };
-            var article = new Article
-            {
-                Title = "²âÊÔÎÄÕÂ",
-                Content = "¹þ¹þ¹þ¹þ¹þ",
-                Type = articleType,
-                AttachedPoints = new List<Point> {profilePoint, normalPoint}
-            };
-            profilePoint.OwnedPieces.Add(article);
-            context.Users.Add(user);
-            context.SaveChanges();
+//            var hasher = new PasswordHasher();
+//            var profilePoint = new ProfilePoint
+//            {
+//                OwnedEntries = new List<Entry>()
+//            };
+//            var normalPoint = new NormalPoint
+//            {
+//                Name = "²âÊÔ¾Ýµã",
+//                AlternativeName = "Test Point",
+//                UrlFriendlyName = "test-point",
+//                Type = NormalPointType.Game
+//            };
+//            var user = new KeylolUser
+//            {
+//                UserName = "stackia",
+//                PasswordHash = hasher.HashPassword("test"),
+//                Email = "jsq2627@gmail.com",
+//                ProfilePoint = profilePoint,
+//                SecurityStamp = "hahaha",
+//                SubscribedPoints = new List<Point> {normalPoint},
+//                ModeratedPoints = new List<NormalPoint> {normalPoint}
+//            };
+//            var articleType = new ArticleType
+//            {
+//                Category = ArticleTypeCategory.Topic,
+//                Name = "²âÊÔ",
+//                UrlFriendlyName = "test"
+//            };
+//            var article = new Article
+//            {
+//                Title = "²âÊÔÎÄÕÂ",
+//                Content = "¹þ¹þ¹þ¹þ¹þ",
+//                Type = articleType,
+//                AttachedPoints = new List<Point> {profilePoint, normalPoint}
+//            };
+//            profilePoint.OwnedEntries.Add(article);
+//            context.Users.Add(user);
+//            context.SaveChanges();
         }
     }
 }

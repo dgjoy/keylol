@@ -12,12 +12,12 @@ namespace Keylol.Models
         [MaxLength(30000)]
         public string Content { get; set; }
 
-        public DateTime PublishTime { get; set; }
-        public DateTime LastEditTime { get; set; }
-
+        public DateTime PublishTime { get; set; } = DateTime.Now;
+        public DateTime LastEditTime { get; set; } = DateTime.Now;
+        
         [Required]
         public virtual KeylolUser Commentator { get; set; }
-
+        
         [Required]
         public virtual Article Article { get; set; }
 

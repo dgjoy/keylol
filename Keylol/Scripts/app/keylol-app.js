@@ -3,7 +3,7 @@
 
 	var app = angular.module("KeylolApp", [
 		// Angular modules 
-		"ngAnimate",
+		//"ngAnimate",
 		"ngRoute",
 
 		// Custom modules

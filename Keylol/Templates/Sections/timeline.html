@@ -14,37 +14,37 @@
             </div>
         </div>
     </div>
-    <div class="piece card" ng-repeat="piece in pieces">
+    <div class="entry card" ng-repeat="entry in entries">
         <svg xmlns="http://www.w3.org/2000/svg" class="card-line">
             <rect x="6" width="5" height="100%"></rect>
             <circle cx="8.5" cy="46" r="5"></circle>
         </svg>
-        <div class="piece-heading">
-            <div class="piece-author">
+        <div class="entry-heading">
+            <div class="entry-author">
                 <a class="avatar-anchor" href="test">
-                    <img ng-src="{{piece.author.avatarUrl}}" alt="头像">
+                    <img ng-src="{{entry.author.avatarUrl}}" alt="头像">
                 </a>
                 <h4>
-                    <a href="test">@{{piece.author.username}}</a>
+                    <a href="test">@{{entry.author.username}}</a>
                 </h4>
             </div>
             <h3>
-                <span class="piece-type font-myriad-keylol" ng-repeat="type in piece.types">{{type}}</span>
-                <span><a ng-href="{{source.url}}" ng-repeat="source in piece.sources">「{{source.name}}」</a></span>
+                <span class="entry-type font-myriad-keylol" ng-repeat="type in entry.types">{{type}}</span>
+                <span><a ng-href="{{source.url}}" ng-repeat="source in entry.sources">「{{source.name}}」</a></span>
             </h3>
         </div>
-        <div class="piece-content clearfix box-shodawed-glowed">
-            <img ng-if="piece.thumbnail" class="thumbnail" ng-src="{{piece.thumbnail}}" alt="预览图">
+        <div class="entry-content clearfix box-shodawed-glowed">
+            <img ng-if="entry.thumbnail" class="thumbnail" ng-src="{{entry.thumbnail}}" alt="预览图">
             <div class="summary">
                 <h3>
-                    <a ng-href="{{piece.url}}">{{piece.title}}</a>
+                    <a ng-href="{{entry.url}}">{{entry.title}}</a>
                 </h3>
-                <p ng-class="{'two-line': !piece.thumbnail}">{{piece.summary}}</p>
+                <p ng-class="{'two-line': !entry.thumbnail}">{{entry.summary}}</p>
             </div>
         </div>
         <footer>
-            <span class="counts"><span>[+1] {{piece.likeCount}}</span><span>(···) {{piece.commentCount}}</span></span>
-            <span class="datetime" am-time-ago="piece.datetime"></span>
+            <span class="counts"><span>[+1] {{entry.likeCount}}</span><span>(···) {{entry.commentCount}}</span></span>
+            <span class="datetime" am-time-ago="entry.datetime"></span>
             <span class="likes">Stackia、Lee. 赞了这篇文章</span>
         </footer>
     </div>

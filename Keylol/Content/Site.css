@@ -11,14 +11,14 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-babc1164aa3845cc7ac16f107438cced.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-4da40bfaf26d2174bb5e4a8bde28b37d.woff") format("woff");
 }
 
 @font-face {
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-9afdc5c749c882c260c0cd6c0181e6bd.woff") format("woff");
+    src: url("./Fonts/lisong-d9b03844cd8ac4a41d6edda01dc7612e.woff") format("woff");
 }
 
 /*#endregion */
@@ -431,8 +431,7 @@ kl-modal[position=right] {
 
         .section-logo p:first-of-type {
             font-size: 25px;
-            margin-top: 2px;
-            margin-bottom: 4px;
+            margin-top: 4px;
         }
 
         .section-logo p:nth-of-type(2) {
@@ -670,21 +669,21 @@ kl-modal[position=right] {
 
     /*#endregion */
 
-    /*#region Piece */
+    /*#region Entry */
 
-    .section-timeline .piece {
+    .section-timeline .entry {
         padding-top: 30px;
         padding-right: 14px;
     }
 
     /*#region Heading */
 
-    .section-timeline .piece-heading {
+    .section-timeline .entry-heading {
         margin-bottom: 10px;
         margin-left: 2px;
     }
 
-        .section-timeline .piece-heading h3 {
+        .section-timeline .entry-heading h3 {
             height: 24px;
             line-height: 24px;
             font-size: 12px;
@@ -695,7 +694,7 @@ kl-modal[position=right] {
             text-overflow: ellipsis;
         }
 
-        .section-timeline .piece-heading .piece-type {
+        .section-timeline .entry-heading .entry-type {
             font-size: 14px;
             color: white;
             background-color: #11254a;
@@ -703,17 +702,17 @@ kl-modal[position=right] {
             margin-right: 5px;
         }
 
-        .section-timeline .piece-heading .piece-author {
+        .section-timeline .entry-heading .entry-author {
             float: right;
             width: 184px;
         }
 
-            .section-timeline .piece-heading .piece-author .avatar-anchor {
+            .section-timeline .entry-heading .entry-author .avatar-anchor {
                 float: right;
                 margin-left: 6px;
             }
 
-            .section-timeline .piece-heading .piece-author img {
+            .section-timeline .entry-heading .entry-author img {
                 width: 24px;
                 height: 24px;
                 box-sizing: border-box;
@@ -722,7 +721,7 @@ kl-modal[position=right] {
                 border: 2px solid #11254a;
             }
 
-            .section-timeline .piece-heading .piece-author h4 {
+            .section-timeline .entry-heading .entry-author h4 {
                 line-height: 24px;
                 height: 24px;
                 font-weight: normal;
@@ -737,22 +736,22 @@ kl-modal[position=right] {
 
     /*#region Content */
 
-    .section-timeline .piece-content {
+    .section-timeline .entry-content {
         background-color: white;
     }
 
-        .section-timeline .piece-content .thumbnail {
+        .section-timeline .entry-content .thumbnail {
             float: left;
             width: 192px;
             height: 108px;
             margin-right: 9px;
         }
 
-        .section-timeline .piece-content .summary {
+        .section-timeline .entry-content .summary {
             padding: 8px 10px;
         }
 
-        .section-timeline .piece-content h3 {
+        .section-timeline .entry-content h3 {
             font-size: 16px;
             font-weight: normal;
             margin: 0 0 5px 0;
@@ -764,14 +763,14 @@ kl-modal[position=right] {
             text-overflow: ellipsis;
         }
 
-        .section-timeline .piece-content p {
+        .section-timeline .entry-content p {
             margin: 0;
             line-height: 16px;
             max-height: 64px;
             overflow: hidden;
         }
 
-            .section-timeline .piece-content p.two-line {
+            .section-timeline .entry-content p.two-line {
                 height: 32px;
             }
 
@@ -779,7 +778,7 @@ kl-modal[position=right] {
 
     /*#region Footer */
 
-    .section-timeline .piece footer {
+    .section-timeline .entry footer {
         text-align: center;
         color: #748a97;
         height: 24px;
@@ -788,11 +787,11 @@ kl-modal[position=right] {
         visibility: hidden;
     }
 
-        .section-timeline .piece footer .datetime {
+        .section-timeline .entry footer .datetime {
             float: left;
         }
 
-        .section-timeline .piece footer .likes {
+        .section-timeline .entry footer .likes {
             display: block;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -800,20 +799,20 @@ kl-modal[position=right] {
             padding: 0 10px;
         }
 
-        .section-timeline .piece footer .counts {
+        .section-timeline .entry footer .counts {
             float: right;
         }
 
-            .section-timeline .piece footer .counts span {
+            .section-timeline .entry footer .counts span {
                 display: inline-block;
                 margin-left: 15px;
             }
 
-                .section-timeline .piece footer .counts span:first-of-type {
+                .section-timeline .entry footer .counts span:first-of-type {
                     margin-left: 0;
                 }
 
-    .section-timeline .piece:hover footer {
+    .section-timeline .entry:hover footer {
         visibility: visible;
     }
 
@@ -1123,7 +1122,7 @@ kl-modal[position=right] {
 .modal-registration h3 {
     color: #11254a;
     font-size: 14px;
-    margin: 2px 0;
+    margin: 3px 0;
 }
 
     .modal-registration h3.single-line {
@@ -1139,7 +1138,11 @@ kl-modal[position=right] {
 .modal-registration h4 {
     font-weight: normal;
     font-size: 12px;
-    margin: 2px 0;
+    margin: 3px 0;
+}
+
+.modal-registration .error {
+    color: red;
 }
 
 .modal-registration .sample-bar-code {
@@ -1256,6 +1259,11 @@ kl-modal[position=right] {
     box-sizing: border-box;
 }
 
+
+.modal-registration .avatar-box-left-spacing {
+    border: none;
+}
+
 .modal-registration .upload-avatar {
     text-align: center;
 }
@@ -1264,21 +1272,11 @@ kl-modal[position=right] {
         margin: 6px 0;
     }
 
-.modal-registration .checkbox-group {
-    padding: 9px 0;
+.modal-registration .gt_holder {
+    margin: 16px auto;
 }
 
-    .modal-registration .checkbox-group div {
-        display: inline;
-        margin: 0 12px;
-    }
-
-    .modal-registration .checkbox-group label {
-        padding-left: 6px;
-    }
-
 .modal-registration .declaration {
-    font-weight: bold;
     max-width: 580px;
 }
 

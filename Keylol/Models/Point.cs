@@ -16,9 +16,6 @@ namespace Keylol.Models
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public virtual ICollection<KeylolUser> Subscribers { get; set; }
-        public virtual ICollection<Piece> AttachedPieces { get; set; }
-        public virtual ICollection<NormalPoint> AssociatedByNormalPoints { get; set; }
-        public virtual ICollection<Piece> OwnedPieces { get; set; }
     }
 
     public class NormalPoint : Point
@@ -36,12 +33,17 @@ namespace Keylol.Models
         public string UrlFriendlyName { get; set; }
 
         public NormalPointType Type { get; set; }
-        public virtual ICollection<Point> AssociatedToPoints { get; set; }
-        public virtual ICollection<KeylolUser> Moderators { get; set; }
+        public virtual ICollection<NormalPoint> AssociatedToPoints { get; set; }
+        public virtual ICollection<NormalPoint> AssociatedByPoints { get; set; }
+        public virtual ICollection<KeylolUser> Staffs { get; set; }
+        public virtual ICollection<Entry> Entries { get; set; }
     }
 
     public class ProfilePoint : Point
     {
+        [Required]
         public virtual KeylolUser User { get; set; }
+
+        public ICollection<Entry> Entries => null;
     }
 }

@@ -3,13 +3,13 @@
 
 	keylolApp.controller("TimelineController", [
 		"$scope", function($scope) {
-			$scope.headingDisplayMode = function(piece) {
-				if (piece.source)
+			$scope.headingDisplayMode = function(entry) {
+				if (entry.source)
 					return "source";
 				else
 					return "title";
 			};
-			$scope.pieces = [
+			$scope.entries = [
 				{
 					types: ["评测", "好评"],
 					sources: [

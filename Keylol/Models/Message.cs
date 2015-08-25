@@ -6,7 +6,9 @@ namespace Keylol.Models
     public abstract class Message
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-
+        public DateTime Time { get; set; } = DateTime.Now;
+        public bool Read { get; set; } = false;
+        
         [Required]
         public virtual KeylolUser Receiver { get; set; }
     }
@@ -16,7 +18,7 @@ namespace Keylol.Models
         [Required]
         [MaxLength(100000)]
         public string Content { get; set; }
-
+        
         [Required]
         public virtual KeylolUser Sender { get; set; }
     }
@@ -26,7 +28,11 @@ namespace Keylol.Models
     public class SystemMessageWarningNotification : SystemMessage
     {
         [Required]
-        public virtual Warning Warning { get; set; }
+        [MaxLength(100000)]
+        public string Content { get; set; }
+        
+        [Required]
+        public virtual KeylolUser Sender { get; set; }
     }
 
     public class SystemMessageReplyNotification : SystemMessage

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Keylol.DAL;
 using Keylol.Models;
@@ -30,17 +34,54 @@ namespace Keylol
         }
     }
 
+    public class KeylolUserValidator : UserValidator<KeylolUser>
+    {
+        public KeylolUserValidator(UserManager<KeylolUser, string> manager) : base(manager)
+        {
+        }
+
+        public override async Task<IdentityResult> ValidateAsync(KeylolUser user)
+        {
+            var errors = new List<string>();
+            var byteLength = user.UserName.ByteLength();
+            if (byteLength < 3 || byteLength > 16)
+            {
+                errors.Add("UserName should be 3-16 bytes.");
+            }
+            if (!AllowOnlyAlphanumericUserNames && !Regex.IsMatch(user.UserName, @"^[0-9A-Za-z\u4E00-\u9FCC]+$"))
+            {
+                errors.Add("Only digits, letters and Chinese characters are allowed in UserName.");
+            }
+            var result = await base.ValidateAsync(user);
+            if (errors.Any() || !result.Succeeded)
+            {
+                errors.AddRange(result.Errors);
+                return IdentityResult.Failed(errors.ToArray());
+            }
+            return IdentityResult.Success;
+        }
+    }
+
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class KeylolUserManager : UserManager<KeylolUser>
     {
         public KeylolUserManager(IUserStore<KeylolUser> store)
-            : base(store) {}
+            : base(store)
+        {
+        }
+
+        public override Task<IdentityResult> CreateAsync(KeylolUser user, string password)
+        {
+            user.ProfilePoint = new ProfilePoint();
+            return base.CreateAsync(user, password);
+        }
 
         public static KeylolUserManager Create(IdentityFactoryOptions<KeylolUserManager> options, IOwinContext context)
         {
-            var manager = new KeylolUserManager(new UserStore<KeylolUser>(context.Get<KeylolDbContext>()));
+            var manager =
+                new KeylolUserManager(new UserStore<KeylolUser>(context.Get<KeylolDbContext>()));
             // Configure validation logic for usernames
-            manager.UserValidator = new UserValidator<KeylolUser>(manager)
+            manager.UserValidator = new KeylolUserValidator(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
                 RequireUniqueEmail = true
@@ -49,29 +90,29 @@ namespace Keylol
             // Configure validation logic for passwords
             manager.PasswordValidator = new PasswordValidator
             {
-                RequiredLength = 6,
-                RequireNonLetterOrDigit = true,
-                RequireDigit = true,
-                RequireLowercase = true,
-                RequireUppercase = true
+                RequireDigit = false,
+                RequireLowercase = false,
+                RequireNonLetterOrDigit = false,
+                RequireUppercase = false,
+                RequiredLength = 6
             };
 
             // Configure user lockout defaults
-            manager.UserLockoutEnabledByDefault = true;
+            manager.UserLockoutEnabledByDefault = false;
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
             // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
             // You can write your own provider and plug it in here.
-            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<KeylolUser>
-            {
-                MessageFormat = "Your security code is {0}"
-            });
-            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<KeylolUser>
-            {
-                Subject = "Security Code",
-                BodyFormat = "Your security code is {0}"
-            });
+//            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<KeylolUser>
+//            {
+//                MessageFormat = "Your security code is {0}"
+//            });
+//            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<KeylolUser>
+//            {
+//                Subject = "Security Code",
+//                BodyFormat = "Your security code is {0}"
+//            });
             manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
@@ -88,11 +129,14 @@ namespace Keylol
     public class KeylolSignInManager : SignInManager<KeylolUser, string>
     {
         public KeylolSignInManager(KeylolUserManager userManager, IAuthenticationManager authenticationManager)
-            : base(userManager, authenticationManager) {}
+            : base(userManager, authenticationManager)
+        {
+        }
 
         public override Task<ClaimsIdentity> CreateUserIdentityAsync(KeylolUser user)
         {
-            return user.GenerateUserIdentityAsync((KeylolUserManager) UserManager, CookieAuthenticationDefaults.AuthenticationType);
+            return user.GenerateUserIdentityAsync((KeylolUserManager) UserManager,
+                CookieAuthenticationDefaults.AuthenticationType);
         }
 
         public static KeylolSignInManager Create(IdentityFactoryOptions<KeylolSignInManager> options,
