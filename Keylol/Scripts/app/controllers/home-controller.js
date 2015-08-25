@@ -11,6 +11,13 @@
                     controller: "RegistrationController"
                 });
             };
+
+			$scope.showLoginPasswordForm = function() {
+                ModalService.showModal({
+                    templateUrl: "Templates/Modal/login-password.html",
+                    controller: "LoginPasswordController"
+                });
+            };
         }
     ]);
 })();

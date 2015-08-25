@@ -18,7 +18,31 @@
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-d9b03844cd8ac4a41d6edda01dc7612e.woff") format("woff");
+    src: url("./Fonts/lisong-fb4fa40975376917371cff951ab32fb4.woff") format("woff");
+}
+
+/*#endregion */
+
+/*#region Keyframes */
+
+@keyframes exit-background-flash {
+    from {
+        fill: #088100;
+    }
+
+    to {
+        fill: white;
+    }
+}
+
+@keyframes exit-text-flash {
+    from {
+        fill: white;
+    }
+
+    to {
+        fill: #088100;
+    }
 }
 
 /*#endregion */
@@ -266,7 +290,29 @@ kl-modal[position=right] {
     background-color: #eef1f3;
     box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
     position: relative;
+    box-sizing: border-box;
 }
+
+    /*#region Table */
+
+    .modal-window table td {
+        border: 1px solid #11254a;
+        padding: 1px 3px;
+    }
+
+    .modal-window table input[type=text],
+    .modal-window table input[type=password],
+    .modal-window table input[type=email] {
+        background: none;
+        border: none;
+        height: 100%;
+        width: 100%;
+        font-size: 16px;
+        padding: 0 6px;
+        box-sizing: border-box;
+    }
+
+    /*#endregion */
 
     /*#region Confirm Button */
 
@@ -323,6 +369,7 @@ kl-modal[position=right] {
                 color: white;
                 font-size: 18px;
                 margin: 4px 0;
+                font-weight: normal;
             }
 
             .modal-window .modal-confirm-button hgroup h2 {
@@ -350,42 +397,59 @@ kl-modal[position=right] {
             height: 48px;
         }
 
-@keyframes exit-background-flash {
-    from {
-        fill: #088100;
+        .modal-window .modal-exit-button.focused .background {
+            animation: exit-background-flash 150ms ease-in-out 6 alternate;
+        }
+
+        .modal-window .modal-exit-button.focused .text {
+            animation: exit-text-flash 150ms ease-in-out 6 alternate;
+        }
+
+        .modal-window .modal-exit-button:hover .background {
+            fill: white;
+        }
+
+        .modal-window .modal-exit-button:hover .text {
+            fill: #088100;
+        }
+
+    /*#endregion */
+
+    /*#region Headings */
+
+    .modal-window h1 {
+        font-size: 18px;
+        color: #11254a;
+        margin: 3px 0;
     }
 
-    to {
-        fill: white;
-    }
-}
-
-@keyframes exit-text-flash {
-    from {
-        fill: white;
+    .modal-window h2 {
+        font-size: 14px;
+        font-weight: normal;
+        margin: 3px 0;
     }
 
-    to {
-        fill: #088100;
+    .modal-window h3 {
+        color: #11254a;
+        font-size: 14px;
+        margin: 3px 0;
     }
-}
 
+        .modal-window h3.single-line {
+            float: left;
+            margin-right: 8px;
+        }
 
-.modal-window .modal-exit-button.focused .background {
-    animation: exit-background-flash 150ms ease-in-out 6 alternate;
-}
+            .modal-window h3.single-line + h4 {
+                position: relative;
+                top: 2px;
+            }
 
-.modal-window .modal-exit-button.focused .text {
-    animation: exit-text-flash 150ms ease-in-out 6 alternate;
-}
-
-.modal-window .modal-exit-button:hover .background {
-    fill: white;
-}
-
-.modal-window .modal-exit-button:hover .text {
-    fill: #088100;
-}
+    .modal-window h4 {
+        font-weight: normal;
+        font-size: 12px;
+        margin: 3px 0;
+    }
 
 /*#endregion */
 
@@ -504,12 +568,22 @@ kl-modal[position=right] {
             background-color: #adafb0;
         }
 
-        .section-promoted-points .heading img {
+        .section-promoted-points .heading .exit {
             float: left;
             margin-left: -5px;
+            width: 60px;
+            height: 60px;
         }
 
-        .section-promoted-points .heading svg {
+            .section-promoted-points .heading .exit .background {
+                fill: #00bd18;
+            }
+
+            .section-promoted-points .heading .exit .text {
+                fill: #e7edef;
+            }
+
+        .section-promoted-points .heading .parking {
             float: left;
             width: 34px;
             height: 34px;
@@ -1107,40 +1181,6 @@ kl-modal[position=right] {
     width: 900px;
 }
 
-.modal-registration h1 {
-    font-size: 18px;
-    color: #11254a;
-    margin: 3px 0;
-}
-
-.modal-registration h2 {
-    font-size: 14px;
-    font-weight: normal;
-    margin: 3px 0;
-}
-
-.modal-registration h3 {
-    color: #11254a;
-    font-size: 14px;
-    margin: 3px 0;
-}
-
-    .modal-registration h3.single-line {
-        float: left;
-        margin-right: 8px;
-    }
-
-        .modal-registration h3.single-line + h4 {
-            position: relative;
-            top: 2px;
-        }
-
-.modal-registration h4 {
-    font-weight: normal;
-    font-size: 12px;
-    margin: 3px 0;
-}
-
 .modal-registration .error {
     color: red;
 }
@@ -1166,11 +1206,6 @@ kl-modal[position=right] {
     margin: 28px 0;
     width: 100%;
 }
-
-    .modal-registration table td {
-        border: 1px solid #11254a;
-        padding: 1px 3px;
-    }
 
 .modal-registration .platform {
     float: left;
@@ -1247,19 +1282,6 @@ kl-modal[position=right] {
             max-width: 192px;
         }
 
-.modal-registration table input[type=text],
-.modal-registration table input[type=password],
-.modal-registration table input[type=email] {
-    background: none;
-    border: none;
-    height: 100%;
-    width: 100%;
-    font-size: 16px;
-    padding: 0 6px;
-    box-sizing: border-box;
-}
-
-
 .modal-registration .avatar-box-left-spacing {
     border: none;
 }
@@ -1287,10 +1309,6 @@ kl-modal[position=right] {
 .modal-registration .modal-window .modal-confirm-button {
     margin-right: -22px;
 }
-
-    .modal-registration .modal-window .modal-confirm-button h1 {
-        font-weight: normal;
-    }
 
 /*#endregion */
 
@@ -1322,5 +1340,35 @@ kl-modal[position=right] {
     .section-reception a {
         color: #000003;
     }
+
+/*#endregion */
+
+/*#region Login Password Window */
+
+.modal-login-password .modal-window {
+    padding: 24px;
+    width: 1024px;
+}
+
+.modal-login-password .error {
+    color: red;
+}
+
+.modal-login-password .heading {
+    margin: 28px 0;
+}
+
+.modal-login-password table {
+    margin: 28px auto;
+    width: 868px;
+}
+
+.modal-login-password .gt_holder {
+    margin: 16px auto;
+}
+
+.modal-login-password .modal-window .modal-confirm-button {
+    margin-right: -32px;
+}
 
 /*#endregion */

@@ -25,7 +25,8 @@
 					activateGeetest[geetestId] = function() {
 						var gee = new Geetest({
 							gt: "0c002064ef8f602ced7bccec08b8e10b",
-							product: product
+							product: product,
+							https: location.protocol === "https:"
 						});
 						gee.onSuccess(function() {
 							onSuccess(gee.getValidate(), gee);
