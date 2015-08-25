@@ -15,7 +15,6 @@
 		function($document, $compile, $controller, $http, $rootScope, $q, $templateCache, $window) {
 
 			//  Get the body of the document, we'll add the modal to this.
-			var body = $document.find('body');
 			var bodyModalCounter = 0;
 
 			function ModalService() {
@@ -62,6 +61,7 @@
 				}
 
 				self.measureScrollbar = function() {
+					var body = $(document.body);
 					var scrollDiv = document.createElement('div');
 					scrollDiv.className = 'modal-scrollbar-measure';
 					body.append(scrollDiv);
@@ -72,6 +72,7 @@
 				self.scrollbarWidth = self.measureScrollbar();
 
 				self.setScrollbar = function() {
+					var body = $(document.body);
 					var bodyPad = parseInt((body.css('padding-right') || 0), 10);
 					self.originalBodyPad = document.body.style.paddingRight || '';
 					if (self.bodyIsOverflowing)
@@ -79,6 +80,7 @@
 				}
 
 				self.emitBodyModalState = function() {
+					var body = $(document.body);
 					if (bodyModalCounter > 0) {
 						if (!body.hasClass("body-modal-open")) {
 							self.checkScrollbar();
@@ -179,7 +181,7 @@
 								options.appendElement.append(modalElement);
 							} else {
 								// append to body when no custom append element is specified
-								body.append(modalElement);
+								$(document.body).append(modalElement);
 								bodyModalCounter++;
 								self.emitBodyModalState();
 							}

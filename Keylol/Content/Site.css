@@ -1288,6 +1288,10 @@ kl-modal[position=right] {
     margin-right: -22px;
 }
 
+    .modal-registration .modal-window .modal-confirm-button h1 {
+        font-weight: normal;
+    }
+
 /*#endregion */
 
 /*#region Reception Section */

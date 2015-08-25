@@ -6,7 +6,7 @@
         <img class="sample-bar-code" src="Content/Images/sample-bar-code.png" alt="条形码">
         <div class="heading font-myriad-lisong">
             <img src="Content/Images/logo-mono.svg" alt="Logo">
-            <h1>其乐自动化会员注册资料表单</h1>
+            <h1>会员注册表单</h1>
             <h2>Keylol Membership Application Form</h2>
         </div>
         <form name="form" ng-submit="submit(form)">
@@ -61,7 +61,7 @@
                             <span class="error" ng-switch-when="used">这个昵称已被别人使用。</span>
                             <span class="error" ng-switch-when="format">仅限使用拉丁字母、数字、汉字。</span>
                             <span class="error" ng-switch-when="length">仅限 3-16 字节。</span>
-                            <span ng-switch-default>注册后无法更改，仅限拉丁字母、数字、汉字，3-16 字节。</span>
+                            <span ng-switch-default>具有唯一性，仅限拉丁字母、数字、汉字，3-16 字节。</span>
                         </h4>
                     </td>
                     <td>
