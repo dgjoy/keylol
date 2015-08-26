@@ -26,15 +26,8 @@
 			};
 			$scope.submit = function(form) {
 				$scope.error = {};
-				var usernameLength = utils.byteLength($scope.vm.UserName);
-				if (usernameLength < 3 || usernameLength > 16) {
-					$scope.error["vm.UserName"] = "UserName should be 3-16 bytes.";
-				} else if (!/^[0-9A-Za-z\u4E00-\u9FCC]+$/.test($scope.vm.UserName)) {
-					$scope.error["vm.UserName"] = "Only digits, letters and Chinese characters are allowed in UserName.";
-				}
-				if ($scope.vm.Password.length < 6) {
-					$scope.error["vm.Password"] = "Passwords must be at least 6 characters.";
-				} else {
+				utils.modelValidate.username($scope.vm.UserName, $scope.error, "vm.UserName");
+				if (utils.modelValidate.password($scope.vm.Password, $scope.error, "vm.Password")) {
 					if ($scope.vm.Password !== $scope.vm.ConfirmPassword) {
 						$scope.error["vm.ConfirmPassword"] = "not match";
 					}

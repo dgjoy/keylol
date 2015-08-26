@@ -3,8 +3,10 @@
 
 	keylolApp.factory("utils", [
 		function() {
-			return {
-				byteLength: function(str) {
+			function Utils() {
+				var self = this;
+
+				self.byteLength = function(str) {
 					var s = 0;
 					for (var i = str.length - 1; i >= 0; i--) {
 						var code = str.charCodeAt(i);
@@ -16,8 +18,9 @@
 						} //trail surrogate
 					}
 					return s;
-				},
-				createGeetest: function(product, onSuccess) {
+				};
+
+				self.createGeetest = function(product, onSuccess) {
 					if (typeof window.activateGeetest === "undefined") {
 						window.activateGeetest = [];
 					}
@@ -41,8 +44,31 @@
 						activateGeetest[geetestId]();
 					}
 					return geetestId;
-				},
-				modelErrorDetect: {
+				};
+
+				self.modelValidate = {
+					username: function(str, errorObj, modelName) {
+						var usernameLength = self.byteLength(str);
+						if (usernameLength < 3 || usernameLength > 16) {
+							errorObj[modelName] = "UserName should be 3-16 bytes.";
+							return false;
+						}
+						if (!/^[0-9A-Za-z\u4E00-\u9FCC]+$/.test(str)) {
+							errorObj[modelName] = "Only digits, letters and Chinese characters are allowed in UserName.";
+							return false;
+						}
+						return true;
+					},
+					password: function(str, errorObj, modelName) {
+						if (str.length < 6) {
+							errorObj[modelName] = "Passwords must be at least 6 characters.";
+							return false;
+						}
+						return true;
+					}
+				};
+
+				self.modelErrorDetect = {
 					username: function(message) {
 						if (/should.*bytes/.test(message))
 							return "length";
@@ -66,8 +92,10 @@
 							return "empty";
 						return "unknown";
 					}
-				}
-			};
+				};
+			}
+
+			return new Utils();
 		}
 	]);
 })();

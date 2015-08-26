@@ -331,10 +331,10 @@ kl-modal[position=right] {
             content: "";
             display: block;
             position: absolute;
-            top: 0;
+            bottom: 0;
             right: 0;
-            width: 24px;
-            height: 60px;
+            width: 12px;
+            height: 10px;
             z-index: -1;
             box-shadow: 0 0 2px #B8BABB;
             transform: rotate(315deg);
@@ -378,6 +378,48 @@ kl-modal[position=right] {
                 font-weight: normal;
                 margin: 4px 0;
             }
+
+    /*#endregion */
+
+    /*#region Border Button */
+
+    .modal-window .modal-border-button {
+        background-color: #748a97;
+        border: none;
+        padding: 3px 7px;
+        color: white;
+        position: relative;
+    }
+
+        .modal-window .modal-border-button.left-border:after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 8px;
+            height: 4px;
+            z-index: -1;
+            box-shadow: 0 0 2px #B8BABB;
+            transform: rotate(45deg);
+            transform-origin: bottom left;
+            background-color: #d9d9d9;
+        }
+
+        .modal-window .modal-border-button.right-border:after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 8px;
+            height: 4px;
+            z-index: -1;
+            box-shadow: 0 0 2px #B8BABB;
+            transform: rotate(315deg);
+            transform-origin: bottom right;
+            background-color: #d9d9d9;
+        }
 
     /*#endregion */
 
@@ -1346,7 +1388,7 @@ kl-modal[position=right] {
 /*#region Login Password Window */
 
 .modal-login-password .modal-window {
-    padding: 24px;
+    padding: 25px;
     width: 1024px;
 }
 
@@ -1355,8 +1397,14 @@ kl-modal[position=right] {
 }
 
 .modal-login-password .heading {
-    margin: 28px 0;
+    margin-bottom: 28px;
 }
+
+    .modal-login-password .heading a {
+        float: right;
+        margin-top: 14px;
+        color: #748a97;
+    }
 
 .modal-login-password table {
     margin: 28px auto;
@@ -1370,5 +1418,18 @@ kl-modal[position=right] {
 .modal-login-password .modal-window .modal-confirm-button {
     margin-right: -32px;
 }
+
+.modal-login-password .change-login-method {
+    max-width: 650px;
+    padding-top: 4px;
+}
+
+    .modal-login-password .change-login-method button {
+        margin-left: -30px;
+    }
+
+    .modal-login-password .change-login-method p {
+        margin: 14px 0 0;
+    }
 
 /*#endregion */
