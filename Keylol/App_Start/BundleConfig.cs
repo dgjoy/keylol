@@ -23,7 +23,8 @@ namespace Keylol
 //                "~/Scripts/jquery.visible.js",
                 "~/Scripts/moment.js",
                 "~/Scripts/moment-local_zh-cn.js",
-                "~/Scripts/ckeditor/ckeditor.js");
+                "~/Scripts/ckeditor/path.js",
+                "~/Scripts/ckeditor/ckeditor.min.js");
             bundles.Add(vendorJsBundle1);
 
             var vendorJsBundle2 = new CustomScriptBundle("~/bundles/vendor-2");
