@@ -299,6 +299,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
+    <Content Include="Scripts\angular-ckeditor.js" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-modal-service.js" />
     <Content Include="Scripts\angular-modal-service.min.js" />
@@ -309,6 +310,7 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app\controllers\modal\login-password-controller.js" />
+    <Content Include="Scripts\app\controllers\modal\editor-controller.js" />
     <Content Include="Scripts\app\controllers\modal\registration-controller.js" />
     <Content Include="Scripts\app\controllers\root-controller.js" />
     <Content Include="Scripts\app\controllers\section\reception-controller.js" />
@@ -1066,11 +1068,12 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
-    <Content Include="Content\Fonts\keylol-rail-sung-4da40bfaf26d2174bb5e4a8bde28b37d.woff" />
+    <Content Include="Content\Fonts\keylol-rail-sung-89668ec816fbfc8bc6c043a81bffdffb.woff" />
     <Content Include="Content\Fonts\lisong-fb4fa40975376917371cff951ab32fb4.woff" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery.visible.js" />
     <Content Include="Scripts\moment-local_zh-cn.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment-with-locales.min.js" />
@@ -1080,6 +1083,7 @@
     <Content Include="Templates\home.html" />
     <Content Include="Templates\Modal\login-password.html" />
     <Content Include="Templates\Modal\login-steam.html" />
+    <Content Include="Templates\Modal\editor.html" />
     <Content Include="Templates\Modal\_container.html" />
     <Content Include="Templates\Modal\registration.html" />
     <Content Include="Templates\Sections\action-hub.html" />

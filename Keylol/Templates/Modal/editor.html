@@ -1,0 +1,10 @@
+﻿<kl-modal position="center" class="modal-editor">
+    <div class="modal-window">
+        <div class="modal-exit-button" ng-click="cancel()">
+            <div ng-include="'Content/Images/exit.svg'"></div>
+        </div>
+        <form name="form">
+            <div ckeditor ng-model="content"></div>
+        </form>
+    </div>
+</kl-modal>

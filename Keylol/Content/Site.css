@@ -11,7 +11,7 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-4da40bfaf26d2174bb5e4a8bde28b37d.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-89668ec816fbfc8bc6c043a81bffdffb.woff") format("woff");
 }
 
 @font-face {
@@ -333,7 +333,7 @@ kl-modal[position=right] {
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 12px;
+            width: 15px;
             height: 10px;
             z-index: -1;
             box-shadow: 0 0 2px #B8BABB;
@@ -560,7 +560,7 @@ kl-modal[position=right] {
     }
 
     .section-main-navigation a {
-        color: #000003;
+        color: #333;
     }
 
     .section-main-navigation .labeled-heading + ul {
@@ -1349,7 +1349,7 @@ kl-modal[position=right] {
     }
 
 .modal-registration .modal-window .modal-confirm-button {
-    margin-right: -22px;
+    margin-right: -24px;
 }
 
 /*#endregion */
@@ -1380,7 +1380,7 @@ kl-modal[position=right] {
         }
 
     .section-reception a {
-        color: #000003;
+        color: #333;
     }
 
 /*#endregion */
@@ -1416,7 +1416,7 @@ kl-modal[position=right] {
 }
 
 .modal-login-password .modal-window .modal-confirm-button {
-    margin-right: -32px;
+    margin-right: -35px;
 }
 
 .modal-login-password .change-login-method {
@@ -1431,5 +1431,14 @@ kl-modal[position=right] {
     .modal-login-password .change-login-method p {
         margin: 14px 0 0;
     }
+
+/*#endregion */
+
+/*#region Editor Window */
+
+.modal-editor .modal-window {
+    padding: 15px;
+    width: 900px;
+}
 
 /*#endregion */

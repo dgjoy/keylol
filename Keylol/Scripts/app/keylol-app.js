@@ -10,7 +10,8 @@
 
 		// 3rd Party Modules
 		"angularModalService",
-		"angularMoment"
+		"angularMoment",
+		"ckeditor"
 	]);
 	app.config([
 		"$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {

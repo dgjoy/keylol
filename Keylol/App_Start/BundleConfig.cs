@@ -17,18 +17,25 @@ namespace Keylol
             
             var nullOrderer = new NullOrderer();
 
-            var vendorJsBundle = new CustomScriptBundle("~/bundles/vendor");
-            vendorJsBundle.Include(
+            var vendorJsBundle1 = new CustomScriptBundle("~/bundles/vendor-1");
+            vendorJsBundle1.Include(
                 "~/Scripts/jquery-{version}.js",
+//                "~/Scripts/jquery.visible.js",
+                "~/Scripts/moment.js",
+                "~/Scripts/moment-local_zh-cn.js",
+                "~/Scripts/ckeditor/ckeditor.js");
+            bundles.Add(vendorJsBundle1);
+
+            var vendorJsBundle2 = new CustomScriptBundle("~/bundles/vendor-2");
+            vendorJsBundle2.Include(
                 "~/Scripts/angular.js",
                 "~/Scripts/i18n/angular-locale_zh.js",
                 "~/Scripts/angular-route.js",
                 //"~/Scripts/angular-animate.js",
                 "~/Scripts/angular-modal-service.js",
-                "~/Scripts/moment.js",
-                "~/Scripts/moment-local_zh-cn.js",
-                "~/Scripts/angular-moment.js");
-            bundles.Add(vendorJsBundle);
+                "~/Scripts/angular-moment.js",
+                "~/Scripts/angular-ckeditor.js");
+            bundles.Add(vendorJsBundle2);
 
             var appJsBundle = new CustomScriptBundle("~/bundles/app");
             appJsBundle.IncludeDirectory("~/Scripts/app", "*.js", true);

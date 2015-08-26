@@ -18,6 +18,12 @@
                     controller: "LoginPasswordController"
                 });
             };
+			$scope.showEditor = function() {
+                ModalService.showModal({
+                    templateUrl: "Templates/Modal/editor.html",
+                    controller: "EditorController"
+                });
+            };
         }
     ]);
 })();
