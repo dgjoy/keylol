@@ -282,6 +282,7 @@ namespace Keylol.Migrations
             DropForeignKey("dbo.PointModerators", "KeylolUser_Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.PointModerators", "NormalPoint_Id", "dbo.Points");
             DropForeignKey("dbo.Entries", "Principal_Id", "dbo.Points");
+            DropForeignKey("dbo.Points", "Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.UserPointSubscriptions", "Point_Id", "dbo.Points");
             DropForeignKey("dbo.UserPointSubscriptions", "KeylolUser_Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.UserRoles", "UserId", "dbo.KeylolUsers");
@@ -290,7 +291,6 @@ namespace Keylol.Migrations
             DropForeignKey("dbo.Messages", "Comment_Id", "dbo.Comments");
             DropForeignKey("dbo.Messages", "Like_Id", "dbo.Likes");
             DropForeignKey("dbo.Messages", "Receiver_Id", "dbo.KeylolUsers");
-            DropForeignKey("dbo.Points", "Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.UserLogins", "UserId", "dbo.KeylolUsers");
             DropForeignKey("dbo.Likes", "Operator_Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.CommentReplies", "ToComment_Id", "dbo.Comments");

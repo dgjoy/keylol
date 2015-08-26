@@ -81,6 +81,10 @@
 					password: function(message) {
 						if (/least.*characters/.test(message))
 							return "length";
+						else if (/not correct/.test(message))
+							return "incorrect";
+						else if (/cannot be empty/.test(message))
+							return "empty";
 						return "unknown";
 					},
 					email: function(message) {
@@ -88,8 +92,14 @@
 							return "used";
 						else if (/is invalid/.test(message))
 							return "malformed";
-						else if (message === "empty")
+						else if (/cannot be empty/.test(message))
 							return "empty";
+						else if (/doesn't exist/.test(message))
+							return "inexistent";
+						else if (/locked out/.test(message))
+							return "lockedout";
+						else if (/Login failed/.test(message))
+							return "failed";
 						return "unknown";
 					}
 				};

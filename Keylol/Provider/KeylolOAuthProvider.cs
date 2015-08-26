@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Keylol.DAL;
 using Keylol.Models;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -10,21 +13,26 @@ namespace Keylol.Provider
 {
     public class KeylolOAuthProvider : OAuthAuthorizationServerProvider
     {
+        private const string ClientAngularApp = "angular-app";
+
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             string clientId, clientSecret;
             if (context.TryGetBasicCredentials(out clientId, out clientSecret))
             {
-                if (clientSecret == clientId + "haha")
-                    context.Validated(clientId);
+                switch (clientId)
+                {
+                    case ClientAngularApp:
+                        context.Validated(clientId);
+                        break;
+                }
             }
         }
 
-        public override async Task GrantClientCredentials(OAuthGrantClientCredentialsContext context)
+        public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<KeylolUserManager>();
-            var user = await userManager.FindByNameAsync("stackia");
-            context.Validated(await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType));
+            if (context.ClientId != ClientAngularApp)
+                return;
         }
     }
 }

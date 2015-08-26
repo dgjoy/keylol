@@ -33,9 +33,9 @@
 					}
 				}
 				if (form.email.$invalid) {
-					$scope.error["vm.Email"] = "is invalid";
+					$scope.error["vm.Email"] = "Email is invalid.";
 				} else if (!$scope.vm.Email) {
-					$scope.error["vm.Email"] = "empty";
+					$scope.error["vm.Email"] = "Email cannot be empty.";
 				}
 				if (typeof geetestResult === "undefined") {
 					$scope.error.authCode = true;
@@ -46,9 +46,15 @@
 					.then(function(response) {
 						alert("注册成功");
 					}, function(response) {
-						$scope.error = response.data.ModelState;
-						if ($scope.error.authCode) {
-							gee.refresh();
+						switch (response.status) {
+						case 400:
+							$scope.error = response.data.ModelState;
+							if ($scope.error.authCode) {
+								gee.refresh();
+							}
+							break;
+						default:
+							console.error(response.data);
 						}
 					});
 			};

@@ -27,38 +27,38 @@ namespace Keylol
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Account/Login"),
+                LoginPath = PathString.Empty,
                 Provider = new CookieAuthenticationProvider
                 {
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity =
                         SecurityStampValidator.OnValidateIdentity<KeylolUserManager, KeylolUser>(
-                            TimeSpan.FromMinutes(30), (manager, user) => user.GenerateUserIdentityAsync(manager, CookieAuthenticationDefaults.AuthenticationType)),
-                    OnApplyRedirect = context =>
-                    {
-                        if (!context.Request.Path.StartsWithSegments(new PathString("/api")))
-                            context.Response.Redirect(context.RedirectUri);
-                    }
+                            TimeSpan.FromMinutes(30), (manager, user) => user.GenerateUserIdentityAsync(manager)),
+//                    OnApplyRedirect = context =>
+//                    {
+//                        if (!context.Request.Path.StartsWithSegments(new PathString("/api")))
+//                            context.Response.Redirect(context.RedirectUri);
+//                    }
                 }
             });
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+//            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Enables the application to temporarily store user information when they are verifying the second factor in the two-factor authentication process.
-            app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
+//            app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
 
             // Enables the application to remember the second login verification factor such as phone or email.
             // Once you check this option, your second step of verification during the login process will be remembered on the device where you logged in from.
             // This is similar to the RememberMe option when you log in.
-            app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
+//            app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
-            app.UseOAuthBearerTokens(new OAuthAuthorizationServerOptions()
-            {
-                AllowInsecureHttp = true,
-                TokenEndpointPath = new PathString("/api/oauth/token"),
-                AuthorizeEndpointPath = new PathString("/api/oauth/authorize"),
-                Provider = new KeylolOAuthProvider()
-            });
+//            app.UseOAuthBearerTokens(new OAuthAuthorizationServerOptions()
+//            {
+//                AllowInsecureHttp = true,
+//                TokenEndpointPath = new PathString("/api/oauth/token"),
+//                AuthorizeEndpointPath = new PathString("/api/oauth/authorize"),
+//                Provider = new KeylolOAuthProvider()
+//            });
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(

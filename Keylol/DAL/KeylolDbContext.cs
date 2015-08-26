@@ -64,10 +64,6 @@ namespace Keylol.DAL
                 .Map(t => t.MapLeftKey("ByComment_Id")
                     .MapRightKey("ToComment_Id")
                     .ToTable("CommentReplies"));
-
-            modelBuilder.Entity<KeylolUser>()
-                .HasRequired(user => user.ProfilePoint)
-                .WithRequiredPrincipal(point => point.User);
         }
 
         public static KeylolDbContext Create()

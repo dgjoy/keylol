@@ -17,8 +17,18 @@ namespace Keylol.Models
     }
 
     // You can add profile data for the user by adding more properties to your KeylolUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
-    public class KeylolUser : IdentityUser
+    public sealed class KeylolUser : IdentityUser
     {
+        public KeylolUser()
+        {
+            LockoutEnabled = true;
+        }
+
+        public KeylolUser(string userName) : this()
+        {
+            UserName = userName;
+        }
+
         public DateTime RegisterTime { get; set; } = DateTime.Now;
 
         [Required]
@@ -31,20 +41,19 @@ namespace Keylol.Models
         [MaxLength(64)]
         public string LastVisitIp { get; set; }
 
-        public virtual ICollection<Point> SubscribedPoints { get; set; }
-        [Required]
-        public virtual ProfilePoint ProfilePoint { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<Like> Likes { get; set; }
-        public virtual ICollection<Message> ReceivedMessages { get; set; }
-        public virtual ICollection<UserMessage> SentUserMessages { get; set; }
-        public virtual ICollection<SystemMessageWarningNotification> SentWarnings { get; set; }
-        public virtual ICollection<NormalPoint> ModeratedPoints { get; set; }
+        public ICollection<Point> SubscribedPoints { get; set; }
+        public ProfilePoint ProfilePoint { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Like> Likes { get; set; }
+        public ICollection<Message> ReceivedMessages { get; set; }
+        public ICollection<UserMessage> SentUserMessages { get; set; }
+        public ICollection<SystemMessageWarningNotification> SentWarnings { get; set; }
+        public ICollection<NormalPoint> ModeratedPoints { get; set; }
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<KeylolUser> manager, string authenticationType)
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<KeylolUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
             return userIdentity;
         }

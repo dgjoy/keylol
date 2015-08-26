@@ -56,28 +56,52 @@ namespace Keylol.Controllers
                 return BadRequest(ModelState);
             }
             return Ok();
-//            {
-//                var user = new KeylolUser {UserName = model.Email, Email = model.Email};
-//                var result = await UserManager.CreateAsync(user, model.Password);
-//                if (result.Succeeded)
-//                {
-//                    await SignInManager.SignInAsync(user, false, false);
-//
-//                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-//                    // Send an email with this link
-//                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-//                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-//                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-//
-//                    return RedirectToAction("Index", "Home");
-//                }
-//                AddErrors(result);
-//            }
-//
-//            // If we got this far, something failed, redisplay form
-//            return View(model);
         }
 
+        // Login
+        [AllowAnonymous]
+        [Route("api/user/login")]
+        public async Task<IHttpActionResult> Post(LoginViewModel vm)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var geetest = new Geetest();
+//            if (!await geetest.ValidateAsync(vm.GeetestChallenge, vm.GeetestSeccode, vm.GeetestValidate))
+//            {
+//                ModelState.AddModelError("authCode", "true");
+//                return BadRequest(ModelState);
+//            }
+            var user = await UserManager.FindByEmailAsync(vm.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("vm.Email", "Email doesn't exist.");
+                return BadRequest(ModelState);
+            }
+            var result = await SignInManager.PasswordSignInAsync(user.UserName, vm.Password, true, true);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return Ok();
+
+                case SignInStatus.LockedOut:
+                    ModelState.AddModelError("vm.Email", "The user is locked out temporarily.");
+                    break;
+
+                case SignInStatus.Failure:
+                    ModelState.AddModelError("vm.Password", "Password is not correct.");
+                    break;
+
+                default:
+                    ModelState.AddModelError("vm.Email", "Login failed.");
+                    break;
+            }
+            return BadRequest(ModelState);
+        }
+
+        public async Task<IHttpActionResult> Get(string id)
+        {
+            return Ok(await UserManager.FindByIdAsync(id));
+        }
 
         //        public IHttpActionResult Login(string returnUrl)
         //        {
