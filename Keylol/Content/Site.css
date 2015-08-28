@@ -306,6 +306,17 @@ kl-modal[position=right] {
     box-sizing: border-box;
 }
 
+    /*#region Secret Barcode */
+
+    .modal-window .secret-barcode {
+        width: 678px;
+        height: 20px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    /*#endregion */
+
     /*#region Table */
 
     .modal-window table td {
@@ -1239,13 +1250,6 @@ kl-modal[position=right] {
     color: red;
 }
 
-.modal-registration .sample-bar-code {
-    width: 678px;
-    height: 20px;
-    margin: 0 auto;
-    display: block;
-}
-
 .modal-registration .heading {
     margin: 28px 0;
 }
@@ -1400,8 +1404,8 @@ kl-modal[position=right] {
 /*#region Login Password Window */
 
 .modal-login-password .modal-window {
-    padding: 25px;
-    width: 1024px;
+    padding: 14px;
+    width: 900px;
 }
 
 .modal-login-password .error {
@@ -1409,7 +1413,7 @@ kl-modal[position=right] {
 }
 
 .modal-login-password .heading {
-    margin-bottom: 28px;
+    margin: 16px 0 28px;
 }
 
     .modal-login-password .heading a {
@@ -1420,7 +1424,7 @@ kl-modal[position=right] {
 
 .modal-login-password table {
     margin: 28px auto;
-    width: 868px;
+    width: 100%;
 }
 
 .modal-login-password .gt_holder {
@@ -1428,16 +1432,16 @@ kl-modal[position=right] {
 }
 
 .modal-login-password .modal-window .modal-confirm-button {
-    margin-right: -35px;
+    margin-right: -24px;
 }
 
 .modal-login-password .change-login-method {
-    max-width: 650px;
+    max-width: 600px;
     padding-top: 4px;
 }
 
     .modal-login-password .change-login-method button {
-        margin-left: -30px;
+        margin-left: -19px;
     }
 
     .modal-login-password .change-login-method p {

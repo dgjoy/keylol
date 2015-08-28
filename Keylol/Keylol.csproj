@@ -287,7 +287,8 @@
     <Content Include="Content\Images\psn-circle-mono.png" />
     <Content Include="Content\Images\psn-circle.png" />
     <Content Include="Content\Images\search-box-button.png" />
-    <Content Include="Content\Images\sample-bar-code.png" />
+    <Content Include="Content\Images\secret-barcode-login.png" />
+    <Content Include="Content\Images\secret-barcode-registration.png" />
     <Content Include="Content\Images\signature-pen.png" />
     <Content Include="Content\Images\steam-circle-mono.png" />
     <Content Include="Content\Images\steam-circle.png" />
