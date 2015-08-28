@@ -20,11 +20,11 @@ namespace Keylol
             var vendorJsBundle1 = new CustomScriptBundle("~/bundles/vendor-1");
             vendorJsBundle1.Include(
                 "~/Scripts/jquery-{version}.js",
-//                "~/Scripts/jquery.visible.js",
                 "~/Scripts/moment.js",
                 "~/Scripts/moment-local_zh-cn.js",
-                "~/Scripts/ckeditor/path.js",
-                "~/Scripts/ckeditor/ckeditor.min.js");
+                "~/Scripts/quill/quill.js",
+                "~/Scripts/quill/quill-click-expand.js",
+                "~/Scripts/quill/quill-float-toolbar.js");
             bundles.Add(vendorJsBundle1);
 
             var vendorJsBundle2 = new CustomScriptBundle("~/bundles/vendor-2");
@@ -34,8 +34,8 @@ namespace Keylol
                 "~/Scripts/angular-route.js",
                 //"~/Scripts/angular-animate.js",
                 "~/Scripts/angular-modal-service.js",
-                "~/Scripts/angular-moment.js",
-                "~/Scripts/angular-ckeditor.js");
+                "~/Scripts/angular-moment.js"
+                );
             bundles.Add(vendorJsBundle2);
 
             var appJsBundle = new CustomScriptBundle("~/bundles/app");
@@ -46,6 +46,7 @@ namespace Keylol
             var cssBundle = new CustomStyleBundle("~/bundles/css");
             cssBundle.Include(
                 "~/Content/normalize.css",
+                "~/Scripts/quill/quill.snow.css",
                 "~/Content/site.css");
             cssBundle.Orderer = nullOrderer;
             bundles.Add(cssBundle);

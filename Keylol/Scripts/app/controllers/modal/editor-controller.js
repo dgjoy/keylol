@@ -2,11 +2,11 @@
 	"use strict";
 
 	keylolApp.controller("EditorController", [
-		"$scope", "close",
-		function($scope, close) {
+		"$scope", "close", "$element",
+		function($scope, close, $element) {
 			$scope.cancel = function() {
 				close();
-			}
+			};
 		}
 	]);
 })();
