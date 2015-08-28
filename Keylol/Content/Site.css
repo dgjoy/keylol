@@ -11,7 +11,7 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-89668ec816fbfc8bc6c043a81bffdffb.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-12a99805ecc86d31373e2b155b593520.woff") format("woff");
 }
 
 @font-face {
@@ -87,7 +87,7 @@ textarea,
     border-radius: 4px;
     box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15), inset 1px 1px 2px rgba(0, 0, 0, 0.25);
     border: none;
-    padding: 6px 8px;
+    padding: 8px;
     background: white;
 }
 
@@ -350,6 +350,7 @@ kl-modal[position=right] {
         height: 60px;
         margin-right: -8px;
         position: relative;
+        min-width: 305px;
     }
 
         .modal-window .modal-confirm-button:after {
@@ -1436,7 +1437,7 @@ kl-modal[position=right] {
 }
 
 .modal-login-password .change-login-method {
-    max-width: 600px;
+    max-width: 570px;
     padding-top: 4px;
 }
 
@@ -1453,12 +1454,117 @@ kl-modal[position=right] {
 /*#region Editor Window */
 
 .modal-editor .modal-window {
-    padding: 15px;
+    padding: 20px 0 30px;
     width: 900px;
 }
 
 .modal-editor .ql-container {
     height: 300px;
+    margin: 0 14px;
+}
+
+.modal-editor input[type=text] {
+    width: calc(100% - 28px);
+    box-sizing: border-box;
+    margin-left: 14px;
+}
+
+.modal-editor .type-title {
+    position: relative;
+}
+
+.modal-editor .article-type {
+    font-size: 18px;
+    background: #11254a;
+    color: white;
+    position: absolute;
+    height: 100%;
+    width: 70px;
+    left: -5px;
+}
+
+    .modal-editor .article-type:after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 8px;
+        height: 4px;
+        z-index: -1;
+        box-shadow: 0 0 2px #B8BABB;
+        transform: rotate(45deg);
+        transform-origin: bottom left;
+        background-color: #d9d9d9;
+    }
+
+    .modal-editor .article-type span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+
+    .modal-editor .article-type + span {
+        display: block;
+        overflow: hidden;
+        padding: 2px 2px 2px 65px;
+    }
+
+        .modal-editor .article-type + span input {
+            width: calc(100% - 26px);
+        }
+
+.modal-editor form h3 {
+    margin: 19px 0 11px;
+}
+
+    .modal-editor form h3:first-of-type {
+        margin-top: 29px;
+    }
+
+.modal-editor .pad-right {
+    position: relative;
+}
+
+    .modal-editor .pad-right input[type=text] {
+        width: calc(100% - 296px);
+    }
+
+    .modal-editor .pad-right .right-content {
+        position: absolute;
+        right: 14px;
+        top: 0;
+        height: 100%;
+        width: 254px;
+    }
+
+    .modal-editor .pad-right label {
+        margin: 0 26px 0 4px;
+        font-size: 14px;
+    }
+
+        .modal-editor .pad-right label:last-of-type {
+            margin-right: 0;
+        }
+
+    .modal-editor .pad-right .right-content span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+        .modal-editor .pad-right .right-content span.left-align {
+            left: 0;
+            right: 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            transform: translateY(-50%);
+        }
+
+.modal-editor .modal-confirm-button {
+    margin-top: 40px;
 }
 
 /*#endregion */

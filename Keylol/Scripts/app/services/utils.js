@@ -5,6 +5,7 @@
 		function() {
 			function Utils() {
 				var self = this;
+				var uniqueId = 1;
 
 				self.byteLength = function(str) {
 					var s = 0;
@@ -22,9 +23,9 @@
 
 				self.createGeetest = function(product, onSuccess) {
 					if (typeof window.activateGeetest === "undefined") {
-						window.activateGeetest = [];
+						window.activateGeetest = {};
 					}
-					var geetestId = activateGeetest.length;
+					var geetestId = self.uniqueId();
 					activateGeetest[geetestId] = function() {
 						var gee = new Geetest({
 							gt: "0c002064ef8f602ced7bccec08b8e10b",
@@ -44,6 +45,10 @@
 						activateGeetest[geetestId]();
 					}
 					return geetestId;
+				};
+
+				self.uniqueId = function() {
+					return uniqueId++;
 				};
 
 				self.modelValidate = {

@@ -26,9 +26,11 @@ namespace Keylol.FontGarage.CLI
                 "资讯",
                 "差评",
                 "模组",
+                "感悟",
                 "请无视游戏与艺术之间的空隙",
                 "提交注册申请",
-                "登入其乐"
+                "登入其乐",
+                "发布文章"
             });
             SubsetFont("lisong-full.ttf", "lisong-", new[]
             {

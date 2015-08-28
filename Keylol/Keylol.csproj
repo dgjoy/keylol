@@ -1069,8 +1069,8 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
-    <Content Include="Content\Fonts\keylol-rail-sung-89668ec816fbfc8bc6c043a81bffdffb.woff" />
     <Content Include="Content\Fonts\lisong-fb4fa40975376917371cff951ab32fb4.woff" />
+    <Content Include="Content\Fonts\keylol-rail-sung-12a99805ecc86d31373e2b155b593520.woff" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1086,6 +1086,7 @@
     <Content Include="Scripts\quill\quill.min.js" />
     <Content Include="Scripts\quill\quill.snow.css" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Templates\Directives\quill.html" />
     <Content Include="Templates\home.html" />
     <Content Include="Templates\Modal\login-password.html" />
     <Content Include="Templates\Modal\login-steam.html" />
