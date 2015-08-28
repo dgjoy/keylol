@@ -6494,7 +6494,7 @@ Format = (function() {
     link: {
       tag: 'A',
       add: function(node, value) {
-        node.setAttribute('href', value);
+        node.setAttribute('href', node.innerText);
         return node;
       },
       remove: function(node) {
@@ -6502,7 +6502,7 @@ Format = (function() {
         return node;
       },
       value: function(node) {
-        return node.getAttribute('href');
+        return !!node.getAttribute('href');
       }
     },
     image: {
@@ -7192,7 +7192,7 @@ Normalizer = (function() {
     }
     if (Normalizer.ALIASES[node.tagName] != null) {
       node = dom(node).switchTag(Normalizer.ALIASES[node.tagName]).get();
-    } else if (this.whitelist.tags[node.tagName] == null) {
+    } else if (this.whitelist.tags[node.tagName] == null || (node.tagName === 'A' && node.href !== node.innerText)) {
       if (dom.BLOCK_TAGS[node.tagName] != null) {
         node = dom(node).switchTag(dom.DEFAULT_BLOCK_TAG).get();
       } else if (!node.hasAttributes() && (node.firstChild != null)) {
@@ -9396,17 +9396,47 @@ PasteManager = (function() {
   }
 
   PasteManager.prototype._onConvert = function(container) {
-    var delta, doc, lengthAdded;
+    var delta, doc, lengthAdded, i;
     doc = new Document(container, this.quill.options);
     delta = doc.toDelta();
     lengthAdded = delta.length();
     if (lengthAdded === 0) {
       return delta;
     }
-    return delta.compose(new Delta().retain(lengthAdded - 1)["delete"](1));
+	var newDelta = new Delta();
+	for (i = 0; i < delta.ops.length; ++i) {
+		if (typeof delta.ops[i].insert === "string") {
+			var parts = delta.ops[i].insert.split(" ");
+			var attrsWithLink = $.extend(true, {}, delta.ops[i].attributes);
+			if (attrsWithLink.link) {
+				newDelta.push(delta.ops[i]);
+				continue;
+			}
+			attrsWithLink.link = true;
+			for (var j = 0; j < parts.length; ++j) {
+				var isLink = false;
+				if (/^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/im.test(parts[j])) {
+					isLink = true;
+				}
+				if (j < parts.length - 1) {
+					if (isLink) {
+						newDelta.insert(parts[j], attrsWithLink);
+						newDelta.insert(" ", delta.ops[i].attributes);
+					} else {
+						newDelta.insert(parts[j] + " ", delta.ops[i].attributes);
+					}
+				} else {
+					newDelta.insert(parts[j], isLink ? attrsWithLink : delta.ops[i].attributes);
+				}
+			}
+		} else {
+			newDelta.push(delta.ops[i]);
+		}
+	}
+    return newDelta.compose(new Delta().retain(lengthAdded - 1)["delete"](1));
   };
 
-  PasteManager.prototype._paste = function() {
+  PasteManager.prototype._paste = function(e) {
     var oldDocLength, range;
     oldDocLength = this.quill.getLength();
     range = this.quill.getSelection();
