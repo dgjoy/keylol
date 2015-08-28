@@ -177,11 +177,37 @@
     tab-size: 4;
     white-space: pre-wrap;
     padding: 12px 15px;
+    font-size: 14px;
+    line-height: 1.5em;
 }
 
     .ql-editor div {
-        margin: 0;
+        margin: 8px 0 16px;
         padding: 0;
+    }
+
+    .ql-editor h1,
+    .modal-window .ql-editor h1 {
+        font-size: 16px;
+        color: #11254a;
+        margin: 8px 0 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-weight: normal;
+    }
+
+        .ql-editor h1:before {
+            content: ">";
+            margin-right: 8px;
+            font-family: Myriad Pro;
+        }
+
+    .ql-editor blockquote {
+        background: #EEF1F3;
+        border-left: 10px solid #748A97;
+        margin: 8px 0 16px;
+        padding: 10px 15px;
     }
 
     .ql-editor a {
@@ -215,9 +241,10 @@
 
     .ql-editor img {
         max-width: 100%;
+        display: block;
+        margin: 8px auto 16px;
     }
 
-    .ql-editor blockquote,
     .ql-editor ol,
     .ql-editor ul {
         margin: 0 0 0 2em;

@@ -33,7 +33,6 @@
 					var quill = new Quill(contentArea, options);
 					quill.addFormat("blockquote", { tag: "BLOCKQUOTE", type: "line", exclude: "subtitle" });
 					quill.addFormat("subtitle", { tag: "H1", prepare: "heading", type: "line", exclude: "blockquote" });
-					window.qu = quill;
 					if (!scope.content) {
 						ngModel.$setViewValue(quill.getHTML());
 					}
