@@ -7399,6 +7399,12 @@ Selection = (function() {
     }
   };
 
+	Selection.prototype.cursorFocus = function(elem) {
+		var y = this.doc.root.parentNode.scrollTop;
+		elem.focus();
+		this.doc.root.parentNode.scrollTop = y;
+	};
+
   Selection.prototype.setRange = function(range, source) {
     var endNode, endOffset, ref, ref1, ref2, startNode, startOffset;
     if (range != null) {
@@ -7541,7 +7547,7 @@ Selection = (function() {
     }
     if (startNode != null) {
       if (!this.checkFocus()) {
-        this.doc.root.focus();
+        this.cursorFocus(this.doc.root);
       }
       nativeRange = this._getNativeRange();
       if ((nativeRange == null) || startNode !== nativeRange.startContainer || startOffset !== nativeRange.startOffset || endNode !== nativeRange.endContainer || endOffset !== nativeRange.endOffset) {
@@ -9407,26 +9413,32 @@ PasteManager = (function() {
 	for (i = 0; i < delta.ops.length; ++i) {
 		if (typeof delta.ops[i].insert === "string") {
 			var parts = delta.ops[i].insert.split(" ");
-			var attrsWithLink = $.extend(true, {}, delta.ops[i].attributes);
-			if (attrsWithLink.link) {
+			if (delta.ops[i].attributes && delta.ops[i].attributes.link) {
 				newDelta.push(delta.ops[i]);
 				continue;
 			}
-			attrsWithLink.link = true;
 			for (var j = 0; j < parts.length; ++j) {
+				var attrs = $.extend(true, {}, delta.ops[i].attributes);
 				var isLink = false;
 				if (/^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/im.test(parts[j])) {
 					isLink = true;
+					// Bugged
+//					if (/(jpg|jpeg|png|gif|svg)$/im.test(parts[j])) {
+//						attrs.image = parts[j];
+//						parts[j] = 1;
+//					} else {
+						attrs.link = true;
+//					}
 				}
 				if (j < parts.length - 1) {
 					if (isLink) {
-						newDelta.insert(parts[j], attrsWithLink);
+						newDelta.insert(parts[j], attrs);
 						newDelta.insert(" ", delta.ops[i].attributes);
 					} else {
 						newDelta.insert(parts[j] + " ", delta.ops[i].attributes);
 					}
 				} else {
-					newDelta.insert(parts[j], isLink ? attrsWithLink : delta.ops[i].attributes);
+					newDelta.insert(parts[j], isLink ? attrs : delta.ops[i].attributes);
 				}
 			}
 		} else {

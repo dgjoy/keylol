@@ -11,14 +11,14 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-12a99805ecc86d31373e2b155b593520.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-41b1b73711a9f2b9f3d3bd5dbdcb152f.woff") format("woff");
 }
 
 @font-face {
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-fb4fa40975376917371cff951ab32fb4.woff") format("woff");
+    src: url("./Fonts/lisong-571cc3a7e9e4071e90f1689d3e14b9f7.woff") format("woff");
 }
 
 /*#endregion */
@@ -1816,6 +1816,7 @@ kl-modal[position=right] {
         .section-article-comments .textarea-container textarea {
             width: 100%;
             min-height: 80px;
+            resize: vertical;
         }
 
 /*#endregion */
