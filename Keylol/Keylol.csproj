@@ -275,9 +275,7 @@
     <Content Include="apple-touch-icon-180.png" />
     <Content Include="Content\Images\arrow-right.png" />
     <Content Include="Content\Images\border-slash.png" />
-    <Content Include="Content\Images\exit-darker.png" />
     <Content Include="Content\Images\edit-pen.png" />
-    <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\cuc.png" />
     <Content Include="Content\Images\card-needle.png" />
     <Content Include="Content\Images\logo-mono.svg" />
