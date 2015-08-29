@@ -10193,6 +10193,7 @@ Quill = (function(superClass) {
     refNode = before ? this.root : null;
     container = document.createElement('div');
     dom(container).addClass(className);
+	dom(container).addClass('article-content');
     this.container.insertBefore(container, refNode);
     return container;
   };

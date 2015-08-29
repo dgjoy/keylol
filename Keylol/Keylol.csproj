@@ -308,6 +308,7 @@
     <Content Include="Scripts\angular-route.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\controllers\article-controller.js" />
     <Content Include="Scripts\app\controllers\modal\login-password-controller.js" />
     <Content Include="Scripts\app\controllers\modal\editor-controller.js" />
     <Content Include="Scripts\app\controllers\modal\registration-controller.js" />
@@ -1085,12 +1086,16 @@
     <Content Include="Scripts\quill\quill.snow.css" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Templates\Directives\quill.html" />
+    <Content Include="Templates\article.html" />
     <Content Include="Templates\home.html" />
     <Content Include="Templates\Modal\login-password.html" />
     <Content Include="Templates\Modal\login-steam.html" />
     <Content Include="Templates\Modal\editor.html" />
     <Content Include="Templates\Modal\_container.html" />
     <Content Include="Templates\Modal\registration.html" />
+    <Content Include="Templates\Sections\article-comments.html" />
+    <Content Include="Templates\Sections\article-content.html" />
+    <Content Include="Templates\Sections\article-header.html" />
     <Content Include="Templates\Sections\action-hub.html" />
     <Content Include="Templates\Sections\cuc-entrance.html" />
     <Content Include="Templates\Sections\ifs-right.html" />

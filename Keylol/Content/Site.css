@@ -53,7 +53,7 @@ body {
     color: #333;
     background-color: #eef1f3;
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, "Hiragino Sans GB", "Microsoft YaHei", "Microsoft JhengHei", "WenQuanYi Micro Hei", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     min-width: 1220px;
     box-sizing: border-box;
 }
@@ -105,6 +105,16 @@ textarea,
     margin-left: -15px;
     margin-right: -15px;
 }
+
+    .row.as-section {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+        .row.as-section [class^=col-] {
+            margin-top: -20px;
+            margin-bottom: -20px;
+        }
 
 .col-left {
     width: 200px;
@@ -163,9 +173,9 @@ textarea,
 
 .labeled-heading {
     position: relative;
-    line-height: 20px;
+    line-height: 22px;
     padding-left: 8px;
-    font-size: 14px;
+    font-size: 15px;
     color: #11254a;
     font-weight: normal;
 }
@@ -177,7 +187,7 @@ textarea,
         top: 0;
         left: -5px;
         width: 8px;
-        height: 20px;
+        height: 22px;
         background-color: #11254a;
     }
 
@@ -187,7 +197,7 @@ textarea,
         position: absolute;
         left: -13px;
         width: 8px;
-        height: 20px;
+        height: 22px;
         z-index: -1;
         box-shadow: 0 0 2px #B8BABB;
         transform: rotate(135deg);
@@ -210,6 +220,65 @@ textarea,
 
     .list-inline li {
         display: inline;
+    }
+
+.entry-type {
+    font-size: 15px;
+    color: white;
+    background-color: #11254a;
+    padding: 2px 3px;
+}
+
+.avatar-small {
+    border-radius: 50%;
+    border: 2px solid #11254A;
+    box-sizing: border-box;
+    display: block;
+}
+
+.avatar-big {
+    border-radius: 50%;
+    border: 3px solid #11254A;
+    box-sizing: border-box;
+    display: block;
+}
+
+.border-button {
+    background-color: #748a97;
+    border: none;
+    padding: 3px 7px;
+    color: white;
+    position: relative;
+}
+
+    .border-button.left-border:after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 8px;
+        height: 4px;
+        z-index: -1;
+        box-shadow: 0 0 2px #B8BABB;
+        transform: rotate(45deg);
+        transform-origin: bottom left;
+        background-color: #adafb0;
+    }
+
+    .border-button.right-border:after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 8px;
+        height: 4px;
+        z-index: -1;
+        box-shadow: 0 0 2px #B8BABB;
+        transform: rotate(315deg);
+        transform-origin: bottom right;
+        background-color: #adafb0;
     }
 
 /*#endregion */
@@ -241,7 +310,7 @@ kl-modal {
     kl-modal:after {
         display: inline-block;
         height: 100%;
-        margin-left: -.05em;
+        margin-left: -0.05em;
         content: "";
     }
 
@@ -330,7 +399,7 @@ kl-modal[position=right] {
         background: none;
         height: 100%;
         width: 100%;
-        font-size: 16px;
+        font-size: 17px;
         box-sizing: border-box;
         box-shadow: none;
         border-radius: 0;
@@ -347,7 +416,7 @@ kl-modal[position=right] {
         border: none;
         text-align: right;
         padding: 6px 19px;
-        height: 60px;
+        height: 66px;
         margin-right: -8px;
         position: relative;
         min-width: 305px;
@@ -393,59 +462,17 @@ kl-modal[position=right] {
 
             .modal-window .modal-confirm-button hgroup h1 {
                 color: white;
-                font-size: 18px;
+                font-size: 19px;
                 margin: 4px 0;
                 font-weight: normal;
             }
 
             .modal-window .modal-confirm-button hgroup h2 {
                 color: white;
-                font-size: 12px;
+                font-size: 13px;
                 font-weight: normal;
                 margin: 4px 0;
             }
-
-    /*#endregion */
-
-    /*#region Border Button */
-
-    .modal-window .modal-border-button {
-        background-color: #748a97;
-        border: none;
-        padding: 3px 7px;
-        color: white;
-        position: relative;
-    }
-
-        .modal-window .modal-border-button.left-border:after {
-            content: "";
-            display: block;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 8px;
-            height: 4px;
-            z-index: -1;
-            box-shadow: 0 0 2px #B8BABB;
-            transform: rotate(45deg);
-            transform-origin: bottom left;
-            background-color: #d9d9d9;
-        }
-
-        .modal-window .modal-border-button.right-border:after {
-            content: "";
-            display: block;
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 8px;
-            height: 4px;
-            z-index: -1;
-            box-shadow: 0 0 2px #B8BABB;
-            transform: rotate(315deg);
-            transform-origin: bottom right;
-            background-color: #d9d9d9;
-        }
 
     /*#endregion */
 
@@ -486,20 +513,20 @@ kl-modal[position=right] {
     /*#region Headings */
 
     .modal-window h1 {
-        font-size: 18px;
+        font-size: 19px;
         color: #11254a;
         margin: 3px 0;
     }
 
     .modal-window h2 {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: normal;
         margin: 3px 0;
     }
 
     .modal-window h3 {
         color: #11254a;
-        font-size: 14px;
+        font-size: 15px;
         margin: 3px 0;
     }
 
@@ -510,12 +537,12 @@ kl-modal[position=right] {
 
             .modal-window h3.single-line + h4 {
                 position: relative;
-                top: 2px;
+                top: 1px;
             }
 
     .modal-window h4 {
         font-weight: normal;
-        font-size: 12px;
+        font-size: 13px;
         margin: 3px 0;
     }
 
@@ -562,12 +589,12 @@ kl-modal[position=right] {
     }
 
         .section-logo p:first-of-type {
-            font-size: 25px;
-            margin-top: 4px;
+            font-size: 26px;
+            margin-top: 2px;
         }
 
         .section-logo p:nth-of-type(2) {
-            font-size: 14px;
+            font-size: 15px;
         }
 
 /*#endregion */
@@ -593,7 +620,7 @@ kl-modal[position=right] {
         padding-left: 10px;
         padding-right: 10px;
         margin-right: -7px;
-        line-height: 20px;
+        line-height: 22px;
     }
 
         .section-main-navigation .labeled-heading + ul li {
@@ -603,7 +630,7 @@ kl-modal[position=right] {
 
         .section-main-navigation .labeled-heading + ul + p {
             margin: 0;
-            line-height: 20px;
+            line-height: 22px;
             padding-right: 10px;
             text-align: right;
         }
@@ -664,8 +691,8 @@ kl-modal[position=right] {
         }
 
             .section-promoted-points .heading p:first-of-type {
-                font-size: 16px;
-                padding-top: 14px;
+                font-size: 17px;
+                padding-top: 10px;
                 padding-bottom: 1px;
             }
 
@@ -736,13 +763,13 @@ kl-modal[position=right] {
     }
 
         .section-timeline .heading .title h1 {
-            font-size: 16px;
+            font-size: 17px;
             font-weight: normal;
             margin: 0 0 2px;
         }
 
         .section-timeline .heading .title h2 {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: normal;
             margin: 0;
         }
@@ -774,7 +801,7 @@ kl-modal[position=right] {
 
     .section-timeline .heading {
         position: relative;
-        padding-right: 63px;
+        padding-right: 64px;
     }
 
         .section-timeline .heading .left-info,
@@ -794,7 +821,7 @@ kl-modal[position=right] {
         .section-timeline .heading .right-button {
             position: absolute;
             right: 0;
-            width: 48px;
+            width: 49px;
             height: 100%;
         }
 
@@ -826,9 +853,9 @@ kl-modal[position=right] {
     }
 
         .section-timeline .entry-heading h3 {
-            height: 24px;
-            line-height: 24px;
-            font-size: 12px;
+            height: 26px;
+            line-height: 26px;
+            font-size: 13px;
             font-weight: normal;
             margin: 0;
             white-space: nowrap;
@@ -837,10 +864,6 @@ kl-modal[position=right] {
         }
 
         .section-timeline .entry-heading .entry-type {
-            font-size: 14px;
-            color: white;
-            background-color: #11254a;
-            padding: 2px;
             margin-right: 5px;
         }
 
@@ -857,15 +880,11 @@ kl-modal[position=right] {
             .section-timeline .entry-heading .entry-author img {
                 width: 24px;
                 height: 24px;
-                box-sizing: border-box;
-                display: block;
-                border-radius: 50%;
-                border: 2px solid #11254a;
             }
 
             .section-timeline .entry-heading .entry-author h4 {
-                line-height: 24px;
-                height: 24px;
+                line-height: 26px;
+                height: 26px;
                 font-weight: normal;
                 margin: 0;
                 text-align: right;
@@ -884,9 +903,9 @@ kl-modal[position=right] {
 
         .section-timeline .entry-content .thumbnail {
             float: left;
-            width: 192px;
-            height: 108px;
-            margin-right: 9px;
+            width: 210px;
+            height: 118px;
+            margin-right: 10px;
         }
 
         .section-timeline .entry-content .summary {
@@ -894,12 +913,12 @@ kl-modal[position=right] {
         }
 
         .section-timeline .entry-content h3 {
-            font-size: 16px;
+            font-size: 17px;
             font-weight: normal;
             margin: 0 0 5px 0;
             padding-top: 1px;
-            line-height: 22px;
-            height: 22px;
+            line-height: 24px;
+            height: 24px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -907,13 +926,13 @@ kl-modal[position=right] {
 
         .section-timeline .entry-content p {
             margin: 0;
-            line-height: 16px;
-            max-height: 64px;
+            line-height: 18px;
+            max-height: 72px;
             overflow: hidden;
         }
 
             .section-timeline .entry-content p.two-line {
-                height: 32px;
+                height: 36px;
             }
 
     /*#endregion */
@@ -923,8 +942,8 @@ kl-modal[position=right] {
     .section-timeline .entry footer {
         text-align: center;
         color: #748a97;
-        height: 24px;
-        line-height: 24px;
+        height: 26px;
+        line-height: 26px;
         margin-top: 6px;
         visibility: hidden;
     }
@@ -970,7 +989,7 @@ kl-modal[position=right] {
     width: 100%;
     min-width: 184px;
     height: 100%;
-    min-height: 38px;
+    min-height: 40px;
     box-sizing: border-box;
     padding: 7px 30px 7px 10px;
     background-color: #11254A;
@@ -980,7 +999,7 @@ kl-modal[position=right] {
     .section-search-box input[type=search] {
         box-shadow: none;
         height: 100%;
-        line-height: 24px;
+        line-height: 26px;
         display: block;
         width: 100%;
         box-sizing: border-box;
@@ -1011,14 +1030,13 @@ kl-modal[position=right] {
 
 .section-action-hub {
     width: 300px;
-    height: 129px;
+    height: 134px;
     background-color: white;
     padding: 12px;
     box-sizing: border-box;
 }
 
     .section-action-hub .name-settings {
-        padding: 2px 0;
         margin-left: 65px;
     }
 
@@ -1029,7 +1047,8 @@ kl-modal[position=right] {
         }
 
         .section-action-hub .name-settings .name {
-            font-size: 14px;
+            padding: 3px 0 2px;
+            font-size: 15px;
         }
 
         .section-action-hub .name-settings .settings-link a {
@@ -1043,11 +1062,10 @@ kl-modal[position=right] {
         .section-action-hub .avatar-anchor img {
             width: 48px;
             height: 48px;
-            border-radius: 50%;
         }
 
     .section-action-hub .links {
-        margin-top: 14px;
+        margin-top: 16px;
     }
 
         .section-action-hub .links li {
@@ -1062,7 +1080,7 @@ kl-modal[position=right] {
         }
 
         .section-action-hub .links a {
-            font-size: 16px;
+            font-size: 17px;
             font-style: italic;
         }
 
@@ -1107,7 +1125,7 @@ kl-modal[position=right] {
 
         .section-promoted-readings .article h2 {
             font-weight: normal;
-            font-size: 12px;
+            font-size: 13px;
             margin: 0;
             white-space: nowrap;
             overflow: hidden;
@@ -1121,16 +1139,16 @@ kl-modal[position=right] {
 
         .section-promoted-readings .article p {
             margin: 7px 0;
-            max-height: 48px;
+            max-height: 54px;
             overflow: hidden;
-            line-height: 16px;
+            line-height: 18px;
         }
 
         .section-promoted-readings .article footer {
             text-align: right;
             color: #748a97;
-            height: 14px;
-            line-height: 14px;
+            height: 16px;
+            line-height: 16px;
         }
 
             .section-promoted-readings .article footer span {
@@ -1188,8 +1206,8 @@ kl-modal[position=right] {
     }
 
         .section-cuc-entrance p:first-of-type {
-            font-size: 18px;
-            margin: 6px 0 2px;
+            font-size: 19px;
+            margin: 3px 0 2px;
         }
 
 /*#endregion */
@@ -1291,7 +1309,7 @@ kl-modal[position=right] {
         }
 
         .modal-registration .platform .go-binding-anchor span {
-            font-size: 14px;
+            font-size: 15px;
             color: #333;
         }
 
@@ -1322,11 +1340,11 @@ kl-modal[position=right] {
             float: left;
             width: 35px;
             height: 35px;
-            margin-right: 8px;
+            margin: 1px 8px 0 0;
         }
 
         .modal-registration .platform .pasted-card div h5 {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: normal;
             margin: 2px 0;
         }
@@ -1362,7 +1380,7 @@ kl-modal[position=right] {
 }
 
     .modal-registration .declaration h3.single-line + h4 {
-        top: 5px;
+        top: 6px;
     }
 
 .modal-registration .modal-window .modal-confirm-button {
@@ -1419,7 +1437,7 @@ kl-modal[position=right] {
 
     .modal-login-password .heading a {
         float: right;
-        margin-top: 14px;
+        margin-top: 15px;
         color: #748a97;
     }
 
@@ -1438,7 +1456,7 @@ kl-modal[position=right] {
 
 .modal-login-password .change-login-method {
     max-width: 570px;
-    padding-top: 4px;
+    padding-top: 6px;
 }
 
     .modal-login-password .change-login-method button {
@@ -1474,7 +1492,7 @@ kl-modal[position=right] {
 }
 
 .modal-editor .article-type {
-    font-size: 18px;
+    font-size: 19px;
     background: #11254a;
     color: white;
     position: absolute;
@@ -1508,11 +1526,11 @@ kl-modal[position=right] {
     .modal-editor .article-type + span {
         display: block;
         overflow: hidden;
-        padding: 2px 2px 2px 65px;
+        padding: 2px 28px 2px 65px;
     }
 
         .modal-editor .article-type + span input {
-            width: calc(100% - 26px);
+            width: 100%;
         }
 
 .modal-editor form h3 {
@@ -1541,7 +1559,7 @@ kl-modal[position=right] {
 
     .modal-editor .pad-right label {
         margin: 0 26px 0 4px;
-        font-size: 14px;
+        font-size: 15px;
     }
 
         .modal-editor .pad-right label:last-of-type {
@@ -1566,5 +1584,238 @@ kl-modal[position=right] {
 .modal-editor .modal-confirm-button {
     margin-top: 40px;
 }
+
+.modal-editor .save-draft {
+    max-width: 570px;
+    padding-top: 44px;
+}
+
+    .modal-editor .save-draft button {
+        margin-left: -5px;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAIVBMVEUAAAD////////////////+/v7+/v7+/v7+/v7+/v7///92EJ5ZAAAACnRSTlMAFCBAgI+fq7ffnxGb6AAAAEpJREFUeNrt0rEKACAIRdGyeqX//8G1BTZITQ3vDELCXaREFFMzq0nWlL2s66kMfJAB5JvAiYITAwZvQRenBQFuf+soDn69ElFoAjToFA1LQoTVAAAAAElFTkSuQmCC);
+        background-repeat: no-repeat;
+        background-size: contain;
+        padding-left: 22px;
+    }
+
+    .modal-editor .save-draft span {
+        color: #748a97;
+        margin-left: 6px;
+    }
+
+    .modal-editor .save-draft p {
+        margin: 14px 14px 0;
+    }
+
+/*#endregion */
+
+/*#region Article Basic Styles */
+
+.article-content {
+    outline: none;
+    tab-size: 4;
+    white-space: pre-wrap;
+    font-size: 15px;
+    line-height: 1.6em;
+}
+
+    .article-content div {
+        margin: 8px 0 16px;
+        padding: 0;
+    }
+
+    .article-content h1,
+    .modal-window .article-content h1 {
+        font-size: 17px;
+        color: #11254a;
+        margin: 8px 0 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-weight: normal;
+    }
+
+        .article-content h1:before {
+            content: ">";
+            margin-right: 8px;
+            font-family: Myriad Pro;
+        }
+
+    .article-content blockquote {
+        background: #EEF1F3;
+        border-left: 10px solid #748A97;
+        margin: 8px 0 16px;
+        padding: 10px 15px;
+    }
+
+    .article-content a {
+        text-decoration: underline;
+    }
+
+    .article-content b {
+        font-weight: bold;
+    }
+
+    .article-content i {
+        font-style: italic;
+    }
+
+    .article-content s {
+        text-decoration: line-through;
+    }
+
+    .article-content u {
+        text-decoration: underline;
+    }
+
+    .article-content a,
+    .article-content b,
+    .article-content i,
+    .article-content s,
+    .article-content u,
+    .article-content span {
+        background-color: inherit;
+    }
+
+    .article-content img {
+        max-width: 100%;
+        display: block;
+        margin: 8px auto 16px;
+    }
+
+    .article-content ol,
+    .article-content ul {
+        margin: 0 0 0 2em;
+        padding: 0;
+    }
+
+    .article-content ol {
+        list-style-type: decimal;
+    }
+
+    .article-content ul {
+        list-style-type: disc;
+    }
+
+/*#endregion */
+
+/*#region Article Content Section */
+
+.section-article-content {
+    background: white;
+    padding: 18px 32px;
+    min-width: 300px;
+}
+
+    .section-article-content .share-actions {
+        text-align: center;
+        padding: 10px 0 2px;
+    }
+
+        .section-article-content .share-actions p {
+            margin: 0;
+            font-weight: bold;
+            font-size: 17px;
+            color: #11254a;
+        }
+
+        .section-article-content .share-actions a {
+            color: #748a97;
+        }
+
+/*#endregion */
+
+/*#region Article Comments Section */
+
+.section-article-comments {
+    background: white;
+    padding: 20px 20px 30px;
+}
+
+    .section-article-comments .labeled-heading {
+        margin-left: -20px;
+    }
+
+    .section-article-comments .avatar-anchor {
+        float: left;
+    }
+
+        .section-article-comments .avatar-anchor img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .section-article-comments .avatar-anchor + article {
+            margin-left: 40px;
+        }
+
+    .section-article-comments .comment {
+        margin-top: 20px;
+    }
+
+        .section-article-comments .comment:hover .action {
+            display: inline;
+        }
+
+        .section-article-comments .comment:first-of-type {
+            margin-top: 28px;
+        }
+
+    .section-article-comments .header {
+        height: 25px;
+        font-size: 15px;
+    }
+
+        .section-article-comments .header .as-author {
+            color: #748a97;
+        }
+
+        .section-article-comments .header .time {
+            font-size: 13px;
+        }
+
+        .section-article-comments .header .action {
+            color: #748a97;
+            margin-left: 12px;
+            display: none;
+        }
+
+    .section-article-comments .content {
+        line-height: 1.6em;
+    }
+
+        .section-article-comments .content .like-count {
+            color: white;
+            background: #11254a;
+            padding: 1px 4px;
+            margin-left: 7px;
+        }
+
+    .section-article-comments form {
+        position: relative;
+        margin-top: 52px;
+    }
+
+    .section-article-comments button[type=submit] {
+        position: absolute;
+        right: -25px;
+        bottom: 8px;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAHlBMVEX///////////////////////////////////////8V2MxSAAAACXRSTlMAESIzRGZ3iLtU0KdmAAAAOUlEQVR42u3HuREAIAwDMEL4vP/CXKBz4QmsTs3M7MuRMmwD2CIsUEKEdJQuwg6Ao8JirhkiZmbPBS/FAnGzq3lQAAAAAElFTkSuQmCC);
+        background-repeat: no-repeat;
+        background-size: contain;
+        padding-right: 23px;
+        background-position: 100% 1px;
+    }
+
+    .section-article-comments .textarea-container {
+        display: block;
+        overflow: hidden;
+        padding: 2px 90px 2px 8px;
+    }
+
+        .section-article-comments .textarea-container textarea {
+            width: 100%;
+            min-height: 80px;
+        }
 
 /*#endregion */

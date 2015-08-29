@@ -11,7 +11,7 @@
             </div>
             <div quill ng-model="vm.content"></div>
             <h3 class="labeled-heading">推送至据点</h3>
-            <input type="text" placeholder="如果希望推荐一篇其他其乐文章给读者扩展阅读，可以粘贴文章链接 (URL) 在这里">
+            <input type="text" placeholder="最多可以同时推送至五个据点，每篇文章都会自动发布在你的个人据点中">
             <h3 class="labeled-heading">评价游戏</h3>
             <div class="pad-right">
                 <input type="text" placeholder="选择一个游戏据点作为评价对象">
@@ -25,7 +25,7 @@
             </div>
             <h3 class="labeled-heading">推荐阅读链接</h3>
             <div class="pad-right">
-                <input type="text" class="pad-right" name="point" ng-model="vm.point" placeholder="最多可以同时推送至五个据点，每篇文章都会自动发布在你的个人据点中">
+                <input type="text" class="pad-right" name="point" ng-model="vm.point" placeholder="如果希望推荐一篇其他其乐文章给读者扩展阅读，可以粘贴文章链接 (URL) 在这里">
                 <div class="right-content">
                     <span class="left-align" ng-if="form.point.$dirty"><a href="test">德军总部：新秩序 单人剧情视频</a></span>
                 </div>
@@ -38,6 +38,11 @@
                     <h2>Publish the Article</h2>
                 </hgroup>
             </button>
+            <div class="save-draft">
+                <button type="button" class="border-button left-border" ng-click="cancel()">保存草稿</button>
+                <span>自动保存于 39 秒 前</span>
+                <p>草稿将保存在本地浏览器缓存中，并在下次打开编辑框时自动加载。</p>
+            </div>
         </form>
     </div>
 </kl-modal>

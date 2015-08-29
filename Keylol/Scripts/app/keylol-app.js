@@ -22,6 +22,9 @@
 			}).when("/test", {
 				templateUrl: "Templates/test.html",
 				controller: "TestController"
+			}).when("/article", {
+				templateUrl: "Templates/article.html",
+				controller: "ArticleController"
 			});
 		}
 	]);
