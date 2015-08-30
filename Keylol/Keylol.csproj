@@ -1067,8 +1067,8 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
-    <Content Include="Content\Fonts\keylol-rail-sung-41b1b73711a9f2b9f3d3bd5dbdcb152f.woff" />
     <Content Include="Content\Fonts\lisong-571cc3a7e9e4071e90f1689d3e14b9f7.woff" />
+    <Content Include="Content\Fonts\keylol-rail-sung-ec1269d18d515853267ec97dd37b2c72.woff" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1091,6 +1091,7 @@
     <Content Include="Templates\Modal\editor.html" />
     <Content Include="Templates\Modal\_container.html" />
     <Content Include="Templates\Modal\registration.html" />
+    <Content Include="Templates\Sections\point-summary.html" />
     <Content Include="Templates\Sections\article-comments.html" />
     <Content Include="Templates\Sections\article-content.html" />
     <Content Include="Templates\Sections\article-header.html" />
