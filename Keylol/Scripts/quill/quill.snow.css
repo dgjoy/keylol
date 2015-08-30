@@ -267,9 +267,20 @@
 }
 
     .ql-snow.ql-toolbar .ql-format-group {
+        transition: box-shadow 300ms ease-in-out, top 300ms ease-in-out, left 300ms ease-in-out;
         display: inline-block;
         vertical-align: middle;
         padding: 5px;
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+
+    .ql-snow.ql-toolbar .ql-format-group-flying {
+        background: #eef1f3;
+        box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
+        top: -2.12px;
+        left: -2.12px;
     }
 
     .ql-snow.ql-toolbar .ql-format-separator {

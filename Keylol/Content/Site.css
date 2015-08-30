@@ -11,7 +11,7 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-ec1269d18d515853267ec97dd37b2c72.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-30aececf171560648df0e0196c14a147.woff") format("woff");
 }
 
 @font-face {
@@ -186,15 +186,15 @@ textarea,
 
 /*#region Utilities */
 
-.box-shodowed {
+.box-shadowed {
     box-shadow: 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
 }
 
-.box-shodowed-inset {
+.box-shadowed-inset {
     box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.50);
 }
 
-.box-shodawed-glowed {
+.box-shadowed-glowed {
     box-shadow: 0 0 1px rgba(0,0,0,0.35), 2.12px 2.12px 2px rgba(53, 72, 86, 0.15);
 }
 
@@ -619,14 +619,10 @@ kl-modal[position=right] {
     }
 
         .article-content h1:before {
-            content: "";
-            display: inline-block;
-            width: 8px;
-            height: 16px;
-            vertical-align: text-top;
+            content: ">";
+            font-family: "Keylol Rail Sung";
             margin-right: 6px;
             font-size: 16px;
-            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAQCAMAAAAcVM5PAAAAYFBMVEUAAAARJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoRJUoNse52AAAAH3RSTlMAP2/8UuhU+k9WVU1Q5mS68pviIZ7gFZnh3+UU8MQl1gZP9gAAAE5JREFUCFs1zEUCgFAUQlHs7k72v0t5fmVyzwh4+Eb/Q8DQISLjFwnJ1JDxV24qTGUl1aZGaNVO7QdgVKcZWNRVhbpZsXM63meerrhu1weafAZzD+tKdwAAAABJRU5ErkJggg==);
         }
 
     .article-content blockquote {
@@ -1033,7 +1029,7 @@ kl-modal[position=right] {
         float: left;
         width: 54px;
         height: 54px;
-        margin-right: 14px;
+        margin: 0 11px 0 5px;
     }
 
     .section-logo p {
@@ -1042,12 +1038,15 @@ kl-modal[position=right] {
     }
 
         .section-logo p:first-of-type {
-            font-size: 26px;
-            margin-top: 2px;
+            font-size: 25px;
+            margin-top: 3px;
         }
 
         .section-logo p:nth-of-type(2) {
             font-size: 15px;
+            position: relative;
+            top: -2px;
+            left: 2px;
         }
 
 /*#endregion */
@@ -1823,6 +1822,7 @@ kl-modal[position=right] {
     text-align: right;
     width: 100%;
     min-width: 250px;
+    margin-top: -3px;
 }
 
     .section-site-footer p {

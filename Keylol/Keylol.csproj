@@ -1070,7 +1070,7 @@
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
     <Content Include="Content\Fonts\lisong-571cc3a7e9e4071e90f1689d3e14b9f7.woff" />
-    <Content Include="Content\Fonts\keylol-rail-sung-ec1269d18d515853267ec97dd37b2c72.woff" />
+    <Content Include="Content\Fonts\keylol-rail-sung-30aececf171560648df0e0196c14a147.woff" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

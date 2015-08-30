@@ -33,11 +33,11 @@
 			if (scrollValue < jumpPositionTop) {
 				$toolbar[0].style.position = "static";
 				$editorParent[0].style.paddingTop = 0;
-				$formatGroups[0].style.backgroundColor = "none";
+				$formatGroups.removeClass("ql-format-group-flying");
 			} else {
 				$editorParent[0].style.paddingTop = $toolbar[0].offsetHeight + "px";
 				$toolbar[0].style.width = $editorParent[0].offsetWidth + "px";
-				$formatGroups[0].style.backgroundColor = "#eef1f3";
+				$formatGroups.addClass("ql-format-group-flying");
 				if (scrollValue < jumpPositionBottom) {
 					$toolbar[0].style.position = "fixed";
 					$toolbar[0].style.top = 0;

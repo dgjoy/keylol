@@ -18,6 +18,8 @@ namespace Keylol.FontGarage.CLI
             SubsetFont("keylol-rail-sung-full.ttf", "keylol-rail-sung-", new[]
             {
                 "`其乐",
+                "{}",
+                ">",
                 "推荐据点",
                 "客务中心",
                 "讯息轨道",
