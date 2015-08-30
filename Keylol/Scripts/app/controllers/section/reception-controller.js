@@ -2,7 +2,8 @@
     "use strict";
 
     keylolApp.controller("ReceptionController", [
-        "$scope", function($scope) {
+        "$scope",
+		function($scope) {
 		    $scope.quickLinks = [
 			    {
 				    name: "League of Legends",

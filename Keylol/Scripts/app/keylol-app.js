@@ -25,6 +25,9 @@
 			}).when("/article", {
 				templateUrl: "Templates/article.html",
 				controller: "ArticleController"
+			}).when("/point", {
+				templateUrl: "Templates/point.html",
+				controller: "PointController"
 			});
 		}
 	]);

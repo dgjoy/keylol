@@ -2,7 +2,8 @@
     "use strict";
 
     keylolApp.controller("PromotedPointsController", [
-        "$scope", function($scope) {
+        "$scope",
+		function($scope) {
             $scope.recommendedPoints = [
                 {
                     name: "Counter-Strike Global Offensive",

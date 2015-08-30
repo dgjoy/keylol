@@ -2,7 +2,8 @@
     "use strict";
 
     keylolApp.controller("PromotedReadingsController", [
-        "$scope", function($scope) {
+        "$scope",
+		function($scope) {
             $scope.recommendedArticles = [
                 {
                     title: "Crusader Kings II 王国风云2",

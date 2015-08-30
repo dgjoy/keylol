@@ -2,7 +2,8 @@
 	"use strict";
 
 	keylolApp.controller("TimelineController", [
-		"$scope", function($scope) {
+		"$scope",
+		function($scope) {
 			$scope.headingDisplayMode = function(entry) {
 				if (entry.source)
 					return "source";

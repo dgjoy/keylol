@@ -1,10 +1,10 @@
 ﻿(function() {
     "use strict";
 
-    keylolApp.controller("TestController", [
+    keylolApp.controller("PointController", [
         "pageTitle", "$scope",
 		function(pageTitle, $scope) {
-            pageTitle.set("测试页面 - 其乐");
-        }
+            pageTitle.set("据点 - 其乐");
+		}
     ]);
 })();
