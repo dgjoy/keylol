@@ -794,7 +794,7 @@ kl-modal[position=right] {
     }
 
 .modal-registration [id^=geetest-] {
-    padding: 14px 0;
+    margin: 14px 0;
 }
 
 .modal-registration .declaration {
@@ -838,7 +838,7 @@ kl-modal[position=right] {
 }
 
 .modal-login-password [id^=geetest-] {
-    padding: 14px 0;
+    margin: 14px 0;
 }
 
 .modal-login-password .modal-window .modal-confirm-button {

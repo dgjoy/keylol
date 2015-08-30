@@ -318,13 +318,13 @@
     <Content Include="Scripts\app\controllers\section\promoted-readings-controller.js" />
     <Content Include="Scripts\app\controllers\section\promoted-points-controller.js" />
     <Content Include="Scripts\app\controllers\section\timeline-controller.js" />
-    <Content Include="Scripts\app\controllers\test-controller.js" />
+    <Content Include="Scripts\app\controllers\not-found-controller.js" />
     <Content Include="Scripts\app\controllers\home-controller.js" />
     <Content Include="Scripts\app\directives\quill.js" />
     <Content Include="Scripts\app\directives\kl-modal.js" />
     <Content Include="Scripts\app\keylol-app.js" />
-    <Content Include="Scripts\app\services\utils.js" />
-    <Content Include="Scripts\app\services\page-title-service.js" />
+    <Content Include="Scripts\app\providers\utils-provider.js" />
+    <Content Include="Scripts\app\providers\page-title-service.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
@@ -1111,7 +1111,7 @@
     <Content Include="Templates\Sections\site-footer.html" />
     <Content Include="Templates\Sections\spotlight-banner.html" />
     <Content Include="Templates\Sections\timeline.html" />
-    <Content Include="Templates\test.html" />
+    <Content Include="Templates\not-found.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

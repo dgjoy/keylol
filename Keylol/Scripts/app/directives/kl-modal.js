@@ -2,7 +2,8 @@
 	"use strict";
 
 	keylolApp.directive("klModal", [
-		"$timeout", function($timeout) {
+		"$timeout",
+		function($timeout) {
 			var exitFocus;
 			return {
 				restrict: "E",

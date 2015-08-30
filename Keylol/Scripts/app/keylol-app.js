@@ -13,21 +13,28 @@
 		"angularMoment"
 	]);
 	app.config([
-		"$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
+		"$routeProvider", "$locationProvider", "utilsProvider", "pageTitleProvider",
+		function($routeProvider, $locationProvider, utilsProvider, pageTitleProvider) {
 			$locationProvider.html5Mode(true);
 
 			$routeProvider.when("/", {
 				templateUrl: "Templates/home.html",
 				controller: "HomeController"
-			}).when("/test", {
-				templateUrl: "Templates/test.html",
-				controller: "TestController"
 			}).when("/article", {
 				templateUrl: "Templates/article.html",
 				controller: "ArticleController"
 			}).when("/point", {
 				templateUrl: "Templates/point.html",
 				controller: "PointController"
+			}).otherwise({
+				templateUrl: "Templates/not-found.html",
+				controller: "NotFoundController"
+			});
+
+			pageTitleProvider.setLoadingTitle("载入中 - 其乐");
+
+			utilsProvider.config({
+				geetestId: "0c002064ef8f602ced7bccec08b8e10b"
 			});
 		}
 	]);
