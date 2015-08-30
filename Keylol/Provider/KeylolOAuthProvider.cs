@@ -15,7 +15,7 @@ namespace Keylol.Provider
     {
         private const string ClientAngularApp = "angular-app";
 
-        public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             string clientId, clientSecret;
             if (context.TryGetBasicCredentials(out clientId, out clientSecret))
@@ -27,12 +27,12 @@ namespace Keylol.Provider
                         break;
                 }
             }
+            return Task.FromResult(0);
         }
 
-        public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+        public override Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            if (context.ClientId != ClientAngularApp)
-                return;
+            return Task.FromResult(0);
         }
     }
 }

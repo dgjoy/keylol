@@ -66,11 +66,11 @@ namespace Keylol.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var geetest = new Geetest();
-//            if (!await geetest.ValidateAsync(vm.GeetestChallenge, vm.GeetestSeccode, vm.GeetestValidate))
-//            {
-//                ModelState.AddModelError("authCode", "true");
-//                return BadRequest(ModelState);
-//            }
+            if (!await geetest.ValidateAsync(vm.GeetestChallenge, vm.GeetestSeccode, vm.GeetestValidate))
+            {
+                ModelState.AddModelError("authCode", "true");
+                return BadRequest(ModelState);
+            }
             var user = await UserManager.FindByEmailAsync(vm.Email);
             if (user == null)
             {
