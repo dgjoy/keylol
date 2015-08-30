@@ -324,7 +324,7 @@
     <Content Include="Scripts\app\directives\kl-modal.js" />
     <Content Include="Scripts\app\keylol-app.js" />
     <Content Include="Scripts\app\providers\utils-provider.js" />
-    <Content Include="Scripts\app\providers\page-title-service.js" />
+    <Content Include="Scripts\app\providers\page-title-provider.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
