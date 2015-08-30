@@ -2,8 +2,8 @@
     "use strict";
 
     keylolApp.controller("HomeController", [
-        "pageTitle", "$scope", "ModalService",
-		function(pageTitle, $scope, ModalService) {
+        "pageTitle", "$scope",
+		function(pageTitle, $scope) {
             pageTitle.set("其乐");
         }
     ]);

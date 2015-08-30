@@ -31,7 +31,7 @@
 				controller: "NotFoundController"
 			});
 
-			pageTitleProvider.setLoadingTitle("载入中 - 其乐");
+			pageTitleProvider.loadingTitle("载入中 - 其乐");
 
 			utilsProvider.config({
 				geetestId: "0c002064ef8f602ced7bccec08b8e10b"

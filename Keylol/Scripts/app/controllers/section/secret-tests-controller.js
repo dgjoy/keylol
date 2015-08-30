@@ -2,23 +2,23 @@
 	"use strict";
 
 	keylolApp.controller("SecretTestsController", [
-		"$scope", "ModalService",
-		function($scope, ModalService) {
+		"$scope", "modal",
+		function($scope, modal) {
 			$scope.showRegistrationForm = function() {
-				ModalService.showModal({
+				modal.show({
 					templateUrl: "Templates/Modal/registration.html",
 					controller: "RegistrationController"
 				});
 			};
 
 			$scope.showLoginPasswordForm = function() {
-				ModalService.showModal({
+				modal.show({
 					templateUrl: "Templates/Modal/login-password.html",
 					controller: "LoginPasswordController"
 				});
 			};
 			$scope.showEditor = function() {
-				ModalService.showModal({
+				modal.show({
 					templateUrl: "Templates/Modal/editor.html",
 					controller: "EditorController"
 				});

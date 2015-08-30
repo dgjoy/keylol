@@ -5,7 +5,10 @@
 		var _config = {};
 		return {
 			config: function(config) {
-				_config = config;
+				if (config) {
+					_config = config;
+				}
+				return _config;
 			},
 			$get: [
 				function() {

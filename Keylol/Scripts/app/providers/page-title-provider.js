@@ -4,8 +4,11 @@
 	keylolApp.provider("pageTitle", function() {
 		var _loadingTitle = "";
 		return {
-			setLoadingTitle: function(title) {
-				_loadingTitle = title;
+			loadingTitle: function(title) {
+				if (title) {
+					_loadingTitle = title;
+				}
+				return _loadingTitle;
 			},
 			$get: [
 				"$rootScope",

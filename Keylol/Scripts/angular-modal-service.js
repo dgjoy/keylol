@@ -10,7 +10,7 @@
 
 	var module = angular.module('angularModalService', []);
 
-	module.factory('ModalService', [
+	module.factory('modal', [
 		'$document', '$compile', '$controller', '$http', '$rootScope', '$q', '$templateCache', '$window',
 		function($document, $compile, $controller, $http, $rootScope, $q, $templateCache, $window) {
 
@@ -93,7 +93,7 @@
 					}
 				};
 
-				self.showModal = function(options) {
+				self.show = function(options) {
 
 					//  Create a deferred we'll resolve when the modal is ready.
 					var deferred = $q.defer();
@@ -204,7 +204,6 @@
 
 					return deferred.promise;
 				};
-
 			}
 
 			return new ModalService();
