@@ -11,10 +11,26 @@
 				return _config;
 			},
 			$get: [
-				function() {
+				"$q",
+				function($q) {
 					function Utils() {
 						var self = this;
 						var uniqueId = 1;
+
+						self.supportWebp = $q(function(resolve, reject) {
+							var img = new Image();
+							img.onload = function() {
+								if (img.width > 0 && img.height > 0) {
+									resolve();
+								} else {
+									reject();
+								}
+							};
+							img.onerror = function() {
+								reject();
+							};
+							img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA"; // detect lossy webp
+						});
 
 						self.byteLength = function(str) {
 							var s = 0;
