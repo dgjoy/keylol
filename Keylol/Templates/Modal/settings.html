@@ -5,64 +5,242 @@
         </div>
         <img class="secret-barcode" src="Content/Images/secret-barcode-registration.png" alt="条形码">
         <div class="heading font-myriad-lisong">
-            <h1>会员信息变更函</h1>
-            <h2>Personal Details Update Form</h2>
+            <div class="menu-left">
+                <h1>会员信息变更函</h1>
+                <h2>Personal Details Update Form</h2>
+            </div>
+            <div class="menu-right">
+                <ul>
+                    <li ng-class="{'active': settings_page[1]}"><a href="javascript:" ng-click="changepage(1)">信息资料</a></li>
+                    <li ng-class="{'active': settings_page[2]}"><a href="javascript:" ng-click="changepage(2)">平台</a></li>
+                    <li ng-class="{'active': settings_page[3]}"><a href="javascript:" ng-click="changepage(3)">安全</a></li>
+                    <li ng-class="{'active': settings_page[4]}"><a href="javascript:" ng-click="changepage(4)">偏好设定</a></li>
+                </ul>
+            </div>
         </div>
+        <div class="clearfix"></div>
         <form name="form" class="clearfix" ng-submit="submit(form)">
-            <table>
-                <colgroup>
-                    <col style="width: 36%;">
-                    <col style="width: 42%;">
-                    <col style="width: 2%;">
-                    <col style="width: 20%;">
-                </colgroup>
-                <tbody>
-                <tr>
-                    <td>
-                        <h3 class="font-myriad-lisong">昵称</h3>
-                        <h4 ng-switch="errorDetect.username(error['vm.UserName'])">
-                            <span class="error" ng-switch-when="used">这个昵称已被别人使用。</span>
-                            <span class="error" ng-switch-when="format">仅限使用拉丁字母、数字、汉字。</span>
-                            <span class="error" ng-switch-when="length">仅限 3-16 字节。</span>
-                            <span ng-switch-default>具有唯一性，仅限字母、数字、汉字，3-16 字节。</span>
-                        </h4>
-                    </td>
-                    <td>
-                        <input type="text" tabindex="1" ng-model="yourVariable">
-                    </td>
-                    <td class="avatar-box-left-spacing"></td>
-                    <td rowspan="3" class="upload-avatar">
-                        <h3 class="font-myriad-lisong">账户头像</h3>
-                        <h4>用胶水贴上一张照片</h4>
-                        <button type="button" tabindex="5" ng-click="cancel()">胶水</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h3 class="font-myriad-lisong">登录口令</h3>
-                        <h4 ng-switch="errorDetect.password(error['vm.Password'])">
-                            <span class="error" ng-switch-when="length">密码需要至少长 6 位。</span>
-                            <span ng-switch-default>拉丁字母、数字、字符，大小写敏感，至少 6 位。</span>
-                        </h4>
-                    </td>
-                    <td>
-                        <input type="password" tabindex="2" ng-model="vm.Password">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h3 class="font-myriad-lisong">确认登录口令</h3>
-                        <h4 ng-switch="error['vm.ConfirmPassword']">
-                            <span class="error" ng-switch-when="not match">密码不匹配。</span>
-                            <span ng-switch-default>再次输入你的登录口令，以避免输入失误。</span>
-                        </h4>
-                    </td>
-                    <td>
-                        <input type="password" tabindex="3" ng-model="vm.ConfirmPassword">
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div ng-show="settings_page[1]">
+                <table>
+                    <colgroup>
+                        <col style="width: 36%;">
+                        <col style="width: 42%;">
+                        <col style="width: 2%;">
+                        <col style="width: 20%;">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3 class="font-myriad-lisong">昵称</h3>
+                                <h4 ng-switch="errorDetect.username(error['vm.UserName'])">
+                                    <span class="error" ng-switch-when="used">这个昵称已被别人使用。</span>
+                                    <span class="error" ng-switch-when="format">仅限使用拉丁字母、数字、汉字。</span>
+                                    <span class="error" ng-switch-when="length">仅限 3-16 字节。</span>
+                                    <span ng-switch-default>暂时不允许注册后更改昵称。</span>
+                                </h4>
+                            </td>
+                            <td>
+                                <input type="text" tabindex="1" ng-model="vm.UserName" readonly="readonly">
+                            </td>
+                            <td class="avatar-box-left-spacing"></td>
+                            <td rowspan="3" class="upload-avatar">
+                                <h3 class="font-myriad-lisong">账户头像</h3>
+                                <h4>用胶水贴上一张照片</h4>
+                                <button type="button" tabindex="5" ng-click="cancel()">胶水</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="font-myriad-lisong">用户识别码</h3>
+                                <h4 ng-switch="errorDetect.password(error['vm.UIC'])">
+                                    <span class="error" ng-switch-when="length">密码需要至少长 6 位。</span>
+                                    <span ng-switch-default>唯一用户标示(UIC)，注册后无法更改。</span>
+                                </h4>
+                            </td>
+                            <td>
+                                <input type="text" tabindex="2" ng-model="vm.UIC">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="font-myriad-lisong">玩家标签</h3>
+                                <h4 ng-switch="error['vm.Tags']">
+                                    <span class="error" ng-switch-when="not match">密码不匹配。</span>
+                                    <span ng-switch-default>一句话概括你的游戏生涯。</span>
+                                </h4>
+                            </td>
+                            <td>
+                                <input type="text" tabindex="3" ng-model="vm.Tags">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <colgroup>
+                        <col style="width: 36%;">
+                        <col style="width: 64%;">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3 class="font-myriad-lisong">电子邮箱</h3>
+                                <h4 ng-switch="errorDetect.email(error['vm.Email'])">
+                                    <span class="error" ng-switch-when="empty">邮箱不能为空。</span>
+                                    <span class="error" ng-switch-when="malformed">邮箱格式不正确。</span>
+                                    <span class="error" ng-switch-when="used">这个邮箱已经被别人使用了。</span>
+                                    <span ng-switch-default>辅助账户找回、登录和接收订阅资讯。</span>
+                                </h4>
+                            </td>
+                            <td>
+                                <input type="email" tabindex="4" ng-model="vm.Email">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <colgroup>
+                        <col style="width: 100%;">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3 class="font-myriad-lisong">个人据点横幅</h3>
+                                <h4 ng-switch="errorDetect.email(error['vm.Email'])">
+                                    <span class="error" ng-switch-when="empty">邮箱不能为空。</span>
+                                    <span class="error" ng-switch-when="malformed">邮箱格式不正确。</span>
+                                    <span class="error" ng-switch-when="used">这个邮箱已经被别人使用了。</span>
+                                    <span ng-switch-default>640 x 90 大小的背景图片，展示在个人据点顶部。</span>
+                                </h4>
+                                <div class="modal-settings-point">
+                                    <img src="Content/Images/settings-point-img.png" alt="个人据点横幅" />
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div ng-show="settings_page[2]">
+                <table>
+                    <colgroup>
+                        <col style="width: 100%;">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3 class="font-myriad-lisong">平台账号</h3>
+                                <h4>
+                                    <span>内测阶段暂时不允许在注册后更换已绑定的 Steam 账号</span>
+                                </h4>
+                                <div class="modal-settings-page2-block larger">
+                                    <a class="go-binding-anchor" href="test">
+                                        <img src="Content/Images/steam-circle-mono.png" alt="绑定 Steam">
+                                        <span>Steam</span>
+                                    </a>
+                                    <div class="pasted-card box-shadowed">
+                                        <img class="needle" src="Content/Images/card-needle.png" alt="订书针">
+                                        <div>
+                                            <img src="/Content/Images/steam-circle.png" alt="Steam">
+                                            <div>
+                                                <h5>已绑定 <a href="test">×</a></h5>
+                                                <h5>leeberun_os</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-settings-page2-block normal right-border">
+                                    <h4>资料透明度</h4>
+                                    <h4><span class="light-yellow"></span>仅自己可见</h4>
+                                </div>
+                                <div class="modal-settings-page2-block normal">
+                                    <h4>机器人信息</h4>
+                                    <h4 style="color: #748A97">其乐机器人 #41</h4>
+                                </div>
+                                <div class="modal-settings-page2-block normal">
+                                    <h4>通讯关系</h4>
+                                    <h4><span class="light-green"></span>双向好友</h4>
+                                </div>
+                                <div class="modal-settings-page2-block normal">
+                                    <h4>机器人状态</h4>
+                                    <h4><span class="light-green"></span>正常在线</h4>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <colgroup>
+                        <col style="width: 100%;">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3 class="font-myriad-lisong">分享社区动态</h3>
+                                <h4>
+                                    <span>在个人据点自动同步 Steam 账户活动，需要设定你的 Steam 资料为 "好友可见" 或 "公开"。</span>
+                                </h4>
+                                <div class="">
+                                    <div>
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-1" />
+                                            <label for="settings-checkbox-1"></label>
+                                            <span>新增好友</span>
+                                        </div>  
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-2" />
+                                            <label for="settings-checkbox-2"></label>
+                                            <span>解锁成就</span>
+                                        </div> 
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-3" />
+                                            <label for="settings-checkbox-3"></label>
+                                            <span>预购/入库游戏</span>
+                                        </div> 
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-4" />
+                                            <label for="settings-checkbox-4"></label>
+                                            <span>加入群组</span>
+                                        </div> 
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-5" />
+                                            <label for="settings-checkbox-5"></label>
+                                            <span>创建群组</span>
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div>
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-6" />
+                                            <label for="settings-checkbox-6"></label>
+                                            <span>愿望清单更新</span>
+                                        </div>
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-7" />
+                                            <label for="settings-checkbox-7"></label>
+                                            <span>发布游戏评论</span>
+                                        </div>
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-8" />
+                                            <label for="settings-checkbox-8"></label>
+                                            <span>上传截图</span>
+                                        </div>
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-9" />
+                                            <label for="settings-checkbox-9"></label>
+                                            <span>添加视频</span>
+                                        </div>
+                                        <div class="modal-settings-checkbox">
+                                            <input type="checkbox" value=" " id="settings-checkbox-10" />
+                                            <label for="settings-checkbox-10"></label>
+                                            <span>收藏更新</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <button type="submit" class="modal-confirm-button">
                 <img class="arrow-right" src="Content/Images/arrow-right.png" alt="下一步">
                 <img class="signature-pen" src="Content/Images/signature-pen.png" alt="提交"/>
@@ -72,9 +250,9 @@
                 </hgroup>
             </button>
             <div class="tips">
-                <h3 class="single-line font-myriad-lisong">提示</h3>
-                <h4>Tips</h4>
-                <p>在设置栏目之间切换时，更改的内容会被保留并且会有星号 (*) 标记在栏目旁。</p>
+                <h3 class="single-line font-myriad-lisong">守则</h3>
+                <h4>Terms and Conditions</h4>
+                <p>请所有其乐会员悉知并遵守 《其乐社区用户通用守则》 以及所在地区的相关法律。</p>
             </div>
         </form>
     </div>
