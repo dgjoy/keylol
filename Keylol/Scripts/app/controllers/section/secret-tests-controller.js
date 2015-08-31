@@ -23,6 +23,12 @@
 					controller: "EditorController"
 				});
 			};
+			$scope.showSettings = function() {
+				modal.show({
+					templateUrl: "Templates/Modal/settings.html",
+					controller: "SettingsController"
+				});
+			};
 		}
 	]);
 })();

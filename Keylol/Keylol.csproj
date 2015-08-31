@@ -306,6 +306,7 @@
     <Content Include="Scripts\angular-route.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\controllers\modal\settings-controller.js" />
     <Content Include="Scripts\app\controllers\point-controller.js" />
     <Content Include="Scripts\app\controllers\article-controller.js" />
     <Content Include="Scripts\app\controllers\modal\login-password-controller.js" />
@@ -1085,6 +1086,7 @@
     <Content Include="Scripts\quill\quill.js" />
     <Content Include="Scripts\quill\quill.snow.css" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Templates\Modal\settings.html" />
     <Content Include="Templates\point.html" />
     <Content Include="Templates\Directives\quill.html" />
     <Content Include="Templates\article.html" />

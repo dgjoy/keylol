@@ -1,0 +1,81 @@
+﻿<kl-modal position="center" class="modal-settings">
+    <div class="modal-window">
+        <div class="modal-exit-button" ng-click="cancel()">
+            <div ng-include="'Content/Images/exit.svg'"></div>
+        </div>
+        <img class="secret-barcode" src="Content/Images/secret-barcode-registration.png" alt="条形码">
+        <div class="heading font-myriad-lisong">
+            <h1>会员信息变更函</h1>
+            <h2>Personal Details Update Form</h2>
+        </div>
+        <form name="form" class="clearfix" ng-submit="submit(form)">
+            <table>
+                <colgroup>
+                    <col style="width: 36%;">
+                    <col style="width: 42%;">
+                    <col style="width: 2%;">
+                    <col style="width: 20%;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td>
+                        <h3 class="font-myriad-lisong">昵称</h3>
+                        <h4 ng-switch="errorDetect.username(error['vm.UserName'])">
+                            <span class="error" ng-switch-when="used">这个昵称已被别人使用。</span>
+                            <span class="error" ng-switch-when="format">仅限使用拉丁字母、数字、汉字。</span>
+                            <span class="error" ng-switch-when="length">仅限 3-16 字节。</span>
+                            <span ng-switch-default>具有唯一性，仅限字母、数字、汉字，3-16 字节。</span>
+                        </h4>
+                    </td>
+                    <td>
+                        <input type="text" tabindex="1" ng-model="yourVariable">
+                    </td>
+                    <td class="avatar-box-left-spacing"></td>
+                    <td rowspan="3" class="upload-avatar">
+                        <h3 class="font-myriad-lisong">账户头像</h3>
+                        <h4>用胶水贴上一张照片</h4>
+                        <button type="button" tabindex="5" ng-click="cancel()">胶水</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h3 class="font-myriad-lisong">登录口令</h3>
+                        <h4 ng-switch="errorDetect.password(error['vm.Password'])">
+                            <span class="error" ng-switch-when="length">密码需要至少长 6 位。</span>
+                            <span ng-switch-default>拉丁字母、数字、字符，大小写敏感，至少 6 位。</span>
+                        </h4>
+                    </td>
+                    <td>
+                        <input type="password" tabindex="2" ng-model="vm.Password">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h3 class="font-myriad-lisong">确认登录口令</h3>
+                        <h4 ng-switch="error['vm.ConfirmPassword']">
+                            <span class="error" ng-switch-when="not match">密码不匹配。</span>
+                            <span ng-switch-default>再次输入你的登录口令，以避免输入失误。</span>
+                        </h4>
+                    </td>
+                    <td>
+                        <input type="password" tabindex="3" ng-model="vm.ConfirmPassword">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="modal-confirm-button">
+                <img class="arrow-right" src="Content/Images/arrow-right.png" alt="下一步">
+                <img class="signature-pen" src="Content/Images/signature-pen.png" alt="提交"/>
+                <hgroup class="font-myriad-keylol">
+                    <h1>提交变更函</h1>
+                    <h2>Submit the Update</h2>
+                </hgroup>
+            </button>
+            <div class="tips">
+                <h3 class="single-line font-myriad-lisong">提示</h3>
+                <h4>Tips</h4>
+                <p>在设置栏目之间切换时，更改的内容会被保留并且会有星号 (*) 标记在栏目旁。</p>
+            </div>
+        </form>
+    </div>
+</kl-modal>

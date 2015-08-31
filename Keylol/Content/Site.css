@@ -994,6 +994,36 @@ kl-modal[position=right] {
 
 /*#endregion */
 
+/*#region Settings Window */
+
+.modal-settings .modal-window {
+    padding: 14px;
+    width: 900px;
+}
+
+.modal-settings .heading {
+    margin: 28px 0;
+}
+
+.modal-settings table {
+    margin: 28px 0;
+    width: 100%;
+}
+
+.modal-settings .tips {
+    max-width: 580px;
+    padding-top: 8px;
+}
+
+    .modal-settings .tips h3.single-line + h4 {
+        top: 6px;
+    }
+
+.modal-settings .modal-window .modal-confirm-button {
+    margin-right: -24px;
+}
+
+/*#endregion */
 
 /*#endregion */
 
