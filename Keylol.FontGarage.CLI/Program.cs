@@ -34,7 +34,8 @@ namespace Keylol.FontGarage.CLI
                 "登入其乐",
                 "发布文章",
                 "由你筛选的游戏讯息轨道",
-                "提交变更函"
+                "提交变更函",
+                "千古绝唱脍炙人口白璧微瑕差强人意誉而不和阳春白雪无人问津褒贬不一众矢之的怨声载道不堪卒读神怒天诛"
             });
             SubsetFont("lisong-full.ttf", "lisong-", new[]
             {

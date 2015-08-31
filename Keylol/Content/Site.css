@@ -11,7 +11,7 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-9ec1334222e9b763cf3abfdf42e6e70a.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-d6d189ea9f24420eae57c7d93c23d2ac.woff") format("woff");
 }
 
 @font-face {
@@ -1860,7 +1860,7 @@ kl-modal[position=right] {
     }
 
     .section-site-footer .divider {
-        margin: 0 3px;
+        margin: 0 4px;
         color: #c7cdd1;
     }
 
@@ -2088,6 +2088,91 @@ kl-modal[position=right] {
 
         .section-point-staffs p a {
             color: #333;
+        }
+
+/*#endregion */
+
+/*#region Point Votes Section */
+
+.section-point-votes {
+    background: white;
+    width: 100%;
+    /* min-width: 200px; */
+    padding: 10px;
+}
+
+    .section-point-votes .reputation-level {
+        text-align: center;
+    }
+
+        .section-point-votes .reputation-level span {
+            background: #11254a;
+            padding: 3px 5px;
+            font-size: 17px;
+            display: inline-block;
+            color: white;
+        }
+
+    .section-point-votes .point-name {
+        font-size: 15px;
+        text-align: center;
+        margin: 9px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .section-point-votes .positive-vs-negative {
+        background: #748a97;
+        height: 5px;
+        margin-bottom: 3px;
+    }
+
+        .section-point-votes .positive-vs-negative div {
+            background: #11254a;
+            height: 100%;
+        }
+
+    .section-point-votes [class$=-text] p {
+        margin: 0;
+    }
+
+    .section-point-votes [class$=-text] a {
+        color: #333;
+    }
+
+    .section-point-votes .positive-text {
+        float: left;
+    }
+
+        .section-point-votes .positive-text p:first-child {
+            color: #11254a;
+        }
+
+    .section-point-votes .negative-text {
+        float: right;
+        text-align: right;
+    }
+
+        .section-point-votes .negative-text p:first-child {
+            color: #748a97;
+        }
+
+    .section-point-votes .external-links {
+        text-align: center;
+        margin-top: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .section-point-votes .external-links a {
+            color: #748a97;
+        }
+
+        .section-point-votes .external-links .divider {
+            color: #c7cdd1;
+            margin: 0 4px;
         }
 
 /*#endregion */
