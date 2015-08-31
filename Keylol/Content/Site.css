@@ -18,7 +18,7 @@
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-df2a570a29392f67d7714a7d4225e51a.woff") format("woff");
+    src: url("./Fonts/lisong-d9dc5af2b28fbeaa31eefbeb2e61934d.woff") format("woff");
 }
 
 /*#endregion */
@@ -1016,7 +1016,7 @@ kl-modal[position=right] {
 }
 
     .modal-settings .tips h3.single-line + h4 {
-        top: 6px;
+        top: 3px;
     }
 
 .modal-settings .modal-window .modal-confirm-button {
