@@ -11,14 +11,14 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-9ec1334222e9b763cf3abfdf42e6e70a.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-d6d189ea9f24420eae57c7d93c23d2ac.woff") format("woff");
 }
 
 @font-face {
     font-family: "LiSong";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/lisong-d9dc5af2b28fbeaa31eefbeb2e61934d.woff") format("woff");
+    src: url("./Fonts/lisong-fdd0168d0a8b87a3de93bb498775e41d.woff") format("woff");
 }
 
 /*#endregion */
@@ -450,6 +450,11 @@ kl-modal[position=right] {
         padding: 0 6px;
     }
 
+        .modal-window table input[type=text]:disabled,
+        .modal-window table input[type=email]:disabled {
+            cursor: text;
+        }
+
     /*#endregion */
 
     /*#region Confirm Button */
@@ -589,6 +594,56 @@ kl-modal[position=right] {
         font-size: 13px;
         margin: 3px 0;
     }
+
+    /*#endregion */
+
+    /*#region Pasted Card */
+
+    .modal-window .pasted-card {
+        position: relative;
+        background-color: #fdfeeb;
+        border-image: url(/Content/Images/border-slash.png) 30 round;
+        border-width: 4px;
+        border-style: solid;
+        transform: rotate(-1deg);
+        text-align: center;
+        min-width: 182px;
+        box-sizing: border-box;
+    }
+
+        .modal-window .pasted-card .needle {
+            position: absolute;
+            top: -3px;
+            left: 4px;
+        }
+
+        .modal-window .pasted-card > div {
+            display: inline-block;
+            margin: 6px 0 4px;
+        }
+
+        .modal-window .pasted-card div img {
+            float: left;
+            width: 35px;
+            height: 35px;
+            margin: 1px 8px 0 0;
+        }
+
+        .modal-window .pasted-card div h5 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 2px 0;
+        }
+
+        .modal-window .pasted-card div a {
+            font-weight: bold;
+        }
+
+        .modal-window .pasted-card div div {
+            float: left;
+            text-align: left;
+            max-width: 192px;
+        }
 
 /*#endregion */
 
@@ -732,50 +787,11 @@ kl-modal[position=right] {
         }
 
     .modal-registration .platform .pasted-card {
-        width: 262px;
+        width: 270px;
         position: absolute;
         top: 0;
         left: 0;
-        background-color: #fdfeeb;
-        border-image: url(/Content/Images/border-slash.png) 30 round;
-        border-width: 4px;
-        border-style: solid;
-        transform: rotate(-1deg);
     }
-
-        .modal-registration .platform .pasted-card .needle {
-            position: absolute;
-            top: -3px;
-            left: 4px;
-        }
-
-        .modal-registration .platform .pasted-card > div {
-            display: inline-block;
-            margin: 6px 0 4px;
-        }
-
-        .modal-registration .platform .pasted-card div img {
-            float: left;
-            width: 35px;
-            height: 35px;
-            margin: 1px 8px 0 0;
-        }
-
-        .modal-registration .platform .pasted-card div h5 {
-            font-size: 13px;
-            font-weight: normal;
-            margin: 2px 0;
-        }
-
-        .modal-registration .platform .pasted-card div a {
-            font-weight: bold;
-        }
-
-        .modal-registration .platform .pasted-card div div {
-            float: left;
-            text-align: left;
-            max-width: 192px;
-        }
 
 .modal-registration .avatar-box-left-spacing {
     border: none;
@@ -1005,25 +1021,26 @@ kl-modal[position=right] {
     margin: 28px 0;
 }
 
-    .modal-settings .heading .menu-left {
-        float: left;
-    }
-
     .modal-settings .heading .menu-right {
         float: right;
+        font-size: 15px;
+        margin-top: 6px;
     }
-        .modal-settings .heading .menu-right ul {
-            list-style: none;
+
+        .modal-settings .heading .menu-right ul li {
+            margin-left: 30px;
         }
 
-            .modal-settings .heading .menu-right  ul li {
-                display: inline;
-                font-size: 16px;
-                margin-left: 30px;
+            .modal-settings .heading .menu-right ul li:first-of-type {
+                margin-left: 0;
             }
 
-                .modal-settings .heading .menu-right ul li.active {
-                    font-weight: bold;
+            .modal-settings .heading .menu-right ul li.current {
+                font-weight: bold;
+            }
+
+                .modal-settings .heading .menu-right ul li.current a:hover {
+                    text-decoration: none;
                 }
 
 .modal-settings .avatar-box-left-spacing {
@@ -1039,40 +1056,27 @@ kl-modal[position=right] {
     width: 100%;
 }
 
-.modal-settings .tips {
-    max-width: 580px;
-    padding-top: 8px;
-}
-
-    .modal-settings .tips h3.single-line + h4 {
-        top: 3px;
-    }
-
-.modal-settings .modal-window .modal-confirm-button {
-    margin-right: -24px;
-}
-
-.modal-settings .modal-settings-point {
+.modal-settings .profile-point-background {
     margin: 14px 0;
-    width: 100%;
     text-align: center;
 }
 
-    .modal-settings .modal-settings-point img {
+    .modal-settings .profile-point-background img {
         width: 640px;
-        height: 90px;
+        height: 92px;
     }
 
-.modal-settings .modal-settings-page2-block {
-    width: 17.5%;
+.modal-settings .platform-status {
+    width: 18%;
     float: left;
     text-align: center;
     position: relative;
-    margin: 4px 0;
+    margin: 7px 0 9px;
+    box-sizing: border-box;
 }
 
-    .modal-settings .modal-settings-page2-block span.light-yellow {
-        border-radius:5px;
+    .modal-settings .platform-status span.light-yellow {
+        border-radius: 50%;
         background-color: #F38B00;
         height: 10px;
         width: 10px;
@@ -1080,8 +1084,8 @@ kl-modal[position=right] {
         margin-right: 4px;
     }
 
-    .modal-settings .modal-settings-page2-block span.light-green {
-        border-radius:5px;
+    .modal-settings .platform-status span.light-green {
+        border-radius: 50%;
         background-color: #00AF41;
         height: 10px;
         width: 10px;
@@ -1089,141 +1093,110 @@ kl-modal[position=right] {
         margin-right: 4px;
     }
 
-    .modal-settings .modal-settings-page2-block.normal {
-        width: 17%;
+    .modal-settings .platform-status.larger {
+        width: 28%;
     }
 
-    .modal-settings .modal-settings-page2-block.larger {
-        width: 30%;
+    .modal-settings .platform-status.right-border {
+        border-right: 1px solid #748A97;
     }
 
-    .modal-settings .modal-settings-page2-block.right-border {
-        border-right:1px solid #748A97;
-    }
-
-    .modal-settings .modal-settings-page2-block h4 {
-        text-align: left;
-        text-indent:3em;
-    }
-
-    .modal-settings .modal-settings-page2-block .go-binding-anchor {
+    .modal-settings .platform-status .text-block {
         display: inline-block;
-        opacity: 0.25;
+        text-align: left;
     }
 
-        .modal-settings .modal-settings-page2-block .go-binding-anchor:hover {
-            text-decoration: none;
-            opacity: 1.0;
-        }
+    .modal-settings .platform-status .bot-name {
+        color: #748a97;
+    }
 
-        .modal-settings .modal-settings-page2-block .go-binding-anchor img {
-            width: 35px;
-            height: 35px;
-            vertical-align: middle;
-        }
-
-        .modal-settings .modal-settings-page2-block .go-binding-anchor span {
-            font-size: 15px;
-            color: #333;
-        }
-
-    .modal-settings .modal-settings-page2-block .pasted-card {
-        width: 262px;
+    .modal-settings .platform-status .pasted-card {
         position: absolute;
         top: 0;
-        left: -30px;
-        background-color: #fdfeeb;
-        border-image: url(/Content/Images/border-slash.png) 30 round;
-        border-width: 4px;
-        border-style: solid;
-        transform: rotate(-1deg);
+        left: -25px;
+        width: calc(100% + 25px);
     }
 
-        .modal-settings .modal-settings-page2-block .pasted-card .needle {
-            position: absolute;
-            top: -3px;
-            left: 4px;
-        }
+.modal-settings .checkbox-group {
+    margin: 9px 0;
+}
 
-        .modal-settings .modal-settings-page2-block .pasted-card > div {
-            display: inline-block;
-            margin: 6px 0 4px;
-        }
+    .modal-settings .checkbox-group div {
+        display: block;
+        width: 20%;
+        float: left;
+        text-indent: 5%;
+    }
 
-        .modal-settings .modal-settings-page2-block .pasted-card div img {
-            float: left;
-            width: 35px;
-            height: 35px;
-            margin: 1px 8px 0 0;
-        }
+    .modal-settings .checkbox-group label {
+        padding-left: 2px;
+    }
 
-        .modal-settings .modal-settings-page2-block .pasted-card div h5 {
-            font-size: 13px;
-            font-weight: normal;
-            margin: 2px 0;
-        }
-
-        .modal-settings .modal-settings-page2-block .pasted-card div a {
-            font-weight: bold;
-        }
-
-        .modal-settings .modal-settings-page2-block .pasted-card div div {
-            float: left;
-            text-align: left;
-            max-width: 192px;
-        }
-
-/*#region Checkbox */
+/*#region Customized Checkbox (Disabled) */
+/*
 .modal-settings-checkbox {
     width: 120px;
-	margin: 6px 26px;
-	position: relative;
+    margin: 6px 26px;
+    position: relative;
     float: left;
 }
 
-.modal-settings-checkbox span {
-    margin-left: 4px;
-}
+    .modal-settings-checkbox span {
+        margin-left: 4px;
+    }
 
-.modal-settings-checkbox label {
-	cursor: pointer;
-	position: absolute;
-	width: 16px;
-	height: 16px;
-	top: 0;
-  	left: 0;
-	background: #eee;
-	border:1px solid #ddd;
-}
+    .modal-settings-checkbox label {
+        cursor: pointer;
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 0;
+        left: 0;
+        background: #eee;
+        border: 1px solid #ddd;
+    }
 
-.modal-settings-checkbox label:after {
-	opacity: 0.2;
-	content: '';
-	position: absolute;
-	width: 9px;
-	height: 5px;
-	background: transparent;
-	top: 2px;
-	left: 2px;
-	border: 3px solid #333;
-	border-top: none;
-	border-right: none;
- 
-	-webkit-transform: rotate(-45deg);
-	-moz-transform: rotate(-45deg);
-	-o-transform: rotate(-45deg);
-	-ms-transform: rotate(-45deg);
-	transform: rotate(-45deg);
-}
+        .modal-settings-checkbox label:after {
+            opacity: 0.2;
+            content: '';
+            position: absolute;
+            width: 9px;
+            height: 5px;
+            background: transparent;
+            top: 2px;
+            left: 2px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            -webkit-transform: rotate(-45deg);
+            -moz-transform: rotate(-45deg);
+            -o-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
 
-.modal-settings-checkbox label:hover::after {
-	opacity: 0.5;
-}
- 
-.modal-settings-checkbox input[type=checkbox]:checked + label:after {
-	opacity: 1;
-}
+        .modal-settings-checkbox label:hover::after {
+            opacity: 0.5;
+        }
+
+    .modal-settings-checkbox input[type=checkbox]:checked + label:after {
+        opacity: 1;
+    }
+*/
 /*#endregion */
+
+.modal-settings .tips {
+    max-width: 580px;
+    padding-top: 8px;
+}
+
+    .modal-settings .tips h3.single-line + h4 {
+        top: 6px;
+    }
+
+.modal-settings .modal-window .modal-confirm-button {
+    margin-right: -24px;
+}
 
 /*#endregion */
 
@@ -1429,7 +1402,6 @@ kl-modal[position=right] {
 /*#endregion */
 
 /*#region Spotlight Banner Section */
-
 
 .section-spotlight-banner {
     height: 100%;
@@ -1976,7 +1948,7 @@ kl-modal[position=right] {
 
         .section-promoted-readings .article p {
             margin: 7px 0;
-            max-height: 54px;
+            max-height: 36px;
             overflow: hidden;
             line-height: 18px;
         }
@@ -2063,7 +2035,7 @@ kl-modal[position=right] {
     }
 
     .section-site-footer .divider {
-        margin: 0 3px;
+        margin: 0 4px;
         color: #c7cdd1;
     }
 
@@ -2269,13 +2241,114 @@ kl-modal[position=right] {
 .section-point-staffs {
     background: white;
     width: 100%;
-    /* min-width: */
+    min-width: 200px;
     padding: 15px 0 10px;
 }
 
     .section-point-staffs h1 {
-        margin: 0 0 60px;
+        margin: 0 0 14px;
     }
+
+    .section-point-staffs p {
+        margin: 7px 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        .section-point-staffs p span {
+            float: right;
+            color: #748a97;
+        }
+
+        .section-point-staffs p a {
+            color: #333;
+        }
+
+/*#endregion */
+
+/*#region Point Votes Section */
+
+.section-point-votes {
+    background: white;
+    width: 100%;
+    /* min-width: 200px; */
+    padding: 10px;
+}
+
+    .section-point-votes .reputation-level {
+        text-align: center;
+    }
+
+        .section-point-votes .reputation-level span {
+            background: #11254a;
+            padding: 3px 5px;
+            font-size: 17px;
+            display: inline-block;
+            color: white;
+        }
+
+    .section-point-votes .point-name {
+        font-size: 15px;
+        text-align: center;
+        margin: 9px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .section-point-votes .positive-vs-negative {
+        background: #748a97;
+        height: 5px;
+        margin-bottom: 3px;
+    }
+
+        .section-point-votes .positive-vs-negative div {
+            background: #11254a;
+            height: 100%;
+        }
+
+    .section-point-votes [class$=-text] p {
+        margin: 0;
+    }
+
+    .section-point-votes [class$=-text] a {
+        color: #333;
+    }
+
+    .section-point-votes .positive-text {
+        float: left;
+    }
+
+        .section-point-votes .positive-text p:first-child {
+            color: #11254a;
+        }
+
+    .section-point-votes .negative-text {
+        float: right;
+        text-align: right;
+    }
+
+        .section-point-votes .negative-text p:first-child {
+            color: #748a97;
+        }
+
+    .section-point-votes .external-links {
+        text-align: center;
+        margin-top: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .section-point-votes .external-links a {
+            color: #748a97;
+        }
+
+        .section-point-votes .external-links .divider {
+            color: #c7cdd1;
+            margin: 0 4px;
+        }
 
 /*#endregion */
 

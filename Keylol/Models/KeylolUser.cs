@@ -29,17 +29,15 @@ namespace Keylol.Models
             UserName = userName;
         }
 
+        [Required]
+        [MaxLength(5)]
+        public string IdCode { get; set; }
+
         public DateTime RegisterTime { get; set; } = DateTime.Now;
 
         [Required]
         [MaxLength(64)]
         public string RegisterIp { get; set; }
-
-        public DateTime LastVisitTime { get; set; } = DateTime.Now;
-
-        [Required]
-        [MaxLength(64)]
-        public string LastVisitIp { get; set; }
 
         public ICollection<Point> SubscribedPoints { get; set; }
         public ProfilePoint ProfilePoint { get; set; }
