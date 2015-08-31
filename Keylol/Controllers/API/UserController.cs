@@ -38,8 +38,7 @@ namespace Keylol.Controllers
             {
                 UserName = vm.UserName,
                 Email = vm.Email,
-                RegisterIp = OwinContext.Request.RemoteIpAddress,
-                LastVisitIp = OwinContext.Request.RemoteIpAddress
+                RegisterIp = OwinContext.Request.RemoteIpAddress
             };
             var result = await UserManager.CreateAsync(user, vm.Password);
             if (!result.Succeeded)

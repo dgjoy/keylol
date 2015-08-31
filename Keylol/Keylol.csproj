@@ -321,6 +321,8 @@
     <Content Include="Scripts\app\controllers\section\timeline-controller.js" />
     <Content Include="Scripts\app\controllers\not-found-controller.js" />
     <Content Include="Scripts\app\controllers\home-controller.js" />
+    <Content Include="Scripts\app\directives\webp-background.js" />
+    <Content Include="Scripts\app\directives\webp-src.js" />
     <Content Include="Scripts\app\directives\quill.js" />
     <Content Include="Scripts\app\directives\kl-modal.js" />
     <Content Include="Scripts\app\keylol-app.js" />
