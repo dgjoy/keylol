@@ -2066,13 +2066,29 @@ kl-modal[position=right] {
 .section-point-staffs {
     background: white;
     width: 100%;
-    /* min-width: */
+    min-width: 200px;
     padding: 15px 0 10px;
 }
 
     .section-point-staffs h1 {
-        margin: 0 0 60px;
+        margin: 0 0 14px;
     }
+
+    .section-point-staffs p {
+        margin: 7px 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        .section-point-staffs p span {
+            float: right;
+            color: #748a97;
+        }
+
+        .section-point-staffs p a {
+            color: #333;
+        }
 
 /*#endregion */
 
