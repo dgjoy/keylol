@@ -1102,6 +1102,7 @@
     <Content Include="Templates\Sections\cuc-entrance.html" />
     <Content Include="Templates\Sections\ifs-right.html" />
     <Content Include="Templates\Sections\promoted-readings.html" />
+    <Content Include="Templates\Sections\point-staffs.html" />
     <Content Include="Templates\Sections\secret-tests.html" />
     <Content Include="Templates\Sections\reception.html" />
     <Content Include="Templates\Sections\search-box.html" />

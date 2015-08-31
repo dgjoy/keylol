@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(Keylol.Startup))]
+[assembly: OwinStartup(typeof(Keylol.Startup))]
 namespace Keylol
 {
     public partial class Startup

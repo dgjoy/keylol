@@ -2031,4 +2031,19 @@ kl-modal[position=right] {
 
 /*#endregion */
 
+/*#region Point Staffs Section */
+
+.section-point-staffs {
+    background: white;
+    width: 100%;
+    /* min-width: */
+    padding: 15px 0 10px;
+}
+
+    .section-point-staffs h1 {
+        margin: 0 0 60px;
+    }
+
+/*#endregion */
+
 /*#endregion */
