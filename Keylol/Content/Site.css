@@ -649,6 +649,50 @@ kl-modal[position=right] {
 
 /*#endregion */
 
+/*#region Input Code Directive */
+
+input-code span {
+    display: inline-block;
+    position: relative;
+    padding-right: 1px;
+    vertical-align: bottom;
+}
+
+    input-code span:before {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 0;
+        width: 33px;
+        height: 10px;
+        bottom: 0;
+        box-sizing: border-box;
+        border-right: 1px solid #11254a;
+        border-bottom: 1px solid #11254a;
+    }
+
+    input-code span:first-of-type {
+        padding-left: 1px;
+    }
+
+        input-code span:first-of-type:before {
+            border-left: 1px solid #11254a;
+            left: 0px;
+            width: 34px;
+        }
+
+input-code input[type=text].code-input-textbox {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+}
+
+/*#endregion */
+
 /*#region Article Basic Styles */
 
 .article-content {
@@ -792,6 +836,17 @@ kl-modal[position=right] {
         top: 0;
         left: 0;
     }
+
+.modal-registration .generate-id-code {
+    float: right;
+    color: #748a97;
+    margin: 5px 5px 0;
+}
+
+.modal-registration .id-code {
+    text-align: center;
+    margin: 10px 0 14px;
+}
 
 .modal-registration .avatar-box-left-spacing {
     border: none;

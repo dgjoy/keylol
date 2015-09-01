@@ -262,10 +262,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="apple-touch-icon-180.png" />
-    <Content Include="ClearScript.V8\ClearScriptV8-32.dll" />
-    <Content Include="ClearScript.V8\ClearScriptV8-64.dll" />
-    <Content Include="ClearScript.V8\v8-ia32.dll" />
-    <Content Include="ClearScript.V8\v8-x64.dll" />
+    <None Include="ClearScript.V8\ClearScriptV8-32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ClearScript.V8\ClearScriptV8-64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ClearScript.V8\v8-ia32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ClearScript.V8\v8-x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Content\Images\arrow-right.png" />
     <Content Include="Content\Images\border-slash.png" />
     <Content Include="Content\Images\edit-pen.png" />
@@ -314,7 +322,9 @@
     <Content Include="Scripts\app\controllers\section\timeline-controller.js" />
     <Content Include="Scripts\app\controllers\not-found-controller.js" />
     <Content Include="Scripts\app\controllers\home-controller.js" />
+    <Content Include="Scripts\app\directives\focus-me.js" />
     <Content Include="Scripts\app\directives\webp-background.js" />
+    <Content Include="Scripts\app\directives\input-code.js" />
     <Content Include="Scripts\app\directives\webp-src.js" />
     <Content Include="Scripts\app\directives\quill.js" />
     <Content Include="Scripts\app\directives\kl-modal.js" />
@@ -1081,6 +1091,7 @@
     <Content Include="Scripts\quill\quill.js" />
     <Content Include="Scripts\quill\quill.snow.css" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Templates\Directives\input-code.html" />
     <Content Include="Templates\Modal\settings.html" />
     <Content Include="Templates\point.html" />
     <Content Include="Templates\Directives\quill.html" />

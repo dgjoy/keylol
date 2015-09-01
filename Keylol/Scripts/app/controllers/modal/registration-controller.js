@@ -5,6 +5,7 @@
 		"$scope", "close", "$http", "utils",
 		function($scope, close, $http, utils) {
 			$scope.vm = {
+				IdCode: "",
 				UserName: "",
 				Password: "",
 				ConfirmPassword: "",
