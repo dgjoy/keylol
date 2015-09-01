@@ -1173,14 +1173,18 @@ input-code input[type=text].code-input-textbox {
     }
 
 .modal-settings .checkbox-group {
-    margin: 9px 0;
+    margin: 12px 0;
 }
 
     .modal-settings .checkbox-group div {
         display: block;
         width: 20%;
         float: left;
-        text-indent: 5%;
+        text-indent: 2%;
+    }
+
+    .modal-settings .checkbox-group.more div {
+        width: 8%;
     }
 
     .modal-settings .checkbox-group label {
@@ -1239,6 +1243,10 @@ input-code input[type=text].code-input-textbox {
     }
 */
 /*#endregion */
+
+.modal-settings [id^=geetest-] {
+    margin: 14px 0;
+}
 
 .modal-settings .tips {
     max-width: 580px;
