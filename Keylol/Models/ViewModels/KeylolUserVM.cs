@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Keylol.ViewModels
+namespace Keylol.Models.ViewModels
 {
-    public class RegisterViewModel
+    public class RegisterVM
     {
         [Required]
         public string UserName { get; set; }
@@ -24,7 +23,7 @@ namespace Keylol.ViewModels
         public string GeetestValidate { get; set; }
     }
 
-    public class LoginViewModel
+    public class LoginVM
     {
         [Required]
         public string Email { get; set; }

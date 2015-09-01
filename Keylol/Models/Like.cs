@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models
@@ -10,6 +11,8 @@ namespace Keylol.Models
         
         [Required]
         public virtual KeylolUser Operator { get; set; }
+
+        public virtual ICollection<LikeMessage> RelatedLikeMessages { get; set; }
     }
 
     public class ArticleLike : Like

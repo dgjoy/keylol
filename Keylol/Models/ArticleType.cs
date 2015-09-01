@@ -21,9 +21,7 @@ namespace Keylol.Models
         [MaxLength(20)]
         public string Name { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string UrlFriendlyName { get; set; }
+        public bool AllowVote { get; set; } = false;
 
         public virtual ICollection<Article> Articles { get; set; }
     }

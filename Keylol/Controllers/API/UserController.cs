@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.UI.WebControls;
 using Keylol.Models;
-using Keylol.ViewModels;
+using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -17,7 +17,7 @@ namespace Keylol.Controllers
     {
         // Register
         [AllowAnonymous]
-        public async Task<IHttpActionResult> Post(RegisterViewModel vm)
+        public async Task<IHttpActionResult> Post(RegisterVM vm)
         {
             if (!ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace Keylol.Controllers
         // Login
         [AllowAnonymous]
         [Route("api/user/login")]
-        public async Task<IHttpActionResult> Post(LoginViewModel vm)
+        public async Task<IHttpActionResult> Post(LoginVM vm)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -186,7 +186,7 @@ namespace Keylol.Controllers
         //        [System.Web.Mvc.HttpPost]
         //        [System.Web.Mvc.AllowAnonymous]
         //        [ValidateAntiForgeryToken]
-        //        public async Task<ActionResult> Register(RegisterViewModel model)
+        //        public async Task<ActionResult> Register(RegisterVM model)
         //        {
         //            if (ModelState.IsValid)
         //            {
