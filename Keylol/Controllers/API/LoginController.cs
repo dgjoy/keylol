@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -12,12 +13,27 @@ namespace Keylol.Controllers.API
     [Authorize]
     public class LoginController : KeylolApiController
     {
+        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        public async Task<IHttpActionResult> Get(string id)
+        {
+            var loginLog = await DbContext.LoginLogs.FindAsync(id);
+            if (loginLog == null)
+                return NotFound();
+            return Ok(new LoginLogDTO(loginLog));
+        }
+
         // Login
         [AllowAnonymous]
         public async Task<IHttpActionResult> Post(LoginVM vm)
         {
             if (User.Identity.IsAuthenticated)
                 return Unauthorized();
+
+            if (vm == null)
+            {
+                ModelState.AddModelError("vm", "Invalid view model.");
+                return BadRequest(ModelState);
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -41,7 +57,14 @@ namespace Keylol.Controllers.API
             switch (result)
             {
                 case SignInStatus.Success:
-                    return Ok();
+                    var loginLog = new LoginLog
+                    {
+                        Ip = OwinContext.Request.RemoteIpAddress,
+                        User = user
+                    };
+                    DbContext.LoginLogs.Add(loginLog);
+                    await DbContext.SaveChangesAsync();
+                    return Created($"api/login/{loginLog.Id}", new LoginLogDTO(loginLog));
 
                 case SignInStatus.LockedOut:
                     ModelState.AddModelError("vm.EmailOrIdCode", "The user is locked out temporarily.");
@@ -61,10 +84,13 @@ namespace Keylol.Controllers.API
         // Logout
         public async Task<IHttpActionResult> Delete(string id)
         {
-            if (User.Identity.GetUserId() != id)
-            {
+            var loginLog = await DbContext.LoginLogs.FindAsync(id);
+            if (loginLog == null)
+                return NotFound();
+
+            if (User.Identity.GetUserId() != loginLog.User.Id)
                 return Unauthorized();
-            }
+
             AuthenticationManager.SignOut();
             return Ok();
         }

@@ -18,18 +18,8 @@ namespace Keylol.Models
     }
 
     // You can add profile data for the user by adding more properties to your KeylolUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
-    public sealed class KeylolUser : IdentityUser
+    public class KeylolUser : IdentityUser
     {
-        public KeylolUser()
-        {
-            LockoutEnabled = true;
-        }
-
-        public KeylolUser(string userName) : this()
-        {
-            UserName = userName;
-        }
-
         [Required]
         [Index(IsUnique = true)]
         [StringLength(5, MinimumLength = 5)]
@@ -48,6 +38,8 @@ namespace Keylol.Models
         [Required(AllowEmptyStrings = true)]
         [MaxLength(64)]
         public string AvatarImage { get; set; } = string.Empty;
+
+        public override bool LockoutEnabled { get; set; } = true;
 
         // Auto share options
         public bool AutoShareOnAddingNewFriend { get; set; } = false;
@@ -75,18 +67,18 @@ namespace Keylol.Models
         public bool MessageNotifyOnArticleLiked { get; set; } = true;
         public bool MessageNotifyOnCommentLiked { get; set; } = true;
 
-        public ProfilePoint ProfilePoint { get; set; }
-        public ICollection<Point> SubscribedPoints { get; set; }
-        public ICollection<NormalPoint> ManagedPoints { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<Like> Likes { get; set; }
-        
-        public ICollection<Message> ReceivedMessages { get; set; }
-        public ICollection<UserMessage> SentUserMessages { get; set; }
-        public ICollection<OfficialMessageWithSender> SentOfficialMessage { get; set; }
+        public virtual ProfilePoint ProfilePoint { get; set; }
+        public virtual ICollection<Point> SubscribedPoints { get; set; }
+        public virtual ICollection<NormalPoint> ManagedPoints { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
 
-        public ICollection<LoginLog> LoginLogs { get; set; }
-        public ICollection<EditLog> EditLogs { get; set; }
+        public virtual ICollection<Message> ReceivedMessages { get; set; }
+        public virtual ICollection<UserMessage> SentUserMessages { get; set; }
+        public virtual ICollection<OfficialMessageWithSender> SentOfficialMessage { get; set; }
+
+        public virtual ICollection<LoginLog> LoginLogs { get; set; }
+        public virtual ICollection<EditLog> EditLogs { get; set; }
 
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
         //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;

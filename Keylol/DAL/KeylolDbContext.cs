@@ -1,6 +1,10 @@
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.Linq;
 using Keylol.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -109,6 +113,27 @@ namespace Keylol.DAL
                 .HasMany(message => message.Likes)
                 .WithMany(like => like.RelatedLikeMessages)
                 .Map(t => t.ToTable("LikeMessagePayload"));
+        }
+
+        // Ignore validation error on unmodified properties
+        protected override DbEntityValidationResult ValidateEntity(DbEntityEntry entityEntry,
+            IDictionary<object, object> items)
+        {
+            var result = base.ValidateEntity(entityEntry, items);
+            var falseErrors = result.ValidationErrors
+                .Where(error =>
+                {
+                    var member = entityEntry.Member(error.PropertyName);
+                    var property = member as DbPropertyEntry;
+                    if (property != null)
+                        return !property.IsModified;
+                    return false;
+                });
+
+            foreach (var error in falseErrors.ToArray())
+                result.ValidationErrors.Remove(error);
+
+            return result;
         }
 
         public static KeylolDbContext Create()

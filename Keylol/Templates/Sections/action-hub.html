@@ -1,33 +1,43 @@
 ﻿<div class="section-action-hub box-shadowed">
-    <div class="clearfix">
-        <a class="avatar-anchor" href="test">
-            <img class="avatar-big" src="Content/Images/exit.svg" alt="<username>">
+    <div class="not-logged-in" ng-if="true">
+        <button class="border-button top-border">登录</button>
+        <a href="test">
+            <img src="Content/Images/steam-logo.png">
+            <h4>通过 Steam 帐户</h4>
+            <h3 class="font-myriad-keylol">注册其乐会员</h3>
         </a>
-        <div class="name-settings">
-            <h4 class="name">
-                <a href="test">@&lt;username></a>
-            </h4>
-            <h4 class="settings-link">
-                <a href="test">设置 / 编辑账户</a>
-            </h4>
-        </div>
     </div>
-    <ul class="links list-inline">
-        <li>
-            <h4>文章</h4>
-            <a href="test">46</a>
-        </li>
-        <li>
-            <h4>据点</h4>
-            <a href="test">85</a>
-        </li>
-        <li>
-            <h4>提醒</h4>
-            <a href="test">0</a>
-        </li>
-        <li>
-            <h4>私信</h4>
-            <a href="test">0</a>
-        </li>
-    </ul>
+    <div ng-if="false">
+        <div class="clearfix">
+            <a class="avatar-anchor" href="test">
+                <img class="avatar-big" src="Content/Images/exit.svg" alt="<username>">
+            </a>
+            <div class="name-settings">
+                <h4 class="name">
+                    <a href="test">@&lt;username></a>
+                </h4>
+                <h4 class="settings-link">
+                    <a href="test">设置 / 编辑账户</a>
+                </h4>
+            </div>
+        </div>
+        <ul class="links list-inline">
+            <li>
+                <h4>文章</h4>
+                <a href="test">46</a>
+            </li>
+            <li>
+                <h4>据点</h4>
+                <a href="test">85</a>
+            </li>
+            <li>
+                <h4>提醒</h4>
+                <a href="test">0</a>
+            </li>
+            <li>
+                <h4>私信</h4>
+                <a href="test">0</a>
+            </li>
+        </ul>
+    </div>
 </div>

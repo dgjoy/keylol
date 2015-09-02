@@ -29,6 +29,10 @@ namespace Keylol
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = PathString.Empty,
+                CookieHttpOnly = true,
+                CookieName = ".Keylol.Cookies",
+                SlidingExpiration = true,
+                ExpireTimeSpan = TimeSpan.FromDays(15),
                 Provider = new CookieAuthenticationProvider
                 {
                     // Enables the application to validate the security stamp when the user logs in.

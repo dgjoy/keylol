@@ -11,7 +11,7 @@
     font-family: "Keylol Rail Sung";
     font-style: normal;
     font-weight: normal;
-    src: url("./Fonts/keylol-rail-sung-d6d189ea9f24420eae57c7d93c23d2ac.woff") format("woff");
+    src: url("./Fonts/keylol-rail-sung-f64293596a95078abc8673b55ba4131b.woff") format("woff");
 }
 
 @font-face {
@@ -322,6 +322,21 @@ textarea,
         box-shadow: 0 0 2px #B8BABB;
         transform: rotate(45deg);
         transform-origin: bottom right;
+        background-color: #adafb0;
+    }
+
+    .border-button.top-border:after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 8px;
+        z-index: -1;
+        box-shadow: 0 0 2px #B8BABB;
+        transform: rotate(315deg);
+        transform-origin: top right;
         background-color: #adafb0;
     }
 
@@ -1892,6 +1907,57 @@ input-code input[type=text].code-input-textbox {
     background-color: white;
     padding: 12px;
 }
+
+    .section-action-hub .not-logged-in {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+        .section-action-hub .not-logged-in button {
+            position: absolute;
+            right: 0;
+            top: -17px;
+        }
+
+        .section-action-hub .not-logged-in a {
+            padding: 10px;
+            display: block;
+            position: absolute;
+            top: 50%;
+            width: 72%;
+            left: 48%;
+            transform: translate(-50%, -50%);
+            text-align: right;
+        }
+
+        .section-action-hub .not-logged-in a {
+            text-decoration: none;
+        }
+
+        .section-action-hub .not-logged-in img {
+            float: right;
+            width: 49px;
+            height: 42px;
+            margin-left: 10px;
+        }
+
+        .section-action-hub .not-logged-in h4 {
+            margin: 0 0 5px;
+            font-weight: normal;
+            line-height: 15px;
+        }
+
+        .section-action-hub .not-logged-in h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: normal;
+            line-height: 22px;
+        }
+
+        .section-action-hub .not-logged-in a:hover h3 {
+            text-decoration: underline;
+        }
 
     .section-action-hub .name-settings {
         margin-left: 65px;

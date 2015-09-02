@@ -224,6 +224,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\Attributes.cs" />
     <Compile Include="App_Start\Geetest.cs" />
     <Compile Include="App_Start\Extensions.cs" />
     <Compile Include="App_Start\KeylolApiController.cs" />
@@ -246,6 +247,8 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
+    <Compile Include="Models\DTO\LogDTO.cs" />
+    <Compile Include="Models\DTO\UserDTO.cs" />
     <Compile Include="Models\Entry.cs" />
     <Compile Include="Models\ArticleType.cs" />
     <Compile Include="Models\Comment.cs" />
@@ -253,8 +256,9 @@
     <Compile Include="Models\Like.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Point.cs" />
+    <Compile Include="Models\ViewModels\LoginVM.cs" />
     <Compile Include="Provider\KeylolOAuthProvider.cs" />
-    <Compile Include="Models\ViewModels\KeylolUserVM.cs" />
+    <Compile Include="Models\ViewModels\UserVM.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\KeylolUser.cs" />
     <Compile Include="Models\ViewModels\ManageViewModels.cs" />
@@ -292,6 +296,7 @@
     <Content Include="Content\Images\signature-pen.png" />
     <Content Include="Content\Images\steam-circle-mono.png" />
     <Content Include="Content\Images\steam-circle.png" />
+    <Content Include="Content\Images\steam-logo.png" />
     <Content Include="Content\Images\xbox-circle-mono.png" />
     <Content Include="Content\Images\xbox-circle.png" />
     <Content Include="Content\normalize.css" />
@@ -1076,8 +1081,8 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
-    <Content Include="Content\Fonts\keylol-rail-sung-d6d189ea9f24420eae57c7d93c23d2ac.woff" />
     <Content Include="Content\Fonts\lisong-fdd0168d0a8b87a3de93bb498775e41d.woff" />
+    <Content Include="Content\Fonts\keylol-rail-sung-f64293596a95078abc8673b55ba4131b.woff" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1165,7 +1170,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\DTO\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

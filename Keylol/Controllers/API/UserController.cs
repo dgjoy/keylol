@@ -1,9 +1,13 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace Keylol.Controllers.API
@@ -11,12 +15,33 @@ namespace Keylol.Controllers.API
     [Authorize]
     public class UserController : KeylolApiController
     {
+        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false)
+        {
+            var visitorId = User.Identity.GetUserId();
+            var staffClaim = await UserManager.GetStaffClaimAsync(visitorId);
+            if (staffClaim != StaffClaim.Operator)
+            {
+                if (visitorId != id)
+                    return Unauthorized();
+            }
+            var user = await UserManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+            return Ok(new UserDTO(user, includeProfilePointBackgroundImage));
+        }
+
         // Register
         [AllowAnonymous]
         public async Task<IHttpActionResult> Post(RegisterVM vm)
         {
             if (User.Identity.IsAuthenticated)
                 return Unauthorized();
+
+            if (vm == null)
+            {
+                ModelState.AddModelError("vm", "Invalid view model.");
+                return BadRequest(ModelState);
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -25,6 +50,11 @@ namespace Keylol.Controllers.API
             if (!await geetest.ValidateAsync(vm.GeetestChallenge, vm.GeetestSeccode, vm.GeetestValidate))
             {
                 ModelState.AddModelError("authCode", "true");
+                return BadRequest(ModelState);
+            }
+            if (!Regex.IsMatch(vm.IdCode, @"^[A-Z0-9]{5}$"))
+            {
+                ModelState.AddModelError("vm.IdCode", "Only 5 uppercase letters and digits are allowed in IdCode.");
                 return BadRequest(ModelState);
             }
             if (await DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == vm.IdCode) != null)
@@ -58,14 +88,79 @@ namespace Keylol.Controllers.API
                 }
                 return BadRequest(ModelState);
             }
-            await UserManager.SetStatusClaimAsync(user.Id, StatusClaim.Normal);
-            return Ok();
+            return Created($"api/user/{user.Id}", new UserDTO(user));
         }
 
         // Change settings
-        public async Task<IHttpActionResult> Put()
+        public async Task<IHttpActionResult> Put(string id, SettingsVM vm)
         {
-            
+            if (User.Identity.GetUserId() != id)
+                return Unauthorized();
+
+            if (vm == null)
+            {
+                ModelState.AddModelError("vm", "Invalid view model.");
+                return BadRequest(ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await UserManager.FindByIdAsync(id);
+
+            if (vm.NewPassword != null || vm.LockoutEnabled != null)
+            {
+                if (vm.Password == null)
+                {
+                    ModelState.AddModelError("vm.Password", "Password cannot be empty.");
+                    return BadRequest(ModelState);
+                }
+
+                var geetest = new Geetest();
+                if (vm.GeetestChallenge == null || vm.GeetestSeccode == null || vm.GeetestValidate == null ||
+                    !await geetest.ValidateAsync(vm.GeetestChallenge, vm.GeetestSeccode, vm.GeetestValidate))
+                {
+                    ModelState.AddModelError("authCode", "true");
+                    return BadRequest(ModelState);
+                }
+
+                if (vm.NewPassword != null)
+                {
+                    var resultPassword = await UserManager.ChangePasswordAsync(id, vm.Password, vm.NewPassword);
+                    if (!resultPassword.Succeeded)
+                    {
+                        foreach (var error in resultPassword.Errors)
+                        {
+                            if (error.Contains("Incorrect password"))
+                                ModelState.AddModelError("vm.Password", "Password is not correct.");
+                            else
+                                ModelState.AddModelError("vm.NewPassword", error);
+                        }
+                        return BadRequest(ModelState);
+                    }
+                }
+                else
+                {
+                    if (!await UserManager.CheckPasswordAsync(user, vm.Password))
+                    {
+                        ModelState.AddModelError("vm.Password", "Password is not correct.");
+                        return BadRequest(ModelState);
+                    }
+                }
+            }
+
+            vm.CopyToUser(user);
+            var result = await UserManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    if (error.Contains("Email"))
+                        ModelState.AddModelError("vm.Email", error);
+                }
+                return BadRequest(ModelState);
+            }
+            return Ok();
         }
 
         //        public IHttpActionResult Login(string returnUrl)

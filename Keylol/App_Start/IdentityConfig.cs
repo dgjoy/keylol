@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http.Controllers;
-using System.Web.Http.Filters;
 using Keylol.DAL;
 using Keylol.Models;
 using Microsoft.AspNet.Identity;
@@ -19,97 +14,6 @@ using Microsoft.Owin.Security;
 
 namespace Keylol
 {
-    public class ClaimsAuthorizeAttribute : AuthorizationFilterAttribute
-    {
-        private readonly string _claimType;
-        private readonly string _claimValue;
-
-        public ClaimsAuthorizeAttribute(string claimType, string claimValue)
-        {
-            _claimType = claimType;
-            _claimValue = claimValue;
-        }
-        
-        public override Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
-        {
-            var principal = actionContext.RequestContext.Principal as ClaimsPrincipal;
-
-            if (principal == null || !principal.Identity.IsAuthenticated)
-            {
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
-                return Task.FromResult(0);
-            }
-
-            if (!principal.HasClaim(x => x.Type == _claimType && x.Value == _claimValue))
-            {
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
-                return Task.FromResult(0);
-            }
-
-            //User is Authorized, complete execution
-            return Task.FromResult(0);
-        }
-    }
-
-    public static class StatusClaim
-    {
-        public const string ClaimType = "status";
-
-        public const string Probationer = "probationer";
-        public const string Normal = "normal";
-
-        public static async Task<string> GetStatusClaimAsync(this KeylolUserManager manager, string userId)
-        {
-            return (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType)?.Value;
-        }
-
-        public static async Task<IdentityResult> SetStatusClaimAsync(this KeylolUserManager manager, string userId,
-            string status)
-        {
-            var claim = (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType);
-            if (claim != null)
-            {
-                await manager.RemoveClaimAsync(userId, claim);
-            }
-            return await manager.AddClaimAsync(userId, new Claim("status", status));
-        }
-    }
-
-    public static class StaffClaim
-    {
-        public const string ClaimType = "staff";
-
-        public const string Manager = "manager";
-        public const string Moderator = "moderator";
-        public const string Operator = "operator";
-
-        public static async Task<string> GetStaffClaimAsync(this KeylolUserManager manager, string userId)
-        {
-            return (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType)?.Value;
-        }
-
-        public static async Task<IdentityResult> RemoveStaffClaimAsync(this KeylolUserManager manager, string userId)
-        {
-            var claim = (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType);
-            if (claim != null)
-            {
-                return await manager.RemoveClaimAsync(userId, claim);
-            }
-            return new IdentityResult("User doesn't have any staff claims.");
-        }
-
-        public static async Task<IdentityResult> SetStaffClaimAsync(this KeylolUserManager manager, string userId,
-            string staff)
-        {
-            var claim = (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType);
-            if (claim != null)
-            {
-                await manager.RemoveClaimAsync(userId, claim);
-            }
-            return await manager.AddClaimAsync(userId, new Claim(ClaimType, staff));
-        }
-    }
-
     public class EmailService : IIdentityMessageService
     {
         public Task SendAsync(IdentityMessage message)

@@ -35,7 +35,7 @@
 				}
 				if (!$.isEmptyObject($scope.error))
 					return;
-				$http.post("/api/user/login", $scope.vm)
+				$http.post("/api/login", $scope.vm)
 					.then(function(response) {
 						alert("登录成功");
 					}, function(response) {
