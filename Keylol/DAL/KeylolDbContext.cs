@@ -81,6 +81,9 @@ namespace Keylol.DAL
             modelBuilder.Entity<IdentityUserRole>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
 
+            modelBuilder.Entity<ProfilePoint>().Map(t => t.MapInheritedProperties().ToTable("ProfilePoints"));
+            modelBuilder.Entity<NormalPoint>().Map(t => t.MapInheritedProperties().ToTable("NormalPoints"));
+
             modelBuilder.Entity<KeylolUser>()
                 .HasMany(user => user.SubscribedPoints)
                 .WithMany(point => point.Subscribers)

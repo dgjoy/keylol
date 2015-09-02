@@ -74,20 +74,28 @@ namespace Keylol.Controllers.API
                 Email = vm.Email,
                 RegisterIp = OwinContext.Request.RemoteIpAddress
             };
-            var result = await UserManager.CreateAsync(user, vm.Password);
-            if (!result.Succeeded)
+            try
             {
-                foreach (var error in result.Errors)
+                var result = await UserManager.CreateAsync(user, vm.Password);
+                if (!result.Succeeded)
                 {
-                    if (error.Contains("UserName"))
-                        ModelState.AddModelError("vm.UserName", error);
-                    else if (error.Contains("Password"))
-                        ModelState.AddModelError("vm.Password", error);
-                    else if (error.Contains("Email"))
-                        ModelState.AddModelError("vm.Email", error);
+                    foreach (var error in result.Errors)
+                    {
+                        if (error.Contains("UserName"))
+                            ModelState.AddModelError("vm.UserName", error);
+                        else if (error.Contains("Password"))
+                            ModelState.AddModelError("vm.Password", error);
+                        else if (error.Contains("Email"))
+                            ModelState.AddModelError("vm.Email", error);
+                    }
+                    return BadRequest(ModelState);
                 }
-                return BadRequest(ModelState);
             }
+            catch (Exception e)
+            {
+                var x = "e";
+            }
+            
             return Created($"api/user/{user.Id}", new UserDTO(user));
         }
 

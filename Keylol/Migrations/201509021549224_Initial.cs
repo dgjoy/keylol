@@ -36,7 +36,7 @@ namespace Keylol.Migrations
                         Sender_Id1 = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Points", t => t.Point_Id)
+                .ForeignKey("dbo.NormalPoints", t => t.Point_Id)
                 .ForeignKey("dbo.Entries", t => t.Article_Id)
                 .ForeignKey("dbo.Comments", t => t.Comment_Id)
                 .ForeignKey("dbo.Entries", t => t.Article_Id1)
@@ -77,6 +77,7 @@ namespace Keylol.Migrations
                         RegisterIp = c.String(nullable: false, maxLength: 64),
                         GamerTag = c.String(nullable: false, maxLength: 100),
                         AvatarImage = c.String(nullable: false, maxLength: 64),
+                        LockoutEnabled = c.Boolean(nullable: false),
                         AutoShareOnAddingNewFriend = c.Boolean(nullable: false),
                         AutoShareOnUnlockingAchievement = c.Boolean(nullable: false),
                         AutoShareOnAcquiringNewGame = c.Boolean(nullable: false),
@@ -105,7 +106,6 @@ namespace Keylol.Migrations
                         PhoneNumberConfirmed = c.Boolean(nullable: false),
                         TwoFactorEnabled = c.Boolean(nullable: false),
                         LockoutEndDateUtc = c.DateTime(),
-                        LockoutEnabled = c.Boolean(nullable: false),
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
                     })
@@ -161,32 +161,12 @@ namespace Keylol.Migrations
                         Type_Id = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Points", t => t.Principal_Id)
+                .ForeignKey("dbo.ProfilePoints", t => t.Principal_Id)
                 .ForeignKey("dbo.Entries", t => t.RecommendedArticle_Id)
                 .ForeignKey("dbo.ArticleTypes", t => t.Type_Id)
                 .Index(t => t.Principal_Id)
                 .Index(t => t.RecommendedArticle_Id)
                 .Index(t => t.Type_Id);
-            
-            CreateTable(
-                "dbo.Points",
-                c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
-                        BackgroundImage = c.String(nullable: false, maxLength: 64),
-                        Type = c.Int(),
-                        IdCode = c.String(maxLength: 5),
-                        ChineseName = c.String(maxLength: 150),
-                        EnglishName = c.String(maxLength: 150),
-                        PreferedName = c.Int(),
-                        Aliases = c.String(maxLength: 32),
-                        StoreLink = c.String(maxLength: 512),
-                        Discriminator = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.KeylolUsers", t => t.Id)
-                .Index(t => t.Id)
-                .Index(t => t.IdCode, unique: true);
             
             CreateTable(
                 "dbo.Logs",
@@ -283,8 +263,8 @@ namespace Keylol.Migrations
                         ByPoint_Id = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => new { t.ToPoint_Id, t.ByPoint_Id })
-                .ForeignKey("dbo.Points", t => t.ToPoint_Id)
-                .ForeignKey("dbo.Points", t => t.ByPoint_Id)
+                .ForeignKey("dbo.NormalPoints", t => t.ToPoint_Id)
+                .ForeignKey("dbo.NormalPoints", t => t.ByPoint_Id)
                 .Index(t => t.ToPoint_Id)
                 .Index(t => t.ByPoint_Id);
             
@@ -297,7 +277,7 @@ namespace Keylol.Migrations
                     })
                 .PrimaryKey(t => new { t.Entry_Id, t.NormalPoint_Id })
                 .ForeignKey("dbo.Entries", t => t.Entry_Id)
-                .ForeignKey("dbo.Points", t => t.NormalPoint_Id)
+                .ForeignKey("dbo.NormalPoints", t => t.NormalPoint_Id)
                 .Index(t => t.Entry_Id)
                 .Index(t => t.NormalPoint_Id);
             
@@ -309,7 +289,7 @@ namespace Keylol.Migrations
                         Article_Id = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => new { t.NormalPoint_Id, t.Article_Id })
-                .ForeignKey("dbo.Points", t => t.NormalPoint_Id)
+                .ForeignKey("dbo.NormalPoints", t => t.NormalPoint_Id)
                 .ForeignKey("dbo.Entries", t => t.Article_Id)
                 .Index(t => t.NormalPoint_Id)
                 .Index(t => t.Article_Id);
@@ -322,7 +302,7 @@ namespace Keylol.Migrations
                         KeylolUser_Id = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => new { t.NormalPoint_Id, t.KeylolUser_Id })
-                .ForeignKey("dbo.Points", t => t.NormalPoint_Id)
+                .ForeignKey("dbo.NormalPoints", t => t.NormalPoint_Id)
                 .ForeignKey("dbo.KeylolUsers", t => t.KeylolUser_Id)
                 .Index(t => t.NormalPoint_Id)
                 .Index(t => t.KeylolUser_Id);
@@ -362,16 +342,45 @@ namespace Keylol.Migrations
                     })
                 .PrimaryKey(t => new { t.KeylolUser_Id, t.Point_Id })
                 .ForeignKey("dbo.KeylolUsers", t => t.KeylolUser_Id)
-                .ForeignKey("dbo.Points", t => t.Point_Id)
-                .Index(t => t.KeylolUser_Id)
-                .Index(t => t.Point_Id);
+                .Index(t => t.KeylolUser_Id);
+            
+            CreateTable(
+                "dbo.NormalPoints",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        BackgroundImage = c.String(nullable: false, maxLength: 64),
+                        Type = c.Int(nullable: false),
+                        IdCode = c.String(nullable: false, maxLength: 5),
+                        ChineseName = c.String(nullable: false, maxLength: 150),
+                        EnglishName = c.String(nullable: false, maxLength: 150),
+                        PreferedName = c.Int(nullable: false),
+                        Aliases = c.String(nullable: false, maxLength: 32),
+                        StoreLink = c.String(nullable: false, maxLength: 512),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.KeylolUsers", t => t.Id)
+                .Index(t => t.Id)
+                .Index(t => t.IdCode, unique: true);
+            
+            CreateTable(
+                "dbo.ProfilePoints",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        BackgroundImage = c.String(nullable: false, maxLength: 64),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.KeylolUsers", t => t.Id)
+                .Index(t => t.Id);
             
         }
         
         public override void Down()
         {
+            DropForeignKey("dbo.ProfilePoints", "Id", "dbo.KeylolUsers");
+            DropForeignKey("dbo.NormalPoints", "Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.UserRoles", "RoleId", "dbo.Roles");
-            DropForeignKey("dbo.UserPointSubscriptions", "Point_Id", "dbo.Points");
             DropForeignKey("dbo.UserPointSubscriptions", "KeylolUser_Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.UserRoles", "UserId", "dbo.KeylolUsers");
             DropForeignKey("dbo.Messages", "Sender_Id1", "dbo.KeylolUsers");
@@ -404,18 +413,19 @@ namespace Keylol.Migrations
             DropForeignKey("dbo.Logs", "Editor_Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.Logs", "Article_Id", "dbo.Entries");
             DropForeignKey("dbo.PointStaffs", "KeylolUser_Id", "dbo.KeylolUsers");
-            DropForeignKey("dbo.PointStaffs", "NormalPoint_Id", "dbo.Points");
-            DropForeignKey("dbo.Messages", "Point_Id", "dbo.Points");
+            DropForeignKey("dbo.PointStaffs", "NormalPoint_Id", "dbo.NormalPoints");
+            DropForeignKey("dbo.Messages", "Point_Id", "dbo.NormalPoints");
             DropForeignKey("dbo.PointArticleRecommendation", "Article_Id", "dbo.Entries");
-            DropForeignKey("dbo.PointArticleRecommendation", "NormalPoint_Id", "dbo.Points");
-            DropForeignKey("dbo.Entries", "Principal_Id", "dbo.Points");
-            DropForeignKey("dbo.Points", "Id", "dbo.KeylolUsers");
-            DropForeignKey("dbo.EntryPointPushes", "NormalPoint_Id", "dbo.Points");
+            DropForeignKey("dbo.PointArticleRecommendation", "NormalPoint_Id", "dbo.NormalPoints");
+            DropForeignKey("dbo.Entries", "Principal_Id", "dbo.ProfilePoints");
+            DropForeignKey("dbo.EntryPointPushes", "NormalPoint_Id", "dbo.NormalPoints");
             DropForeignKey("dbo.EntryPointPushes", "Entry_Id", "dbo.Entries");
-            DropForeignKey("dbo.PointAssociations", "ByPoint_Id", "dbo.Points");
-            DropForeignKey("dbo.PointAssociations", "ToPoint_Id", "dbo.Points");
+            DropForeignKey("dbo.PointAssociations", "ByPoint_Id", "dbo.NormalPoints");
+            DropForeignKey("dbo.PointAssociations", "ToPoint_Id", "dbo.NormalPoints");
             DropForeignKey("dbo.UserClaims", "UserId", "dbo.KeylolUsers");
-            DropIndex("dbo.UserPointSubscriptions", new[] { "Point_Id" });
+            DropIndex("dbo.ProfilePoints", new[] { "Id" });
+            DropIndex("dbo.NormalPoints", new[] { "IdCode" });
+            DropIndex("dbo.NormalPoints", new[] { "Id" });
             DropIndex("dbo.UserPointSubscriptions", new[] { "KeylolUser_Id" });
             DropIndex("dbo.CommentReplies", new[] { "ToComment_Id" });
             DropIndex("dbo.CommentReplies", new[] { "ByComment_Id" });
@@ -439,8 +449,6 @@ namespace Keylol.Migrations
             DropIndex("dbo.Logs", new[] { "User_Id" });
             DropIndex("dbo.Logs", new[] { "Editor_Id" });
             DropIndex("dbo.Logs", new[] { "Article_Id" });
-            DropIndex("dbo.Points", new[] { "IdCode" });
-            DropIndex("dbo.Points", new[] { "Id" });
             DropIndex("dbo.Entries", new[] { "Type_Id" });
             DropIndex("dbo.Entries", new[] { "RecommendedArticle_Id" });
             DropIndex("dbo.Entries", new[] { "Principal_Id" });
@@ -464,6 +472,8 @@ namespace Keylol.Migrations
             DropIndex("dbo.Messages", new[] { "Comment_Id" });
             DropIndex("dbo.Messages", new[] { "Article_Id" });
             DropIndex("dbo.Messages", new[] { "Point_Id" });
+            DropTable("dbo.ProfilePoints");
+            DropTable("dbo.NormalPoints");
             DropTable("dbo.UserPointSubscriptions");
             DropTable("dbo.CommentReplies");
             DropTable("dbo.LikeMessagePayload");
@@ -477,7 +487,6 @@ namespace Keylol.Migrations
             DropTable("dbo.ArticleTypes");
             DropTable("dbo.Likes");
             DropTable("dbo.Logs");
-            DropTable("dbo.Points");
             DropTable("dbo.Entries");
             DropTable("dbo.Comments");
             DropTable("dbo.UserClaims");

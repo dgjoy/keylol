@@ -241,9 +241,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201509011020529_Initial.cs" />
-    <Compile Include="Migrations\201509011020529_Initial.Designer.cs">
-      <DependentUpon>201509011020529_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201509021549224_Initial.cs" />
+    <Compile Include="Migrations\201509021549224_Initial.Designer.cs">
+      <DependentUpon>201509021549224_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
@@ -1187,8 +1187,8 @@
     <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201509011020529_Initial.resx">
-      <DependentUpon>201509011020529_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201509021549224_Initial.resx">
+      <DependentUpon>201509021549224_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
