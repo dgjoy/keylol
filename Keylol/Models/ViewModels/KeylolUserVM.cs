@@ -5,6 +5,9 @@ namespace Keylol.Models.ViewModels
     public class RegisterVM
     {
         [Required]
+        public string IdCode { get; set; }
+
+        [Required]
         public string UserName { get; set; }
 
         [Required]
@@ -26,7 +29,7 @@ namespace Keylol.Models.ViewModels
     public class LoginVM
     {
         [Required]
-        public string Email { get; set; }
+        public string EmailOrIdCode { get; set; }
 
         [Required]
         public string Password { get; set; }

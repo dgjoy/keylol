@@ -1,5 +1,6 @@
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Diagnostics;
 using Keylol.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -10,6 +11,7 @@ namespace Keylol.DAL
         public KeylolDbContext()
             : base("DefaultConnection", false)
         {
+            Database.Log = s => Debug.WriteLine(s);
         }
 
         public DbSet<Point> Points { get; set; }

@@ -5,7 +5,7 @@
 		"$scope", "close", "$http", "utils",
 		function($scope, close, $http, utils) {
 			$scope.vm = {
-				Email: "",
+				EmailOrIdCode: "",
 				Password: ""
 			};
 			var geetestResult;
@@ -24,10 +24,8 @@
 			};
 			$scope.submit = function(form) {
 				$scope.error = {};
-				if (form.email.$invalid) {
-					$scope.error["vm.Email"] = "Email is invalid.";
-				} else if (!$scope.vm.Email) {
-					$scope.error["vm.Email"] = "Email cannot be empty.";
+				if (!$scope.vm.EmailOrIdCode) {
+					$scope.error["vm.EmailOrIdCode"] = "Email or UIC cannot be empty.";
 				}
 				if (!$scope.vm.Password) {
 					$scope.error["vm.Password"] = "Password cannot be empty.";

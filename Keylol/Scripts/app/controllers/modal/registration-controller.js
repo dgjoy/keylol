@@ -27,6 +27,8 @@
 			};
 			$scope.submit = function(form) {
 				$scope.error = {};
+				$scope.vm.IdCode = $scope.vm.IdCode.toUpperCase();
+				utils.modelValidate.idCode($scope.vm.IdCode, $scope.error, "vm.IdCode");
 				utils.modelValidate.username($scope.vm.UserName, $scope.error, "vm.UserName");
 				if (utils.modelValidate.password($scope.vm.Password, $scope.error, "vm.Password")) {
 					if ($scope.vm.Password !== $scope.vm.ConfirmPassword) {

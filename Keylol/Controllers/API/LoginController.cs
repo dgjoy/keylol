@@ -4,16 +4,17 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.ViewModels;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace Keylol.Controllers.API
 {
     [Authorize]
-    public class UserController : KeylolApiController
+    public class LoginController : KeylolApiController
     {
-        // Register
+        // Login
         [AllowAnonymous]
-        public async Task<IHttpActionResult> Post(RegisterVM vm)
+        public async Task<IHttpActionResult> Post(LoginVM vm)
         {
             if (User.Identity.IsAuthenticated)
                 return Unauthorized();
@@ -27,45 +28,45 @@ namespace Keylol.Controllers.API
                 ModelState.AddModelError("authCode", "true");
                 return BadRequest(ModelState);
             }
-            if (await DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == vm.IdCode) != null)
+            var user = Regex.IsMatch(vm.EmailOrIdCode, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$",
+                RegexOptions.IgnoreCase)
+                ? await UserManager.FindByEmailAsync(vm.EmailOrIdCode)
+                : await DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == vm.EmailOrIdCode);
+            if (user == null)
             {
-                ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
+                ModelState.AddModelError("vm.EmailOrIdCode", "User doesn't exist.");
                 return BadRequest(ModelState);
             }
-            if (await UserManager.FindByNameAsync(vm.UserName) != null)
+            var result = await SignInManager.PasswordSignInAsync(user.UserName, vm.Password, true, true);
+            switch (result)
             {
-                ModelState.AddModelError("vm.UserName", "UserName is already used by others.");
-                return BadRequest(ModelState);
+                case SignInStatus.Success:
+                    return Ok();
+
+                case SignInStatus.LockedOut:
+                    ModelState.AddModelError("vm.EmailOrIdCode", "The user is locked out temporarily.");
+                    break;
+
+                case SignInStatus.Failure:
+                    ModelState.AddModelError("vm.Password", "Password is not correct.");
+                    break;
+
+                default:
+                    ModelState.AddModelError("vm.Email", "Login failed.");
+                    break;
             }
-            var user = new KeylolUser
-            {
-                IdCode = vm.IdCode,
-                UserName = vm.UserName,
-                Email = vm.Email,
-                RegisterIp = OwinContext.Request.RemoteIpAddress
-            };
-            var result = await UserManager.CreateAsync(user, vm.Password);
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    if (error.Contains("UserName"))
-                        ModelState.AddModelError("vm.UserName", error);
-                    else if (error.Contains("Password"))
-                        ModelState.AddModelError("vm.Password", error);
-                    else if (error.Contains("Email"))
-                        ModelState.AddModelError("vm.Email", error);
-                }
-                return BadRequest(ModelState);
-            }
-            await UserManager.SetStatusClaimAsync(user.Id, StatusClaim.Normal);
-            return Ok();
+            return BadRequest(ModelState);
         }
 
-        // Change settings
-        public async Task<IHttpActionResult> Put()
+        // Logout
+        public async Task<IHttpActionResult> Delete(string id)
         {
-            
+            if (User.Identity.GetUserId() != id)
+            {
+                return Unauthorized();
+            }
+            AuthenticationManager.SignOut();
+            return Ok();
         }
 
         //        public IHttpActionResult Login(string returnUrl)

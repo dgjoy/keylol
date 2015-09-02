@@ -77,6 +77,13 @@
 						};
 
 						self.modelValidate = {
+							idCode: function(str, errorObj, modelName) {
+								if (!/^[A-Z0-9]{5}$/.test(str)) {
+									errorObj[modelName] = "Only 5 uppercase letters and digits are allowed in IdCode.";
+									return false;
+								}
+								return true;
+							},
 							username: function(str, errorObj, modelName) {
 								var usernameLength = self.byteLength(str);
 								if (usernameLength < 3 || usernameLength > 16) {
@@ -99,6 +106,13 @@
 						};
 
 						self.modelErrorDetect = {
+							idCode: function(message) {
+								if (/Only.*allowed/.test(message))
+									return "format";
+								else if (/already used/.test(message))
+									return "used";
+								return "unknown";
+							},
 							username: function(message) {
 								if (/should.*bytes/.test(message))
 									return "length";
