@@ -27,7 +27,7 @@
 
 @keyframes exit-background-flash {
     from {
-        fill: #00be19;
+        fill: #009e57;
     }
 
     to {
@@ -41,7 +41,7 @@
     }
 
     to {
-        fill: #00be19;
+        fill: #009e57;
     }
 }
 
@@ -569,7 +569,7 @@ kl-modal[position=right] {
         }
 
         .modal-window .modal-exit-button:hover .text {
-            fill: #00be19;
+            fill: #009e57;
         }
 
     /*#endregion */
@@ -1451,7 +1451,7 @@ input-code input[type=text].code-input-textbox {
 
             .section-promoted-points .heading p:first-of-type {
                 font-size: 17px;
-                padding-top: 12px;
+                padding-top: 13px;
             }
 
     .section-promoted-points .point {
@@ -1632,18 +1632,18 @@ input-code input[type=text].code-input-textbox {
 
     .section-timeline .heading .title {
         color: #11254a;
-        padding: 7px 0;
+        padding: 7px 0 6px;
         margin-left: 2px;
     }
 
         .section-timeline .heading .title h1 {
             font-size: 17px;
             font-weight: normal;
-            margin: 0 0 2px;
+            margin: 0 0 1px;
         }
 
         .section-timeline .heading .title h2 {
-            font-size: 11px;
+            font-size: 13px;
             font-weight: normal;
             margin: 0;
         }
@@ -1675,7 +1675,7 @@ input-code input[type=text].code-input-textbox {
 
     .section-timeline .heading {
         position: relative;
-        padding-right: 64px;
+        padding-right: 65px;
     }
 
         .section-timeline .heading .left-info,
@@ -1695,7 +1695,7 @@ input-code input[type=text].code-input-textbox {
         .section-timeline .heading .right-button {
             position: absolute;
             right: 0;
-            width: 49px;
+            width: 50px;
             height: 100%;
         }
 
@@ -2145,7 +2145,7 @@ input-code input[type=text].code-input-textbox {
 
         .section-cuc-entrance p:first-of-type {
             font-size: 19px;
-            margin: 3px 0 2px;
+            margin: 4px 0 0;
         }
 
 /*#endregion */

@@ -32,18 +32,6 @@
                         {
                             name: "求生之路2",
                             url: "test"
-                        },
-                        {
-                            name: "刺客信条：革命",
-                            url: "test"
-                        },
-                        {
-                            name: "未转变",
-                            url: "test"
-                        },
-                        {
-                            name: "僵尸末日",
-                            url: "test"
                         }
                     ]
                 },
@@ -77,18 +65,6 @@
                         },
                         {
                             name: "角色扮演",
-                            url: "test"
-                        },
-                        {
-                            name: "桌面游戏",
-                            url: "test"
-                        },
-                        {
-                            name: "第三人称射击",
-                            url: "test"
-                        },
-                        {
-                            name: "横板过关",
                             url: "test"
                         }
                     ]
@@ -136,26 +112,6 @@
                         {
                             name: "Paradox",
                             url: "test"
-                        },
-                        {
-                            name: "独立游戏",
-                            url: "test"
-                        },
-                        {
-                            name: "微软",
-                            url: "test"
-                        },
-                        {
-                            name: "任天堂",
-                            url: "test"
-                        },
-                        {
-                            name: "SqEx",
-                            url: "test"
-                        },
-                        {
-                            name: "2K",
-                            url: "test"
                         }
                     ]
                 },
@@ -201,26 +157,6 @@
                         },
                         {
                             name: "XBOX360",
-                            url: "test"
-                        },
-                        {
-                            name: "R★SC",
-                            url: "test"
-                        },
-                        {
-                            name: "PSVita",
-                            url: "test"
-                        },
-                        {
-                            name: "iOS",
-                            url: "test"
-                        },
-                        {
-                            name: "安卓",
-                            url: "test"
-                        },
-                        {
-                            name: "GFWL",
                             url: "test"
                         }
                     ]
