@@ -1087,6 +1087,24 @@ input-code input[type=text].code-input-textbox {
     width: 900px;
 }
 
+.modal-settings .error {
+    color: red;
+}
+
+.modal-settings .tab-changed {
+    position: relative;
+}
+
+    .modal-settings .tab-changed:after {
+        content: "*";
+        position: absolute;
+        top: 0;
+    }
+
+    .modal-settings .tab-changed.tab-error:after {
+        color: red;
+    }
+
 .modal-settings .heading {
     margin: 28px 0;
 }

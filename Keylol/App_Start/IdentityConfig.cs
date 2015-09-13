@@ -50,6 +50,14 @@ namespace Keylol
             {
                 errors.Add("Only digits, letters and Chinese characters are allowed in UserName.");
             }
+            if (!Regex.IsMatch(user.Email, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$", RegexOptions.IgnoreCase))
+            {
+                errors.Add("Email is invalid.");
+            }
+            if (user.GamerTag.ByteLength() > 40)
+            {
+                errors.Add("GamerTag should not be longer than 40 bytes.");
+            }
             var result = await base.ValidateAsync(user);
             if (errors.Any() || !result.Succeeded)
             {

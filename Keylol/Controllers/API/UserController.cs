@@ -15,7 +15,8 @@ namespace Keylol.Controllers.API
     [Authorize]
     public class UserController : KeylolApiController
     {
-        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false, bool includeClaims = false)
+        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
+            bool includeClaims = false)
         {
             var visitorId = User.Identity.GetUserId();
             var staffClaim = await UserManager.GetStaffClaimAsync(visitorId);
@@ -185,6 +186,8 @@ namespace Keylol.Controllers.API
                 {
                     if (error.Contains("Email"))
                         ModelState.AddModelError("vm.Email", error);
+                    else if (error.Contains("GamerTag"))
+                        ModelState.AddModelError("vm.GamerTag", error);
                 }
                 return BadRequest(ModelState);
             }

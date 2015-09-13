@@ -102,6 +102,13 @@
 									return false;
 								}
 								return true;
+							},
+							gamerTag: function (str, errorObj, modelName) {
+							    if (self.byteLength(str) > 40) {
+							        errorObj[modelName] = "GamerTag should not be longer than 40 bytes.";
+							        return false;
+							    }
+							    return true;
 							}
 						};
 
@@ -145,7 +152,12 @@
 								else if (/Login failed/.test(message))
 									return "failed";
 								return "unknown";
-							}
+							},
+							gamerTag: function (message) {
+							    if (/not be longer than/.test(message))
+							        return "length";
+                                return "unknown";
+                            }
 						};
 					}
 

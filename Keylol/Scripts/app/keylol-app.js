@@ -14,8 +14,8 @@
         "ngStorage"
 	]);
 	app.config([
-		"$routeProvider", "$locationProvider", "utilsProvider", "pageTitleProvider",
-		function($routeProvider, $locationProvider, utilsProvider, pageTitleProvider) {
+		"$routeProvider", "$locationProvider", "utilsProvider", "pageTitleProvider", "$localStorageProvider",
+		function ($routeProvider, $locationProvider, utilsProvider, pageTitleProvider, $localStorageProvider) {
 			$locationProvider.html5Mode(true);
 
 			$routeProvider.when("/", {
@@ -37,6 +37,8 @@
 			utilsProvider.config({
 				geetestId: "0c002064ef8f602ced7bccec08b8e10b"
 			});
+
+		    $localStorageProvider.setKeyPrefix("keylol-");
 		}
 	]);
 	app.constant("amTimeAgoConfig", {

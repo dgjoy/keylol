@@ -62,7 +62,7 @@
                             }
                             break;
                         default:
-                            console.error(response.data);
+                            alert(response.data);
                         }
                     });
             };

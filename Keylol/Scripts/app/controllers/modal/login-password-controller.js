@@ -3,11 +3,15 @@
 
 	keylolApp.controller("LoginPasswordController", [
 		"$scope", "close", "$http", "utils", "union",
-		function($scope, close, $http, utils, union) {
+		function ($scope, close, $http, utils, union) {
+		    $scope.error = {};
+		    $scope.errorDetect = utils.modelErrorDetect;
+
 			$scope.vm = {
 				EmailOrIdCode: "",
 				Password: ""
 			};
+
 			var geetestResult;
 			var gee;
 			$scope.geetestId = utils.createGeetest("float", function(result, geetest) {
@@ -17,11 +21,11 @@
 				$scope.vm.GeetestSeccode = geetestResult.geetest_seccode;
 				$scope.vm.GeetestValidate = geetestResult.geetest_validate;
 			});
-			$scope.error = {};
-			$scope.errorDetect = utils.modelErrorDetect;
+
 			$scope.cancel = function() {
 				close();
 			};
+
 			$scope.submit = function() {
 				$scope.error = {};
 				if (!$scope.vm.EmailOrIdCode) {

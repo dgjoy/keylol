@@ -26,9 +26,6 @@ namespace Keylol.Controllers.API
         [AllowAnonymous]
         public async Task<IHttpActionResult> Post(LoginVM vm)
         {
-            if (User.Identity.IsAuthenticated)
-                return Unauthorized();
-
             if (vm == null)
             {
                 ModelState.AddModelError("vm", "Invalid view model.");

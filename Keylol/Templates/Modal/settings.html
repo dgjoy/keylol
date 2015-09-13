@@ -8,16 +8,16 @@
     <div class="menu-right">
         <ul class="list-inline">
             <li ng-class="{current: page === 'profiles'}">
-                <a href="" ng-click="page = 'profiles'">信息资料</a>
+                <a href="" ng-class="{'tab-changed': optionsInPageChanged('profiles'), 'tab-error': optionsInPageError('profiles')}" ng-click="setPage('profiles')">信息资料</a>
             </li>
             <li ng-class="{current: page === 'platform'}">
-                <a href="" ng-click="page = 'platform'">平台</a>
+                <a href="" ng-class="{'tab-changed': optionsInPageChanged('platform'), 'tab-error': optionsInPageError('platform')}" ng-click="setPage('platform')">平台</a>
             </li>
             <li ng-class="{current: page === 'security'}">
-                <a href="" ng-click="page = 'security'">安全</a>
+                <a href="" ng-class="{'tab-changed': optionsInPageChanged('security'), 'tab-error': optionsInPageError('security')}" ng-click="setPage('security')">安全</a>
             </li>
             <li ng-class="{current: page === 'preferences'}">
-                <a href="" ng-click="page = 'preferences'">偏好设定</a>
+                <a href="" ng-class="{'tab-changed': optionsInPageChanged('preferences'), 'tab-error': optionsInPageError('preferences')}" ng-click="setPage('preferences')">偏好设定</a>
             </li>
             <li>
                 <a href="" ng-click="logout()">退出登录</a>
@@ -42,15 +42,10 @@
         <tr>
             <td>
                 <h3 class="font-myriad-lisong">昵称</h3>
-                <h4 ng-switch="errorDetect.username(error['vm.UserName'])">
-                    <span class="error" ng-switch-when="used">这个昵称已被别人使用。</span>
-                    <span class="error" ng-switch-when="format">仅限使用拉丁字母、数字、汉字。</span>
-                    <span class="error" ng-switch-when="length">仅限 3-16 字节。</span>
-                    <span ng-switch-default>暂时不允许注册后更改昵称。</span>
-                </h4>
+                <h4>暂时不允许注册后更改昵称。</h4>
             </td>
             <td>
-                <input type="text" tabindex="1" ng-model="vm.UserName" disabled>
+                <input type="text" tabindex="1" ng-model="union.$localStorage.user.UserName" disabled>
             </td>
             <td class="avatar-box-left-spacing"></td>
             <td rowspan="3" class="upload-avatar">
@@ -62,25 +57,22 @@
         <tr>
             <td>
                 <h3 class="font-myriad-lisong">用户识别码</h3>
-                <h4 ng-switch="errorDetect.password(error['vm.UIC'])">
-                    <span class="error" ng-switch-when="length">密码需要至少长 6 位。</span>
-                    <span ng-switch-default>唯一用户标示(UIC)，注册后无法更改。</span>
-                </h4>
+                <h4>唯一用户标示(UIC)，注册后无法更改。</h4>
             </td>
             <td>
-                <input type="text" tabindex="2" ng-model="vm.IdCode">
+                <input type="text" tabindex="2" ng-model="union.$localStorage.user.IdCode" disabled>
             </td>
         </tr>
         <tr>
             <td>
                 <h3 class="font-myriad-lisong">玩家标签</h3>
-                <h4 ng-switch="error['vm.Tags']">
-                    <span class="error" ng-switch-when="not match">密码不匹配。</span>
+                <h4 ng-switch="errorDetect.gamerTag(error['vm.GamerTag'])">
+                    <span class="error" ng-switch-when="length">不能超过 40 字节。</span>
                     <span ng-switch-default>一句话概括你的游戏生涯。</span>
                 </h4>
             </td>
             <td>
-                <input type="text" tabindex="3" ng-model="vm.Tags">
+                <input type="text" tabindex="3" ng-model="vm.GamerTag">
             </td>
         </tr>
         </tbody>
@@ -102,7 +94,7 @@
                 </h4>
             </td>
             <td>
-                <input type="email" tabindex="4" ng-model="vm.Email">
+                <input name="email" type="email" tabindex="4" ng-model="vm.Email">
             </td>
         </tr>
         </tbody>
@@ -124,7 +116,7 @@
         <tr>
             <td>
                 <h3 class="font-myriad-lisong">平台账户</h3>
-                <h4>内测阶段暂时不允许在注册后更换已绑定的 Steam 帐户</h4>
+                <h4>内测阶段暂时不允许在注册后更换已绑定的 Steam 账户</h4>
                 <div class="platform-status larger">
                     <div class="pasted-card box-shadowed">
                         <img class="needle" src="Content/Images/card-needle.png" alt="订书针">
@@ -171,45 +163,45 @@
                 <h4>在个人据点自动同步 Steam 账户活动，需要设定你的 Steam 资料为 "好友可见" 或 "公开"。</h4>
                 <div class="checkbox-group clearfix">
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[0]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[0]}}" ng-model="vm.AutoShareOnAddingNewFriend">
                         <label for="settings-checkbox-{{uniqueIds[0]}}">新增好友</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[1]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[1]}}" ng-model="vm.AutoShareOnUnlockingAchievement">
                         <label for="settings-checkbox-{{uniqueIds[1]}}">解锁成就</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[2]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[2]}}" ng-model="vm.AutoShareOnAcquiringNewGame">
                         <label for="settings-checkbox-{{uniqueIds[2]}}">预购/入库游戏</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[3]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[3]}}" ng-model="vm.AutoShareOnJoiningGroup">
                         <label for="settings-checkbox-{{uniqueIds[3]}}">加入群组</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[4]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[4]}}" ng-model="vm.AutoShareOnCreatingGroup">
                         <label for="settings-checkbox-{{uniqueIds[4]}}">创建群组</label>
                     </div>
                 </div>
                 <div class="checkbox-group clearfix">
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[5]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[5]}}" ng-model="vm.AutoShareOnUpdatingWishlist">
                         <label for="settings-checkbox-{{uniqueIds[5]}}">愿望清单更新</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[6]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[6]}}" ng-model="vm.AutoShareOnPublishingReview">
                         <label for="settings-checkbox-{{uniqueIds[6]}}">发布游戏评论</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[7]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[7]}}" ng-model="vm.AutoShareOnUploadingScreenshot">
                         <label for="settings-checkbox-{{uniqueIds[7]}}">上传截图</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[8]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[8]}}" ng-model="vm.AutoShareOnAddingVideo">
                         <label for="settings-checkbox-{{uniqueIds[8]}}">添加视频</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[9]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[9]}}" ng-model="vm.AutoShareOnAddingFavorite">
                         <label for="settings-checkbox-{{uniqueIds[9]}}">收藏更新</label>
                     </div>
                 </div>
@@ -227,28 +219,38 @@
         <tr>
             <td>
                 <h3 class="font-myriad-lisong">当前登录口令</h3>
-                <h4>若不更改当前口令或调整登陆保护，请留空此栏。</h4>
+                <h4 ng-switch="errorDetect.password(error['vm.Password'])">
+                    <span class="error" ng-switch-when="empty">如需更改当前口令或调整登录保护，请填写登录口令。</span>
+                    <span class="error" ng-switch-when="incorrect">登录口令不正确。</span>
+                    <span ng-switch-default>若不更改当前口令或调整登录保护，请留空此栏。</span>
+                </h4>
             </td>
             <td>
-                <input type="password">
+                <input type="password" ng-model="vm.Password">
             </td>
         </tr>
         <tr>
             <td>
                 <h3 class="font-myriad-lisong">新登录口令</h3>
-                <h4>字母、数字、符号，大小写敏感，至少 6 位。</h4>
+                <h4 ng-switch="errorDetect.password(error['vm.NewPassword'])">
+                    <span class="error" ng-switch-when="length">密码需要至少长 6 位。</span>
+                    <span ng-switch-default>拉丁字母、数字、字符，大小写敏感，至少 6 位。</span>
+                </h4>
             </td>
             <td>
-                <input type="password">
+                <input type="password" ng-model="vm.NewPassword">
             </td>
         </tr>
         <tr>
             <td>
                 <h3 class="font-myriad-lisong">确认新登录口令</h3>
-                <h4>再次输入你的新登录口令，避免输入失误。</h4>
+                <h4 ng-switch="error['vm.ConfirmPassword']">
+                    <span class="error" ng-switch-when="not match">密码不匹配。</span>
+                    <span ng-switch-default>再次输入你的登录口令，以避免输入失误。</span>
+                </h4>
             </td>
             <td>
-                <input type="password">
+                <input type="password" ng-model="vm.ConfirmPassword">
             </td>
         </tr>
         </tbody>
@@ -260,11 +262,11 @@
                 <h4>如果开启此项，使用口令登录失败连续十次时，将锁定登录三十分钟。关闭登录保护时，需要在上方栏目输入当前口令。</h4>
                 <div class="checkbox-group more clearfix">
                     <div>
-                        <input type="radio" id="radio-{{uniqueIds[10]}}" name="vote" checked>
+                        <input type="radio" id="radio-{{uniqueIds[10]}}" name="vote" ng-model="vm.LockoutEnabled" ng-value="true">
                         <label for="radio-{{uniqueIds[10]}}">开启</label>
                     </div>
                     <div>
-                        <input type="radio" id="radio-{{uniqueIds[11]}}" name="vote">
+                        <input type="radio" id="radio-{{uniqueIds[11]}}" name="vote" ng-model="vm.LockoutEnabled" ng-value="false">
                         <label for="radio-{{uniqueIds[11]}}">关闭</label>
                     </div>
                 </div>
@@ -289,23 +291,23 @@
                 <h4>可以通过邮件订阅掌握其乐账户的日常动态。</h4>
                 <div class="checkbox-group clearfix">
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[12]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[12]}}" ng-model="vm.EmailNotifyOnArticleReplied">
                         <label for="settings-checkbox-{{uniqueIds[12]}}">文章被回复</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[13]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[13]}}" ng-model="vm.EmailNotifyOnCommentReplied">
                         <label for="settings-checkbox-{{uniqueIds[13]}}">评论被回复</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[14]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[14]}}" ng-model="vm.EmailNotifyOnEditorRecommended">
                         <label for="settings-checkbox-{{uniqueIds[14]}}">编辑推荐</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[15]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[15]}}" ng-model="vm.EmailNotifyOnMessageReceived">
                         <label for="settings-checkbox-{{uniqueIds[15]}}">站内简讯</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[16]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[16]}}" ng-model="vm.EmailNotifyOnAdvertisement">
                         <label for="settings-checkbox-{{uniqueIds[16]}}">商业广告（不推荐）</label>
                     </div>
                 </div>
@@ -319,23 +321,23 @@
                 <h4>每当账户有以下动态，你会收到站内简讯通知。</h4>
                 <div class="checkbox-group clearfix">
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[17]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[17]}}" ng-model="vm.MessageNotifyOnArticleReplied">
                         <label for="settings-checkbox-{{uniqueIds[17]}}">文章被回复</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[18]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[18]}}" ng-model="vm.MessageNotifyOnCommentReplied">
                         <label for="settings-checkbox-{{uniqueIds[18]}}">评论被回复</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[19]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[19]}}" ng-model="vm.MessageNotifyOnEditorRecommended">
                         <label for="settings-checkbox-{{uniqueIds[19]}}">编辑推荐</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[20]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[20]}}" ng-model="vm.MessageNotifyOnArticleLiked">
                         <label for="settings-checkbox-{{uniqueIds[20]}}">文章被认可</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[21]}}">
+                        <input type="checkbox" id="settings-checkbox-{{uniqueIds[21]}}" ng-model="vm.MessageNotifyOnCommentLiked">
                         <label for="settings-checkbox-{{uniqueIds[21]}}">评论被认可</label>
                     </div>
                 </div>
