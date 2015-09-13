@@ -15,7 +15,7 @@ namespace Keylol.Controllers.API
     [Authorize]
     public class UserController : KeylolApiController
     {
-        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false)
+        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false, bool includeClaims = false)
         {
             var visitorId = User.Identity.GetUserId();
             var staffClaim = await UserManager.GetStaffClaimAsync(visitorId);
@@ -27,7 +27,19 @@ namespace Keylol.Controllers.API
             var user = await UserManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
-            return Ok(new UserDTO(user, includeProfilePointBackgroundImage));
+
+            var userDTO = new UserDTO(user);
+
+            if (includeProfilePointBackgroundImage)
+                userDTO.ProfilePointBackgroundImage = user.ProfilePoint.BackgroundImage;
+
+            if (includeClaims)
+            {
+                userDTO.StatusClaim = await UserManager.GetStatusClaimAsync(user.Id);
+                userDTO.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
+            }
+
+            return Ok(userDTO);
         }
 
         // Register
@@ -74,29 +86,37 @@ namespace Keylol.Controllers.API
                 Email = vm.Email,
                 RegisterIp = OwinContext.Request.RemoteIpAddress
             };
-            try
+
+            var result = await UserManager.CreateAsync(user, vm.Password);
+            if (!result.Succeeded)
             {
-                var result = await UserManager.CreateAsync(user, vm.Password);
-                if (!result.Succeeded)
+                foreach (var error in result.Errors)
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        if (error.Contains("UserName"))
-                            ModelState.AddModelError("vm.UserName", error);
-                        else if (error.Contains("Password"))
-                            ModelState.AddModelError("vm.Password", error);
-                        else if (error.Contains("Email"))
-                            ModelState.AddModelError("vm.Email", error);
-                    }
-                    return BadRequest(ModelState);
+                    if (error.Contains("UserName"))
+                        ModelState.AddModelError("vm.UserName", error);
+                    else if (error.Contains("Password"))
+                        ModelState.AddModelError("vm.Password", error);
+                    else if (error.Contains("Email"))
+                        ModelState.AddModelError("vm.Email", error);
                 }
+                return BadRequest(ModelState);
             }
-            catch (Exception e)
+
+            // Auto login
+            await SignInManager.SignInAsync(user, true, true);
+            var loginLog = new LoginLog
             {
-                var x = "e";
-            }
-            
-            return Created($"api/user/{user.Id}", new UserDTO(user));
+                Ip = OwinContext.Request.RemoteIpAddress,
+                User = user
+            };
+            DbContext.LoginLogs.Add(loginLog);
+            await DbContext.SaveChangesAsync();
+            var userDTO = new UserDTO(user)
+            {
+                LoginLog = new LoginLogDTO(loginLog)
+            };
+
+            return Created($"api/user/{user.Id}", userDTO);
         }
 
         // Change settings

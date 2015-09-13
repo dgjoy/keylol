@@ -233,6 +233,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\API\PointController.cs" />
+    <Compile Include="Controllers\API\CommentController.cs" />
+    <Compile Include="Controllers\API\ArticleController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\API\UserController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -320,6 +323,7 @@
     <Content Include="Scripts\app\controllers\modal\editor-controller.js" />
     <Content Include="Scripts\app\controllers\modal\registration-controller.js" />
     <Content Include="Scripts\app\controllers\root-controller.js" />
+    <Content Include="Scripts\app\controllers\section\action-hub-controller.js" />
     <Content Include="Scripts\app\controllers\section\secret-tests-controller.js" />
     <Content Include="Scripts\app\controllers\section\reception-controller.js" />
     <Content Include="Scripts\app\controllers\section\main-navigation-controller.js" />
@@ -335,6 +339,7 @@
     <Content Include="Scripts\app\directives\quill.js" />
     <Content Include="Scripts\app\directives\kl-modal.js" />
     <Content Include="Scripts\app\keylol-app.js" />
+    <Content Include="Scripts\app\providers\union-service.js" />
     <Content Include="Scripts\app\providers\utils-provider.js" />
     <Content Include="Scripts\app\providers\page-title-provider.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
@@ -1091,6 +1096,7 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\ngStorage.js" />
     <Content Include="Scripts\quill\quill-float-toolbar.js" />
     <Content Include="Scripts\quill\quill-click-expand.js" />
     <Content Include="Scripts\quill\quill.base.css" />

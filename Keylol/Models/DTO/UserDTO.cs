@@ -5,7 +5,7 @@ namespace Keylol.Models.DTO
 {
     public class UserDTO
     {
-        public UserDTO(KeylolUser user, bool includeProfilePointBackgroundImage = false)
+        public UserDTO(KeylolUser user)
         {
             Id = user.Id;
             IdCode = user.IdCode;
@@ -14,9 +14,6 @@ namespace Keylol.Models.DTO
             Email = user.Email;
             AvatarImage = user.AvatarImage;
             LockoutEnabled = user.LockoutEnabled;
-
-            if (includeProfilePointBackgroundImage)
-                ProfilePointBackgroundImage = user.ProfilePoint.BackgroundImage;
 
             AutoShareOnAcquiringNewGame = user.AutoShareOnAcquiringNewGame;
             AutoShareOnAddingFavorite = user.AutoShareOnAddingFavorite;
@@ -50,6 +47,11 @@ namespace Keylol.Models.DTO
         public string AvatarImage { get; set; }
         public string ProfilePointBackgroundImage { get; set; }
         public bool LockoutEnabled { get; set; }
+
+        public string StatusClaim { get; set; }
+        public string StaffClaim { get; set; }
+
+        public LoginLogDTO LoginLog { get; set; }
 
         public bool AutoShareOnAddingNewFriend { get; set; }
         public bool AutoShareOnUnlockingAchievement { get; set; }

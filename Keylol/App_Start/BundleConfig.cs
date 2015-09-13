@@ -34,7 +34,8 @@ namespace Keylol
                 "~/Scripts/angular-route.js",
                 //"~/Scripts/angular-animate.js",
                 "~/Scripts/angular-modal-service.js",
-                "~/Scripts/angular-moment.js"
+                "~/Scripts/angular-moment.js",
+                "~/Scripts/ngStorage.js"
                 );
             bundles.Add(vendorJsBundle2);
 

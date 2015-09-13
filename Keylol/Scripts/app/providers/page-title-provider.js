@@ -4,7 +4,7 @@
 	keylolApp.provider("pageTitle", function() {
 		var _loadingTitle = "";
 		return {
-			loadingTitle: function(title) {
+			setLoadingTitle: function(title) {
 				if (title) {
 					_loadingTitle = title;
 				}

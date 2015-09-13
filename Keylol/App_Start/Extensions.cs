@@ -32,8 +32,7 @@ namespace Keylol
 
         public const string Probationer = "probationer";
 
-        // Exclude this claim = "normal"
-
+        /// null represents "normal"
         public static async Task<string> GetStatusClaimAsync(this KeylolUserManager manager, string userId)
         {
             return (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType)?.Value;
@@ -69,8 +68,7 @@ namespace Keylol
         public const string Moderator = "moderator";
         public const string Operator = "operator";
 
-        // Exclude this claim = "user"
-
+        /// null represents "user"
         public static async Task<string> GetStaffClaimAsync(this KeylolUserManager manager, string userId)
         {
             return (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType)?.Value;

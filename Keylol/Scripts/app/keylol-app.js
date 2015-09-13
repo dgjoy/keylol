@@ -10,7 +10,8 @@
 
 		// 3rd Party Modules
 		"angularModalService",
-		"angularMoment"
+		"angularMoment",
+        "ngStorage"
 	]);
 	app.config([
 		"$routeProvider", "$locationProvider", "utilsProvider", "pageTitleProvider",
@@ -31,7 +32,7 @@
 				controller: "NotFoundController"
 			});
 
-			pageTitleProvider.loadingTitle("载入中 - 其乐");
+			pageTitleProvider.setLoadingTitle("载入中 - 其乐");
 
 			utilsProvider.config({
 				geetestId: "0c002064ef8f602ced7bccec08b8e10b"

@@ -44,7 +44,7 @@ namespace Keylol.Controllers.API
                 ModelState.AddModelError("authCode", "true");
                 return BadRequest(ModelState);
             }
-            var user = Regex.IsMatch(vm.EmailOrIdCode, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$",
+            var user = Regex.IsMatch(vm.EmailOrIdCode, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$",
                 RegexOptions.IgnoreCase)
                 ? await UserManager.FindByEmailAsync(vm.EmailOrIdCode)
                 : await DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == vm.EmailOrIdCode);
@@ -84,6 +84,12 @@ namespace Keylol.Controllers.API
         // Logout
         public async Task<IHttpActionResult> Delete(string id)
         {
+            if (id == "current")
+            {
+                AuthenticationManager.SignOut();
+                return Ok();
+            }
+
             var loginLog = await DbContext.LoginLogs.FindAsync(id);
             if (loginLog == null)
                 return NotFound();

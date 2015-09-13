@@ -2,8 +2,8 @@
 	"use strict";
 
 	keylolApp.controller("LoginPasswordController", [
-		"$scope", "close", "$http", "utils",
-		function($scope, close, $http, utils) {
+		"$scope", "close", "$http", "utils", "union",
+		function($scope, close, $http, utils, union) {
 			$scope.vm = {
 				EmailOrIdCode: "",
 				Password: ""
@@ -22,7 +22,7 @@
 			$scope.cancel = function() {
 				close();
 			};
-			$scope.submit = function(form) {
+			$scope.submit = function() {
 				$scope.error = {};
 				if (!$scope.vm.EmailOrIdCode) {
 					$scope.error["vm.EmailOrIdCode"] = "Email or UIC cannot be empty.";
@@ -37,8 +37,9 @@
 					return;
 				$http.post("/api/login", $scope.vm)
 					.then(function(response) {
-						alert("登录成功");
-					}, function(response) {
+					    union.$localStorage.login = response.data;
+				        close();
+				    }, function(response) {
 						switch (response.status) {
 						case 400:
 							$scope.error = response.data.ModelState;
@@ -47,7 +48,7 @@
 							}
 							break;
 						default:
-							console.error(response.data);
+							alert(response.data);
 						}
 					});
 			};
