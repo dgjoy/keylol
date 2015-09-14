@@ -39,7 +39,7 @@
 				}
 				if (!$.isEmptyObject($scope.error))
 					return;
-				$http.post("/api/login", $scope.vm)
+				$http.post("api/login", $scope.vm)
 					.then(function(response) {
 					    union.$localStorage.login = response.data;
 				        close();

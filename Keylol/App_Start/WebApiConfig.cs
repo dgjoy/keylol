@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using System.Web.Http.Batch;
 
 namespace Keylol
 {
@@ -10,6 +11,8 @@ namespace Keylol
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            config.Routes.MapHttpBatchRoute("batch", "api/batch", new DefaultHttpBatchHandler(GlobalConfiguration.DefaultServer));
 
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new {id = RouteParameter.Optional}
                 );

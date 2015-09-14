@@ -308,6 +308,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
+    <Content Include="Scripts\angular-http-batch.js" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-modal-service.js" />
     <Content Include="Scripts\angular-moment.js" />
@@ -342,6 +343,13 @@
     <Content Include="Scripts\app\providers\union-service.js" />
     <Content Include="Scripts\app\providers\utils-provider.js" />
     <Content Include="Scripts\app\providers\page-title-provider.js" />
+    <Content Include="Content\Fonts\lisong-fdd0168d0a8b87a3de93bb498775e41d.woff" />
+    <Content Include="Content\Fonts\keylol-rail-sung-f64293596a95078abc8673b55ba4131b.woff" />
+    <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\angular-animate.min.js.map" />
+    <Content Include="Scripts\angular-route.min.js.map" />
+    <Content Include="Scripts\angular-moment.min.js.map" />
+    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
@@ -1086,9 +1094,6 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
-    <Content Include="Content\Fonts\lisong-fdd0168d0a8b87a3de93bb498775e41d.woff" />
-    <Content Include="Content\Fonts\keylol-rail-sung-f64293596a95078abc8673b55ba4131b.woff" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\moment-local_zh-cn.js" />
@@ -1168,10 +1173,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Scripts\angular.min.js.map" />
-    <Content Include="Scripts\angular-animate.min.js.map" />
-    <Content Include="Scripts\angular-route.min.js.map" />
-    <Content Include="Scripts\angular-moment.min.js.map" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
   </ItemGroup>
   <ItemGroup>

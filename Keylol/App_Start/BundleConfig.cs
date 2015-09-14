@@ -33,6 +33,7 @@ namespace Keylol
                 "~/Scripts/i18n/angular-locale_zh.js",
                 "~/Scripts/angular-route.js",
                 //"~/Scripts/angular-animate.js",
+                "~/Scripts/angular-http-batch.js",
                 "~/Scripts/angular-modal-service.js",
                 "~/Scripts/angular-moment.js",
                 "~/Scripts/ngStorage.js"
