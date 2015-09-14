@@ -60,8 +60,8 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BundleTransformer.Autoprefixer, Version=1.9.72.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
-      <HintPath>..\packages\BundleTransformer.Autoprefixer.1.9.72\lib\net40\BundleTransformer.Autoprefixer.dll</HintPath>
+    <Reference Include="BundleTransformer.Autoprefixer, Version=1.9.74.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
+      <HintPath>..\packages\BundleTransformer.Autoprefixer.1.9.74\lib\net40\BundleTransformer.Autoprefixer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="BundleTransformer.Core, Version=1.9.69.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
@@ -270,6 +270,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="apple-touch-icon-180.png" />
+    <None Include="BundleTransformer.Configuration.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="ClearScript.V8\ClearScriptV8-32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1180,9 +1183,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <None Include="BundleTransformer.Configuration.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Content\Fonts\keylol-rail-sung-full.ttf" />
     <None Include="Content\Fonts\lisong-full.ttf" />
     <None Include="Content\Fonts\myriadpro-regular-full.woff" />
