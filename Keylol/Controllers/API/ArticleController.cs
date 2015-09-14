@@ -28,17 +28,18 @@ namespace Keylol.Controllers.API
         }
 
         [AllowAnonymous]
-        public async Task<IHttpActionResult> Get(string idCode, int sequenceNumber)
+        [Route("api/article/{authorIdCode}/{sequenceNumberForAuthor}")]
+        public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
             var article =
                 await
                     DbContext.Articles.SingleOrDefaultAsync(
-                        a => a.Principal.User.IdCode == idCode && a.SequenceNumberForAuthor == sequenceNumber);
+                        a => a.Principal.User.IdCode == authorIdCode && a.SequenceNumberForAuthor == sequenceNumberForAuthor);
             if (article == null)
                 return NotFound();
             var articleDTO = new ArticleDTO(article)
             {
-                AuthorIdCode = idCode
+                AuthorIdCode = authorIdCode
             };
             return Ok(articleDTO);
         }
@@ -90,10 +91,11 @@ namespace Keylol.Controllers.API
             article.Principal = (await UserManager.FindByIdAsync(User.Identity.GetUserId())).ProfilePoint;
             article.SequenceNumberForAuthor =
                 (await
-                    DbContext.Articles.Where(a => a.Principal == article.Principal)
+                    DbContext.Articles.Where(a => a.Principal.Id == article.Principal.Id)
                         .Select(a => a.SequenceNumberForAuthor)
                         .DefaultIfEmpty(0)
                         .MaxAsync()) + 1;
+            DbContext.Articles.Add(article);
             await DbContext.SaveChangesAsync();
             return Created($"api/article/{article.Id}", new ArticleDTO(article, false));
         }

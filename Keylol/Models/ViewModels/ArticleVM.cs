@@ -16,6 +16,7 @@ namespace Keylol.Models.ViewModels
         [MaxLength(300000)]
         public string Content { get; set; }
 
+        [Required]
         public List<string> AttachedPointsId { get; set; }
 
         public string VoteForPointId { get; set; }
