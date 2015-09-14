@@ -244,12 +244,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201509021549224_Initial.cs" />
-    <Compile Include="Migrations\201509021549224_Initial.Designer.cs">
-      <DependentUpon>201509021549224_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201509141153214_Initial.cs" />
+    <Compile Include="Migrations\201509141153214_Initial.Designer.cs">
+      <DependentUpon>201509141153214_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
+    <Compile Include="Models\DTO\ArticleDTO.cs" />
     <Compile Include="Models\DTO\LogDTO.cs" />
     <Compile Include="Models\DTO\UserDTO.cs" />
     <Compile Include="Models\Entry.cs" />
@@ -259,6 +260,7 @@
     <Compile Include="Models\Like.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Point.cs" />
+    <Compile Include="Models\ViewModels\ArticleVM.cs" />
     <Compile Include="Models\ViewModels\LoginVM.cs" />
     <Compile Include="Provider\KeylolOAuthProvider.cs" />
     <Compile Include="Models\ViewModels\UserVM.cs" />
@@ -1194,8 +1196,8 @@
     <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201509021549224_Initial.resx">
-      <DependentUpon>201509021549224_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201509141153214_Initial.resx">
+      <DependentUpon>201509141153214_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

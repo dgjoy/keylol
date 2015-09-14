@@ -63,6 +63,7 @@ namespace Keylol.Models
         public virtual ICollection<Entry> Entries { get; set; }
         public virtual ICollection<Article> RecommendedArticles { get; set; }
         public virtual ICollection<PointRecommendationMessage> RelatedRecommendationMessages { get; set; }
+        public virtual ICollection<Article> VoteByArticles { get; set; }
     }
 
     public class ProfilePoint : Point

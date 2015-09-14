@@ -155,16 +155,21 @@ namespace Keylol.Migrations
                         Muted = c.Boolean(),
                         Archived = c.Boolean(),
                         GlobalRecommended = c.Boolean(),
+                        SequenceNumberForAuthor = c.Int(),
                         Discriminator = c.String(nullable: false, maxLength: 128),
                         Principal_Id = c.String(nullable: false, maxLength: 128),
+                        VoteForPoint_Id = c.String(maxLength: 128),
                         RecommendedArticle_Id = c.String(maxLength: 128),
                         Type_Id = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.ProfilePoints", t => t.Principal_Id)
+                .ForeignKey("dbo.NormalPoints", t => t.VoteForPoint_Id)
                 .ForeignKey("dbo.Entries", t => t.RecommendedArticle_Id)
                 .ForeignKey("dbo.ArticleTypes", t => t.Type_Id)
+                .Index(t => t.SequenceNumberForAuthor)
                 .Index(t => t.Principal_Id)
+                .Index(t => t.VoteForPoint_Id)
                 .Index(t => t.RecommendedArticle_Id)
                 .Index(t => t.Type_Id);
             
@@ -412,6 +417,7 @@ namespace Keylol.Migrations
             DropForeignKey("dbo.Likes", "Article_Id", "dbo.Entries");
             DropForeignKey("dbo.Logs", "Editor_Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.Logs", "Article_Id", "dbo.Entries");
+            DropForeignKey("dbo.Entries", "VoteForPoint_Id", "dbo.NormalPoints");
             DropForeignKey("dbo.PointStaffs", "KeylolUser_Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.PointStaffs", "NormalPoint_Id", "dbo.NormalPoints");
             DropForeignKey("dbo.Messages", "Point_Id", "dbo.NormalPoints");
@@ -451,7 +457,9 @@ namespace Keylol.Migrations
             DropIndex("dbo.Logs", new[] { "Article_Id" });
             DropIndex("dbo.Entries", new[] { "Type_Id" });
             DropIndex("dbo.Entries", new[] { "RecommendedArticle_Id" });
+            DropIndex("dbo.Entries", new[] { "VoteForPoint_Id" });
             DropIndex("dbo.Entries", new[] { "Principal_Id" });
+            DropIndex("dbo.Entries", new[] { "SequenceNumberForAuthor" });
             DropIndex("dbo.Comments", new[] { "Commentator_Id" });
             DropIndex("dbo.Comments", new[] { "Article_Id" });
             DropIndex("dbo.UserClaims", new[] { "UserId" });

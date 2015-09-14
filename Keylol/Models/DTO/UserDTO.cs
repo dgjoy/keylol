@@ -15,6 +15,8 @@ namespace Keylol.Models.DTO
             AvatarImage = user.AvatarImage;
             LockoutEnabled = user.LockoutEnabled;
 
+            // Ignore claims
+
             AutoShareOnAcquiringNewGame = user.AutoShareOnAcquiringNewGame;
             AutoShareOnAddingFavorite = user.AutoShareOnAddingFavorite;
             AutoShareOnAddingNewFriend = user.AutoShareOnAddingNewFriend;

@@ -31,6 +31,7 @@ namespace Keylol
         public const string ClaimType = "status";
 
         public const string Probationer = "probationer";
+        public const string Normal = null;
 
         /// null represents "normal"
         public static async Task<string> GetStatusClaimAsync(this KeylolUserManager manager, string userId)
@@ -67,6 +68,7 @@ namespace Keylol
         public const string Manager = "manager";
         public const string Moderator = "moderator";
         public const string Operator = "operator";
+        public const string User = null;
 
         /// null represents "user"
         public static async Task<string> GetStaffClaimAsync(this KeylolUserManager manager, string userId)

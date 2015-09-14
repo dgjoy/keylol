@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+Ôªøusing System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using Keylol.DAL;
 using Keylol.Models;
@@ -15,6 +15,74 @@ namespace Keylol.Migrations
 
         protected override void Seed(KeylolDbContext context)
         {
+            context.ArticleTypes.AddOrUpdate(type => type.Name,
+                new ArticleType()
+                {
+                    Name = "ËØÑÊµã",
+                    Category = ArticleTypeCategory.Topic,
+                    AllowVote = true
+                },
+                new ArticleType()
+                {
+                    Name = "ÊÑüÊÇü",
+                    Category = ArticleTypeCategory.Topic,
+                    AllowVote = true
+                },
+                new ArticleType()
+                {
+                    Name = "Á†îËÆ®",
+                    Category = ArticleTypeCategory.Topic
+                },
+                new ArticleType()
+                {
+                    Name = "ÊîªÁï•",
+                    Category = ArticleTypeCategory.Topic
+                },
+                new ArticleType()
+                {
+                    Name = "Êñ∞Èóª",
+                    Category = ArticleTypeCategory.Aging
+                },
+                new ArticleType()
+                {
+                    Name = "Ë¥≠Áâ©",
+                    Category = ArticleTypeCategory.Aging
+                },
+                new ArticleType()
+                {
+                    Name = "ÊùÇË∞à",
+                    Category = ArticleTypeCategory.Personal
+                },
+                new ArticleType()
+                {
+                    Name = "ÂéüÂ£∞",
+                    Category = ArticleTypeCategory.Resource
+                },
+                new ArticleType()
+                {
+                    Name = "ÂéüÁîª",
+                    Category = ArticleTypeCategory.Resource
+                },
+                new ArticleType()
+                {
+                    Name = "ËµÑÊñô",
+                    Category = ArticleTypeCategory.Resource
+                },
+                new ArticleType()
+                {
+                    Name = "Ê±âÂåñ",
+                    Category = ArticleTypeCategory.Resource
+                },
+                new ArticleType()
+                {
+                    Name = "Ê®°ÁªÑ",
+                    Category = ArticleTypeCategory.Resource
+                },
+                new ArticleType()
+                {
+                    Name = "Êèí‰ª∂",
+                    Category = ArticleTypeCategory.Resource
+                });
 //            var hasher = new PasswordHasher();
 //            var profilePoint = new ProfilePoint
 //            {
@@ -22,7 +90,7 @@ namespace Keylol.Migrations
 //            };
 //            var normalPoint = new NormalPoint
 //            {
-//                Name = "≤‚ ‘æ›µ„",
+//                Name = "ÊµãËØïÊçÆÁÇπ",
 //                AlternativeName = "Test Point",
 //                UrlFriendlyName = "test-point",
 //                Type = NormalPointType.Game
@@ -40,13 +108,13 @@ namespace Keylol.Migrations
 //            var articleType = new ArticleType
 //            {
 //                Category = ArticleTypeCategory.Topic,
-//                Name = "≤‚ ‘",
+//                Name = "ÊµãËØï",
 //                UrlFriendlyName = "test"
 //            };
 //            var article = new Article
 //            {
-//                Title = "≤‚ ‘Œƒ’¬",
-//                Content = "π˛π˛π˛π˛π˛",
+//                Title = "ÊµãËØïÊñáÁ´†",
+//                Content = "ÂìàÂìàÂìàÂìàÂìà",
 //                Type = articleType,
 //                AttachedPoints = new List<Point> {profilePoint, normalPoint}
 //            };

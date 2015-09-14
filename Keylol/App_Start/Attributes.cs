@@ -8,36 +8,6 @@ using System.Web.Http.Filters;
 
 namespace Keylol
 {
-    public class ClaimsAuthorizeExcludeAttribute : AuthorizationFilterAttribute
-    {
-        private readonly string _claimType;
-
-        public ClaimsAuthorizeExcludeAttribute(string claimType)
-        {
-            _claimType = claimType;
-        }
-
-        public override Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
-        {
-            var principal = actionContext.RequestContext.Principal as ClaimsPrincipal;
-
-            if (principal == null || !principal.Identity.IsAuthenticated)
-            {
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
-                return Task.FromResult(0);
-            }
-
-            if (principal.HasClaim(x => x.Type == _claimType))
-            {
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
-                return Task.FromResult(0);
-            }
-
-            //User is Authorized, complete execution
-            return Task.FromResult(0);
-        }
-    }
-
     public class ClaimsAuthorizeAttribute : AuthorizationFilterAttribute
     {
         private readonly string _claimType;
@@ -59,7 +29,8 @@ namespace Keylol
                 return Task.FromResult(0);
             }
 
-            if (!principal.HasClaim(x => x.Type == _claimType && x.Value == _claimValue))
+            if ((_claimValue == null && principal.HasClaim(x => x.Type == _claimType)) ||
+                (_claimValue != null && !principal.HasClaim(x => x.Type == _claimType && x.Value == _claimValue)))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult(0);

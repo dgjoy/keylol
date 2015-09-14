@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
@@ -46,12 +47,16 @@ namespace Keylol.Models
 
         public bool GlobalRecommended { get; set; } = false;
 
+        [Index]
+        public int SequenceNumberForAuthor { get; set; }
+
         public virtual Article RecommendedArticle { get; set; }
         public virtual ICollection<Article> RecommendedByArticles { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<ArticleLike> Likes { get; set; }
         public virtual ICollection<NormalPoint> RecommendedByPoints { get; set; }
         public virtual ICollection<EditLog> EditLogs { get; set; }
+        public virtual NormalPoint VoteForPoint { get; set; }
 
         public virtual ICollection<RejectionMessage> RelatedRejectionMessages { get; set; }
         public virtual ICollection<ArticleArchiveMessage> RelatedArchiveMessages { get; set; }
