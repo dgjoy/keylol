@@ -1,9 +1,13 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Cors;
 using System.Web.Http.Controllers;
+using System.Web.Http.Cors;
 using System.Web.Http.Filters;
 
 namespace Keylol
@@ -38,6 +42,36 @@ namespace Keylol
 
             //User is Authorized, complete execution
             return Task.FromResult(0);
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+    public class EnableCorsRegexAttribute : Attribute, ICorsPolicyProvider
+    {
+        private readonly string _originPattern;
+
+        public bool SupportsCredentials { get; set; } = false;
+
+        public EnableCorsRegexAttribute(string originPattern)
+        {
+            _originPattern = originPattern;
+        }
+
+        public Task<CorsPolicy> GetCorsPolicyAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var corsRequestContext = request.GetCorsRequestContext();
+            var policy = new CorsPolicy()
+            {
+                AllowAnyHeader = true,
+                AllowAnyMethod = true,
+                SupportsCredentials = SupportsCredentials,
+                PreflightMaxAge = 365 * 24 * 3600
+            };
+            if (Regex.IsMatch(corsRequestContext.Origin, _originPattern, RegexOptions.IgnoreCase))
+            {
+                policy.Origins.Add(corsRequestContext.Origin);
+            }
+            return Task.FromResult(policy);
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Net.Http.Formatting;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 
 namespace Keylol
 {

@@ -60,8 +60,8 @@ namespace Keylol
 //            app.UseOAuthBearerTokens(new OAuthAuthorizationServerOptions()
 //            {
 //                AllowInsecureHttp = true,
-//                TokenEndpointPath = new PathString("/api/oauth/token"),
-//                AuthorizeEndpointPath = new PathString("/api/oauth/authorize"),
+//                TokenEndpointPath = new PathString("/oauth/token"),
+//                AuthorizeEndpointPath = new PathString("/oauth/authorize"),
 //                Provider = new KeylolOAuthProvider()
 //            });
 
