@@ -1,7 +1,9 @@
-﻿using Microsoft.Owin;
+﻿using Keylol;
+using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(Keylol.Startup))]
+[assembly: OwinStartup(typeof (Startup))]
+
 namespace Keylol
 {
     public partial class Startup
@@ -9,6 +11,7 @@ namespace Keylol
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            ConfigureWebAPI(app);
         }
     }
 }

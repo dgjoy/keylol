@@ -32,7 +32,9 @@ namespace Keylol.Controllers
             var article =
                 await
                     DbContext.Articles.SingleOrDefaultAsync(
-                        a => a.Principal.User.IdCode == authorIdCode && a.SequenceNumberForAuthor == sequenceNumberForAuthor);
+                        a =>
+                            a.Principal.User.IdCode == authorIdCode &&
+                            a.SequenceNumberForAuthor == sequenceNumberForAuthor);
             if (article == null)
                 return NotFound();
             var articleDTO = new ArticleDTO(article)

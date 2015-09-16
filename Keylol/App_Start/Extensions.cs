@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -29,7 +28,6 @@ namespace Keylol
     public static class StatusClaim
     {
         public const string ClaimType = "status";
-
         public const string Probationer = "probationer";
         public const string Normal = null;
 
@@ -64,7 +62,6 @@ namespace Keylol
     public static class StaffClaim
     {
         public const string ClaimType = "staff";
-
         public const string Manager = "manager";
         public const string Moderator = "moderator";
         public const string Operator = "operator";

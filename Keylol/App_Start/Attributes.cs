@@ -50,22 +50,22 @@ namespace Keylol
     {
         private readonly string _originPattern;
 
-        public bool SupportsCredentials { get; set; } = false;
-
         public EnableCorsRegexAttribute(string originPattern)
         {
             _originPattern = originPattern;
         }
 
+        public bool SupportsCredentials { get; set; } = false;
+
         public Task<CorsPolicy> GetCorsPolicyAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var corsRequestContext = request.GetCorsRequestContext();
-            var policy = new CorsPolicy()
+            var policy = new CorsPolicy
             {
                 AllowAnyHeader = true,
                 AllowAnyMethod = true,
                 SupportsCredentials = SupportsCredentials,
-                PreflightMaxAge = 365 * 24 * 3600
+                PreflightMaxAge = 365*24*3600
             };
             if (Regex.IsMatch(corsRequestContext.Origin, _originPattern, RegexOptions.IgnoreCase))
             {

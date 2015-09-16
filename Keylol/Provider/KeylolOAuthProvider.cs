@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Keylol.DAL;
-using Keylol.Models;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
+﻿using System.Threading.Tasks;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol.Provider

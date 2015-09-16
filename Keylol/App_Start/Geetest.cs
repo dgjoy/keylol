@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,16 +11,17 @@ namespace Keylol
     {
         private const string BaseUrl = "http://api.geetest.com";
         private const string Key = "444dcf8693daa76733c7ad1c6e2655d7";
-
-        private HttpClient Client { get; } = new HttpClient() {BaseAddress = new Uri(BaseUrl)};
+        private HttpClient Client { get; } = new HttpClient {BaseAddress = new Uri(BaseUrl)};
 
         public async Task<bool> ValidateAsync(string challenge, string seccode, string validate)
         {
             if (validate.Length > 0 && CheckResultByPrivate(challenge, validate))
             {
-                var postData = new List<KeyValuePair<string, string>>();
-                postData.Add(new KeyValuePair<string, string>("seccode", seccode));
-                postData.Add(new KeyValuePair<string, string>("sdk", "csharp_2.15.7.23.1"));
+                var postData = new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("seccode", seccode),
+                    new KeyValuePair<string, string>("sdk", "csharp_2.15.7.23.1")
+                };
                 var result = await Client.PostAsync(GetApiEntry("/validate.php"), new FormUrlEncodedContent(postData));
                 if (await result.Content.ReadAsStringAsync() == MD5Encode(seccode))
                     return true;

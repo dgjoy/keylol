@@ -1,13 +1,10 @@
 ﻿using System;
 using Keylol.DAL;
 using Keylol.Models;
-using Keylol.Provider;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.OAuth;
 using Owin;
 
 namespace Keylol
@@ -39,12 +36,7 @@ namespace Keylol
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity =
                         SecurityStampValidator.OnValidateIdentity<KeylolUserManager, KeylolUser>(
-                            TimeSpan.FromMinutes(30), (manager, user) => user.GenerateUserIdentityAsync(manager)),
-//                    OnApplyRedirect = context =>
-//                    {
-//                        if (!context.Request.Path.StartsWithSegments(new PathString("/api")))
-//                            context.Response.Redirect(context.RedirectUri);
-//                    }
+                            TimeSpan.FromMinutes(30), (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
             });
 //            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);

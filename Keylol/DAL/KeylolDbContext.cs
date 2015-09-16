@@ -21,29 +21,22 @@ namespace Keylol.DAL
         public DbSet<Point> Points { get; set; }
         public DbSet<NormalPoint> NormalPoints { get; set; }
         public DbSet<ProfilePoint> ProfilePoints { get; set; }
-
         public DbSet<Entry> Entries { get; set; }
         public DbSet<Article> Articles { get; set; }
         public DbSet<ArticleType> ArticleTypes { get; set; }
         public DbSet<Status> Statuses { get; set; }
-
         public DbSet<Comment> Comments { get; set; }
-
         public DbSet<Like> Likes { get; set; }
         public DbSet<ArticleLike> ArticleLikes { get; set; }
         public DbSet<CommentLike> CommentLikes { get; set; }
-
         public DbSet<Message> Messages { get; set; }
         public DbSet<UserMessage> UserMessages { get; set; }
-
         public DbSet<OfficialMessage> OfficialMessages { get; set; }
         public DbSet<OfficialMessageWithSender> OfficialMessagesWithSender { get; set; }
-
         public DbSet<CorrectionalServiceMessage> CorrectionalServiceMessages { get; set; }
         public DbSet<EditingMessage> EditingMessages { get; set; }
         public DbSet<SocialMessage> SocialMessages { get; set; }
         public DbSet<SystemMessage> SystemMessages { get; set; }
-
         public DbSet<WarningMessage> WarningMessages { get; set; }
         public DbSet<RejectionMessage> RejectionMessages { get; set; }
         public DbSet<ArchiveMessage> ArchiveMessages { get; set; }
@@ -62,7 +55,6 @@ namespace Keylol.DAL
         public DbSet<CommentReplyMessage> CommentReplyMessages { get; set; }
         public DbSet<AnnouncementMessage> AnnouncementMessages { get; set; }
         public DbSet<AdvertisementMessage> AdvertisementMessages { get; set; }
-
         public DbSet<Log> Logs { get; set; }
         public DbSet<LoginLog> LoginLogs { get; set; }
         public DbSet<EditLog> EditLogs { get; set; }
