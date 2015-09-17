@@ -4,8 +4,8 @@ using System.ServiceModel;
 namespace Keylol.Services.Contracts
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
-    [ServiceContract]
-    public interface ISteamBotManager
+    [ServiceContract(Namespace = "http://xmlns.keylol.com/wcf/2015/09")]
+    public interface ISteamBotCoodinator
     {
 
         [OperationContract]
@@ -19,7 +19,7 @@ namespace Keylol.Services.Contracts
 
 
     // Use a data contract as illustrated in the sample below to add composite types to service operations.
-    [DataContract]
+    [DataContract(Namespace = "http://xmlns.keylol.com/wcf/2015/09")]
     public class CompositeType
     {
         bool boolValue = true;

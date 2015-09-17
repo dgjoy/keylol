@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -116,6 +116,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
@@ -177,9 +178,18 @@
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\SteamBindingTokenController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DAL\KeylolDbConfiguration.cs" />
-    <Compile Include="Services\Contracts\ISteamBotManager.cs" />
+    <Compile Include="Migrations\201509171748101_SteamBot.cs" />
+    <Compile Include="Migrations\201509171748101_SteamBot.Designer.cs">
+      <DependentUpon>201509171748101_SteamBot.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DTO\SteamBindingTokenDTO.cs" />
+    <Compile Include="Models\SteamBindingToken.cs" />
+    <Compile Include="Models\SteamBot.cs" />
+    <Compile Include="Models\SteamLoginToken.cs" />
+    <Compile Include="Services\Contracts\ISteamBotCoodinator.cs" />
     <Compile Include="Migrations\201509141153214_Initial.cs" />
     <Compile Include="Migrations\201509141153214_Initial.Designer.cs">
       <DependentUpon>201509141153214_Initial.cs</DependentUpon>
@@ -204,6 +214,7 @@
     <Compile Include="Models\KeylolUser.cs" />
     <Compile Include="Models\ViewModels\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Providers\SteamBotIdentityValidator.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Services\SteamBotManager.svc.cs">
       <DependentUpon>SteamBotManager.svc</DependentUpon>
@@ -231,6 +242,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201509141153214_Initial.resx">
       <DependentUpon>201509141153214_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509171748101_SteamBot.resx">
+      <DependentUpon>201509171748101_SteamBot.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

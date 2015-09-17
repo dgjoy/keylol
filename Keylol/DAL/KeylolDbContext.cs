@@ -58,6 +58,8 @@ namespace Keylol.DAL
         public DbSet<Log> Logs { get; set; }
         public DbSet<LoginLog> LoginLogs { get; set; }
         public DbSet<EditLog> EditLogs { get; set; }
+        public DbSet<SteamBindingToken> SteamBindingTokens { get; set; }
+        public DbSet<SteamLoginToken> SteamLoginTokens { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

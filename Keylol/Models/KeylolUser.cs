@@ -41,6 +41,12 @@ namespace Keylol.Models
 
         public override bool LockoutEnabled { get; set; } = true;
 
+        public long? SteamId { get; set; }
+
+        public DateTime SteamBindingTime { get; set; }
+
+        public bool SteamBindingLockEnabled { get; set; } = false;
+
         // Auto share options
         public bool AutoShareOnAddingNewFriend { get; set; } = false;
         public bool AutoShareOnUnlockingAchievement { get; set; } = true;

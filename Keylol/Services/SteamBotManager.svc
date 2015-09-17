@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="Keylol.Services.SteamBotManager" CodeBehind="SteamBotManager.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Keylol.Services.SteamBotCoodinator" CodeBehind="SteamBotManager.svc.cs" %>

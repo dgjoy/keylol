@@ -3,7 +3,7 @@ using Keylol.Services.Contracts;
 
 namespace Keylol.Services
 {
-    public class SteamBotManager : ISteamBotManager
+    public class SteamBotCoodinator : ISteamBotCoodinator
     {
         public string GetData(int value)
         {
