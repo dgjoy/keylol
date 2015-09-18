@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Keylol.DAL;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Services;
+using Keylol.Services.Contracts;
 using Microsoft.AspNet.SignalR;
 
 namespace Keylol.Hubs
@@ -36,6 +38,12 @@ namespace Keylol.Hubs
                 t => t.BrowserConnectionId == Context.ConnectionId);
             if (token != null)
             {
+                if (token.SteamId != null && !token.Consumed)
+                {
+                    ISteamBotCoodinatorCallback callback;
+                    if (SteamBotCoodinator.Clients.TryGetValue(token.Bot.Manager.Id, out callback))
+                        callback.DeleteSteamFriend(token.Bot.Id, token.SteamId.Value);
+                }
                 _dbContext.SteamBindingTokens.Remove(token);
                 await _dbContext.SaveChangesAsync();
             }
@@ -44,9 +52,17 @@ namespace Keylol.Hubs
 
         public async Task<SteamBindingTokenDTO> CreateToken()
         {
+            var bot =
+                await
+                    _dbContext.SteamBots.FirstOrDefaultAsync(
+                        b => b.Online && b.Manager != null && b.FriendCount < b.FriendUpperLimit);
+            if (bot == null)
+                return null;
+
             var token = new SteamBindingToken
             {
                 Code = await SteamBindingToken.GenerateCodeAsync(_dbContext),
+                Bot = bot,
                 BrowserConnectionId = Context.ConnectionId
             };
             _dbContext.SteamBindingTokens.Add(token);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -22,6 +23,9 @@ namespace Keylol.Services
         private readonly KeylolDbContext _dbContext = new KeylolDbContext();
         private readonly SteamBotManager _client;
 
+        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients =
+            new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
+
         public SteamBotCoodinator()
         {
             OperationContext.Current.Channel.Closed += OnClientClosed;
@@ -29,6 +33,7 @@ namespace Keylol.Services
             _client =
                 _dbContext.SteamBotManagers.Single(
                     manager => manager.ClientId == OperationContext.Current.ServiceSecurityContext.PrimaryIdentity.Name);
+            Clients[_client.Id] = OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>();
         }
 
         [OperationContract]
@@ -104,6 +109,8 @@ namespace Keylol.Services
 
         private async void OnClientClosed(object sender, EventArgs eventArgs)
         {
+            ISteamBotCoodinatorCallback callback;
+            Clients.TryRemove(_client.Id, out callback);
             _client.Bots.Clear();
             await _dbContext.SaveChangesAsync();
             _dbContext.Dispose();

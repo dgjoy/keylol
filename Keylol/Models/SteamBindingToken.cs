@@ -26,6 +26,8 @@ namespace Keylol.Models
 
         public long? SteamId { get; set; }
 
+        public bool Consumed { get; set; } = false;
+
         [Required]
         public virtual SteamBot Bot { get; set; }
 

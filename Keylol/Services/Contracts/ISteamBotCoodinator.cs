@@ -28,5 +28,6 @@ namespace Keylol.Services.Contracts
 
     public interface ISteamBotCoodinatorCallback
     {
+        void DeleteSteamFriend(string botId, long steamId);
     }
 }
