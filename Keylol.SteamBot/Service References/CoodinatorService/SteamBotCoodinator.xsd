@@ -71,17 +71,10 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Test">
+  <xs:element name="BroadcastBotOnFriendAdded">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="TestResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="TestResult" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -90,13 +83,6 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="steamId" type="xs:long" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="TestCallback">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

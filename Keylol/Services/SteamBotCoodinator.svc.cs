@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace Keylol.Services
                     manager => manager.ClientId == OperationContext.Current.ServiceSecurityContext.PrimaryIdentity.Name);
             Clients[_client.Id] = OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>();
         }
-        
+
         public async Task<IEnumerable<SteamBotDTO>> AllocateBots()
         {
             if (_botAllocated)
@@ -44,7 +45,7 @@ namespace Keylol.Services
             }
             _botAllocated = true;
 
-            var bots = await _dbContext.SteamBots.Where(bot => bot.Manager == null).ToListAsync();
+            var bots = await _dbContext.SteamBots.Where(bot => bot.Manager == null).Take(5).ToListAsync();
             foreach (var bot in bots)
             {
                 bot.Online = false;
@@ -53,7 +54,7 @@ namespace Keylol.Services
             await _dbContext.SaveChangesAsync();
             return bots.Select(bot => new SteamBotDTO(bot));
         }
-        
+
         public async Task UpdateBots(IEnumerable<SteamBotVM> vms)
         {
             foreach (var vm in vms)
@@ -78,7 +79,9 @@ namespace Keylol.Services
         public async Task<bool> BindSteamUserWithBindingToken(long userSteamId, string code, string botId)
         {
             var token =
-                await _dbContext.SteamBindingTokens.SingleOrDefaultAsync(t => t.Code == code && t.Bot.Id == botId);
+                await
+                    _dbContext.SteamBindingTokens.SingleOrDefaultAsync(
+                        t => t.Code == code && t.Bot.Id == botId && t.SteamId == null);
             if (token == null)
                 return false;
 
@@ -105,10 +108,16 @@ namespace Keylol.Services
             return true;
         }
 
-        public Task<string> Test(string message)
+        public async Task BroadcastBotOnFriendAdded(string botId)
         {
-            OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>().TestCallback(message);
-            return Task.FromResult("Your input:" + message);
+            GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
+                .Clients.Clients(
+                    await _dbContext.SteamBots.Where(bot => bot.Id == botId)
+                        .SelectMany(bot => bot.BindingTokens)
+                        .Select(token => token.BrowserConnectionId)
+                        .ToListAsync()
+                )?
+                .NotifySteamFriendAdded();
         }
 
         private async void OnClientClosed(object sender, EventArgs eventArgs)
@@ -116,7 +125,13 @@ namespace Keylol.Services
             ISteamBotCoodinatorCallback callback;
             Clients.TryRemove(_client.Id, out callback);
             _client.Bots.Clear();
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+            }
             _dbContext.Dispose();
         }
     }

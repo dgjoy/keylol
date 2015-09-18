@@ -851,11 +851,11 @@ namespace Keylol.SteamBot.CoodinatorService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse")]
         System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(long userSteamId, string code);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/Test", ReplyAction="http://tempuri.org/ISteamBotCoodinator/TestResponse")]
-        string Test(string message);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded")]
+        void BroadcastBotOnFriendAdded(string botId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/Test", ReplyAction="http://tempuri.org/ISteamBotCoodinator/TestResponse")]
-        System.Threading.Tasks.Task<string> TestAsync(string message);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded")]
+        System.Threading.Tasks.Task BroadcastBotOnFriendAddedAsync(string botId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -863,9 +863,6 @@ namespace Keylol.SteamBot.CoodinatorService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend")]
         void DeleteSteamFriend(string botId, long steamId);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/TestCallback")]
-        void TestCallback(string message);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -936,12 +933,12 @@ namespace Keylol.SteamBot.CoodinatorService {
             return base.Channel.BindSteamUserWithLoginTokenAsync(userSteamId, code);
         }
         
-        public string Test(string message) {
-            return base.Channel.Test(message);
+        public void BroadcastBotOnFriendAdded(string botId) {
+            base.Channel.BroadcastBotOnFriendAdded(botId);
         }
         
-        public System.Threading.Tasks.Task<string> TestAsync(string message) {
-            return base.Channel.TestAsync(message);
+        public System.Threading.Tasks.Task BroadcastBotOnFriendAddedAsync(string botId) {
+            return base.Channel.BroadcastBotOnFriendAddedAsync(botId);
         }
     }
 }

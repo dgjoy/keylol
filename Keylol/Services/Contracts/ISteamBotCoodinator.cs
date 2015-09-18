@@ -27,16 +27,13 @@ namespace Keylol.Services.Contracts
         [OperationContract]
         Task<bool> BindSteamUserWithLoginToken(long userSteamId, string code);
 
-        [OperationContract]
-        Task<string> Test(string message);
+        [OperationContract(IsOneWay = true)]
+        Task BroadcastBotOnFriendAdded(string botId);
     }
     
     public interface ISteamBotCoodinatorCallback
     {
         [OperationContract(IsOneWay = true)]
         void DeleteSteamFriend(string botId, long steamId);
-
-        [OperationContract(IsOneWay = true)]
-        void TestCallback(string message);
     }
 }

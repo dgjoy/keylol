@@ -78,17 +78,11 @@
   <wsdl:message name="ISteamBotCoodinator_BindSteamUserWithLoginToken_OutputMessage">
     <wsdl:part name="parameters" element="tns:BindSteamUserWithLoginTokenResponse" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_Test_InputMessage">
-    <wsdl:part name="parameters" element="tns:Test" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_Test_OutputMessage">
-    <wsdl:part name="parameters" element="tns:TestResponse" />
+  <wsdl:message name="ISteamBotCoodinator_BroadcastBotOnFriendAdded_InputMessage">
+    <wsdl:part name="parameters" element="tns:BroadcastBotOnFriendAdded" />
   </wsdl:message>
   <wsdl:message name="ISteamBotCoodinator_DeleteSteamFriend_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:DeleteSteamFriend" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_TestCallback_OutputCallbackMessage">
-    <wsdl:part name="parameters" element="tns:TestCallback" />
   </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="ISteamBotCoodinator">
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="AllocateBots">
@@ -111,15 +105,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken" message="tns:ISteamBotCoodinator_BindSteamUserWithLoginToken_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse" message="tns:ISteamBotCoodinator_BindSteamUserWithLoginToken_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Test">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/Test" message="tns:ISteamBotCoodinator_Test_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/TestResponse" message="tns:ISteamBotCoodinator_Test_OutputMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BroadcastBotOnFriendAdded">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded" message="tns:ISteamBotCoodinator_BroadcastBotOnFriendAdded_InputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="DeleteSteamFriend">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend" message="tns:ISteamBotCoodinator_DeleteSteamFriend_OutputCallbackMessage" />
-    </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="TestCallback">
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/TestCallback" message="tns:ISteamBotCoodinator_TestCallback_OutputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetHttpBinding_ISteamBotCoodinator" type="tns:ISteamBotCoodinator">
@@ -170,23 +160,14 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="Test">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/Test" style="document" />
+    <wsdl:operation name="BroadcastBotOnFriendAdded">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="DeleteSteamFriend">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend" style="document" />
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="TestCallback">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/TestCallback" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,18 +15,36 @@ namespace Keylol.SteamBot
     {
         public static void Main(string[] args)
         {
-            Task.Run(async () =>
+            ServicePointManager.ServerCertificateValidationCallback +=
+                (sender, certificate, chain, errors) => true;
+            var context = new InstanceContext(new SteamBotCoodinatorCallbackHandler());
+            var client = new SteamBotCoodinatorClient(context);
+            if (client.ClientCredentials != null)
             {
-                var context = new InstanceContext(new SteamBotCoodinatorCallbackHandler());
-                var client = new SteamBotCoodinatorClient(context);
-                if (client.ClientCredentials != null)
+                client.ClientCredentials.UserName.UserName = "test1";
+                client.ClientCredentials.UserName.Password = "test";
+            }
+            var bots = client.AllocateBots();
+            foreach (var bot in bots)
+            {
+                Console.WriteLine($"Bot UserName: {bot.SteamUserName} Password: {bot.SteamPassword}");
+            }
+            client.UpdateBots(bots.Select(bot => new SteamBotVM {Id = bot.Id, Online = true}).ToArray());
+
+            while (true)
+            {
+                var input = Console.ReadLine();
+                if (input != null)
                 {
-                    client.ClientCredentials.UserName.UserName = "test1";
-                    client.ClientCredentials.UserName.Password = "test";
+                    var parts = input.Split('|');
+                    if (parts.Length < 2)
+                        client.BroadcastBotOnFriendAdded(parts[0]);
+                    else
+                        Console.WriteLine(client.BindSteamUserWithBindingToken(123, parts[0], parts[1])
+                            ? "Correct"
+                            : "Wrong");
                 }
-                var result = await client.TestAsync("my string");
-                Console.WriteLine($"Result: {result}");
-            }).Wait();
+            }
         }
     }
 
@@ -32,12 +52,7 @@ namespace Keylol.SteamBot
     {
         public void DeleteSteamFriend(string botId, long steamId)
         {
-            Console.WriteLine($"{botId} {steamId}");
-        }
-
-        public void TestCallback(string message)
-        {
-            Console.WriteLine($"TestCallback: {message}");
+            Console.WriteLine($"Bot {botId} should delete this friend: {steamId}");
         }
     }
 }

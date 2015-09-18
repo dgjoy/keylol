@@ -12,9 +12,11 @@ namespace Keylol.Models.DTO
         {
             Id = token.Id;
             Code = token.Code;
+            BotId = token.Bot.Id;
         }
 
         public string Id { get; set; }
         public string Code { get; set; }
+        public string BotId { get; set; }
     }
 }
