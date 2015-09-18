@@ -6,15 +6,12 @@ namespace Keylol
 {
     public partial class Startup
     {
-        public void ConfigureWebAPI(IAppBuilder app)
+        public void UseWebAPI(IAppBuilder app)
         {
             var config = new HttpConfiguration();
             var server = new HttpServer(config);
 
-            config.EnableCors(new EnableCorsRegexAttribute(@"(http|https)://([a-z-]+\.)?keylol\.com")
-            {
-                SupportsCredentials = true
-            });
+            config.EnableCors(_corsPolicyProvider);
 
             config.MapHttpAttributeRoutes();
 

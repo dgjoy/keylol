@@ -88,7 +88,7 @@ namespace Keylol.Services
             await _dbContext.SaveChangesAsync();
             GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
                 .Clients.Client(token.BrowserConnectionId)?
-                .NotifyCodeReceived();
+                .NotifyCodeReceived(token.Id);
             return true;
         }
 
@@ -103,7 +103,7 @@ namespace Keylol.Services
             await _dbContext.SaveChangesAsync();
             GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
                 .Clients.Client(token.BrowserConnectionId)?
-                .NotifyCodeReceived();
+                .NotifyCodeReceived(token.Id);
             return true;
         }
 

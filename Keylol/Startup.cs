@@ -1,7 +1,4 @@
-﻿using System;
-using Keylol;
-using Keylol.DAL;
-using Microsoft.AspNet.SignalR;
+﻿using Keylol;
 using Microsoft.Owin;
 using Owin;
 
@@ -11,11 +8,14 @@ namespace Keylol
 {
     public partial class Startup
     {
+        private readonly EnableCorsRegexAttribute _corsPolicyProvider =
+            new EnableCorsRegexAttribute(@"(http|https)://([a-z-]+\.)?keylol\.com") {SupportsCredentials = true};
+
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
-            ConfigureWebAPI(app);
-            app.MapSignalR(new HubConfiguration {EnableJavaScriptProxies = false});
+            UseAuth(app);
+            UseSignalR(app);
+            UseWebAPI(app);
         }
     }
 }

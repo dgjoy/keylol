@@ -16,7 +16,7 @@ namespace Keylol.Hubs
     public interface ISteamBindingHubClient
     {
         void NotifySteamFriendAdded();
-        void NotifyCodeReceived();
+        void NotifyCodeReceived(string tokenId);
     }
 
     public class SteamBindingHub : Hub<ISteamBindingHubClient>
@@ -34,9 +34,8 @@ namespace Keylol.Hubs
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            var token = await _dbContext.SteamBindingTokens.SingleOrDefaultAsync(
-                t => t.BrowserConnectionId == Context.ConnectionId);
-            if (token != null)
+            var tokens = await _dbContext.SteamBindingTokens.Where(t => t.BrowserConnectionId == Context.ConnectionId).ToListAsync();
+            foreach (var token in tokens)
             {
                 if (token.SteamId != null && !token.Consumed)
                 {
@@ -45,8 +44,8 @@ namespace Keylol.Hubs
                         callback.DeleteSteamFriend(token.Bot.Id, token.SteamId.Value);
                 }
                 _dbContext.SteamBindingTokens.Remove(token);
-                await _dbContext.SaveChangesAsync();
             }
+            await _dbContext.SaveChangesAsync();
             await base.OnDisconnected(stopCalled);
         }
 

@@ -5,8 +5,10 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Linq;
+using Keylol.Hubs;
 using Keylol.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.SignalR;
 
 namespace Keylol.DAL
 {
@@ -15,7 +17,14 @@ namespace Keylol.DAL
         public KeylolDbContext()
             : base("DefaultConnection", false)
         {
-            Database.Log = s => Debug.WriteLine(s);
+#if DEBUG
+            var debugInfoHub = GlobalHost.ConnectionManager.GetHubContext<DebugInfoHub, IDebugInfoHubClient>();
+            Database.Log = s =>
+            {
+                debugInfoHub.Clients.All.Write(s);
+                Debug.Write(s);
+            };
+#endif
         }
 
         public DbSet<Point> Points { get; set; }

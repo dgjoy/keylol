@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Keylol.Hubs
 {
     public interface ISteamLoginHubClient
     {
-        void NotifyCodeReceived();
+        void NotifyCodeReceived(string tokenId);
     }
 
     public class SteamLoginHub : Hub<ISteamLoginHubClient>
@@ -31,13 +32,12 @@ namespace Keylol.Hubs
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            var token = await _dbContext.SteamLoginTokens.SingleOrDefaultAsync(
-                t => t.BrowserConnectionId == Context.ConnectionId);
-            if (token != null)
+            var tokens = await _dbContext.SteamLoginTokens.Where(t => t.BrowserConnectionId == Context.ConnectionId).ToListAsync();
+            foreach (var token in tokens)
             {
                 _dbContext.SteamLoginTokens.Remove(token);
-                await _dbContext.SaveChangesAsync();
             }
+            await _dbContext.SaveChangesAsync();
             await base.OnDisconnected(stopCalled);
         }
 

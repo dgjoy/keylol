@@ -9,6 +9,7 @@ using System.Web.Cors;
 using System.Web.Http.Controllers;
 using System.Web.Http.Cors;
 using System.Web.Http.Filters;
+using Microsoft.Owin;
 
 namespace Keylol
 {
@@ -46,7 +47,7 @@ namespace Keylol
     }
 
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class EnableCorsRegexAttribute : Attribute, ICorsPolicyProvider
+    public class EnableCorsRegexAttribute : Attribute, ICorsPolicyProvider, Microsoft.Owin.Cors.ICorsPolicyProvider
     {
         private readonly string _originPattern;
 
@@ -59,7 +60,16 @@ namespace Keylol
 
         public Task<CorsPolicy> GetCorsPolicyAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var corsRequestContext = request.GetCorsRequestContext();
+            return Task.FromResult(CreateCorsPolicyForPattern(request.GetCorsRequestContext().Origin));
+        }
+
+        public Task<CorsPolicy> GetCorsPolicyAsync(IOwinRequest request)
+        {
+            return Task.FromResult(CreateCorsPolicyForPattern(request.Headers.Get("Origin")));
+        }
+
+        private CorsPolicy CreateCorsPolicyForPattern(string origin)
+        {
             var policy = new CorsPolicy
             {
                 AllowAnyHeader = true,
@@ -67,11 +77,11 @@ namespace Keylol
                 SupportsCredentials = SupportsCredentials,
                 PreflightMaxAge = 365*24*3600
             };
-            if (Regex.IsMatch(corsRequestContext.Origin, _originPattern, RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(origin, _originPattern, RegexOptions.IgnoreCase))
             {
-                policy.Origins.Add(corsRequestContext.Origin);
+                policy.Origins.Add(origin);
             }
-            return Task.FromResult(policy);
+            return policy;
         }
     }
 }
