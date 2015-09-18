@@ -1,5 +1,7 @@
-﻿using Keylol;
+﻿using System;
+using Keylol;
 using Keylol.DAL;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Owin;
 
@@ -13,6 +15,7 @@ namespace Keylol
         {
             ConfigureAuth(app);
             ConfigureWebAPI(app);
+            app.MapSignalR(new HubConfiguration {EnableJavaScriptProxies = false});
         }
     }
 }

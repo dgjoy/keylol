@@ -19,6 +19,13 @@ namespace Keylol.Models
         [Index(IsUnique = true)]
         public string Code { get; set; }
 
+        [Required]
+        [Index]
+        [MaxLength(128)]
+        public string BrowserConnectionId { get; set; }
+
+        public long? SteamId { get; set; }
+
         public static async Task<string> GenerateCodeAsync(KeylolDbContext dbContext)
         {
             string code;

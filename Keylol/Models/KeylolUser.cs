@@ -41,6 +41,7 @@ namespace Keylol.Models
 
         public override bool LockoutEnabled { get; set; } = true;
 
+        [Index]
         public long? SteamId { get; set; }
 
         public DateTime SteamBindingTime { get; set; }
@@ -85,6 +86,8 @@ namespace Keylol.Models
 
         public virtual ICollection<LoginLog> LoginLogs { get; set; }
         public virtual ICollection<EditLog> EditLogs { get; set; }
+
+        public virtual SteamBot SteamBot { get; set; }
 
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
         //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
