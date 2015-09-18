@@ -17,6 +17,7 @@ using Microsoft.AspNet.SignalR;
 namespace Keylol.Services
 {
     [ValidateDataAnnotationsBehavior]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class SteamBotCoodinator : ISteamBotCoodinator
     {
         private bool _botAllocated;
@@ -29,14 +30,12 @@ namespace Keylol.Services
         public SteamBotCoodinator()
         {
             OperationContext.Current.Channel.Closed += OnClientClosed;
-            OperationContext.Current.Channel.Faulted += OnClientClosed;
             _client =
                 _dbContext.SteamBotManagers.Single(
                     manager => manager.ClientId == OperationContext.Current.ServiceSecurityContext.PrimaryIdentity.Name);
             Clients[_client.Id] = OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>();
         }
-
-        [OperationContract]
+        
         public async Task<IEnumerable<SteamBotDTO>> AllocateBots()
         {
             if (_botAllocated)
@@ -54,8 +53,7 @@ namespace Keylol.Services
             await _dbContext.SaveChangesAsync();
             return bots.Select(bot => new SteamBotDTO(bot));
         }
-
-        [OperationContract]
+        
         public async Task UpdateBots(IEnumerable<SteamBotVM> vms)
         {
             foreach (var vm in vms)
@@ -105,6 +103,12 @@ namespace Keylol.Services
                 .Clients.Client(token.BrowserConnectionId)?
                 .NotifyCodeReceived(token.Id);
             return true;
+        }
+
+        public Task<string> Test(string message)
+        {
+            OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>().TestCallback(message);
+            return Task.FromResult("Your input:" + message);
         }
 
         private async void OnClientClosed(object sender, EventArgs eventArgs)

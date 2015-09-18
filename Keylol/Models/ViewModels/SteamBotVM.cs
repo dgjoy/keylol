@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Keylol.Models.ViewModels
 {
-    [DataContract(Namespace = "http://xmlns.keylol.com/wcf/2015/09")]
+    [DataContract]
     public class SteamBotVM
     {
         [DataMember]

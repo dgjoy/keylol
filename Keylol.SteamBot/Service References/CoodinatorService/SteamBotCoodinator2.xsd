@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfSteamBotDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SteamBotDTO" nillable="true" type="tns:SteamBotDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSteamBotDTO" nillable="true" type="tns:ArrayOfSteamBotDTO" />
+  <xs:complexType name="SteamBotDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamPassword" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamUserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SteamBotDTO" nillable="true" type="tns:SteamBotDTO" />
+  <xs:complexType name="UserDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AutoShareOnAcquiringNewGame" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnAddingFavorite" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnAddingNewFriend" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnAddingVideo" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnCreatingGroup" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnJoiningGroup" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnPublishingReview" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnUnlockingAchievement" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnUpdatingWishlist" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AutoShareOnUploadingScreenshot" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AvatarImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EmailNotifyOnAdvertisement" type="xs:boolean" />
+      <xs:element minOccurs="0" name="EmailNotifyOnArticleReplied" type="xs:boolean" />
+      <xs:element minOccurs="0" name="EmailNotifyOnCommentReplied" type="xs:boolean" />
+      <xs:element minOccurs="0" name="EmailNotifyOnEditorRecommended" type="xs:boolean" />
+      <xs:element minOccurs="0" name="EmailNotifyOnMessageReceived" type="xs:boolean" />
+      <xs:element minOccurs="0" name="GamerTag" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LockoutEnabled" type="xs:boolean" />
+      <xs:element minOccurs="0" name="LoginLog" nillable="true" type="tns:LoginLogDTO" />
+      <xs:element minOccurs="0" name="MessageNotifyOnArticleLiked" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MessageNotifyOnArticleReplied" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MessageNotifyOnCommentLiked" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MessageNotifyOnCommentReplied" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MessageNotifyOnEditorRecommended" type="xs:boolean" />
+      <xs:element minOccurs="0" name="ProfilePointBackgroundImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StaffClaim" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamBot" nillable="true" type="tns:SteamBotDTO" />
+      <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UserDTO" nillable="true" type="tns:UserDTO" />
+  <xs:complexType name="LoginLogDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Ip" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Time" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="UserId" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LoginLogDTO" nillable="true" type="tns:LoginLogDTO" />
+</xs:schema>

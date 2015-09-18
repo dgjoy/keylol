@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace Keylol.Models.DTO
 {
-    [DataContract(Namespace = "http://xmlns.keylol.com/wcf/2015/09")]
+    [DataContract]
     public class UserDTO
     {
         public UserDTO(KeylolUser user)

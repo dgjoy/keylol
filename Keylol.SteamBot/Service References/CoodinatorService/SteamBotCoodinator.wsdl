@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="SteamBotCoodinator" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="NetHttpBinding_ISteamBotCoodinator_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false" />
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Lax />
+              </wsp:Policy>
+            </sp:Layout>
+            <sp:IncludeTimestamp />
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+              <wsp:Policy>
+                <sp:WssUsernameToken10 />
+              </wsp:Policy>
+            </sp:UsernameToken>
+          </wsp:Policy>
+        </sp:SignedSupportingTokens>
+        <sp:Wss10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy />
+        </sp:Wss10>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
+      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ISteamBotCoodinator_AllocateBots_InputMessage">
+    <wsdl:part name="parameters" element="tns:AllocateBots" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_AllocateBots_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AllocateBotsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_UpdateBots_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateBots" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_UpdateBots_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateBotsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_GetUserBySteamId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserBySteamId" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_GetUserBySteamId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserBySteamIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_BindSteamUserWithBindingToken_InputMessage">
+    <wsdl:part name="parameters" element="tns:BindSteamUserWithBindingToken" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_BindSteamUserWithBindingToken_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BindSteamUserWithBindingTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_BindSteamUserWithLoginToken_InputMessage">
+    <wsdl:part name="parameters" element="tns:BindSteamUserWithLoginToken" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_BindSteamUserWithLoginToken_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BindSteamUserWithLoginTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_Test_InputMessage">
+    <wsdl:part name="parameters" element="tns:Test" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_Test_OutputMessage">
+    <wsdl:part name="parameters" element="tns:TestResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_DeleteSteamFriend_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:DeleteSteamFriend" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_TestCallback_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:TestCallback" />
+  </wsdl:message>
+  <wsdl:portType msc:usingSession="true" name="ISteamBotCoodinator">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="AllocateBots">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots" message="tns:ISteamBotCoodinator_AllocateBots_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/AllocateBotsResponse" message="tns:ISteamBotCoodinator_AllocateBots_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateBots">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots" message="tns:ISteamBotCoodinator_UpdateBots_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/UpdateBotsResponse" message="tns:ISteamBotCoodinator_UpdateBots_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUserBySteamId">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId" message="tns:ISteamBotCoodinator_GetUserBySteamId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse" message="tns:ISteamBotCoodinator_GetUserBySteamId_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BindSteamUserWithBindingToken">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken" message="tns:ISteamBotCoodinator_BindSteamUserWithBindingToken_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse" message="tns:ISteamBotCoodinator_BindSteamUserWithBindingToken_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BindSteamUserWithLoginToken">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken" message="tns:ISteamBotCoodinator_BindSteamUserWithLoginToken_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse" message="tns:ISteamBotCoodinator_BindSteamUserWithLoginToken_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Test">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/Test" message="tns:ISteamBotCoodinator_Test_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/TestResponse" message="tns:ISteamBotCoodinator_Test_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="DeleteSteamFriend">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend" message="tns:ISteamBotCoodinator_DeleteSteamFriend_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="TestCallback">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/TestCallback" message="tns:ISteamBotCoodinator_TestCallback_OutputCallbackMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NetHttpBinding_ISteamBotCoodinator" type="tns:ISteamBotCoodinator">
+    <wsp:PolicyReference URI="#NetHttpBinding_ISteamBotCoodinator_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/websocket" />
+    <wsdl:operation name="AllocateBots">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/AllocateBots" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateBots">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/UpdateBots" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserBySteamId">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BindSteamUserWithBindingToken">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BindSteamUserWithLoginToken">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Test">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/Test" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSteamFriend">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestCallback">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/TestCallback" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SteamBotCoodinator">
+    <wsdl:port name="NetHttpBinding_ISteamBotCoodinator" binding="tns:NetHttpBinding_ISteamBotCoodinator">
+      <soap12:address location="wss://localhost:44300/Services/SteamBotCoodinator.svc" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>wss://localhost:44300/Services/SteamBotCoodinator.svc</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

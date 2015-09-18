@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Keylol.Models.DTO
 {
-    [DataContract(Namespace = "http://xmlns.keylol.com/wcf/2015/09")]
+    [DataContract]
     public class SteamBotDTO
     {
         public SteamBotDTO(SteamBot bot)
