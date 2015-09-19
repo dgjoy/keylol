@@ -13,9 +13,7 @@ namespace Keylol.Services.Providers
         {
             using (var dbContext = new KeylolDbContext())
             {
-                if (
-                    dbContext.SteamBotManagers.SingleOrDefault(
-                        manager => manager.ClientId == userName && manager.ClientSecret == password) != null)
+                if (userName == "keylol-bot" && password == "neLFDyJB8Vj2Xtsn2KMTUEFw")
                     return;
                 throw new MessageSecurityException("Authentication failed.",
                     new FaultException("ClientId or ClientSecret is not correct."));

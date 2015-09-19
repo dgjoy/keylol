@@ -84,15 +84,6 @@ namespace Keylol.Migrations
                     Name = "插件",
                     Category = ArticleTypeCategory.Resource
                 });
-            
-            for (var i = 1; i <= 4; i++)
-            {
-                context.SteamBotManagers.AddOrUpdate(manager => manager.ClientId, new Models.SteamBotManager
-                {
-                    ClientId = $"test{i}",
-                    ClientSecret = "test"
-                });
-            }
 
             for (var i = 1; i <= 20; i++)
             {

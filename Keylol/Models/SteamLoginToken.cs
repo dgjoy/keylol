@@ -23,8 +23,8 @@ namespace Keylol.Models
         [Index]
         [MaxLength(128)]
         public string BrowserConnectionId { get; set; }
-
-        public long? SteamId { get; set; }
+        
+        public string SteamId { get; set; }
 
         public static async Task<string> GenerateCodeAsync(KeylolDbContext dbContext)
         {

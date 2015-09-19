@@ -208,12 +208,19 @@
     <Compile Include="Migrations\201509181049318_SteamBindingTokenConsumed.Designer.cs">
       <DependentUpon>201509181049318_SteamBindingTokenConsumed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509190850515_RemoveSteamBotManager.cs" />
+    <Compile Include="Migrations\201509190850515_RemoveSteamBotManager.Designer.cs">
+      <DependentUpon>201509190850515_RemoveSteamBotManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201509191821467_SteamIdAsString.cs" />
+    <Compile Include="Migrations\201509191821467_SteamIdAsString.Designer.cs">
+      <DependentUpon>201509191821467_SteamIdAsString.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\DTO\SteamLoginTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBindingTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBotDTO.cs" />
     <Compile Include="Models\SteamBindingToken.cs" />
     <Compile Include="Models\SteamBot.cs" />
-    <Compile Include="Models\SteamBotManager.cs" />
     <Compile Include="Models\SteamLoginToken.cs" />
     <Compile Include="Models\ViewModels\SteamBotVM.cs" />
     <Compile Include="Migrations\201509141153214_Initial.cs" />
@@ -276,6 +283,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509181049318_SteamBindingTokenConsumed.resx">
       <DependentUpon>201509181049318_SteamBindingTokenConsumed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509190850515_RemoveSteamBotManager.resx">
+      <DependentUpon>201509190850515_RemoveSteamBotManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509191821467_SteamIdAsString.resx">
+      <DependentUpon>201509191821467_SteamIdAsString.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -42,10 +42,10 @@
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
-      <xsd:import schemaLocation="http://localhost:38328/Services/SteamBotCoodinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels" />
+      <xsd:import schemaLocation="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
+      <xsd:import schemaLocation="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="ISteamBotCoodinator_AllocateBots_InputMessage">
@@ -56,9 +56,6 @@
   </wsdl:message>
   <wsdl:message name="ISteamBotCoodinator_UpdateBots_InputMessage">
     <wsdl:part name="parameters" element="tns:UpdateBots" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_UpdateBots_OutputMessage">
-    <wsdl:part name="parameters" element="tns:UpdateBotsResponse" />
   </wsdl:message>
   <wsdl:message name="ISteamBotCoodinator_GetUserBySteamId_InputMessage">
     <wsdl:part name="parameters" element="tns:GetUserBySteamId" />
@@ -81,8 +78,8 @@
   <wsdl:message name="ISteamBotCoodinator_BroadcastBotOnFriendAdded_InputMessage">
     <wsdl:part name="parameters" element="tns:BroadcastBotOnFriendAdded" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_DeleteSteamFriend_OutputCallbackMessage">
-    <wsdl:part name="parameters" element="tns:DeleteSteamFriend" />
+  <wsdl:message name="ISteamBotCoodinator_RemoveSteamFriend_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:RemoveSteamFriend" />
   </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="ISteamBotCoodinator">
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="AllocateBots">
@@ -91,7 +88,6 @@
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateBots">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots" message="tns:ISteamBotCoodinator_UpdateBots_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/UpdateBotsResponse" message="tns:ISteamBotCoodinator_UpdateBots_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUserBySteamId">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId" message="tns:ISteamBotCoodinator_GetUserBySteamId_InputMessage" />
@@ -108,8 +104,8 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BroadcastBotOnFriendAdded">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded" message="tns:ISteamBotCoodinator_BroadcastBotOnFriendAdded_InputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="DeleteSteamFriend">
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend" message="tns:ISteamBotCoodinator_DeleteSteamFriend_OutputCallbackMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="RemoveSteamFriend">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/RemoveSteamFriend" message="tns:ISteamBotCoodinator_RemoveSteamFriend_OutputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetHttpBinding_ISteamBotCoodinator" type="tns:ISteamBotCoodinator">
@@ -129,9 +125,6 @@
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetUserBySteamId">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId" style="document" />
@@ -166,8 +159,8 @@
         <soap12:body use="literal" />
       </wsdl:input>
     </wsdl:operation>
-    <wsdl:operation name="DeleteSteamFriend">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend" style="document" />
+    <wsdl:operation name="RemoveSteamFriend">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/RemoveSteamFriend" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
@@ -175,9 +168,9 @@
   </wsdl:binding>
   <wsdl:service name="SteamBotCoodinator">
     <wsdl:port name="NetHttpBinding_ISteamBotCoodinator" binding="tns:NetHttpBinding_ISteamBotCoodinator">
-      <soap12:address location="wss://localhost:44300/Services/SteamBotCoodinator.svc" />
+      <soap12:address location="wss://localhost/Services/SteamBotCoodinator.svc" />
       <wsa10:EndpointReference>
-        <wsa10:Address>wss://localhost:44300/Services/SteamBotCoodinator.svc</wsa10:Address>
+        <wsa10:Address>wss://localhost/Services/SteamBotCoodinator.svc</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

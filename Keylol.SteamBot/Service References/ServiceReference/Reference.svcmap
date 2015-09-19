@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="f0b83b04-e5f3-4542-982a-1d157d5e5e39" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="https://localhost/Services/SteamBotCoodinator.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SteamBotCoodinator.disco" MetadataType="Disco" ID="225e03af-b26b-49a2-bd6b-60392a352777" SourceId="1" SourceUrl="https://localhost/Services/SteamBotCoodinator.svc?disco" />
+    <MetadataFile FileName="SteamBotCoodinator.wsdl" MetadataType="Wsdl" ID="642121c0-61b3-4925-a296-c02b038d13d3" SourceId="1" SourceUrl="https://localhost/Services/SteamBotCoodinator.svc?wsdl" />
+    <MetadataFile FileName="SteamBotCoodinator.xsd" MetadataType="Schema" ID="5588b92f-2aa5-4a3d-a7fe-c087f75f91fb" SourceId="1" SourceUrl="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd1" />
+    <MetadataFile FileName="SteamBotCoodinator1.xsd" MetadataType="Schema" ID="2fc7e8f5-ade6-476f-950f-e083ac1b2211" SourceId="1" SourceUrl="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd0" />
+    <MetadataFile FileName="SteamBotCoodinator2.xsd" MetadataType="Schema" ID="0174bc4c-e8f6-44c5-8b9b-14d3e107da84" SourceId="1" SourceUrl="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd3" />
+    <MetadataFile FileName="SteamBotCoodinator3.xsd" MetadataType="Schema" ID="f05f00ef-3393-4dc7-bd59-4c90d11c2af3" SourceId="1" SourceUrl="https://localhost/Services/SteamBotCoodinator.svc?xsd=xsd2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

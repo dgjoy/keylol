@@ -24,7 +24,7 @@ namespace Keylol.Models
         [MaxLength(128)]
         public string BrowserConnectionId { get; set; }
 
-        public long? SteamId { get; set; }
+        public string SteamId { get; set; }
 
         public bool Consumed { get; set; } = false;
 

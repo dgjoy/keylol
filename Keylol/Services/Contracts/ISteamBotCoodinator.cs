@@ -15,17 +15,17 @@ namespace Keylol.Services.Contracts
         [OperationContract]
         Task<IEnumerable<SteamBotDTO>> AllocateBots();
 
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         Task UpdateBots(IEnumerable<SteamBotVM> vms);
 
         [OperationContract]
-        Task<UserDTO> GetUserBySteamId(long steamId);
+        Task<UserDTO> GetUserBySteamId(string steamId);
 
         [OperationContract]
-        Task<bool> BindSteamUserWithBindingToken(long userSteamId, string code, string botId);
+        Task<bool> BindSteamUserWithBindingToken(string userSteamId, string code, string botId);
 
         [OperationContract]
-        Task<bool> BindSteamUserWithLoginToken(long userSteamId, string code);
+        Task<bool> BindSteamUserWithLoginToken(string userSteamId, string code);
 
         [OperationContract(IsOneWay = true)]
         Task BroadcastBotOnFriendAdded(string botId);
@@ -34,6 +34,6 @@ namespace Keylol.Services.Contracts
     public interface ISteamBotCoodinatorCallback
     {
         [OperationContract(IsOneWay = true)]
-        void DeleteSteamFriend(string botId, long steamId);
+        void RemoveSteamFriend(string botId, string steamId);
     }
 }

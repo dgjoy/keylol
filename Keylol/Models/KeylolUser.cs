@@ -41,8 +41,9 @@ namespace Keylol.Models
 
         public override bool LockoutEnabled { get; set; } = true;
 
-        [Index]
-        public long? SteamId { get; set; }
+        [Index(IsUnique = true)]
+        [MaxLength(64)]
+        public string SteamId { get; set; }
 
         public DateTime SteamBindingTime { get; set; }
 

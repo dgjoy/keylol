@@ -63,8 +63,9 @@ namespace Keylol.Models.DTO
         [DataMember]
         public bool LockoutEnabled { get; set; }
         [DataMember]
-        public long? SteamId { get; set; }
+        public string SteamId { get; set; }
 
+        [DataMember]
         public string StatusClaim { get; set; }
         [DataMember]
         public string StaffClaim { get; set; }

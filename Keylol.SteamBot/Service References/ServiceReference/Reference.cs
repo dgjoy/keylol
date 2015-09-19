@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Keylol.SteamBot.CoodinatorService {
+namespace Keylol.SteamBot.ServiceReference {
     using System.Runtime.Serialization;
     using System;
     
@@ -109,7 +109,7 @@ namespace Keylol.SteamBot.CoodinatorService {
         private System.Nullable<bool> OnlineField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<long> SteamIdField;
+        private string SteamIdField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -161,12 +161,12 @@ namespace Keylol.SteamBot.CoodinatorService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<long> SteamId {
+        public string SteamId {
             get {
                 return this.SteamIdField;
             }
             set {
-                if ((this.SteamIdField.Equals(value) != true)) {
+                if ((object.ReferenceEquals(this.SteamIdField, value) != true)) {
                     this.SteamIdField = value;
                     this.RaisePropertyChanged("SteamId");
                 }
@@ -256,7 +256,7 @@ namespace Keylol.SteamBot.CoodinatorService {
         private bool LockoutEnabledField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private Keylol.SteamBot.CoodinatorService.LoginLogDTO LoginLogField;
+        private Keylol.SteamBot.ServiceReference.LoginLogDTO LoginLogField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool MessageNotifyOnArticleLikedField;
@@ -280,10 +280,13 @@ namespace Keylol.SteamBot.CoodinatorService {
         private string StaffClaimField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private Keylol.SteamBot.CoodinatorService.SteamBotDTO SteamBotField;
+        private string StatusClaimField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<long> SteamIdField;
+        private Keylol.SteamBot.ServiceReference.SteamBotDTO SteamBotField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SteamIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UserNameField;
@@ -572,7 +575,7 @@ namespace Keylol.SteamBot.CoodinatorService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public Keylol.SteamBot.CoodinatorService.LoginLogDTO LoginLog {
+        public Keylol.SteamBot.ServiceReference.LoginLogDTO LoginLog {
             get {
                 return this.LoginLogField;
             }
@@ -676,7 +679,20 @@ namespace Keylol.SteamBot.CoodinatorService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public Keylol.SteamBot.CoodinatorService.SteamBotDTO SteamBot {
+        public string StatusClaim {
+            get {
+                return this.StatusClaimField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.StatusClaimField, value) != true)) {
+                    this.StatusClaimField = value;
+                    this.RaisePropertyChanged("StatusClaim");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public Keylol.SteamBot.ServiceReference.SteamBotDTO SteamBot {
             get {
                 return this.SteamBotField;
             }
@@ -689,12 +705,12 @@ namespace Keylol.SteamBot.CoodinatorService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<long> SteamId {
+        public string SteamId {
             get {
                 return this.SteamIdField;
             }
             set {
-                if ((this.SteamIdField.Equals(value) != true)) {
+                if ((object.ReferenceEquals(this.SteamIdField, value) != true)) {
                     this.SteamIdField = value;
                     this.RaisePropertyChanged("SteamId");
                 }
@@ -818,38 +834,38 @@ namespace Keylol.SteamBot.CoodinatorService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="CoodinatorService.ISteamBotCoodinator", CallbackContract=typeof(Keylol.SteamBot.CoodinatorService.ISteamBotCoodinatorCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.ISteamBotCoodinator", CallbackContract=typeof(Keylol.SteamBot.ServiceReference.ISteamBotCoodinatorCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface ISteamBotCoodinator {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/AllocateBotsResponse")]
-        Keylol.SteamBot.CoodinatorService.SteamBotDTO[] AllocateBots();
+        Keylol.SteamBot.ServiceReference.SteamBotDTO[] AllocateBots();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/AllocateBotsResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.CoodinatorService.SteamBotDTO[]> AllocateBotsAsync();
+        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDTO[]> AllocateBotsAsync();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/UpdateBotsResponse")]
-        void UpdateBots(Keylol.SteamBot.CoodinatorService.SteamBotVM[] vms);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
+        void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/UpdateBotsResponse")]
-        System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.CoodinatorService.SteamBotVM[] vms);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
-        Keylol.SteamBot.CoodinatorService.UserDTO GetUserBySteamId(long steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
+        System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.CoodinatorService.UserDTO> GetUserBySteamIdAsync(long steamId);
+        Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
+        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO> GetUserBySteamIdAsync(string steamId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
-        bool BindSteamUserWithBindingToken(long userSteamId, string code, string botId);
+        bool BindSteamUserWithBindingToken(string userSteamId, string code, string botId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
-        System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(long userSteamId, string code, string botId);
+        System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string userSteamId, string code, string botId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse")]
-        bool BindSteamUserWithLoginToken(long userSteamId, string code);
+        bool BindSteamUserWithLoginToken(string userSteamId, string code);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse")]
-        System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(long userSteamId, string code);
+        System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(string userSteamId, string code);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded")]
         void BroadcastBotOnFriendAdded(string botId);
@@ -861,17 +877,17 @@ namespace Keylol.SteamBot.CoodinatorService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface ISteamBotCoodinatorCallback {
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteSteamFriend")]
-        void DeleteSteamFriend(string botId, long steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/RemoveSteamFriend")]
+        void RemoveSteamFriend(string botId, string steamId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface ISteamBotCoodinatorChannel : Keylol.SteamBot.CoodinatorService.ISteamBotCoodinator, System.ServiceModel.IClientChannel {
+    public interface ISteamBotCoodinatorChannel : Keylol.SteamBot.ServiceReference.ISteamBotCoodinator, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SteamBotCoodinatorClient : System.ServiceModel.DuplexClientBase<Keylol.SteamBot.CoodinatorService.ISteamBotCoodinator>, Keylol.SteamBot.CoodinatorService.ISteamBotCoodinator {
+    public partial class SteamBotCoodinatorClient : System.ServiceModel.DuplexClientBase<Keylol.SteamBot.ServiceReference.ISteamBotCoodinator>, Keylol.SteamBot.ServiceReference.ISteamBotCoodinator {
         
         public SteamBotCoodinatorClient(System.ServiceModel.InstanceContext callbackInstance) : 
                 base(callbackInstance) {
@@ -893,43 +909,43 @@ namespace Keylol.SteamBot.CoodinatorService {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public Keylol.SteamBot.CoodinatorService.SteamBotDTO[] AllocateBots() {
+        public Keylol.SteamBot.ServiceReference.SteamBotDTO[] AllocateBots() {
             return base.Channel.AllocateBots();
         }
         
-        public System.Threading.Tasks.Task<Keylol.SteamBot.CoodinatorService.SteamBotDTO[]> AllocateBotsAsync() {
+        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDTO[]> AllocateBotsAsync() {
             return base.Channel.AllocateBotsAsync();
         }
         
-        public void UpdateBots(Keylol.SteamBot.CoodinatorService.SteamBotVM[] vms) {
+        public void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms) {
             base.Channel.UpdateBots(vms);
         }
         
-        public System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.CoodinatorService.SteamBotVM[] vms) {
+        public System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms) {
             return base.Channel.UpdateBotsAsync(vms);
         }
         
-        public Keylol.SteamBot.CoodinatorService.UserDTO GetUserBySteamId(long steamId) {
+        public Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId) {
             return base.Channel.GetUserBySteamId(steamId);
         }
         
-        public System.Threading.Tasks.Task<Keylol.SteamBot.CoodinatorService.UserDTO> GetUserBySteamIdAsync(long steamId) {
+        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO> GetUserBySteamIdAsync(string steamId) {
             return base.Channel.GetUserBySteamIdAsync(steamId);
         }
         
-        public bool BindSteamUserWithBindingToken(long userSteamId, string code, string botId) {
+        public bool BindSteamUserWithBindingToken(string userSteamId, string code, string botId) {
             return base.Channel.BindSteamUserWithBindingToken(userSteamId, code, botId);
         }
         
-        public System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(long userSteamId, string code, string botId) {
+        public System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string userSteamId, string code, string botId) {
             return base.Channel.BindSteamUserWithBindingTokenAsync(userSteamId, code, botId);
         }
         
-        public bool BindSteamUserWithLoginToken(long userSteamId, string code) {
+        public bool BindSteamUserWithLoginToken(string userSteamId, string code) {
             return base.Channel.BindSteamUserWithLoginToken(userSteamId, code);
         }
         
-        public System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(long userSteamId, string code) {
+        public System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(string userSteamId, string code) {
             return base.Channel.BindSteamUserWithLoginTokenAsync(userSteamId, code);
         }
         

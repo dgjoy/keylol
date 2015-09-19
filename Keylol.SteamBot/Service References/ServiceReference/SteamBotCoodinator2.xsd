@@ -11,7 +11,7 @@
       <xs:element minOccurs="0" name="FriendCount" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Online" nillable="true" type="xs:boolean" />
-      <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="SteamBotVM" nillable="true" type="tns:SteamBotVM" />

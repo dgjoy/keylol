@@ -23,7 +23,7 @@ namespace Keylol.Services
     {
         private bool _botAllocated;
         private readonly KeylolDbContext _dbContext = new KeylolDbContext();
-        private readonly SteamBotManager _client;
+        private readonly string _sessionId = OperationContext.Current.SessionId;
 
         public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients =
             new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
@@ -31,10 +31,11 @@ namespace Keylol.Services
         public SteamBotCoodinator()
         {
             OperationContext.Current.Channel.Closed += OnClientClosed;
-            _client =
-                _dbContext.SteamBotManagers.Single(
-                    manager => manager.ClientId == OperationContext.Current.ServiceSecurityContext.PrimaryIdentity.Name);
-            Clients[_client.Id] = OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>();
+            if (_sessionId != null)
+            {
+                Clients[_sessionId] =
+                    OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>();
+            }
         }
 
         public async Task<IEnumerable<SteamBotDTO>> AllocateBots()
@@ -45,11 +46,11 @@ namespace Keylol.Services
             }
             _botAllocated = true;
 
-            var bots = await _dbContext.SteamBots.Where(bot => bot.Manager == null).Take(5).ToListAsync();
+            var bots = await _dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(1).ToListAsync();
             foreach (var bot in bots)
             {
                 bot.Online = false;
-                bot.Manager = _client;
+                bot.SessionId = _sessionId;
             }
             await _dbContext.SaveChangesAsync();
             return bots.Select(bot => new SteamBotDTO(bot));
@@ -70,13 +71,13 @@ namespace Keylol.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<UserDTO> GetUserBySteamId(long steamId)
+        public async Task<UserDTO> GetUserBySteamId(string steamId)
         {
             var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamId);
             return user == null ? null : new UserDTO(user) {SteamBot = new SteamBotDTO(user.SteamBot)};
         }
 
-        public async Task<bool> BindSteamUserWithBindingToken(long userSteamId, string code, string botId)
+        public async Task<bool> BindSteamUserWithBindingToken(string userSteamId, string code, string botId)
         {
             var token =
                 await
@@ -93,7 +94,7 @@ namespace Keylol.Services
             return true;
         }
 
-        public async Task<bool> BindSteamUserWithLoginToken(long userSteamId, string code)
+        public async Task<bool> BindSteamUserWithLoginToken(string userSteamId, string code)
         {
             var token =
                 await _dbContext.SteamLoginTokens.SingleOrDefaultAsync(t => t.Code == code);
@@ -123,15 +124,15 @@ namespace Keylol.Services
         private async void OnClientClosed(object sender, EventArgs eventArgs)
         {
             ISteamBotCoodinatorCallback callback;
-            Clients.TryRemove(_client.Id, out callback);
-            _client.Bots.Clear();
-            try
+            Clients.TryRemove(_sessionId, out callback);
+            var bots =
+                await
+                    _dbContext.SteamBots.Where(bot => bot.SessionId == _sessionId).ToListAsync();
+            foreach (var bot in bots)
             {
-                await _dbContext.SaveChangesAsync();
+                bot.SessionId = null;
             }
-            catch (DbUpdateException)
-            {
-            }
+            await _dbContext.SaveChangesAsync();
             _dbContext.Dispose();
         }
     }

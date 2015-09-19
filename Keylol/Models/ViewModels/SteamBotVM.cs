@@ -16,7 +16,7 @@ namespace Keylol.Models.ViewModels
         public string Id { get; set; }
         
         [DataMember]
-        public long? SteamId { get; set; }
+        public string SteamId { get; set; }
 
         [DataMember]
         public int? FriendCount { get; set; }
