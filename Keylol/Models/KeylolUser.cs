@@ -45,7 +45,7 @@ namespace Keylol.Models
         [MaxLength(64)]
         public string SteamId { get; set; }
 
-        public DateTime SteamBindingTime { get; set; }
+        public DateTime SteamBindingTime { get; set; } = DateTime.Now;
 
         public bool SteamBindingLockEnabled { get; set; } = false;
 
