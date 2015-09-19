@@ -227,7 +227,6 @@ namespace Keylol.SteamBot
                 _callbackManager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth);
                 _callbackManager.Subscribe<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged);
                 _callbackManager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendListUpdated);
-                _callbackManager.Subscribe<SteamFriends.FriendAddedCallback>(OnFriendAdded);
                 _callbackManager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived);
 
                 _steamClient.Connect();
@@ -340,37 +339,80 @@ namespace Keylol.SteamBot
 
             #region SteamFriend
 
-            private void OnPersonaStateChanged(SteamFriends.PersonaStateCallback callback)
+            private async void OnPersonaStateChanged(SteamFriends.PersonaStateCallback callback)
             {
                 if (callback.FriendID == _steamUser.SteamID && callback.State == EPersonaState.Online)
                 {
                     State = BotState.LoggedOnOnline;
                     _botService.WriteLog($"Bot {Id} successfully logged on.", EventLogEntryType.SuccessAudit);
+                    await _botService.ReportBotHealthAsync();
                 }
             }
 
-            private void OnFriendListUpdated(SteamFriends.FriendsListCallback callback)
+            private async void OnFriendListUpdated(SteamFriends.FriendsListCallback callback)
             {
-                //TODO
-            }
+                foreach (var friend in callback.FriendList)
+                {
+                    if (!friend.SteamID.IsIndividualAccount)
+                        continue;
 
-            private async void OnFriendAdded(SteamFriends.FriendAddedCallback callback)
-            {
-                var user = await _botService._coodinator.GetUserBySteamIdAsync(callback.SteamID.ToString());
-                if (user == null)
-                {
-                    _steamFriends.AddFriend(callback.SteamID);
-                }
-                else
-                {
-                    if (user.SteamBot.Id == Id)
+                    UserDTO user;
+                    switch (friend.Relationship)
                     {
-                        _botService.WriteLog(
-                            $"Bot {Id} alert: an already binded user {user.SteamId} add the same bot as friend again.");
-                    }
-                    else
-                    {
-                        _steamFriends.RemoveFriend(callback.SteamID);
+                        case EFriendRelationship.RequestRecipient:
+                            user = await _botService._coodinator.GetUserBySteamIdAsync(friend.SteamID.ToString());
+                            if (user == null)
+                            {
+                                _steamFriends.AddFriend(friend.SteamID);
+                                _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg, "请输入您的绑定验证码");
+                                await _botService._coodinator.BroadcastBotOnFriendAddedAsync(Id);
+                                var timer = new Timer(300000) {AutoReset = false};
+                                timer.Elapsed += async (sender, args) =>
+                                {
+                                    if ((await _botService._coodinator.GetUserBySteamIdAsync(friend.SteamID.ToString())) ==
+                                        null)
+                                    {
+                                        _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg, "本次操作超时");
+                                        _steamFriends.RemoveFriend(friend.SteamID);
+                                    }
+                                };
+                                timer.Start();
+                            }
+                            else
+                            {
+                                if (user.SteamBot.Id == Id)
+                                {
+                                    _botService.WriteLog(
+                                        $"Bot {Id} alert: an already binded user {user.SteamId} add the same bot as friend again.",
+                                        EventLogEntryType.Error);
+                                }
+                                else
+                                {
+                                    _steamFriends.RemoveFriend(friend.SteamID);
+                                }
+                            }
+                            break;
+
+                        case EFriendRelationship.Friend:
+                            if (!callback.Incremental)
+                            {
+                                user = await _botService._coodinator.GetUserBySteamIdAsync(friend.SteamID.ToString());
+                                if (user == null || user.SteamBot.Id != Id)
+                                    _steamFriends.RemoveFriend(friend.SteamID);
+                            }
+                            break;
+
+                        case EFriendRelationship.None:
+                            user = await _botService._coodinator.GetUserBySteamIdAsync(friend.SteamID.ToString());
+                            if (user != null && user.SteamBot.Id == Id)
+                            {
+                                //TODO: Notify coodinator
+                            }
+                            break;
+
+                        default:
+                            _steamFriends.RemoveFriend(friend.SteamID);
+                            break;
                     }
                 }
             }
@@ -390,7 +432,6 @@ namespace Keylol.SteamBot
                     else
                     {
                         _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "验证码无效");
-//                        _steamFriends.RemoveFriend(callback.Sender);
                     }
                 }
                 else
