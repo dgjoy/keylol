@@ -15,8 +15,6 @@ namespace Keylol.SteamBot
     {
         public static void Main(string[] args)
         {
-            ServicePointManager.ServerCertificateValidationCallback +=
-                (sender, certificate, chain, errors) => true;
             var context = new InstanceContext(new SteamBotCoodinatorCallbackHandler());
             var client = new SteamBotCoodinatorClient(context);
             if (client.ClientCredentials != null)
