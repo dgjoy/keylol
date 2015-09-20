@@ -85,6 +85,7 @@ namespace Keylol.SteamBot
             Directory.CreateDirectory(_appDataFolder);
             Task.Run(async () =>
             {
+                WriteLog($"Coodinator endpoint: {_coodinator.Endpoint.Address}");
                 var bots = await _coodinator.AllocateBotsAsync();
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
@@ -135,7 +136,6 @@ namespace Keylol.SteamBot
                     break;
             }
             OnStop();
-            Thread.Sleep(5000);
         }
 
         private class SteamBotCoodinatorCallbackHandler : ISteamBotCoodinatorCallback
@@ -260,11 +260,6 @@ namespace Keylol.SteamBot
                         EventLogEntryType.Warning);
                     await Task.Delay(TimeSpan.FromSeconds(2));
                     _steamClient.Connect();
-                }
-                else
-                {
-                    _botService.WriteLog($"Bot {Id} disconnected.");
-                    _isRunning = false;
                 }
             }
 
@@ -463,6 +458,7 @@ namespace Keylol.SteamBot
                 {
                     State = BotState.Disposing;
                     _botService.WriteLog($"Bot {Id} is disposing...");
+                    _isRunning = false;
                     _steamClient.Disconnect();
                 }
                 _disposed = true;
