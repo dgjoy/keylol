@@ -78,6 +78,9 @@ namespace Keylol.Migrations
                         GamerTag = c.String(nullable: false, maxLength: 100),
                         AvatarImage = c.String(nullable: false, maxLength: 64),
                         LockoutEnabled = c.Boolean(nullable: false),
+                        SteamId = c.String(maxLength: 64),
+                        SteamBindingTime = c.DateTime(nullable: false),
+                        SteamBindingLockEnabled = c.Boolean(nullable: false),
                         AutoShareOnAddingNewFriend = c.Boolean(nullable: false),
                         AutoShareOnUnlockingAchievement = c.Boolean(nullable: false),
                         AutoShareOnAcquiringNewGame = c.Boolean(nullable: false),
@@ -108,10 +111,13 @@ namespace Keylol.Migrations
                         LockoutEndDateUtc = c.DateTime(),
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
+                        SteamBot_Id = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.SteamBots", t => t.SteamBot_Id)
                 .Index(t => t.IdCode, unique: true)
-                .Index(t => t.UserName, unique: true, name: "UserNameIndex");
+                .Index(t => t.UserName, unique: true, name: "UserNameIndex")
+                .Index(t => t.SteamBot_Id);
             
             CreateTable(
                 "dbo.UserClaims",
@@ -251,6 +257,39 @@ namespace Keylol.Migrations
                 .Index(t => t.RoleId);
             
             CreateTable(
+                "dbo.SteamBots",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        SteamUserName = c.String(nullable: false, maxLength: 64),
+                        SteamPassword = c.String(nullable: false, maxLength: 64),
+                        SteamId = c.String(),
+                        FriendCount = c.Int(nullable: false),
+                        FriendUpperLimit = c.Int(nullable: false),
+                        Online = c.Boolean(nullable: false),
+                        SessionId = c.String(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .Index(t => t.SteamUserName, unique: true);
+            
+            CreateTable(
+                "dbo.SteamBindingTokens",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        Code = c.String(nullable: false, maxLength: 8),
+                        BrowserConnectionId = c.String(nullable: false, maxLength: 128),
+                        SteamId = c.String(),
+                        Consumed = c.Boolean(nullable: false),
+                        Bot_Id = c.String(nullable: false, maxLength: 128),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.SteamBots", t => t.Bot_Id)
+                .Index(t => t.Code, unique: true)
+                .Index(t => t.BrowserConnectionId)
+                .Index(t => t.Bot_Id);
+            
+            CreateTable(
                 "dbo.Roles",
                 c => new
                     {
@@ -259,6 +298,19 @@ namespace Keylol.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.Name, unique: true, name: "RoleNameIndex");
+            
+            CreateTable(
+                "dbo.SteamLoginTokens",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        Code = c.String(nullable: false, maxLength: 4),
+                        BrowserConnectionId = c.String(nullable: false, maxLength: 128),
+                        SteamId = c.String(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .Index(t => t.Code, unique: true)
+                .Index(t => t.BrowserConnectionId);
             
             CreateTable(
                 "dbo.PointAssociations",
@@ -387,6 +439,8 @@ namespace Keylol.Migrations
             DropForeignKey("dbo.NormalPoints", "Id", "dbo.KeylolUsers");
             DropForeignKey("dbo.UserRoles", "RoleId", "dbo.Roles");
             DropForeignKey("dbo.UserPointSubscriptions", "KeylolUser_Id", "dbo.KeylolUsers");
+            DropForeignKey("dbo.KeylolUsers", "SteamBot_Id", "dbo.SteamBots");
+            DropForeignKey("dbo.SteamBindingTokens", "Bot_Id", "dbo.SteamBots");
             DropForeignKey("dbo.UserRoles", "UserId", "dbo.KeylolUsers");
             DropForeignKey("dbo.Messages", "Sender_Id1", "dbo.KeylolUsers");
             DropForeignKey("dbo.Messages", "Sender_Id", "dbo.KeylolUsers");
@@ -445,7 +499,13 @@ namespace Keylol.Migrations
             DropIndex("dbo.EntryPointPushes", new[] { "Entry_Id" });
             DropIndex("dbo.PointAssociations", new[] { "ByPoint_Id" });
             DropIndex("dbo.PointAssociations", new[] { "ToPoint_Id" });
+            DropIndex("dbo.SteamLoginTokens", new[] { "BrowserConnectionId" });
+            DropIndex("dbo.SteamLoginTokens", new[] { "Code" });
             DropIndex("dbo.Roles", "RoleNameIndex");
+            DropIndex("dbo.SteamBindingTokens", new[] { "Bot_Id" });
+            DropIndex("dbo.SteamBindingTokens", new[] { "BrowserConnectionId" });
+            DropIndex("dbo.SteamBindingTokens", new[] { "Code" });
+            DropIndex("dbo.SteamBots", new[] { "SteamUserName" });
             DropIndex("dbo.UserRoles", new[] { "RoleId" });
             DropIndex("dbo.UserRoles", new[] { "UserId" });
             DropIndex("dbo.UserLogins", new[] { "UserId" });
@@ -463,6 +523,7 @@ namespace Keylol.Migrations
             DropIndex("dbo.Comments", new[] { "Commentator_Id" });
             DropIndex("dbo.Comments", new[] { "Article_Id" });
             DropIndex("dbo.UserClaims", new[] { "UserId" });
+            DropIndex("dbo.KeylolUsers", new[] { "SteamBot_Id" });
             DropIndex("dbo.KeylolUsers", "UserNameIndex");
             DropIndex("dbo.KeylolUsers", new[] { "IdCode" });
             DropIndex("dbo.Messages", new[] { "Sender_Id1" });
@@ -489,7 +550,10 @@ namespace Keylol.Migrations
             DropTable("dbo.PointArticleRecommendation");
             DropTable("dbo.EntryPointPushes");
             DropTable("dbo.PointAssociations");
+            DropTable("dbo.SteamLoginTokens");
             DropTable("dbo.Roles");
+            DropTable("dbo.SteamBindingTokens");
+            DropTable("dbo.SteamBots");
             DropTable("dbo.UserRoles");
             DropTable("dbo.UserLogins");
             DropTable("dbo.ArticleTypes");

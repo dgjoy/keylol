@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.ServiceModel;
 using System.ServiceProcess;
@@ -228,6 +229,10 @@ namespace Keylol.SteamBot
                 _callbackManager.Subscribe<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged);
                 _callbackManager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendListUpdated);
                 _callbackManager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived);
+//                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
+//                {
+//                    _botService.WriteLog($"CMList: {string.Join("\n", callback.Servers.Select(point => point.ToString()).ToArray())}");
+//                });
 
                 _steamClient.Connect();
             }

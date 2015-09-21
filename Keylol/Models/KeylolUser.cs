@@ -40,8 +40,7 @@ namespace Keylol.Models
         public string AvatarImage { get; set; } = string.Empty;
 
         public override bool LockoutEnabled { get; set; } = true;
-
-        [Index(IsUnique = true)]
+        
         [MaxLength(64)]
         public string SteamId { get; set; }
 

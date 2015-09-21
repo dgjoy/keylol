@@ -18,6 +18,9 @@ namespace Keylol.Models.ViewModels
         [Required]
         public string Email { get; set; }
 
+//        [Required]
+//        public string SteamBindingTokenId { get; set; }
+
         [Required]
         public string GeetestChallenge { get; set; }
 

@@ -46,7 +46,7 @@ namespace Keylol.Services
             }
             _botAllocated = true;
 
-            var bots = await _dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(5).ToListAsync();
+            var bots = await _dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(1).ToListAsync();
             foreach (var bot in bots)
             {
                 bot.Online = false;
