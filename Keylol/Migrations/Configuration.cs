@@ -85,12 +85,26 @@ namespace Keylol.Migrations
                     Category = ArticleTypeCategory.Resource
                 });
 
-            for (var i = 1; i <= 20; i++)
+            var credentials = @"keylol_bot_1 YrXF9LGfHkTJYW8HE4GE8YpJ
+keylol_bot_2 NWG8SUTuXKGBkK7g4dXHCWdU
+keylol_bot_3 EXc897fp5cg2akUpzazwRCk2
+keylol_bot_4 LNFLNCvmSmr2EJHqRNHjpNVt
+keylol_bot_5 AVw9sFHWQuZ9jx4xc8cwA5ny".Split('\n').Select(s =>
+            {
+                var parts = s.Split(' ');
+                return new
+                {
+                    UserName = parts[0],
+                    Password = parts[1]
+                };
+            });
+
+            foreach (var credential in credentials)
             {
                 context.SteamBots.AddOrUpdate(bot => bot.SteamUserName, new Models.SteamBot
                 {
-                    SteamUserName = $"test{i}",
-                    SteamPassword = "test"
+                    SteamUserName = credential.UserName,
+                    SteamPassword = credential.Password
                 });
             }
 

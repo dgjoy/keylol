@@ -55,7 +55,7 @@ namespace Keylol.Services
 
             using (var dbContext = new KeylolDbContext())
             {
-                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(1).ToListAsync();
+                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(5).ToListAsync();
                 foreach (var bot in bots)
                 {
                     bot.Online = false;
@@ -109,7 +109,7 @@ namespace Keylol.Services
             }
         }
 
-        public async void SetUserStatusProbationer(string steamId)
+        public async Task SetUserStatusProbationer(string steamId)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -122,7 +122,7 @@ namespace Keylol.Services
             }
         }
 
-        public async void SetUserStatusNormal(string steamId)
+        public async Task SetUserStatusNormal(string steamId)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -135,7 +135,7 @@ namespace Keylol.Services
             }
         }
 
-        public async void DeleteBindingToken(string botId, string steamId)
+        public async Task DeleteBindingToken(string botId, string steamId)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -145,6 +145,11 @@ namespace Keylol.Services
                 dbContext.SteamBindingTokens.RemoveRange(tokens);
                 await dbContext.SaveChangesAsync();
             }
+        }
+
+        public Task<string> GetCMServer()
+        {
+            return Task.FromResult("221.6.100.46:27020");
         }
 
         public async Task<bool> BindSteamUserWithBindingToken(string code, string botId, string userSteamId,

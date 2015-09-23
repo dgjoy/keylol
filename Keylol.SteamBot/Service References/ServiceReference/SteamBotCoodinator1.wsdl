@@ -67,6 +67,12 @@
   <wsdl:message name="ISteamBotCoodinator_DeleteBindingToken_InputMessage">
     <wsdl:part name="parameters" element="tns:DeleteBindingToken" />
   </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_GetCMServer_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCMServer" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_GetCMServer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCMServerResponse" />
+  </wsdl:message>
   <wsdl:message name="ISteamBotCoodinator_GetUserBySteamId_InputMessage">
     <wsdl:part name="parameters" element="tns:GetUserBySteamId" />
   </wsdl:message>
@@ -113,6 +119,10 @@
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="DeleteBindingToken">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken" message="tns:ISteamBotCoodinator_DeleteBindingToken_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetCMServer">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/GetCMServer" message="tns:ISteamBotCoodinator_GetCMServer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/GetCMServerResponse" message="tns:ISteamBotCoodinator_GetCMServer_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUserBySteamId">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId" message="tns:ISteamBotCoodinator_GetUserBySteamId_InputMessage" />
@@ -172,6 +182,15 @@
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="GetCMServer">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/GetCMServer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetUserBySteamId">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId" style="document" />

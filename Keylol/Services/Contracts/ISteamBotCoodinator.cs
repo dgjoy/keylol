@@ -19,13 +19,16 @@ namespace Keylol.Services.Contracts
         Task UpdateBots(IList<SteamBotVM> vms);
 
         [OperationContract(IsOneWay = true)]
-        void SetUserStatusProbationer(string steamId);
+        Task SetUserStatusProbationer(string steamId);
 
         [OperationContract(IsOneWay = true)]
-        void SetUserStatusNormal(string steamId);
+        Task SetUserStatusNormal(string steamId);
 
         [OperationContract(IsOneWay = true)]
-        void DeleteBindingToken(string botId, string steamId);
+        Task DeleteBindingToken(string botId, string steamId);
+
+        [OperationContract]
+        Task<string> GetCMServer();
 
         [OperationContract]
         Task<UserDTO> GetUserBySteamId(string steamId);

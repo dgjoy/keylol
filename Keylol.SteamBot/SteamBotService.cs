@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.ServiceModel;
 using System.ServiceProcess;
@@ -22,6 +23,7 @@ namespace Keylol.SteamBot
                 "Keylol Steam Bot Service");
 
         private readonly Timer _healthReportTimer = new Timer(60000) {AutoReset = false};
+        private IPEndPoint _cmServer;
         private readonly object _consoleInputLock = new object();
         private readonly object _consoleOutputLock = new object();
 
@@ -81,6 +83,10 @@ namespace Keylol.SteamBot
             Task.Run(async () =>
             {
                 WriteLog($"Coodinator endpoint: {_coodinator.Endpoint.Address}");
+                var cmServer = await _coodinator.GetCMServerAsync();
+                var parts = cmServer.Split(':');
+                _cmServer = new IPEndPoint(IPAddress.Parse(parts[0]), int.Parse(parts[1]));
+                WriteLog($"CM Server: {_cmServer}");
                 var bots = await _coodinator.AllocateBotsAsync();
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
@@ -223,12 +229,8 @@ namespace Keylol.SteamBot
                 _callbackManager.Subscribe<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged);
                 _callbackManager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendListUpdated);
                 _callbackManager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived);
-//                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
-//                {
-//                    _botService.WriteLog($"CMList: {string.Join("\n", callback.Servers.Select(point => point.ToString()).ToArray())}");
-//                });
 
-                _steamClient.Connect();
+                _steamClient.Connect(_botService._cmServer);
             }
 
             public void RemoveFriend(string steamId)
@@ -260,7 +262,7 @@ namespace Keylol.SteamBot
                     _botService.WriteLog($"Bot {Id} disconnected. Try reconnecting...",
                         EventLogEntryType.Warning);
                     await Task.Delay(TimeSpan.FromSeconds(2));
-                    _steamClient.Connect();
+                    _steamClient.Connect(_botService._cmServer);
                 }
             }
 

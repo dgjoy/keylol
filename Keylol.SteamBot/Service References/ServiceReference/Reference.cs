@@ -867,6 +867,12 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken")]
         System.Threading.Tasks.Task DeleteBindingTokenAsync(string botId, string steamId);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetCMServerResponse")]
+        string GetCMServer();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetCMServerResponse")]
+        System.Threading.Tasks.Task<string> GetCMServerAsync();
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
         Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId);
         
@@ -971,6 +977,14 @@ namespace Keylol.SteamBot.ServiceReference {
         
         public System.Threading.Tasks.Task DeleteBindingTokenAsync(string botId, string steamId) {
             return base.Channel.DeleteBindingTokenAsync(botId, steamId);
+        }
+        
+        public string GetCMServer() {
+            return base.Channel.GetCMServer();
+        }
+        
+        public System.Threading.Tasks.Task<string> GetCMServerAsync() {
+            return base.Channel.GetCMServerAsync();
         }
         
         public Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId) {
