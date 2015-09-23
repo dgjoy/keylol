@@ -16,15 +16,21 @@ namespace Keylol.Models
         public string Ip { get; set; }
 
         [Required]
+        public string UserId { get; set; }
+
         public virtual KeylolUser User { get; set; }
     }
 
     public class EditLog : Log
     {
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
 
         [Required]
+        public string EditorId { get; set; }
+
         public virtual KeylolUser Editor { get; set; }
 
         [Required]

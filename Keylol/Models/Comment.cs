@@ -17,9 +17,11 @@ namespace Keylol.Models
         public bool Archived { get; set; } = false;
         
         [Required]
+        public string CommentatorId { get; set; }
         public virtual KeylolUser Commentator { get; set; }
         
         [Required]
+        public string ArticleId { get; set; }
         public virtual Article Article { get; set; }
 
         public virtual ICollection<CommentLike> Likes { get; set; }

@@ -2,14 +2,14 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using DevTrends.WCFDataAnnotations;
 using Keylol.DAL;
 using Keylol.Hubs;
-using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Keylol.Services.Contracts;
@@ -22,7 +22,6 @@ namespace Keylol.Services
     public class SteamBotCoodinator : ISteamBotCoodinator
     {
         private bool _botAllocated;
-        private readonly KeylolDbContext _dbContext = new KeylolDbContext();
         private readonly string _sessionId = OperationContext.Current.SessionId;
 
         public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients =
@@ -36,6 +35,14 @@ namespace Keylol.Services
                 Clients[_sessionId] =
                     OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>();
             }
+            using (var dbContext = new KeylolDbContext())
+            {
+                foreach (var bot in dbContext.SteamBots.Where(bot => !Clients.Keys.Contains(bot.SessionId)))
+                {
+                    bot.SessionId = null;
+                }
+                dbContext.SaveChanges();
+            }
         }
 
         public async Task<IEnumerable<SteamBotDTO>> AllocateBots()
@@ -46,94 +53,169 @@ namespace Keylol.Services
             }
             _botAllocated = true;
 
-            var bots = await _dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(1).ToListAsync();
-            foreach (var bot in bots)
+            using (var dbContext = new KeylolDbContext())
             {
-                bot.Online = false;
-                bot.SessionId = _sessionId;
+                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(1).ToListAsync();
+                foreach (var bot in bots)
+                {
+                    bot.Online = false;
+                    bot.SessionId = _sessionId;
+                }
+                await dbContext.SaveChangesAsync();
+                return bots.Select(bot => new SteamBotDTO(bot));
             }
-            await _dbContext.SaveChangesAsync();
-            return bots.Select(bot => new SteamBotDTO(bot));
         }
 
-        public async Task UpdateBots(IEnumerable<SteamBotVM> vms)
+        public async Task UpdateBots(IList<SteamBotVM> vms)
         {
-            foreach (var vm in vms)
+            using (var dbContext = new KeylolDbContext())
             {
-                var bot = await _dbContext.SteamBots.FindAsync(vm.Id);
-                if (vm.SteamId != null)
-                    bot.SteamId = vm.SteamId;
-                if (vm.FriendCount != null)
-                    bot.FriendCount = vm.FriendCount.Value;
-                if (vm.Online != null)
-                    bot.Online = vm.Online.Value;
+                var ids = vms.Select(vm => vm.Id);
+                var bots =
+                    await
+                        dbContext.SteamBots.Where(bot => ids.Contains(bot.Id))
+                            .ToListAsync();
+                for (var i = 0; i < bots.Count; i++)
+                {
+                    if (vms[i].SteamId != null)
+                        bots[i].SteamId = vms[i].SteamId;
+                    if (vms[i].FriendCount != null)
+                        bots[i].FriendCount = vms[i].FriendCount.Value;
+                    if (vms[i].Online != null)
+                        bots[i].Online = vms[i].Online.Value;
+                }
+                await dbContext.SaveChangesAsync();
             }
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<UserDTO> GetUserBySteamId(string steamId)
         {
-            var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamId);
-            return user == null ? null : new UserDTO(user) {SteamBot = new SteamBotDTO(user.SteamBot)};
+            using (var dbContext = new KeylolDbContext())
+            {
+                var user =
+                    await dbContext.Users.Include(u => u.SteamBot).SingleOrDefaultAsync(u => u.SteamId == steamId);
+                return user == null ? null : new UserDTO(user) {SteamBot = new SteamBotDTO(user.SteamBot)};
+            }
         }
 
-        public async Task<bool> BindSteamUserWithBindingToken(string userSteamId, string code, string botId)
+        public async Task<IList<UserDTO>> GetUsersBySteamIds(IList<string> steamIds)
         {
-            var token =
-                await
-                    _dbContext.SteamBindingTokens.SingleOrDefaultAsync(
-                        t => t.Code == code && t.Bot.Id == botId && t.SteamId == null);
-            if (token == null)
-                return false;
+            using (var dbContext = new KeylolDbContext())
+            {
+                var users =
+                    await
+                        dbContext.Users.Include(u => u.SteamBot).Where(u => steamIds.Contains(u.SteamId)).ToListAsync();
+                return users.Select(user => new UserDTO(user) {SteamBot = new SteamBotDTO(user.SteamBot)}).ToList();
+            }
+        }
 
-            token.SteamId = userSteamId;
-            await _dbContext.SaveChangesAsync();
-            GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
-                .Clients.Client(token.BrowserConnectionId)?
-                .NotifyCodeReceived(token.Id);
-            return true;
+        public async void SetUserStatusProbationer(string steamId)
+        {
+            using (var dbContext = new KeylolDbContext())
+            {
+                var user = await dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamId);
+                if (user != null)
+                {
+                    var userManager = KeylolUserManager.Create(dbContext);
+                    await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                }
+            }
+        }
+
+        public async void SetUserStatusNormal(string steamId)
+        {
+            using (var dbContext = new KeylolDbContext())
+            {
+                var user = await dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamId);
+                if (user != null)
+                {
+                    var userManager = KeylolUserManager.Create(dbContext);
+                    await userManager.RemoveStatusClaimAsync(user.Id);
+                }
+            }
+        }
+
+        public async void DeleteBindingToken(string botId, string steamId)
+        {
+            using (var dbContext = new KeylolDbContext())
+            {
+                var tokens =
+                    await
+                        dbContext.SteamBindingTokens.Where(t => t.SteamId == steamId && t.BotId == botId).ToListAsync();
+                dbContext.SteamBindingTokens.RemoveRange(tokens);
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> BindSteamUserWithBindingToken(string code, string botId, string userSteamId,
+            string userSteamProfileName, string userSteamAvatarHash)
+        {
+            using (var dbContext = new KeylolDbContext())
+            {
+                var token =
+                    await
+                        dbContext.SteamBindingTokens.SingleOrDefaultAsync(
+                            t => t.Code == code && t.BotId == botId && t.SteamId == null);
+                if (token == null)
+                    return false;
+
+                token.SteamId = userSteamId;
+                await dbContext.SaveChangesAsync();
+                GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
+                    .Clients.Client(token.BrowserConnectionId)?
+                    .NotifyCodeReceived(userSteamProfileName, userSteamAvatarHash);
+                return true;
+            }
         }
 
         public async Task<bool> BindSteamUserWithLoginToken(string userSteamId, string code)
         {
-            var token =
-                await _dbContext.SteamLoginTokens.SingleOrDefaultAsync(t => t.Code == code);
-            if (token == null)
-                return false;
+            using (var dbContext = new KeylolDbContext())
+            {
+                var token =
+                    await dbContext.SteamLoginTokens.SingleOrDefaultAsync(t => t.Code == code);
+                if (token == null)
+                    return false;
 
-            token.SteamId = userSteamId;
-            await _dbContext.SaveChangesAsync();
-            GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
-                .Clients.Client(token.BrowserConnectionId)?
-                .NotifyCodeReceived(token.Id);
-            return true;
+                token.SteamId = userSteamId;
+                await dbContext.SaveChangesAsync();
+                GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
+                    .Clients.Client(token.BrowserConnectionId)?
+                    .NotifyCodeReceived(token.Id);
+                return true;
+            }
         }
 
         public async Task BroadcastBotOnFriendAdded(string botId)
         {
-            GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
-                .Clients.Clients(
-                    await _dbContext.SteamBots.Where(bot => bot.Id == botId)
-                        .SelectMany(bot => bot.BindingTokens)
-                        .Select(token => token.BrowserConnectionId)
-                        .ToListAsync()
-                )?
-                .NotifySteamFriendAdded();
+            using (var dbContext = new KeylolDbContext())
+            {
+                GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
+                    .Clients.Clients(
+                        await dbContext.SteamBots.Where(bot => bot.Id == botId)
+                            .SelectMany(bot => bot.BindingTokens)
+                            .Select(token => token.BrowserConnectionId)
+                            .ToListAsync()
+                    )?
+                    .NotifySteamFriendAdded();
+            }
         }
 
         private async void OnClientClosed(object sender, EventArgs eventArgs)
         {
             ISteamBotCoodinatorCallback callback;
             Clients.TryRemove(_sessionId, out callback);
-            var bots =
-                await
-                    _dbContext.SteamBots.Where(bot => bot.SessionId == _sessionId).ToListAsync();
-            foreach (var bot in bots)
+            using (var dbContext = new KeylolDbContext())
             {
-                bot.SessionId = null;
+                var bots =
+                    await
+                        dbContext.SteamBots.Where(bot => bot.SessionId == _sessionId).ToListAsync();
+                foreach (var bot in bots)
+                {
+                    bot.SessionId = null;
+                }
+                await dbContext.SaveChangesAsync();
             }
-            await _dbContext.SaveChangesAsync();
-            _dbContext.Dispose();
         }
     }
 }

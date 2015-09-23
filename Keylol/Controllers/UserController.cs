@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -62,12 +63,23 @@ namespace Keylol.Controllers
                 ModelState.AddModelError("authCode", "true");
                 return BadRequest(ModelState);
             }
+            var steamBindingToken = await DbContext.SteamBindingTokens.FindAsync(vm.SteamBindingTokenId);
+            if (steamBindingToken == null)
+            {
+                ModelState.AddModelError("vm.SteamBindingTokenId", "Invalid steam binding token.");
+                return BadRequest(ModelState);
+            }
+            if (await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamBindingToken.SteamId) != null)
+            {
+                ModelState.AddModelError("vm.SteamBindingTokenId", "Steam account has been binded to another Keylol account.");
+                return BadRequest(ModelState);
+            }
             if (!Regex.IsMatch(vm.IdCode, @"^[A-Z0-9]{5}$"))
             {
                 ModelState.AddModelError("vm.IdCode", "Only 5 uppercase letters and digits are allowed in IdCode.");
                 return BadRequest(ModelState);
             }
-            if (await DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == vm.IdCode) != null)
+            if (await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == vm.IdCode) != null)
             {
                 ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
                 return BadRequest(ModelState);
@@ -81,8 +93,10 @@ namespace Keylol.Controllers
             {
                 IdCode = vm.IdCode,
                 UserName = vm.UserName,
-                Email = vm.Email,
-                RegisterIp = OwinContext.Request.RemoteIpAddress
+                RegisterIp = OwinContext.Request.RemoteIpAddress,
+                SteamBindingTime = DateTime.Now,
+                SteamId = steamBindingToken.SteamId,
+                SteamBotId = steamBindingToken.BotId
             };
 
             var result = await UserManager.CreateAsync(user, vm.Password);
@@ -94,18 +108,17 @@ namespace Keylol.Controllers
                         ModelState.AddModelError("vm.UserName", error);
                     else if (error.Contains("Password"))
                         ModelState.AddModelError("vm.Password", error);
-                    else if (error.Contains("Email"))
-                        ModelState.AddModelError("vm.Email", error);
                 }
                 return BadRequest(ModelState);
             }
+            DbContext.SteamBindingTokens.Remove(steamBindingToken);
 
             // Auto login
             await SignInManager.SignInAsync(user, true, true);
             var loginLog = new LoginLog
             {
                 Ip = OwinContext.Request.RemoteIpAddress,
-                User = user
+                UserId = user.Id
             };
             DbContext.LoginLogs.Add(loginLog);
             await DbContext.SaveChangesAsync();

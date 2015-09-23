@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="fsiK2w+2AND/Cr8nlN1bymgVCZg=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="QQtTrRo0sv3ln+wSGYPfZDCB9ck=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="netHttpBinding" name="NetHttpBinding_ISteamBotCoodinator">
       <properties>
@@ -145,10 +145,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="NetHttpBinding_ISteamBotCoodinator" contract="ServiceReference.ISteamBotCoodinator" bindingType="netHttpBinding" address="wss://localhost/Services/SteamBotCoodinator.svc" bindingConfiguration="NetHttpBinding_ISteamBotCoodinator">
+    <endpoint name="NetHttpBinding_ISteamBotCoodinator" contract="ServiceReference.ISteamBotCoodinator" bindingType="netHttpBinding" address="wss://localhost:44300/Services/SteamBotCoodinator.svc" bindingConfiguration="NetHttpBinding_ISteamBotCoodinator">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>wss://localhost/Services/SteamBotCoodinator.svc</serializedValue>
+          <serializedValue>wss://localhost:44300/Services/SteamBotCoodinator.svc</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

@@ -10,6 +10,8 @@ namespace Keylol.Models
         public DateTime Time { get; set; } = DateTime.Now;
         
         [Required]
+        public string OperatorId { get; set; }
+
         public virtual KeylolUser Operator { get; set; }
 
         public virtual ICollection<LikeMessage> RelatedLikeMessages { get; set; }
@@ -18,12 +20,16 @@ namespace Keylol.Models
     public class ArticleLike : Like
     {
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
     }
 
     public class CommentLike : Like
     {
         [Required]
+        public string CommentId { get; set; }
+
         public virtual Comment Comment { get; set; }
     }
 }

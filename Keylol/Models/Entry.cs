@@ -21,6 +21,8 @@ namespace Keylol.Models
         public DateTime PublishTime { get; set; } = DateTime.Now;
         
         [Required]
+        public string PrincipalId { get; set; }
+
         public virtual ProfilePoint Principal { get; set; }
 
         public virtual ICollection<NormalPoint> AttachedPoints { get; set; }
@@ -29,6 +31,7 @@ namespace Keylol.Models
     public class Article : Entry
     {
         [Required]
+        public string TypeId { get; set; }
         public virtual ArticleType Type { get; set; }
 
         [Required]
@@ -50,12 +53,14 @@ namespace Keylol.Models
         [Index]
         public int SequenceNumberForAuthor { get; set; }
 
+        public string RecommendedArticleId { get; set; }
         public virtual Article RecommendedArticle { get; set; }
         public virtual ICollection<Article> RecommendedByArticles { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<ArticleLike> Likes { get; set; }
         public virtual ICollection<NormalPoint> RecommendedByPoints { get; set; }
         public virtual ICollection<EditLog> EditLogs { get; set; }
+        public string VoteForPointId { get; set; }
         public virtual NormalPoint VoteForPoint { get; set; }
 
         public virtual ICollection<RejectionMessage> RelatedRejectionMessages { get; set; }

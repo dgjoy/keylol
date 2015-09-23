@@ -87,7 +87,7 @@ namespace Keylol.DAL
 
             modelBuilder.Entity<ProfilePoint>().Map(t => t.MapInheritedProperties().ToTable("ProfilePoints"));
             modelBuilder.Entity<NormalPoint>().Map(t => t.MapInheritedProperties().ToTable("NormalPoints"));
-
+            
             modelBuilder.Entity<KeylolUser>()
                 .HasMany(user => user.SubscribedPoints)
                 .WithMany(point => point.Subscribers)
@@ -123,25 +123,25 @@ namespace Keylol.DAL
         }
 
         // Ignore validation error on unmodified properties
-        protected override DbEntityValidationResult ValidateEntity(DbEntityEntry entityEntry,
-            IDictionary<object, object> items)
-        {
-            var result = base.ValidateEntity(entityEntry, items);
-            var falseErrors = result.ValidationErrors
-                .Where(error =>
-                {
-                    var member = entityEntry.Member(error.PropertyName);
-                    var property = member as DbPropertyEntry;
-                    if (property != null)
-                        return !property.IsModified;
-                    return false;
-                });
-
-            foreach (var error in falseErrors.ToArray())
-                result.ValidationErrors.Remove(error);
-
-            return result;
-        }
+//        protected override DbEntityValidationResult ValidateEntity(DbEntityEntry entityEntry,
+//            IDictionary<object, object> items)
+//        {
+//            var result = base.ValidateEntity(entityEntry, items);
+//            var falseErrors = result.ValidationErrors
+//                .Where(error =>
+//                {
+//                    var member = entityEntry.Member(error.PropertyName);
+//                    var property = member as DbPropertyEntry;
+//                    if (property != null)
+//                        return !property.IsModified;
+//                    return false;
+//                });
+//
+//            foreach (var error in falseErrors.ToArray())
+//                result.ValidationErrors.Remove(error);
+//
+//            return result;
+//        }
 
         public static KeylolDbContext Create()
         {

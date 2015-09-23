@@ -11,6 +11,8 @@ namespace Keylol.Models
         public bool Read { get; set; } = false;
 
         [Required]
+        public string ReceiverId { get; set; }
+
         public virtual KeylolUser Receiver { get; set; }
     }
 
@@ -21,6 +23,8 @@ namespace Keylol.Models
         public string Content { get; set; }
 
         [Required]
+        public string SenderId { get; set; }
+
         public virtual KeylolUser Sender { get; set; }
     }
 
@@ -31,6 +35,8 @@ namespace Keylol.Models
     public abstract class OfficialMessageWithSender : OfficialMessage
     {
         [Required]
+        public string SenderId { get; set; }
+
         public virtual KeylolUser Sender { get; set; }
     }
 
@@ -57,6 +63,8 @@ namespace Keylol.Models
     public class RejectionMessage : CorrectionalServiceMessage
     {
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
     }
 
@@ -74,12 +82,16 @@ namespace Keylol.Models
     public class ArticleArchiveMessage : ArchiveMessage
     {
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
     }
 
     public class CommentArchiveMessage : ArchiveMessage
     {
         [Required]
+        public string CommentId { get; set; }
+
         public virtual Comment Comment { get; set; }
     }
 
@@ -94,18 +106,24 @@ namespace Keylol.Models
         public MuteType Type { get; set; }
 
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
     }
 
     public abstract class RecommendationMessage : EditingMessage
     {
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
     }
 
     public class PointRecommendationMessage : RecommendationMessage
     {
         [Required]
+        public string PointId { get; set; }
+
         public virtual NormalPoint Point { get; set; }
     }
 
@@ -116,6 +134,8 @@ namespace Keylol.Models
     public class EditMessage : EditingMessage
     {
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
     }
 
@@ -127,30 +147,39 @@ namespace Keylol.Models
     public class ArticleLikeMessage : LikeMessage
     {
         [Required]
+        public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
     }
 
     public class CommentLikeMessage : LikeMessage
     {
         [Required]
+        public string CommentId { get; set; }
         public virtual Comment Comment { get; set; }
     }
 
     public abstract class ReplyMessage : SocialMessage
     {
         [Required]
+        public string CommentId { get; set; }
+
         public virtual Comment Comment { get; set; }
     }
 
     public class ArticleReplyMessage : ReplyMessage
     {
         [Required]
+        public string TargetId { get; set; }
+
         public virtual Article Target { get; set; }
     }
 
     public class CommentReplyMessage : ReplyMessage
     {
         [Required]
+        public string TargetId { get; set; }
+
         public virtual Comment Target { get; set; }
     }
 

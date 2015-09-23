@@ -71,6 +71,8 @@ namespace Keylol.Models
         [Required]
         public virtual KeylolUser User { get; set; }
 
+        public string UserId => Id;
+
         public ICollection<Entry> Entries { get; set; }
     }
 }

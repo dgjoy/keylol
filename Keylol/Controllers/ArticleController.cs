@@ -91,7 +91,7 @@ namespace Keylol.Controllers
             article.Principal = (await UserManager.FindByIdAsync(User.Identity.GetUserId())).ProfilePoint;
             article.SequenceNumberForAuthor =
                 (await
-                    DbContext.Articles.Where(a => a.Principal.Id == article.Principal.Id)
+                    DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
                         .Select(a => a.SequenceNumberForAuthor)
                         .DefaultIfEmpty(0)
                         .MaxAsync()) + 1;
@@ -114,7 +114,7 @@ namespace Keylol.Controllers
             var article = await DbContext.Articles.FindAsync(id);
             if (article == null)
                 return NotFound();
-            if (article.Principal.User.Id != User.Identity.GetUserId())
+            if (article.Principal.UserId != User.Identity.GetUserId())
                 return Unauthorized();
 
             var type = await DbContext.ArticleTypes.FindAsync(vm.TypeId);

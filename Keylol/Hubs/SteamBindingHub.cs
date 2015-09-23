@@ -16,7 +16,7 @@ namespace Keylol.Hubs
     public interface ISteamBindingHubClient
     {
         void NotifySteamFriendAdded();
-        void NotifyCodeReceived(string tokenId);
+        void NotifyCodeReceived(string steamProfileName, string steamAvatarHash);
     }
 
     public class SteamBindingHub : Hub<ISteamBindingHubClient>
@@ -34,14 +34,17 @@ namespace Keylol.Hubs
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            var tokens = await _dbContext.SteamBindingTokens.Where(t => t.BrowserConnectionId == Context.ConnectionId).ToListAsync();
+            var tokens =
+                await
+                    _dbContext.SteamBindingTokens.Where(t => t.BrowserConnectionId == Context.ConnectionId)
+                        .ToListAsync();
             foreach (var token in tokens)
             {
-                if (token.SteamId != null && !token.Consumed)
+                if (token.SteamId != null)
                 {
                     ISteamBotCoodinatorCallback callback;
                     if (SteamBotCoodinator.Clients.TryGetValue(token.Bot.SessionId, out callback))
-                        callback.RemoveSteamFriend(token.Bot.Id, token.SteamId);
+                        callback.RemoveSteamFriend(token.BotId, token.SteamId);
                 }
                 _dbContext.SteamBindingTokens.Remove(token);
             }
@@ -54,7 +57,7 @@ namespace Keylol.Hubs
             var bot =
                 await
                     _dbContext.SteamBots.FirstOrDefaultAsync(
-                        b => b.Online && b.SessionId != null && b.FriendCount < b.FriendUpperLimit);
+                        b => b.Online && b.SessionId != null && b.SteamId != null && b.FriendCount < b.FriendUpperLimit);
             if (bot == null)
                 return null;
 

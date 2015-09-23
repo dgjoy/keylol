@@ -50,7 +50,7 @@ namespace Keylol
             {
                 errors.Add("Only digits, letters and Chinese characters are allowed in UserName.");
             }
-            if (!Regex.IsMatch(user.Email, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$", RegexOptions.IgnoreCase))
+            if (user.Email != null && !Regex.IsMatch(user.Email, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$", RegexOptions.IgnoreCase))
             {
                 errors.Add("Email is invalid.");
             }
@@ -71,7 +71,7 @@ namespace Keylol
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class KeylolUserManager : UserManager<KeylolUser>
     {
-        public KeylolUserManager(IUserStore<KeylolUser> store)
+        protected KeylolUserManager(IUserStore<KeylolUser> store)
             : base(store)
         {
         }
@@ -82,15 +82,14 @@ namespace Keylol
             return base.CreateAsync(user, password);
         }
 
-        public static KeylolUserManager Create(IdentityFactoryOptions<KeylolUserManager> options, IOwinContext context)
+        public static KeylolUserManager Create(KeylolDbContext dbContext)
         {
-            var manager =
-                new KeylolUserManager(new UserStore<KeylolUser>(context.Get<KeylolDbContext>()));
-            // Configure validation logic for usernames
+            var manager = new KeylolUserManager(new UserStore<KeylolUser>(dbContext));
+
             manager.UserValidator = new KeylolUserValidator(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = true
+                RequireUniqueEmail = false
             };
 
             // Configure validation logic for passwords
@@ -110,17 +109,24 @@ namespace Keylol
 
             // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
             // You can write your own provider and plug it in here.
-//            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<KeylolUser>
-//            {
-//                MessageFormat = "Your security code is {0}"
-//            });
-//            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<KeylolUser>
-//            {
-//                Subject = "Security Code",
-//                BodyFormat = "Your security code is {0}"
-//            });
+            //            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<KeylolUser>
+            //            {
+            //                MessageFormat = "Your security code is {0}"
+            //            });
+            //            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<KeylolUser>
+            //            {
+            //                Subject = "Security Code",
+            //                BodyFormat = "Your security code is {0}"
+            //            });
             manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
+
+            return manager;
+        }
+
+        public static KeylolUserManager Create(IdentityFactoryOptions<KeylolUserManager> options, IOwinContext context)
+        {
+            var manager = Create(context.Get<KeylolDbContext>());
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {

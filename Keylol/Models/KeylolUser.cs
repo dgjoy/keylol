@@ -41,10 +41,11 @@ namespace Keylol.Models
 
         public override bool LockoutEnabled { get; set; } = true;
         
+        [Index]
         [MaxLength(64)]
         public string SteamId { get; set; }
 
-        public DateTime SteamBindingTime { get; set; } = DateTime.Now;
+        public DateTime SteamBindingTime { get; set; }
 
         public bool SteamBindingLockEnabled { get; set; } = false;
 
@@ -73,8 +74,9 @@ namespace Keylol.Models
         public bool MessageNotifyOnEditorRecommended { get; set; } = true;
         public bool MessageNotifyOnArticleLiked { get; set; } = true;
         public bool MessageNotifyOnCommentLiked { get; set; } = true;
-
+        
         public virtual ProfilePoint ProfilePoint { get; set; }
+        public string ProfilePointId => Id;
         public virtual ICollection<Point> SubscribedPoints { get; set; }
         public virtual ICollection<NormalPoint> ManagedPoints { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
@@ -87,6 +89,7 @@ namespace Keylol.Models
         public virtual ICollection<LoginLog> LoginLogs { get; set; }
         public virtual ICollection<EditLog> EditLogs { get; set; }
 
+        public string SteamBotId { get; set; }
         public virtual SteamBot SteamBot { get; set; }
 
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =

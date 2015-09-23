@@ -16,10 +16,7 @@ namespace Keylol.Models.ViewModels
         public string AvatarImage { get; set; }
 
         [Required]
-        public string Email { get; set; }
-
-//        [Required]
-//        public string SteamBindingTokenId { get; set; }
+        public string SteamBindingTokenId { get; set; }
 
         [Required]
         public string GeetestChallenge { get; set; }

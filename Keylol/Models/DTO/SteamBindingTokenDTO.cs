@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SteamKit2;
 
 namespace Keylol.Models.DTO
 {
@@ -12,11 +13,13 @@ namespace Keylol.Models.DTO
         {
             Id = token.Id;
             Code = token.Code;
-            BotId = token.Bot.Id;
+            var steamId = new SteamID();
+            steamId.SetFromSteam3String(token.Bot.SteamId);
+            BotSteamId64 = steamId.ConvertToUInt64().ToString();
         }
 
         public string Id { get; set; }
         public string Code { get; set; }
-        public string BotId { get; set; }
+        public string BotSteamId64 { get; set; }
     }
 }

@@ -61,4 +61,10 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="LoginLogDTO" nillable="true" type="tns:LoginLogDTO" />
+  <xs:complexType name="ArrayOfUserDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UserDTO" nillable="true" type="tns:UserDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUserDTO" nillable="true" type="tns:ArrayOfUserDTO" />
 </xs:schema>

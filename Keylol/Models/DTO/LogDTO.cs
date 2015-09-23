@@ -12,7 +12,7 @@ namespace Keylol.Models.DTO
             Id = log.Id;
             Time = log.Time;
             Ip = log.Ip;
-            UserId = log.User.Id;
+            UserId = log.UserId;
         }
 
         [DataMember]

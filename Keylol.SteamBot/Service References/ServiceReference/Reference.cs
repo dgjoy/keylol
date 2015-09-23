@@ -849,17 +849,41 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
         System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
         
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusProbationer")]
+        void SetUserStatusProbationer(string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusProbationer")]
+        System.Threading.Tasks.Task SetUserStatusProbationerAsync(string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusNormal")]
+        void SetUserStatusNormal(string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusNormal")]
+        System.Threading.Tasks.Task SetUserStatusNormalAsync(string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken")]
+        void DeleteBindingToken(string botId, string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken")]
+        System.Threading.Tasks.Task DeleteBindingTokenAsync(string botId, string steamId);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
         Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
         System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO> GetUserBySteamIdAsync(string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
-        bool BindSteamUserWithBindingToken(string userSteamId, string code, string botId);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIdsResponse")]
+        Keylol.SteamBot.ServiceReference.UserDTO[] GetUsersBySteamIds(string[] steamIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIdsResponse")]
+        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO[]> GetUsersBySteamIdsAsync(string[] steamIds);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
-        System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string userSteamId, string code, string botId);
+        bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
+        System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse")]
         bool BindSteamUserWithLoginToken(string userSteamId, string code);
@@ -925,6 +949,30 @@ namespace Keylol.SteamBot.ServiceReference {
             return base.Channel.UpdateBotsAsync(vms);
         }
         
+        public void SetUserStatusProbationer(string steamId) {
+            base.Channel.SetUserStatusProbationer(steamId);
+        }
+        
+        public System.Threading.Tasks.Task SetUserStatusProbationerAsync(string steamId) {
+            return base.Channel.SetUserStatusProbationerAsync(steamId);
+        }
+        
+        public void SetUserStatusNormal(string steamId) {
+            base.Channel.SetUserStatusNormal(steamId);
+        }
+        
+        public System.Threading.Tasks.Task SetUserStatusNormalAsync(string steamId) {
+            return base.Channel.SetUserStatusNormalAsync(steamId);
+        }
+        
+        public void DeleteBindingToken(string botId, string steamId) {
+            base.Channel.DeleteBindingToken(botId, steamId);
+        }
+        
+        public System.Threading.Tasks.Task DeleteBindingTokenAsync(string botId, string steamId) {
+            return base.Channel.DeleteBindingTokenAsync(botId, steamId);
+        }
+        
         public Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId) {
             return base.Channel.GetUserBySteamId(steamId);
         }
@@ -933,12 +981,20 @@ namespace Keylol.SteamBot.ServiceReference {
             return base.Channel.GetUserBySteamIdAsync(steamId);
         }
         
-        public bool BindSteamUserWithBindingToken(string userSteamId, string code, string botId) {
-            return base.Channel.BindSteamUserWithBindingToken(userSteamId, code, botId);
+        public Keylol.SteamBot.ServiceReference.UserDTO[] GetUsersBySteamIds(string[] steamIds) {
+            return base.Channel.GetUsersBySteamIds(steamIds);
         }
         
-        public System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string userSteamId, string code, string botId) {
-            return base.Channel.BindSteamUserWithBindingTokenAsync(userSteamId, code, botId);
+        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO[]> GetUsersBySteamIdsAsync(string[] steamIds) {
+            return base.Channel.GetUsersBySteamIdsAsync(steamIds);
+        }
+        
+        public bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash) {
+            return base.Channel.BindSteamUserWithBindingToken(code, botId, userSteamId, userSteamProfileName, userSteamAvatarHash);
+        }
+        
+        public System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash) {
+            return base.Channel.BindSteamUserWithBindingTokenAsync(code, botId, userSteamId, userSteamProfileName, userSteamAvatarHash);
         }
         
         public bool BindSteamUserWithLoginToken(string userSteamId, string code) {

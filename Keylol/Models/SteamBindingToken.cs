@@ -26,9 +26,9 @@ namespace Keylol.Models
 
         public string SteamId { get; set; }
 
-        public bool Consumed { get; set; } = false;
-
         [Required]
+        public string BotId { get; set; }
+
         public virtual SteamBot Bot { get; set; }
 
         public static async Task<string> GenerateCodeAsync(KeylolDbContext dbContext)

@@ -98,17 +98,20 @@
     <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.UserDTO.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ServiceReference\SteamBotCoodinator.wsdl" />
     <None Include="Service References\ServiceReference\SteamBotCoodinator.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\SteamBotCoodinator1.xsd">
+    <None Include="Service References\ServiceReference\SteamBotCoodinator1.wsdl" />
+    <None Include="Service References\ServiceReference\SteamBotCoodinator4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\SteamBotCoodinator2.xsd">
+    <None Include="Service References\ServiceReference\SteamBotCoodinator41.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\SteamBotCoodinator3.xsd">
+    <None Include="Service References\ServiceReference\SteamBotCoodinator42.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\SteamBotCoodinator43.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -127,9 +130,6 @@
     <WCFMetadataStorage Include="Service References\ServiceReference\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\ServiceReference\SteamBotCoodinator.disco" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Service References\ServiceReference\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +140,9 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference\SteamBotCoodinator1.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
