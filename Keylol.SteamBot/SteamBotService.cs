@@ -276,7 +276,7 @@ namespace Keylol.SteamBot
                 {
                     case EResult.OK:
                         State = BotState.LoggedOnNotOnline;
-                        _steamFriends.SetPersonaName("其乐机器人");
+                        _steamFriends.SetPersonaName("其乐机器人 Keylol.com");
                         _steamFriends.SetPersonaState(EPersonaState.Online);
                         break;
 

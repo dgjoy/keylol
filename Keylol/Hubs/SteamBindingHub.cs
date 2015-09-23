@@ -54,10 +54,12 @@ namespace Keylol.Hubs
 
         public async Task<SteamBindingTokenDTO> CreateToken()
         {
-            var bot =
+            var bots =
                 await
-                    _dbContext.SteamBots.FirstOrDefaultAsync(
-                        b => b.Online && b.SessionId != null && b.SteamId != null && b.FriendCount < b.FriendUpperLimit);
+                    _dbContext.SteamBots.Where(
+                        b => b.Online && b.SessionId != null && b.SteamId != null && b.FriendCount < b.FriendUpperLimit).ToListAsync();
+            var random = new Random();
+            var bot = bots.Skip(random.Next(0, bots.Count)).FirstOrDefault();
             if (bot == null)
                 return null;
 
