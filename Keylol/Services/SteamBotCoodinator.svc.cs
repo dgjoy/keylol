@@ -149,7 +149,7 @@ namespace Keylol.Services
 
         public Task<string> GetCMServer()
         {
-            return Task.FromResult("221.6.100.46:27020");
+            return Task.FromResult("221.228.193.179:27018");
         }
 
         public async Task<bool> BindSteamUserWithBindingToken(string code, string botId, string userSteamId,
