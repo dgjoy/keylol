@@ -14,7 +14,7 @@ namespace Keylol.Controllers
     public class UserController : KeylolApiController
     {
         public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
-            bool includeClaims = false)
+            bool includeClaims = false, bool includeSteamBot = false)
         {
             var visitorId = User.Identity.GetUserId();
             var staffClaim = await UserManager.GetStaffClaimAsync(visitorId);
@@ -36,6 +36,11 @@ namespace Keylol.Controllers
             {
                 userDTO.StatusClaim = await UserManager.GetStatusClaimAsync(user.Id);
                 userDTO.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
+            }
+
+            if (includeSteamBot)
+            {
+                userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
             }
 
             return Ok(userDTO);

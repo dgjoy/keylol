@@ -14,6 +14,9 @@ namespace Keylol.Models.DTO
             UserName = user.UserName;
             GamerTag = user.GamerTag;
             Email = user.Email;
+
+            // Ignore ProfilePointBackgroundImage
+
             AvatarImage = user.AvatarImage;
             LockoutEnabled = user.LockoutEnabled;
             SteamId = user.SteamId;

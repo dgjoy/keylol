@@ -55,14 +55,14 @@ namespace Keylol.Services
 
             using (var dbContext = new KeylolDbContext())
             {
-                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(5).ToListAsync();
+                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(1).ToListAsync();
                 foreach (var bot in bots)
                 {
                     bot.Online = false;
                     bot.SessionId = _sessionId;
                 }
                 await dbContext.SaveChangesAsync();
-                return bots.Select(bot => new SteamBotDTO(bot));
+                return bots.Select(bot => new SteamBotDTO(bot, true));
             }
         }
 

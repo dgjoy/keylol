@@ -9,6 +9,9 @@
   <xs:complexType name="SteamBotDTO">
     <xs:sequence>
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Online" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamId64" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamPassword" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamUserName" nillable="true" type="xs:string" />
     </xs:sequence>

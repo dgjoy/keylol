@@ -70,7 +70,8 @@ namespace Keylol.FontGarage.CLI
                 "成为好友",
                 "收到验证码",
                 "绑定成功",
-                "平台连接向导"
+                "平台连接向导",
+                "/"
             });
             Console.ReadKey();
         }

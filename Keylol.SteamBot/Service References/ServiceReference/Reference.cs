@@ -26,6 +26,15 @@ namespace Keylol.SteamBot.ServiceReference {
         private string IdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool OnlineField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SteamIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SteamId64Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SteamPasswordField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -50,6 +59,45 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.IdField, value) != true)) {
                     this.IdField = value;
                     this.RaisePropertyChanged("Id");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool Online {
+            get {
+                return this.OnlineField;
+            }
+            set {
+                if ((this.OnlineField.Equals(value) != true)) {
+                    this.OnlineField = value;
+                    this.RaisePropertyChanged("Online");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SteamId {
+            get {
+                return this.SteamIdField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SteamIdField, value) != true)) {
+                    this.SteamIdField = value;
+                    this.RaisePropertyChanged("SteamId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SteamId64 {
+            get {
+                return this.SteamId64Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SteamId64Field, value) != true)) {
+                    this.SteamId64Field = value;
+                    this.RaisePropertyChanged("SteamId64");
                 }
             }
         }
