@@ -14,7 +14,7 @@ namespace Keylol.Hubs
 {
     public interface ISteamLoginHubClient
     {
-        void NotifyCodeReceived(string tokenId);
+        void NotifyCodeReceived();
     }
 
     public class SteamLoginHub : Hub<ISteamLoginHubClient>

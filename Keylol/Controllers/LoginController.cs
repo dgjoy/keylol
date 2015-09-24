@@ -78,6 +78,33 @@ namespace Keylol.Controllers
             return BadRequest(ModelState);
         }
 
+        // Login using token
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Post(string steamLoginTokenId)
+        {
+            var token = await DbContext.SteamLoginTokens.FindAsync(steamLoginTokenId);
+
+            if (token == null)
+                return Unauthorized();
+            if (token.SteamId == null)
+                return Unauthorized();
+
+            var user = await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == token.SteamId);
+            if (user == null)
+                return Unauthorized();
+
+            await SignInManager.SignInAsync(user, true, true);
+
+            var loginLog = new LoginLog
+            {
+                Ip = OwinContext.Request.RemoteIpAddress,
+                User = user
+            };
+            DbContext.LoginLogs.Add(loginLog);
+            await DbContext.SaveChangesAsync();
+            return Created($"login/{loginLog.Id}", new LoginLogDTO(loginLog));
+        }
+
         // Logout
         public async Task<IHttpActionResult> Delete(string id)
         {

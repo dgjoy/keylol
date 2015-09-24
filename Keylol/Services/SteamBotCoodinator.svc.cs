@@ -186,7 +186,7 @@ namespace Keylol.Services
                 await dbContext.SaveChangesAsync();
                 GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
                     .Clients.Client(token.BrowserConnectionId)?
-                    .NotifyCodeReceived(token.Id);
+                    .NotifyCodeReceived();
                 return true;
             }
         }
