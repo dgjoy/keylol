@@ -94,6 +94,7 @@ namespace Keylol.Controllers
                 IdCode = vm.IdCode,
                 UserName = vm.UserName,
                 RegisterIp = OwinContext.Request.RemoteIpAddress,
+                AvatarImage = vm.AvatarImage,
                 SteamBindingTime = DateTime.Now,
                 SteamId = steamBindingToken.SteamId,
                 SteamBotId = steamBindingToken.BotId

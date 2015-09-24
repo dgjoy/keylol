@@ -305,9 +305,11 @@ namespace Keylol.SteamBot
 
             private void OnUpdateMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
             {
-                var sha1Managed = new SHA1Managed();
-                var hash = sha1Managed.ComputeHash(callback.Data);
-                sha1Managed.Clear();
+                byte[] hash;
+                using (var sha1 = SHA1.Create())
+                {
+                    hash = sha1.ComputeHash(callback.Data);
+                }
 
                 File.WriteAllBytes(Path.Combine(_botService._appDataFolder, $"{Id}.sfh"), hash);
                 // .sfh means Sentry File Hash

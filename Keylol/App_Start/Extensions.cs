@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -7,6 +8,11 @@ namespace Keylol
 {
     public static class Extensions
     {
+        public static long UnixTimestamp(this DateTime dateTime)
+        {
+            return (dateTime.ToUniversalTime().Ticks - 621355968000000000)/10000000;
+        }
+
         public static int ByteLength(this string str)
         {
             var s = 0;

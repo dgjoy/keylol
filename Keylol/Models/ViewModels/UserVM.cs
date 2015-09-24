@@ -13,6 +13,7 @@ namespace Keylol.Models.ViewModels
         [Required]
         public string Password { get; set; }
 
+        [Required(AllowEmptyStrings = true)]
         public string AvatarImage { get; set; }
 
         [Required]
