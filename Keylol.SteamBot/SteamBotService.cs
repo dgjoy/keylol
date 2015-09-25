@@ -6,16 +6,17 @@ using System.Net;
 using System.Security.Cryptography;
 using System.ServiceModel;
 using System.ServiceProcess;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using Keylol.SteamBot.ServiceReference;
 using SteamKit2;
+using Timer = System.Timers.Timer;
 
 namespace Keylol.SteamBot
 {
     public partial class SteamBotService : ServiceBase
     {
-        private readonly SteamBotCoodinatorClient _coodinator;
+        private SteamBotCoodinatorClient _coodinator;
         private Bot[] _bots;
 
         private readonly string _appDataFolder =
@@ -30,13 +31,24 @@ namespace Keylol.SteamBot
         public SteamBotService()
         {
             InitializeComponent();
-            _coodinator = new SteamBotCoodinatorClient(new InstanceContext(new SteamBotCoodinatorCallbackHandler(this)));
-            if (_coodinator.ClientCredentials != null)
-            {
-                _coodinator.ClientCredentials.UserName.UserName = "keylol-bot";
-                _coodinator.ClientCredentials.UserName.Password = "neLFDyJB8Vj2Xtsn2KMTUEFw";
-            }
             _healthReportTimer.Elapsed += async (sender, args) => await ReportBotHealthAsync();
+        }
+
+        private SteamBotCoodinatorClient CreateProxy()
+        {
+            var proxy = new SteamBotCoodinatorClient(new InstanceContext(new SteamBotCoodinatorCallbackHandler(this)));
+            if (proxy.ClientCredentials != null)
+            {
+                proxy.ClientCredentials.UserName.UserName = "keylol-bot";
+                proxy.ClientCredentials.UserName.Password = "neLFDyJB8Vj2Xtsn2KMTUEFw";
+            }
+            proxy.InnerChannel.Faulted += (sender, a) =>
+            {
+                WriteLog("Communication channel faulted. Recreating...", EventLogEntryType.Error);
+                OnStop();
+                OnStart(null);
+            };
+            return proxy;
         }
 
         private void WriteLog(string message, EventLogEntryType type = EventLogEntryType.Information)
@@ -77,11 +89,12 @@ namespace Keylol.SteamBot
             }
         }
 
-        protected override void OnStart(string[] args)
+        protected override async void OnStart(string[] args)
         {
-            Directory.CreateDirectory(_appDataFolder);
-            Task.Run(async () =>
+            try
             {
+                Directory.CreateDirectory(_appDataFolder);
+                _coodinator = CreateProxy();
                 WriteLog($"Coodinator endpoint: {_coodinator.Endpoint.Address}");
                 var cmServer = await _coodinator.GetCMServerAsync();
                 var parts = cmServer.Split(':');
@@ -91,16 +104,30 @@ namespace Keylol.SteamBot
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
                 _healthReportTimer.Start();
-            });
+            }
+            catch (CommunicationException)
+            {
+            }
         }
 
         protected override void OnStop()
         {
-            _healthReportTimer.Stop();
-            _coodinator.Close();
-            foreach (var bot in _bots)
+            if (_healthReportTimer.Enabled)
+                _healthReportTimer.Stop();
+
+            if (_coodinator.State == CommunicationState.Faulted)
+                _coodinator.Abort();
+            else
+                _coodinator.Close();
+
+            if (_bots != null)
             {
-                bot.Dispose();
+                foreach (var bot in _bots)
+                {
+                    bot.Dispose();
+                }
+                _bots = null;
+                Thread.Sleep(1000);
             }
         }
 

@@ -55,11 +55,7 @@ namespace Keylol.Services
 
             using (var dbContext = new KeylolDbContext())
             {
-                var number = 5;
-#if DEBUG
-                number = 1;
-#endif
-                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(number).ToListAsync();
+                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(5).ToListAsync();
                 foreach (var bot in bots)
                 {
                     bot.Online = false;
