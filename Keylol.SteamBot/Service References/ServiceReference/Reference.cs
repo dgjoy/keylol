@@ -231,6 +231,17 @@ namespace Keylol.SteamBot.ServiceReference {
         }
     }
     
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="StatusClaim", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts")]
+    public enum StatusClaim : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Normal = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Probationer = 1,
+    }
+    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="UserDTO", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
@@ -335,6 +346,9 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SteamIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SteamProfileNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UserNameField;
@@ -766,6 +780,19 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SteamProfileName {
+            get {
+                return this.SteamProfileNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SteamProfileNameField, value) != true)) {
+                    this.SteamProfileNameField = value;
+                    this.RaisePropertyChanged("SteamProfileName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string UserName {
             get {
                 return this.UserNameField;
@@ -897,17 +924,17 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
         System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusProbationer")]
-        void SetUserStatusProbationer(string steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus")]
+        void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusProbationer")]
-        System.Threading.Tasks.Task SetUserStatusProbationerAsync(string steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus")]
+        System.Threading.Tasks.Task SetUserStatusAsync(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusNormal")]
-        void SetUserStatusNormal(string steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserSteamProfileName")]
+        void SetUserSteamProfileName(string steamId, string name);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusNormal")]
-        System.Threading.Tasks.Task SetUserStatusNormalAsync(string steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserSteamProfileName")]
+        System.Threading.Tasks.Task SetUserSteamProfileNameAsync(string steamId, string name);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken")]
         void DeleteBindingToken(string botId, string steamId);
@@ -1003,20 +1030,20 @@ namespace Keylol.SteamBot.ServiceReference {
             return base.Channel.UpdateBotsAsync(vms);
         }
         
-        public void SetUserStatusProbationer(string steamId) {
-            base.Channel.SetUserStatusProbationer(steamId);
+        public void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status) {
+            base.Channel.SetUserStatus(steamId, status);
         }
         
-        public System.Threading.Tasks.Task SetUserStatusProbationerAsync(string steamId) {
-            return base.Channel.SetUserStatusProbationerAsync(steamId);
+        public System.Threading.Tasks.Task SetUserStatusAsync(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status) {
+            return base.Channel.SetUserStatusAsync(steamId, status);
         }
         
-        public void SetUserStatusNormal(string steamId) {
-            base.Channel.SetUserStatusNormal(steamId);
+        public void SetUserSteamProfileName(string steamId, string name) {
+            base.Channel.SetUserSteamProfileName(steamId, name);
         }
         
-        public System.Threading.Tasks.Task SetUserStatusNormalAsync(string steamId) {
-            return base.Channel.SetUserStatusNormalAsync(steamId);
+        public System.Threading.Tasks.Task SetUserSteamProfileNameAsync(string steamId, string name) {
+            return base.Channel.SetUserSteamProfileNameAsync(steamId, name);
         }
         
         public void DeleteBindingToken(string botId, string steamId) {

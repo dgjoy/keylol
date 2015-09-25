@@ -46,7 +46,8 @@
       <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
       <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels" />
-      <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" />
+      <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="ISteamBotCoodinator_AllocateBots_InputMessage">
@@ -58,11 +59,11 @@
   <wsdl:message name="ISteamBotCoodinator_UpdateBots_InputMessage">
     <wsdl:part name="parameters" element="tns:UpdateBots" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_SetUserStatusProbationer_InputMessage">
-    <wsdl:part name="parameters" element="tns:SetUserStatusProbationer" />
+  <wsdl:message name="ISteamBotCoodinator_SetUserStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetUserStatus" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_SetUserStatusNormal_InputMessage">
-    <wsdl:part name="parameters" element="tns:SetUserStatusNormal" />
+  <wsdl:message name="ISteamBotCoodinator_SetUserSteamProfileName_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetUserSteamProfileName" />
   </wsdl:message>
   <wsdl:message name="ISteamBotCoodinator_DeleteBindingToken_InputMessage">
     <wsdl:part name="parameters" element="tns:DeleteBindingToken" />
@@ -111,11 +112,11 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateBots">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots" message="tns:ISteamBotCoodinator_UpdateBots_InputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetUserStatusProbationer">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusProbationer" message="tns:ISteamBotCoodinator_SetUserStatusProbationer_InputMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetUserStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus" message="tns:ISteamBotCoodinator_SetUserStatus_InputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetUserStatusNormal">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatusNormal" message="tns:ISteamBotCoodinator_SetUserStatusNormal_InputMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetUserSteamProfileName">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/SetUserSteamProfileName" message="tns:ISteamBotCoodinator_SetUserSteamProfileName_InputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="DeleteBindingToken">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken" message="tns:ISteamBotCoodinator_DeleteBindingToken_InputMessage" />
@@ -165,14 +166,14 @@
         <soap12:body use="literal" />
       </wsdl:input>
     </wsdl:operation>
-    <wsdl:operation name="SetUserStatusProbationer">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/SetUserStatusProbationer" style="document" />
+    <wsdl:operation name="SetUserStatus">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/SetUserStatus" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
     </wsdl:operation>
-    <wsdl:operation name="SetUserStatusNormal">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/SetUserStatusNormal" style="document" />
+    <wsdl:operation name="SetUserSteamProfileName">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/SetUserSteamProfileName" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

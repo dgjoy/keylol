@@ -24,6 +24,7 @@ namespace Keylol.Models
         [MaxLength(128)]
         public string BrowserConnectionId { get; set; }
         
+        [MaxLength(64)]
         public string SteamId { get; set; }
 
         public static async Task<string> GenerateCodeAsync(KeylolDbContext dbContext)

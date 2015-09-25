@@ -6,6 +6,7 @@ using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Threading.Tasks;
 using DevTrends.WCFDataAnnotations;
 using Keylol.DAL;
@@ -109,7 +110,7 @@ namespace Keylol.Services
             }
         }
 
-        public async Task SetUserStatusProbationer(string steamId)
+        public async Task SetUserStatus(string steamId, Contracts.StatusClaim status)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -117,20 +118,29 @@ namespace Keylol.Services
                 if (user != null)
                 {
                     var userManager = KeylolUserManager.Create(dbContext);
-                    await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                    switch (status)
+                    {
+                        case Contracts.StatusClaim.Normal:
+                            await userManager.RemoveStatusClaimAsync(user.Id);
+                            break;
+
+                        case Contracts.StatusClaim.Probationer:
+                            await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                            break;
+                    }
                 }
             }
         }
 
-        public async Task SetUserStatusNormal(string steamId)
+        public async Task SetUserSteamProfileName(string steamId, string name)
         {
             using (var dbContext = new KeylolDbContext())
             {
                 var user = await dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamId);
                 if (user != null)
                 {
-                    var userManager = KeylolUserManager.Create(dbContext);
-                    await userManager.RemoveStatusClaimAsync(user.Id);
+                    user.SteamProfileName = name;
+                    await dbContext.SaveChangesAsync();
                 }
             }
         }

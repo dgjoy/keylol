@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,10 @@ namespace Keylol.Services.Contracts
         Task UpdateBots(IList<SteamBotVM> vms);
 
         [OperationContract(IsOneWay = true)]
-        Task SetUserStatusProbationer(string steamId);
+        Task SetUserStatus(string steamId, Contracts.StatusClaim status);
 
         [OperationContract(IsOneWay = true)]
-        Task SetUserStatusNormal(string steamId);
+        Task SetUserSteamProfileName(string steamId, string name);
 
         [OperationContract(IsOneWay = true)]
         Task DeleteBindingToken(string botId, string steamId);
@@ -51,5 +52,14 @@ namespace Keylol.Services.Contracts
     {
         [OperationContract(IsOneWay = true)]
         void RemoveSteamFriend(string botId, string steamId);
+    }
+
+    [DataContract]
+    public enum StatusClaim
+    {
+        [EnumMember]
+        Normal,
+        [EnumMember]
+        Probationer
     }
 }

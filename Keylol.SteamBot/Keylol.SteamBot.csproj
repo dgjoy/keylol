@@ -24,7 +24,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>10</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -132,6 +132,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator1.wsdl" />
+    <None Include="Service References\ServiceReference\SteamBotCoodinator1.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator4.xsd">
       <SubType>Designer</SubType>
     </None>

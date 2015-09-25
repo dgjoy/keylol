@@ -102,6 +102,7 @@ namespace Keylol.Controllers
                 AvatarImage = vm.AvatarImage,
                 SteamBindingTime = DateTime.Now,
                 SteamId = steamBindingToken.SteamId,
+                SteamProfileName = vm.SteamProfileName,
                 SteamBotId = steamBindingToken.BotId
             };
 

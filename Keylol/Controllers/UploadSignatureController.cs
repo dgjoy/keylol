@@ -26,7 +26,7 @@ namespace Keylol.Controllers
                 return BadRequest();
 
             var range = ((string) options["content-length-range"]).Split(',').Select(int.Parse).ToList();
-            if (range[1] > 10*1024*1024)
+            if (range[1] > 5*1024*1024) // 5 MB
                 return BadRequest();
             
             byte[] hash;

@@ -19,6 +19,9 @@ namespace Keylol.Models.ViewModels
         [Required]
         public string SteamBindingTokenId { get; set; }
 
+        [Required(AllowEmptyStrings = true)]
+        public string SteamProfileName { get; set; }
+
         [Required]
         public string GeetestChallenge { get; set; }
 

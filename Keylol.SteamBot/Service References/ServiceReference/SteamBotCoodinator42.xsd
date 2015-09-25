@@ -51,6 +51,7 @@
       <xs:element minOccurs="0" name="StatusClaim" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamBot" nillable="true" type="tns:SteamBotDTO" />
       <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamProfileName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>

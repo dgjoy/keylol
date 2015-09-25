@@ -153,6 +153,22 @@ namespace Keylol.SteamBot
             _healthReportTimer.Start();
         }
 
+        private async Task ReportBotHealthAsync(Bot bot)
+        {
+            var online = bot.State == Bot.BotState.LoggedOnOnline;
+            var vm = new SteamBotVM
+            {
+                Id = bot.Id,
+                Online = online
+            };
+            if (online)
+            {
+                vm.FriendCount = bot.FriendCount;
+                vm.SteamId = bot.SteamId;
+            }
+            await _coodinator.UpdateBotsAsync(new[] {vm});
+        }
+
         public void TestStartupAndStop(string[] args)
         {
             Console.WriteLine("Running in console mode. Press Ctrl-M to stop.");
@@ -221,7 +237,20 @@ namespace Keylol.SteamBot
 
             public string SteamId => _steamUser.SteamID.Render(true);
 
-            public int FriendCount => _steamFriends.GetFriendCount();
+            public int FriendCount
+            {
+                get
+                {
+                    var total = _steamFriends.GetFriendCount();
+                    var count = 0;
+                    for (var i = 0; i < total; i++)
+                    {
+                        if (_steamFriends.GetFriendByIndex(i).IsIndividualAccount)
+                            count++;
+                    }
+                    return count;
+                }
+            }
 
             public Bot(SteamBotService botService, SteamBotDTO botCredentials)
             {
@@ -368,11 +397,18 @@ namespace Keylol.SteamBot
 
             private async void OnPersonaStateChanged(SteamFriends.PersonaStateCallback callback)
             {
-                if (callback.FriendID == _steamUser.SteamID && callback.State == EPersonaState.Online)
+                if (!callback.FriendID.IsIndividualAccount) return;
+                if (callback.FriendID == _steamUser.SteamID)
                 {
+                    if (callback.State != EPersonaState.Online) return;
                     State = BotState.LoggedOnOnline;
                     _botService.WriteLog($"Bot {Id} successfully logged on.", EventLogEntryType.SuccessAudit);
-                    await _botService.ReportBotHealthAsync();
+                    await _botService.ReportBotHealthAsync(this);
+                }
+                else
+                {
+                    await _botService._coodinator.SetUserSteamProfileNameAsync(callback.FriendID.Render(true),
+                        callback.Name);
                 }
             }
 
@@ -381,7 +417,10 @@ namespace Keylol.SteamBot
                 if (!callback.Incremental)
                 {
                     var friends =
-                        callback.FriendList.Where(friend => friend.Relationship == EFriendRelationship.Friend).ToList();
+                        callback.FriendList.Where(
+                            friend =>
+                                friend.SteamID.IsIndividualAccount && friend.Relationship == EFriendRelationship.Friend)
+                            .ToList();
                     var users =
                         await
                             _botService._coodinator.GetUsersBySteamIdsAsync(
@@ -440,7 +479,8 @@ namespace Keylol.SteamBot
                                 {
                                     _steamFriends.AddFriend(friend.SteamID);
                                     await
-                                        _botService._coodinator.SetUserStatusNormalAsync(friend.SteamID.Render(true));
+                                        _botService._coodinator.SetUserStatusAsync(friend.SteamID.Render(true),
+                                            StatusClaim.Normal);
                                 }
                                 else
                                 {
@@ -460,7 +500,9 @@ namespace Keylol.SteamBot
                             }
                             else if (user.SteamBot.Id == Id)
                             {
-                                await _botService._coodinator.SetUserStatusProbationerAsync(friend.SteamID.Render(true));
+                                await
+                                    _botService._coodinator.SetUserStatusAsync(friend.SteamID.Render(true),
+                                        StatusClaim.Probationer);
                             }
                             break;
 
@@ -469,6 +511,7 @@ namespace Keylol.SteamBot
                             break;
                     }
                 }
+                await _botService.ReportBotHealthAsync(this);
             }
 
             private async void OnFriendMessageReceived(SteamFriends.FriendMsgCallback callback)

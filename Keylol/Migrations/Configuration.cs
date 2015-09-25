@@ -85,6 +85,7 @@ namespace Keylol.Migrations
                     Category = ArticleTypeCategory.Resource
                 });
 
+#if !DEBUG
             var credentials =
                 @"keylol_bot_1 YrXF9LGfHkTJYW8HE4GE8YpJ|keylol_bot_2 NWG8SUTuXKGBkK7g4dXHCWdU|keylol_bot_3 EXc897fp5cg2akUpzazwRCk2|keylol_bot_4 LNFLNCvmSmr2EJHqRNHjpNVt|keylol_bot_5 AVw9sFHWQuZ9jx4xc8cwA5ny"
                     .Split('|').Select(s =>
@@ -102,9 +103,11 @@ namespace Keylol.Migrations
                 context.SteamBots.AddOrUpdate(bot => bot.SteamUserName, new Models.SteamBot
                 {
                     SteamUserName = credential.UserName,
-                    SteamPassword = credential.Password
+                    SteamPassword = credential.Password,
+                    FriendUpperLimit = 200
                 });
             }
+#endif
 
             //            var hasher = new PasswordHasher();
             //            var profilePoint = new ProfilePoint

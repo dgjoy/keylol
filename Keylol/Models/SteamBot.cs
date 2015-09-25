@@ -17,7 +17,8 @@ namespace Keylol.Models
         [Required]
         [MaxLength(64)]
         public string SteamPassword { get; set; }
-
+        
+        [MaxLength(64)]
         public string SteamId { get; set; }
 
         public int FriendCount { get; set; } = 0;
@@ -26,6 +27,7 @@ namespace Keylol.Models
 
         public bool Online { get; set; } = false;
 
+        [MaxLength(128)]
         public string SessionId { get; set; }
 
         public virtual ICollection<SteamBindingToken> BindingTokens { get; set; }

@@ -40,10 +40,14 @@ namespace Keylol.Models
         public string AvatarImage { get; set; } = string.Empty;
 
         public override bool LockoutEnabled { get; set; } = true;
-        
+
         [Index]
         [MaxLength(64)]
         public string SteamId { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(64)]
+        public string SteamProfileName { get; set; } = string.Empty;
 
         public DateTime SteamBindingTime { get; set; }
 
@@ -74,7 +78,7 @@ namespace Keylol.Models
         public bool MessageNotifyOnEditorRecommended { get; set; } = true;
         public bool MessageNotifyOnArticleLiked { get; set; } = true;
         public bool MessageNotifyOnCommentLiked { get; set; } = true;
-        
+
         public virtual ProfilePoint ProfilePoint { get; set; }
         public string ProfilePointId => Id;
         public virtual ICollection<Point> SubscribedPoints { get; set; }

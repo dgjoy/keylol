@@ -221,6 +221,10 @@
     <Compile Include="Migrations\201509231640504_UserSteamIdIndex.Designer.cs">
       <DependentUpon>201509231640504_UserSteamIdIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509250908099_SteamProfileName.cs" />
+    <Compile Include="Migrations\201509250908099_SteamProfileName.Designer.cs">
+      <DependentUpon>201509250908099_SteamProfileName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\DTO\SteamLoginTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBindingTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBotDTO.cs" />
@@ -285,6 +289,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509231640504_UserSteamIdIndex.resx">
       <DependentUpon>201509231640504_UserSteamIdIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509250908099_SteamProfileName.resx">
+      <DependentUpon>201509250908099_SteamProfileName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

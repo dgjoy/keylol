@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using SteamKit2;
 
 namespace Keylol.Models.DTO
 {
@@ -20,6 +21,10 @@ namespace Keylol.Models.DTO
             AvatarImage = user.AvatarImage;
             LockoutEnabled = user.LockoutEnabled;
             SteamId = user.SteamId;
+            var steamId = new SteamID();
+            steamId.SetFromSteam3String(SteamId);
+            SteamId64 = steamId.ConvertToUInt64().ToString();
+            SteamProfileName = user.SteamProfileName;
 
             // Ignore claims
 
@@ -67,6 +72,10 @@ namespace Keylol.Models.DTO
         public bool LockoutEnabled { get; set; }
         [DataMember]
         public string SteamId { get; set; }
+        [DataMember]
+        public string SteamId64 { get; set; }
+        [DataMember]
+        public string SteamProfileName { get; set; }
 
         [DataMember]
         public string StatusClaim { get; set; }
