@@ -95,6 +95,7 @@ namespace Keylol.SteamBot
             {
                 Directory.CreateDirectory(_appDataFolder);
                 _coodinator = CreateProxy();
+                WriteLog("Channel created.");
                 WriteLog($"Coodinator endpoint: {_coodinator.Endpoint.Address}");
                 var cmServer = await _coodinator.GetCMServerAsync();
                 var parts = cmServer.Split(':');
@@ -104,6 +105,7 @@ namespace Keylol.SteamBot
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
                 _healthReportTimer.Start();
+                WriteLog("Timer started.");
             }
             catch (CommunicationException)
             {
@@ -113,12 +115,17 @@ namespace Keylol.SteamBot
         protected override void OnStop()
         {
             if (_healthReportTimer.Enabled)
+            {
                 _healthReportTimer.Stop();
+                WriteLog("Timer stopped.");
+            }
 
             if (_coodinator.State == CommunicationState.Faulted)
                 _coodinator.Abort();
             else
                 _coodinator.Close();
+
+            WriteLog("Channel destroyed.");
 
             if (_bots != null)
             {
@@ -133,6 +140,7 @@ namespace Keylol.SteamBot
 
         private async Task ReportBotHealthAsync()
         {
+            WriteLog("Reporting health...");
             await _coodinator.UpdateBotsAsync(_bots.Select(bot =>
             {
                 var online = bot.State == Bot.BotState.LoggedOnOnline;
@@ -151,6 +159,7 @@ namespace Keylol.SteamBot
             if (_healthReportTimer.Enabled)
                 _healthReportTimer.Stop();
             _healthReportTimer.Start();
+            WriteLog("Timer restarted.");
         }
 
         private async Task ReportBotHealthAsync(Bot bot)
