@@ -8,13 +8,12 @@ namespace Keylol.Models
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public DateTime Time { get; set; } = DateTime.Now;
+        public bool ReadByTargetUser { get; set; } = false;
         
         [Required]
         public string OperatorId { get; set; }
 
         public virtual KeylolUser Operator { get; set; }
-
-        public virtual ICollection<LikeMessage> RelatedLikeMessages { get; set; }
     }
 
     public class ArticleLike : Like

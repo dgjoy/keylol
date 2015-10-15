@@ -7,13 +7,13 @@ namespace Keylol.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Initial : IMigrationMetadata
+    public sealed partial class PointsFullTextIndex : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(PointsFullTextIndex));
         
         string IMigrationMetadata.Id
         {
-            get { return "201509211049353_Initial"; }
+            get { return "201510150709088_PointsFullTextIndex"; }
         }
         
         string IMigrationMetadata.Source

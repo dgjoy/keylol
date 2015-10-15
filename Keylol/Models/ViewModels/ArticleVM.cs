@@ -22,7 +22,5 @@ namespace Keylol.Models.ViewModels
         public string VoteForPointId { get; set; }
 
         public VoteType? Vote { get; set; }
-
-        public string RecommendedArticleId { get; set; }
     }
 }

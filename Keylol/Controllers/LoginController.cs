@@ -13,15 +13,6 @@ namespace Keylol.Controllers
     [Authorize]
     public class LoginController : KeylolApiController
     {
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
-        public async Task<IHttpActionResult> Get(string id)
-        {
-            var loginLog = await DbContext.LoginLogs.FindAsync(id);
-            if (loginLog == null)
-                return NotFound();
-            return Ok(new LoginLogDTO(loginLog));
-        }
-
         // Login
         [AllowAnonymous]
         public async Task<IHttpActionResult> Post(LoginVM vm)
@@ -106,21 +97,8 @@ namespace Keylol.Controllers
         }
 
         // Logout
-        public async Task<IHttpActionResult> Delete(string id)
+        public IHttpActionResult Delete()
         {
-            if (id == "current")
-            {
-                AuthenticationManager.SignOut();
-                return Ok();
-            }
-
-            var loginLog = await DbContext.LoginLogs.FindAsync(id);
-            if (loginLog == null)
-                return NotFound();
-
-            if (User.Identity.GetUserId() != loginLog.User.Id)
-                return Unauthorized();
-
             AuthenticationManager.SignOut();
             return Ok();
         }

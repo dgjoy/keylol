@@ -14,8 +14,8 @@ namespace Keylol.Models
 
         public DateTime PublishTime { get; set; } = DateTime.Now;
 
-        public bool Archived { get; set; } = false;
-        
+        public bool ReadByArticleAuthor { get; set; } = false;
+
         [Required]
         public string CommentatorId { get; set; }
         public virtual KeylolUser Commentator { get; set; }
@@ -25,11 +25,7 @@ namespace Keylol.Models
         public virtual Article Article { get; set; }
 
         public virtual ICollection<CommentLike> Likes { get; set; }
-        public virtual ICollection<Comment> ReplyToComments { get; set; }
-        public virtual ICollection<Comment> RepliedByComments { get; set; }
-        public virtual ICollection<CommentArchiveMessage> RelatedArchiveMessages { get; set; }
-        public virtual ICollection<CommentLikeMessage> RelatedLikeMessages { get; set; }
-        public virtual ICollection<ReplyMessage> RelatedReplyMessagesAsSource { get; set; }
-        public virtual ICollection<CommentReplyMessage> RelatedReplyMessagesAsTarget { get; set; }
+        public virtual ICollection<CommentReply> CommentRepliesAsComment { get; set; }
+        public virtual ICollection<CommentReply> CommentRepliesAsReply { get; set; }
     }
 }

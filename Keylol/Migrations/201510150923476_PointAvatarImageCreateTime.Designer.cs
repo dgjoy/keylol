@@ -7,13 +7,13 @@ namespace Keylol.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class RemoveUnusedProperties : IMigrationMetadata
+    public sealed partial class PointAvatarImageCreateTime : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(RemoveUnusedProperties));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(PointAvatarImageCreateTime));
         
         string IMigrationMetadata.Id
         {
-            get { return "201509231344296_RemoveUnusedProperties"; }
+            get { return "201510150923476_PointAvatarImageCreateTime"; }
         }
         
         string IMigrationMetadata.Source

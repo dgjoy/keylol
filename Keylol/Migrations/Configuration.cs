@@ -19,70 +19,43 @@ namespace Keylol.Migrations
             context.ArticleTypes.AddOrUpdate(type => type.Name,
                 new ArticleType()
                 {
-                    Name = "评测",
-                    Category = ArticleTypeCategory.Topic,
+                    Name = "评",
+                    Description = "感悟、心得、体验、报告",
                     AllowVote = true
                 },
                 new ArticleType()
                 {
-                    Name = "感悟",
-                    Category = ArticleTypeCategory.Topic,
-                    AllowVote = true
+                    Name = "研",
+                    Description = "攻略、技术、成就、教程"
                 },
                 new ArticleType()
                 {
-                    Name = "研讨",
-                    Category = ArticleTypeCategory.Topic
+                    Name = "讯",
+                    Description = "新闻、购物、更新、竞技"
                 },
                 new ArticleType()
                 {
-                    Name = "攻略",
-                    Category = ArticleTypeCategory.Topic
+                    Name = "谈",
+                    Description = "聊天、灌水、吐槽、杂文"
                 },
                 new ArticleType()
                 {
-                    Name = "新闻",
-                    Category = ArticleTypeCategory.Aging
-                },
-                new ArticleType()
+                    Name = "档",
+                    Description = "声画、模组、插件、汉化"
+                });
+
+            context.NormalPoints.AddOrUpdate(point => point.IdCode,
+                new NormalPoint
                 {
-                    Name = "购物",
-                    Category = ArticleTypeCategory.Aging
-                },
-                new ArticleType()
-                {
-                    Name = "杂谈",
-                    Category = ArticleTypeCategory.Personal
-                },
-                new ArticleType()
-                {
-                    Name = "原声",
-                    Category = ArticleTypeCategory.Resource
-                },
-                new ArticleType()
-                {
-                    Name = "原画",
-                    Category = ArticleTypeCategory.Resource
-                },
-                new ArticleType()
-                {
-                    Name = "资料",
-                    Category = ArticleTypeCategory.Resource
-                },
-                new ArticleType()
-                {
-                    Name = "汉化",
-                    Category = ArticleTypeCategory.Resource
-                },
-                new ArticleType()
-                {
-                    Name = "模组",
-                    Category = ArticleTypeCategory.Resource
-                },
-                new ArticleType()
-                {
-                    Name = "插件",
-                    Category = ArticleTypeCategory.Resource
+                    AvatarImage = "d6fa208df2f1a15d2d14324cd1f3004c.jpg",
+                    ChineseName = "军团要塞2",
+                    EnglishName = "Team Fortress 2",
+                    ChineseAliases = "絕地要塞2",
+                    EnglishAliases = "tf2,tf,tfc",
+                    IdCode = "TMFT2",
+                    Type = NormalPointType.Game,
+                    StoreLink = "http://store.steampowered.com/app/440/",
+                    BackgroundImage = "d6fa208df2f1a15d2d14324cd1f3004c.jpg"
                 });
 
 #if !DEBUG

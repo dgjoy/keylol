@@ -7,13 +7,13 @@ namespace Keylol.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class UserSteamIdIndex : IMigrationMetadata
+    public sealed partial class ChineseAliases : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(UserSteamIdIndex));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ChineseAliases));
         
         string IMigrationMetadata.Id
         {
-            get { return "201509231640504_UserSteamIdIndex"; }
+            get { return "201510150622331_ChineseAliases"; }
         }
         
         string IMigrationMetadata.Source

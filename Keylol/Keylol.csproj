@@ -195,7 +195,8 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.SignalR.cs" />
     <Compile Include="App_Start\Startup.WebAPI.cs" />
-    <Compile Include="Controllers\PointController.cs" />
+    <Compile Include="Controllers\ArticleTypeController.cs" />
+    <Compile Include="Controllers\NormalPointController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -205,32 +206,33 @@
     <Compile Include="Hubs\DebugInfoHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
     <Compile Include="Hubs\SteamBindingHub.cs" />
-    <Compile Include="Migrations\201509211049353_Initial.cs" />
-    <Compile Include="Migrations\201509211049353_Initial.Designer.cs">
-      <DependentUpon>201509211049353_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201510111634394_Initial.cs" />
+    <Compile Include="Migrations\201510111634394_Initial.Designer.cs">
+      <DependentUpon>201510111634394_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201509231344296_RemoveUnusedProperties.cs" />
-    <Compile Include="Migrations\201509231344296_RemoveUnusedProperties.Designer.cs">
-      <DependentUpon>201509231344296_RemoveUnusedProperties.cs</DependentUpon>
+    <Compile Include="Migrations\201510150622331_ChineseAliases.cs" />
+    <Compile Include="Migrations\201510150622331_ChineseAliases.Designer.cs">
+      <DependentUpon>201510150622331_ChineseAliases.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201509231611414_ExposeForeignKeys.cs" />
-    <Compile Include="Migrations\201509231611414_ExposeForeignKeys.Designer.cs">
-      <DependentUpon>201509231611414_ExposeForeignKeys.cs</DependentUpon>
+    <Compile Include="Migrations\201510150709088_PointsFullTextIndex.cs" />
+    <Compile Include="Migrations\201510150709088_PointsFullTextIndex.Designer.cs">
+      <DependentUpon>201510150709088_PointsFullTextIndex.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201509231640504_UserSteamIdIndex.cs" />
-    <Compile Include="Migrations\201509231640504_UserSteamIdIndex.Designer.cs">
-      <DependentUpon>201509231640504_UserSteamIdIndex.cs</DependentUpon>
+    <Compile Include="Migrations\201510150923476_PointAvatarImageCreateTime.cs" />
+    <Compile Include="Migrations\201510150923476_PointAvatarImageCreateTime.Designer.cs">
+      <DependentUpon>201510150923476_PointAvatarImageCreateTime.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201509250908099_SteamProfileName.cs" />
-    <Compile Include="Migrations\201509250908099_SteamProfileName.Designer.cs">
-      <DependentUpon>201509250908099_SteamProfileName.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Models\CommentReply.cs" />
+    <Compile Include="Models\DTO\ArticleTypeDTO.cs" />
+    <Compile Include="Models\DTO\CommentDTO.cs" />
+    <Compile Include="Models\DTO\NormalPointDTO.cs" />
     <Compile Include="Models\DTO\SteamLoginTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBindingTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBotDTO.cs" />
     <Compile Include="Models\SteamBindingToken.cs" />
     <Compile Include="Models\SteamBot.cs" />
     <Compile Include="Models\SteamLoginToken.cs" />
+    <Compile Include="Models\ViewModels\CommentVM.cs" />
     <Compile Include="Models\ViewModels\SteamBotVM.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
@@ -242,7 +244,6 @@
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\Like.cs" />
-    <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Point.cs" />
     <Compile Include="Models\ViewModels\ArticleVM.cs" />
     <Compile Include="Models\ViewModels\LoginVM.cs" />
@@ -278,20 +279,17 @@
     <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201509211049353_Initial.resx">
-      <DependentUpon>201509211049353_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201510111634394_Initial.resx">
+      <DependentUpon>201510111634394_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201509231344296_RemoveUnusedProperties.resx">
-      <DependentUpon>201509231344296_RemoveUnusedProperties.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201510150622331_ChineseAliases.resx">
+      <DependentUpon>201510150622331_ChineseAliases.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201509231611414_ExposeForeignKeys.resx">
-      <DependentUpon>201509231611414_ExposeForeignKeys.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201510150709088_PointsFullTextIndex.resx">
+      <DependentUpon>201510150709088_PointsFullTextIndex.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201509231640504_UserSteamIdIndex.resx">
-      <DependentUpon>201509231640504_UserSteamIdIndex.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201509250908099_SteamProfileName.resx">
-      <DependentUpon>201509250908099_SteamProfileName.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201510150923476_PointAvatarImageCreateTime.resx">
+      <DependentUpon>201510150923476_PointAvatarImageCreateTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

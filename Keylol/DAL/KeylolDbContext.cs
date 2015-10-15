@@ -35,35 +35,10 @@ namespace Keylol.DAL
         public DbSet<ArticleType> ArticleTypes { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<CommentReply> CommentReplies { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<ArticleLike> ArticleLikes { get; set; }
         public DbSet<CommentLike> CommentLikes { get; set; }
-        public DbSet<Message> Messages { get; set; }
-        public DbSet<UserMessage> UserMessages { get; set; }
-        public DbSet<OfficialMessage> OfficialMessages { get; set; }
-        public DbSet<OfficialMessageWithSender> OfficialMessagesWithSender { get; set; }
-        public DbSet<CorrectionalServiceMessage> CorrectionalServiceMessages { get; set; }
-        public DbSet<EditingMessage> EditingMessages { get; set; }
-        public DbSet<SocialMessage> SocialMessages { get; set; }
-        public DbSet<SystemMessage> SystemMessages { get; set; }
-        public DbSet<WarningMessage> WarningMessages { get; set; }
-        public DbSet<RejectionMessage> RejectionMessages { get; set; }
-        public DbSet<ArchiveMessage> ArchiveMessages { get; set; }
-        public DbSet<ArticleArchiveMessage> ArticleArchiveMessages { get; set; }
-        public DbSet<CommentArchiveMessage> CommentArchiveMessages { get; set; }
-        public DbSet<MuteMessage> MuteMessages { get; set; }
-        public DbSet<RecommendationMessage> RecommendationMessages { get; set; }
-        public DbSet<PointRecommendationMessage> PointRecommendationMessages { get; set; }
-        public DbSet<GlobalRecommendationMessage> GlobalRecommendationMessages { get; set; }
-        public DbSet<EditMessage> EditMessages { get; set; }
-        public DbSet<LikeMessage> LikeMessages { get; set; }
-        public DbSet<ArticleLikeMessage> ArticleLikeMessages { get; set; }
-        public DbSet<CommentLikeMessage> CommentLikeMessages { get; set; }
-        public DbSet<ReplyMessage> ReplayMessages { get; set; }
-        public DbSet<ArticleReplyMessage> ArticleReplyMessages { get; set; }
-        public DbSet<CommentReplyMessage> CommentReplyMessages { get; set; }
-        public DbSet<AnnouncementMessage> AnnouncementMessages { get; set; }
-        public DbSet<AdvertisementMessage> AdvertisementMessages { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<LoginLog> LoginLogs { get; set; }
         public DbSet<EditLog> EditLogs { get; set; }
@@ -102,24 +77,16 @@ namespace Keylol.DAL
                 .Map(t => t.MapLeftKey("ToPoint_Id")
                     .MapRightKey("ByPoint_Id")
                     .ToTable("PointAssociations"));
-            modelBuilder.Entity<Entry>()
-                .HasMany(entry => entry.AttachedPoints)
-                .WithMany(point => point.Entries)
-                .Map(t => t.ToTable("EntryPointPushes"));
-            modelBuilder.Entity<NormalPoint>()
-                .HasMany(point => point.RecommendedArticles)
-                .WithMany(article => article.RecommendedByPoints)
-                .Map(t => t.ToTable("PointArticleRecommendation"));
+            modelBuilder.Entity<Article>()
+                .HasMany(article => article.AttachedPoints)
+                .WithMany(point => point.Articles)
+                .Map(t => t.ToTable("ArticlePointPushes"));
             modelBuilder.Entity<Comment>()
-                .HasMany(comment => comment.ReplyToComments)
-                .WithMany(comment => comment.RepliedByComments)
-                .Map(t => t.MapLeftKey("ByComment_Id")
-                    .MapRightKey("ToComment_Id")
-                    .ToTable("CommentReplies"));
-            modelBuilder.Entity<LikeMessage>()
-                .HasMany(message => message.Likes)
-                .WithMany(like => like.RelatedLikeMessages)
-                .Map(t => t.ToTable("LikeMessagePayload"));
+                .HasMany(comment => comment.CommentRepliesAsComment)
+                .WithRequired(reply => reply.Comment);
+            modelBuilder.Entity<Comment>()
+                .HasMany(comment => comment.CommentRepliesAsReply)
+                .WithRequired(reply => reply.Reply);
         }
 
         // Ignore validation error on unmodified properties

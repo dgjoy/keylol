@@ -7,13 +7,13 @@ namespace Keylol.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class ExposeForeignKeys : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ExposeForeignKeys));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201509231611414_ExposeForeignKeys"; }
+            get { return "201510111634394_Initial"; }
         }
         
         string IMigrationMetadata.Source

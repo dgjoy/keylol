@@ -12,7 +12,6 @@ namespace Keylol.Controllers
     [Authorize]
     public class ArticleController : KeylolApiController
     {
-        [AllowAnonymous]
         public async Task<IHttpActionResult> Get(string id)
         {
             var article = await DbContext.Articles.FindAsync(id);
@@ -24,9 +23,7 @@ namespace Keylol.Controllers
             };
             return Ok(articleDTO);
         }
-
-        [AllowAnonymous]
-        [Route("article/{authorIdCode}/{sequenceNumberForAuthor}")]
+        
         public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
             var article =
@@ -78,7 +75,7 @@ namespace Keylol.Controllers
                     ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
                     return BadRequest(ModelState);
                 }
-                article.VoteForPoint = voteForPoint;
+                article.VoteForPointId = voteForPoint.Id;
                 article.Vote = vm.Vote;
             }
 
@@ -87,7 +84,6 @@ namespace Keylol.Controllers
             article.Content = vm.Content;
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
-            article.RecommendedArticle = await DbContext.Articles.FindAsync(vm.RecommendedArticleId);
             article.Principal = (await UserManager.FindByIdAsync(User.Identity.GetUserId())).ProfilePoint;
             article.SequenceNumberForAuthor =
                 (await
@@ -114,7 +110,9 @@ namespace Keylol.Controllers
             var article = await DbContext.Articles.FindAsync(id);
             if (article == null)
                 return NotFound();
-            if (article.Principal.UserId != User.Identity.GetUserId())
+
+            var editorId = User.Identity.GetUserId();
+            if (article.PrincipalId != editorId)
                 return Unauthorized();
 
             var type = await DbContext.ArticleTypes.FindAsync(vm.TypeId);
@@ -137,16 +135,22 @@ namespace Keylol.Controllers
                     ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
                     return BadRequest(ModelState);
                 }
-                article.VoteForPoint = voteForPoint;
+                article.VoteForPointId = voteForPoint.Id;
                 article.Vote = vm.Vote;
             }
 
+            DbContext.EditLogs.Add(new EditLog
+            {
+                ArticleId = article.Id,
+                EditorId = editorId,
+                OldContent = article.Content,
+                OldTitle = article.Title
+            });
             article.Type = type;
             article.Title = vm.Title;
             article.Content = vm.Content;
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
-            article.RecommendedArticle = await DbContext.Articles.FindAsync(vm.RecommendedArticleId);
             await DbContext.SaveChangesAsync();
             return Ok();
         }

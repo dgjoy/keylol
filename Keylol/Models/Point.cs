@@ -13,12 +13,6 @@ namespace Keylol.Models
         Platform
     }
 
-    public enum PreferedNameType
-    {
-        Chinese,
-        English
-    }
-
     public abstract class Point
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -34,6 +28,10 @@ namespace Keylol.Models
     {
         public NormalPointType Type { get; set; }
 
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(64)]
+        public string AvatarImage { get; set; } = string.Empty;
+
         [Required]
         [Index(IsUnique = true)]
         [StringLength(5, MinimumLength = 5)]
@@ -47,22 +45,24 @@ namespace Keylol.Models
         [MaxLength(150)]
         public string EnglishName { get; set; }
 
-        public PreferedNameType PreferedName { get; set; }
-
         [Required(AllowEmptyStrings = true)]
         [MaxLength(32)]
-        public string Aliases { get; set; } = string.Empty; // Comma separated list
+        public string EnglishAliases { get; set; } = string.Empty; // Comma separated list
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(64)]
+        public string ChineseAliases { get; set; } = string.Empty; // Comma separated list
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(512)]
         public string StoreLink { get; set; } = string.Empty;
 
+        public DateTime CreateTime { get; set; } = DateTime.Now;
+
         public virtual ICollection<KeylolUser> Staffs { get; set; }
         public virtual ICollection<NormalPoint> AssociatedToPoints { get; set; }
         public virtual ICollection<NormalPoint> AssociatedByPoints { get; set; }
-        public virtual ICollection<Entry> Entries { get; set; }
-        public virtual ICollection<Article> RecommendedArticles { get; set; }
-        public virtual ICollection<PointRecommendationMessage> RelatedRecommendationMessages { get; set; }
+        public virtual ICollection<Article> Articles { get; set; }
         public virtual ICollection<Article> VoteByArticles { get; set; }
     }
 
