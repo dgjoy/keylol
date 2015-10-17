@@ -23,7 +23,7 @@ namespace Keylol.Controllers
             };
             return Ok(articleDTO);
         }
-        
+
         public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
             var article =
@@ -39,6 +39,17 @@ namespace Keylol.Controllers
                 AuthorIdCode = authorIdCode
             };
             return Ok(articleDTO);
+        }
+
+        public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
+        {
+            return Ok((await DbContext.Articles.SqlQuery(@"SELECT * FROM [dbo].[Entries] AS [t1] INNER JOIN (
+	                SELECT * FROM CONTAINSTABLE([dbo].[Entries], ([Title], [Content]), {0})
+	            ) AS [t2] ON [t1].[Id] = [t2].[KEY]
+	            ORDER BY [t2].[RANK] DESC
+	            OFFSET ({1}) ROWS FETCH NEXT ({2}) ROWS ONLY",
+                $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync()).Select(
+                    article => new ArticleDTO(article) {AuthorIdCode = article.Principal.User.IdCode}));
         }
 
         [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]

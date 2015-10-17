@@ -13,20 +13,9 @@ namespace Keylol.Controllers
     [Authorize]
     public class UserController : KeylolApiController
     {
-        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
+        private async Task<UserDTO> CreateUserDTOAsync(KeylolUser user, bool includeProfilePointBackgroundImage = false,
             bool includeClaims = false, bool includeSteamBot = false)
         {
-            var visitorId = User.Identity.GetUserId();
-            var staffClaim = await UserManager.GetStaffClaimAsync(visitorId);
-            if (staffClaim != StaffClaim.Operator)
-            {
-                if (visitorId != id)
-                    return Unauthorized();
-            }
-            var user = await UserManager.FindByIdAsync(id);
-            if (user == null)
-                return NotFound();
-
             var userDTO = new UserDTO(user);
 
             if (includeProfilePointBackgroundImage)
@@ -43,7 +32,46 @@ namespace Keylol.Controllers
                 userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
             }
 
-            return Ok(userDTO);
+            return userDTO;
+        }
+
+        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
+            bool includeClaims = false, bool includeSteamBot = false, string idType = "Id")
+        {
+            KeylolUser user;
+            switch (idType)
+            {
+                case "UserName":
+                    user = await UserManager.FindByNameAsync(id);
+                    if (user == null)
+                        return NotFound();
+
+                    return Ok(await CreateUserDTOAsync(user, includeProfilePointBackgroundImage, includeClaims));
+
+                case "IdCode":
+                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == id);
+                    if (user == null)
+                        return NotFound();
+
+                    return Ok(await CreateUserDTOAsync(user, includeProfilePointBackgroundImage, includeClaims));
+
+                default:
+                    var visitorId = User.Identity.GetUserId();
+                    var staffClaim = await UserManager.GetStaffClaimAsync(visitorId);
+                    if (staffClaim != StaffClaim.Operator)
+                    {
+                        if (visitorId != id)
+                            includeSteamBot = false;
+                    }
+
+                    user = await UserManager.FindByIdAsync(id);
+                    if (user == null)
+                        return NotFound();
+
+                    return
+                        Ok(await CreateUserDTOAsync(user, includeProfilePointBackgroundImage, includeClaims,
+                            includeSteamBot));
+            }
         }
 
         // Register
@@ -76,7 +104,8 @@ namespace Keylol.Controllers
             }
             if (await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamBindingToken.SteamId) != null)
             {
-                ModelState.AddModelError("vm.SteamBindingTokenId", "Steam account has been binded to another Keylol account.");
+                ModelState.AddModelError("vm.SteamBindingTokenId",
+                    "Steam account has been binded to another Keylol account.");
                 return BadRequest(ModelState);
             }
             if (!Regex.IsMatch(vm.IdCode, @"^[A-Z0-9]{5}$"))

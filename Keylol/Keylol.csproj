@@ -223,6 +223,10 @@
     <Compile Include="Migrations\201510150923476_PointAvatarImageCreateTime.Designer.cs">
       <DependentUpon>201510150923476_PointAvatarImageCreateTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510170529190_ArticleFullTextIndex.cs" />
+    <Compile Include="Migrations\201510170529190_ArticleFullTextIndex.Designer.cs">
+      <DependentUpon>201510170529190_ArticleFullTextIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\CommentReply.cs" />
     <Compile Include="Models\DTO\ArticleTypeDTO.cs" />
     <Compile Include="Models\DTO\CommentDTO.cs" />
@@ -292,6 +296,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510150923476_PointAvatarImageCreateTime.resx">
       <DependentUpon>201510150923476_PointAvatarImageCreateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510170529190_ArticleFullTextIndex.resx">
+      <DependentUpon>201510170529190_ArticleFullTextIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
