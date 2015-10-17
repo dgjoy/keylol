@@ -45,7 +45,7 @@ namespace Keylol.Controllers
             }));
             await DbContext.SaveChangesAsync();
 
-            return Ok(new CommentDTO(comment));
+            return Created($"comment/{comment.Id}", new CommentDTO(comment));
         }
     }
 }

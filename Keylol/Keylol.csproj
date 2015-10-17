@@ -202,6 +202,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\UploadSignatureController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UserPointSubscriptionController.cs" />
     <Compile Include="DAL\KeylolDbConfiguration.cs" />
     <Compile Include="Hubs\DebugInfoHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="Models\SteamBot.cs" />
     <Compile Include="Models\SteamLoginToken.cs" />
     <Compile Include="Models\ViewModels\CommentVM.cs" />
+    <Compile Include="Models\ViewModels\NormalPointVM.cs" />
     <Compile Include="Models\ViewModels\SteamBotVM.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
