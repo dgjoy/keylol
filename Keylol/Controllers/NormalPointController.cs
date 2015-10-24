@@ -15,6 +15,10 @@ namespace Keylol.Controllers
     [RoutePrefix("normal-point")]
     public class NormalPointController : KeylolApiController
     {
+        /// <summary>
+        /// 取得指定据点的资料
+        /// </summary>
+        /// <param name="id">据点 ID</param>
         [Route("{id}")]
         [ResponseType(typeof(NormalPointDTO))]
         public async Task<IHttpActionResult> Get(string id)
@@ -26,6 +30,12 @@ namespace Keylol.Controllers
             return Ok(new NormalPointDTO(point));
         }
 
+        /// <summary>
+        /// 根据关键字搜索对应据点
+        /// </summary>
+        /// <param name="keyword">关键字</param>
+        /// <param name="skip">起始位置</param>
+        /// <param name="take">获取数量，最大 50</param>
         [Route]
         [ResponseType(typeof(List<NormalPointDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
@@ -42,6 +52,10 @@ namespace Keylol.Controllers
                 $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync()).Select(point => new NormalPointDTO(point)));
         }
 
+        /// <summary>
+        /// 创建一个据点
+        /// </summary>
+        /// <param name="vm">据点相关属性</param>
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
         [ResponseType(typeof(NormalPointDTO))]

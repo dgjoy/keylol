@@ -14,6 +14,9 @@ namespace Keylol.Controllers
     [RoutePrefix("article-type")]
     public class ArticleTypeController : KeylolApiController
     {
+        /// <summary>
+        /// 取得所有文章分类
+        /// </summary>
         [Route]
         [ResponseType(typeof(List<ArticleTypeDTO>))]
         public async Task<IHttpActionResult> Get()

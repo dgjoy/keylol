@@ -14,6 +14,10 @@ namespace Keylol.Controllers
     [RoutePrefix("comment")]
     public class CommentController : KeylolApiController
     {
+        /// <summary>
+        /// 创建一条评论
+        /// </summary>
+        /// <param name="vm">评论相关属性</param>
         [Route]
         [ResponseType(typeof(CommentDTO))]
         public async Task<IHttpActionResult> Post(CommentVM vm)

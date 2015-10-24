@@ -22,7 +22,7 @@ namespace Keylol
 
             config.EnableSwagger(c =>
             {
-                c.SingleApiVersion("v1", "Keylol API");
+                c.SingleApiVersion("v1", "Keylol REST API");
 
                 var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.XML"));

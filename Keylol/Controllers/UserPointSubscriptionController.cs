@@ -13,6 +13,10 @@ namespace Keylol.Controllers
     [RoutePrefix("user-point-subscription")]
     public class UserPointSubscriptionController : KeylolApiController
     {
+        /// <summary>
+        /// 订阅一个据点或者用户
+        /// </summary>
+        /// <param name="pointId">据点 ID 或者用户 ID</param>
         [Route]
         public async Task<IHttpActionResult> Post(string pointId)
         {
@@ -33,6 +37,10 @@ namespace Keylol.Controllers
             return Created($"user-point-subscription/{point.Id}", "Subscribed!");
         }
 
+        /// <summary>
+        /// 取消订阅指定据点或者用户
+        /// </summary>
+        /// <param name="pointId">据点 ID 或者用户 ID</param>
         [Route]
         public async Task<IHttpActionResult> Delete(string pointId)
         {

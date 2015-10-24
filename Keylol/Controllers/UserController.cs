@@ -37,6 +37,14 @@ namespace Keylol.Controllers
             return userDTO;
         }
 
+        /// <summary>
+        /// 根据 Id、UserName 或者 IdCode 取得一名用户
+        /// </summary>
+        /// <param name="id">用户 ID</param>
+        /// <param name="includeProfilePointBackgroundImage">是否包含用户据点背景图片</param>
+        /// <param name="includeClaims">是否包含用户权限级别</param>
+        /// <param name="includeSteamBot">是否包含用户所属 Steam 机器人</param>
+        /// <param name="idType">Id 类型，可以是 ["Id", "UserName", "IdCode"] 中的一个值</param>
         [Route("{id}")]
         [ResponseType(typeof(UserDTO))]
         public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
@@ -77,8 +85,11 @@ namespace Keylol.Controllers
                             includeSteamBot));
             }
         }
-
-        // Register
+        
+        /// <summary>
+        /// 注册一个新用户
+        /// </summary>
+        /// <param name="vm">用户相关属性</param>
         [AllowAnonymous]
         [Route]
         [ResponseType(typeof(UserDTO))]
@@ -171,8 +182,12 @@ namespace Keylol.Controllers
 
             return Created($"user/{user.Id}", userDTO);
         }
-
-        // Change settings
+        
+        /// <summary>
+        /// 修改用户设置
+        /// </summary>
+        /// <param name="id">用户 ID</param>
+        /// <param name="vm">用户相关属性</param>
         [Route]
         public async Task<IHttpActionResult> Put(string id, SettingsVM vm)
         {

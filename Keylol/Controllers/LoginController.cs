@@ -15,7 +15,10 @@ namespace Keylol.Controllers
     [RoutePrefix("login")]
     public class LoginController : KeylolApiController
     {
-        // Login
+        /// <summary>
+        /// 使用密码登录
+        /// </summary>
+        /// <param name="vm">登录所需相关属性</param>
         [AllowAnonymous]
         [Route]
         [ResponseType(typeof(LoginLogDTO))]
@@ -72,8 +75,11 @@ namespace Keylol.Controllers
             }
             return BadRequest(ModelState);
         }
-
-        // Login using token
+        
+        /// <summary>
+        /// 使用 SteamLoginToken 登录
+        /// </summary>
+        /// <param name="steamLoginTokenId">SteamLoginToken ID</param>
         [AllowAnonymous]
         [Route("token/{steamLoginTokenId}")]
         [ResponseType(typeof(LoginLogDTO))]
@@ -101,8 +107,10 @@ namespace Keylol.Controllers
             await DbContext.SaveChangesAsync();
             return Created($"login/{loginLog.Id}", new LoginLogDTO(loginLog));
         }
-
-        // Logout
+        
+        /// <summary>
+        /// 登出当前用户（清除 Cookies）
+        /// </summary>
         [Route]
         public IHttpActionResult Delete()
         {

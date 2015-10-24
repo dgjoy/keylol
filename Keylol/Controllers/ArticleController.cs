@@ -8,6 +8,7 @@ using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
 {
@@ -15,8 +16,13 @@ namespace Keylol.Controllers
     [RoutePrefix("article")]
     public class ArticleController : KeylolApiController
     {
+        /// <summary>
+        /// 根据 ID 取得一篇文章
+        /// </summary>
+        /// <param name="id">文章 ID</param>
         [Route("{id}")]
         [ResponseType(typeof(ArticleDTO))]
+        [SwaggerResponse(404, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string id)
         {
             var article = await DbContext.Articles.FindAsync(id);
@@ -29,8 +35,14 @@ namespace Keylol.Controllers
             return Ok(articleDTO);
         }
 
+        /// <summary>
+        /// 根据作者和文章序号取得一篇文章
+        /// </summary>
+        /// <param name="authorIdCode">作者 IdCode</param>
+        /// <param name="sequenceNumberForAuthor">文章序号</param>
         [Route("{authorIdCode}/{sequenceNumberForAuthor}")]
         [ResponseType(typeof(ArticleDTO))]
+        [SwaggerResponse(404, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
             var article =
@@ -48,10 +60,17 @@ namespace Keylol.Controllers
             return Ok(articleDTO);
         }
 
+        /// <summary>
+        /// 根据关键字搜索对应文章
+        /// </summary>
+        /// <param name="keyword">关键字</param>
+        /// <param name="skip">起始位置</param>
+        /// <param name="take">获取数量，最大 50</param>
         [Route]
         [ResponseType(typeof(List<ArticleDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
         {
+            if (take > 50) take = 50;
             return Ok((await DbContext.Articles.SqlQuery(@"SELECT * FROM [dbo].[Entries] AS [t1] INNER JOIN (
 	                SELECT * FROM CONTAINSTABLE([dbo].[Entries], ([Title], [Content]), {0})
 	            ) AS [t2] ON [t1].[Id] = [t2].[KEY]
@@ -61,6 +80,10 @@ namespace Keylol.Controllers
                     article => new ArticleDTO(article) {AuthorIdCode = article.Principal.User.IdCode}));
         }
 
+        /// <summary>
+        /// 创建一篇文章
+        /// </summary>
+        /// <param name="vm">文章相关属性</param>
         [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]
         [Route]
         [ResponseType(typeof(ArticleDTO))]
@@ -118,6 +141,11 @@ namespace Keylol.Controllers
             return Created($"article/{article.Id}", new ArticleDTO(article, false));
         }
 
+        /// <summary>
+        /// 编辑指定文章
+        /// </summary>
+        /// <param name="id">文章 Id</param>
+        /// <param name="vm">文章相关属性</param>
         [Route]
         public async Task<IHttpActionResult> Put(string id, ArticleVM vm)
         {

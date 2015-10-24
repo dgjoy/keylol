@@ -16,6 +16,10 @@ namespace Keylol.Controllers
     {
         private const string FormKey = "LaetquRR2LDCO0SezzqNNeTxjnQ=";
         
+        /// <summary>
+        /// 对上传请求进行签名
+        /// </summary>
+        /// <param name="policy">请求 Policy</param>
         [Route]
         [ResponseType(typeof(string))]
         public IHttpActionResult Post(string policy)
