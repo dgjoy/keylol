@@ -8,6 +8,7 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
 {
@@ -21,6 +22,7 @@ namespace Keylol.Controllers
         /// <param name="id">据点 ID</param>
         [Route("{id}")]
         [ResponseType(typeof(NormalPointDTO))]
+        [SwaggerResponse(404, "指定据点不存在")]
         public async Task<IHttpActionResult> Get(string id)
         {
             var point = await DbContext.NormalPoints.FindAsync(id);
@@ -40,6 +42,7 @@ namespace Keylol.Controllers
         [ResponseType(typeof(List<NormalPointDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
         {
+            if (take > 50) take = 50;
             return Ok((await DbContext.NormalPoints.SqlQuery(@"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
                     SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
 		                SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([EnglishName], [EnglishAliases]), {0})
@@ -59,6 +62,7 @@ namespace Keylol.Controllers
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
         [ResponseType(typeof(NormalPointDTO))]
+        [SwaggerResponse(400, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(NormalPointVM vm)
         {
             if (vm == null)

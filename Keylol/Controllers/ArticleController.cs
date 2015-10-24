@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Http.ModelBinding;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -21,7 +22,7 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="id">文章 ID</param>
         [Route("{id}")]
-        [ResponseType(typeof(ArticleDTO))]
+        [ResponseType(typeof (ArticleDTO))]
         [SwaggerResponse(404, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string id)
         {
@@ -41,7 +42,7 @@ namespace Keylol.Controllers
         /// <param name="authorIdCode">作者 IdCode</param>
         /// <param name="sequenceNumberForAuthor">文章序号</param>
         [Route("{authorIdCode}/{sequenceNumberForAuthor}")]
-        [ResponseType(typeof(ArticleDTO))]
+        [ResponseType(typeof (ArticleDTO))]
         [SwaggerResponse(404, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
@@ -67,7 +68,7 @@ namespace Keylol.Controllers
         /// <param name="skip">起始位置</param>
         /// <param name="take">获取数量，最大 50</param>
         [Route]
-        [ResponseType(typeof(List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
         {
             if (take > 50) take = 50;
@@ -86,8 +87,9 @@ namespace Keylol.Controllers
         /// <param name="vm">文章相关属性</param>
         [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]
         [Route]
-        [ResponseType(typeof(ArticleDTO))]
-        public async Task<IHttpActionResult> Post(ArticleVM vm)
+        [ResponseType(typeof (ArticleDTO))]
+        [SwaggerResponse(400, "存在无效的输入属性")]
+        public async Task<IHttpActionResult> Post(ArticlePostVM vm)
         {
             if (vm == null)
             {
@@ -146,8 +148,11 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="id">文章 Id</param>
         /// <param name="vm">文章相关属性</param>
-        [Route]
-        public async Task<IHttpActionResult> Put(string id, ArticleVM vm)
+        [Route("{id}")]
+        [SwaggerResponse(404, "指定文章不存在")]
+        [SwaggerResponse(401, "当前用户无权编辑这篇文章")]
+        [SwaggerResponse(400, "存在无效的输入属性")]
+        public async Task<IHttpActionResult> Put(string id, ArticlePutVM vm)
         {
             if (vm == null)
             {
@@ -166,28 +171,45 @@ namespace Keylol.Controllers
             if (article.PrincipalId != editorId)
                 return Unauthorized();
 
-            var type = await DbContext.ArticleTypes.FindAsync(vm.TypeId);
-            if (type == null)
+            ArticleType type;
+            if (vm.TypeId != null)
             {
-                ModelState.AddModelError("vm.TypeId", "Invalid article type.");
-                return BadRequest(ModelState);
+                type = await DbContext.ArticleTypes.FindAsync(vm.TypeId);
+                if (type == null)
+                {
+                    ModelState.AddModelError("vm.TypeId", "Invalid article type.");
+                    return BadRequest(ModelState);
+                }
+                article.TypeId = vm.TypeId;
+            }
+            else
+            {
+                type = article.Type;
             }
 
-            if (type.AllowVote && vm.Vote != null)
+            if (type.AllowVote)
             {
-                var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
-                if (voteForPoint == null)
+                if (vm.VoteForPointId != null)
                 {
-                    ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
-                    return BadRequest(ModelState);
+                    var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
+                    if (voteForPoint == null)
+                    {
+                        ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
+                        return BadRequest(ModelState);
+                    }
+                    if (voteForPoint.Type != NormalPointType.Game)
+                    {
+                        ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
+                        return BadRequest(ModelState);
+                    }
+                    article.VoteForPointId = voteForPoint.Id;
                 }
-                if (voteForPoint.Type != NormalPointType.Game)
-                {
-                    ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
-                    return BadRequest(ModelState);
-                }
-                article.VoteForPointId = voteForPoint.Id;
                 article.Vote = vm.Vote;
+            }
+            else
+            {
+                article.VoteForPoint = null;
+                article.Vote = null;
             }
 
             DbContext.EditLogs.Add(new EditLog
@@ -197,11 +219,13 @@ namespace Keylol.Controllers
                 OldContent = article.Content,
                 OldTitle = article.Title
             });
-            article.Type = type;
-            article.Title = vm.Title;
-            article.Content = vm.Content;
-            article.AttachedPoints =
-                await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
+            if (vm.Title != null)
+                article.Title = vm.Title;
+            if (vm.Content != null)
+                article.Content = vm.Content;
+            if (vm.AttachedPointsId != null)
+                article.AttachedPoints =
+                    await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
             await DbContext.SaveChangesAsync();
             return Ok();
         }

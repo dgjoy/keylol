@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models.DTO
@@ -8,6 +9,7 @@ namespace Keylol.Models.DTO
         public ArticleDTO(Article article, bool includeContent = true)
         {
             Id = article.Id;
+            PublishTime = article.PublishTime;
             Title = article.Title;
             if (includeContent)
                 Content = article.Content;
@@ -16,6 +18,8 @@ namespace Keylol.Models.DTO
         }
 
         public string Id { get; set; }
+
+        public DateTime PublishTime { get; set; }
 
         public string Title { get; set; }
 

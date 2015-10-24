@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 using Microsoft.AspNet.Identity;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
 {
@@ -18,6 +19,8 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="pointId">据点 ID 或者用户 ID</param>
         [Route]
+        [SwaggerResponse(404, "指定据点或用户不存在")]
+        [SwaggerResponse(401, "尝试订阅自己，操作无效")]
         public async Task<IHttpActionResult> Post(string pointId)
         {
             var point = await DbContext.Points.FindAsync(pointId);
@@ -26,10 +29,7 @@ namespace Keylol.Controllers
 
             var userId = User.Identity.GetUserId();
             if (point.Id == userId)
-            {
-                ModelState.AddModelError("pointId", "Cannot subscribe yourself.");
-                return BadRequest(ModelState);
-            }
+                return Unauthorized();
 
             var user = await UserManager.FindByIdAsync(userId);
             user.SubscribedPoints.Add(point);
@@ -42,6 +42,7 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="pointId">据点 ID 或者用户 ID</param>
         [Route]
+        [SwaggerResponse(404, "指定据点或用户不存在")]
         public async Task<IHttpActionResult> Delete(string pointId)
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());

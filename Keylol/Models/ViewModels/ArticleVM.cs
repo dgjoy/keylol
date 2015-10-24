@@ -3,20 +3,33 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models.ViewModels
 {
-    public class ArticleVM
+    public class ArticlePostVM
     {
         [Required]
         public string TypeId { get; set; }
 
         [Required]
-        [MaxLength(120)]
         public string Title { get; set; }
 
         [Required]
-        [MaxLength(300000)]
         public string Content { get; set; }
 
         [Required]
+        public List<string> AttachedPointsId { get; set; }
+
+        public string VoteForPointId { get; set; }
+
+        public VoteType? Vote { get; set; }
+    }
+
+    public class ArticlePutVM
+    {
+        public string TypeId { get; set; }
+        
+        public string Title { get; set; }
+        
+        public string Content { get; set; }
+        
         public List<string> AttachedPointsId { get; set; }
 
         public string VoteForPointId { get; set; }

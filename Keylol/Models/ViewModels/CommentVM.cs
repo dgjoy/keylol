@@ -10,7 +10,6 @@ namespace Keylol.Models.ViewModels
     public class CommentVM
     {
         [Required]
-        [MaxLength(30000)]
         public string Content { get; set; }
 
         [Required]

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Newtonsoft.Json.Linq;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
 {
@@ -22,6 +23,7 @@ namespace Keylol.Controllers
         /// <param name="policy">请求 Policy</param>
         [Route]
         [ResponseType(typeof(string))]
+        [SwaggerResponse(400, "请求 Policy 无效")]
         public IHttpActionResult Post(string policy)
         {
             var options = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(policy)));

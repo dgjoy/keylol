@@ -8,6 +8,7 @@ using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
 {
@@ -47,6 +48,7 @@ namespace Keylol.Controllers
         /// <param name="idType">Id 类型，可以是 ["Id", "UserName", "IdCode"] 中的一个值</param>
         [Route("{id}")]
         [ResponseType(typeof(UserDTO))]
+        [SwaggerResponse(404, "指定用户不存在")]
         public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
             bool includeClaims = false, bool includeSteamBot = false, string idType = "Id")
         {
@@ -93,7 +95,9 @@ namespace Keylol.Controllers
         [AllowAnonymous]
         [Route]
         [ResponseType(typeof(UserDTO))]
-        public async Task<IHttpActionResult> Post(RegisterVM vm)
+        [SwaggerResponse(401, "已登录状态无法注册新用户")]
+        [SwaggerResponse(400, "存在无效的输入属性")]
+        public async Task<IHttpActionResult> Post(UserPostVM vm)
         {
             if (User.Identity.IsAuthenticated)
                 return Unauthorized();
@@ -188,8 +192,10 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="id">用户 ID</param>
         /// <param name="vm">用户相关属性</param>
-        [Route]
-        public async Task<IHttpActionResult> Put(string id, SettingsVM vm)
+        [Route("{id}")]
+        [SwaggerResponse(401, "当前登录用户无权编辑指定用户")]
+        [SwaggerResponse(400, "存在无效的输入属性")]
+        public async Task<IHttpActionResult> Put(string id, UserPutVM vm)
         {
             if (User.Identity.GetUserId() != id)
                 return Unauthorized();

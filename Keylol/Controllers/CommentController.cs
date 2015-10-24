@@ -7,6 +7,7 @@ using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
 {
@@ -20,6 +21,7 @@ namespace Keylol.Controllers
         /// <param name="vm">评论相关属性</param>
         [Route]
         [ResponseType(typeof(CommentDTO))]
+        [SwaggerResponse(400, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(CommentVM vm)
         {
             if (vm == null)

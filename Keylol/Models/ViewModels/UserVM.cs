@@ -2,7 +2,7 @@
 
 namespace Keylol.Models.ViewModels
 {
-    public class RegisterVM
+    public class UserPostVM
     {
         [Required]
         public string IdCode { get; set; }
@@ -32,7 +32,7 @@ namespace Keylol.Models.ViewModels
         public string GeetestValidate { get; set; }
     }
 
-    public class SettingsVM
+    public class UserPutVM
     {
         public void CopyToUser(KeylolUser user)
         {

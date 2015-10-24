@@ -8,6 +8,7 @@ using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
 {
@@ -22,6 +23,7 @@ namespace Keylol.Controllers
         [AllowAnonymous]
         [Route]
         [ResponseType(typeof(LoginLogDTO))]
+        [SwaggerResponse(400, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(LoginVM vm)
         {
             if (vm == null)
@@ -83,6 +85,7 @@ namespace Keylol.Controllers
         [AllowAnonymous]
         [Route("token/{steamLoginTokenId}")]
         [ResponseType(typeof(LoginLogDTO))]
+        [SwaggerResponse(401, "指定 SteamLoginToken 无效或未经过授权")]
         public async Task<IHttpActionResult> Post(string steamLoginTokenId)
         {
             var token = await DbContext.SteamLoginTokens.FindAsync(steamLoginTokenId);
@@ -111,7 +114,7 @@ namespace Keylol.Controllers
         /// <summary>
         /// 登出当前用户（清除 Cookies）
         /// </summary>
-        [Route]
+        [Route("current")]
         public IHttpActionResult Delete()
         {
             AuthenticationManager.SignOut();
