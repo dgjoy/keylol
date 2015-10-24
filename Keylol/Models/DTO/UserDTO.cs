@@ -131,4 +131,20 @@ namespace Keylol.Models.DTO
         [DataMember]
         public SteamBotDTO SteamBot { get; set; }
     }
+
+    public class UserInCommentDTO
+    {
+        public UserInCommentDTO(KeylolUser user)
+        {
+            Id = user.Id;
+            UserName = user.UserName;
+            IdCode = user.IdCode;
+            AvatarImage = user.AvatarImage;
+        }
+
+        public string Id { get; set; }
+        public string UserName { get; set; }
+        public string IdCode { get; set; }
+        public string AvatarImage { get; set; }
+    }
 }

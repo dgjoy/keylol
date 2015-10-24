@@ -50,6 +50,7 @@ namespace Keylol.Migrations
                     AvatarImage = "keylol://avatars/d6fa208df2f1a15d2d14324cd1f3004c.jpg",
                     ChineseName = "军团要塞2",
                     EnglishName = "Team Fortress 2",
+                    PreferedName = PreferedNameType.Chinese,
                     ChineseAliases = "絕地要塞2",
                     EnglishAliases = "tf2,tf,tfc",
                     IdCode = "TMFT2",

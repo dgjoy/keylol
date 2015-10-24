@@ -13,6 +13,12 @@ namespace Keylol.Models
         Platform
     }
 
+    public enum PreferedNameType
+    {
+        Chinese,
+        English
+    }
+
     public abstract class Point
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -44,6 +50,8 @@ namespace Keylol.Models
         [Required]
         [MaxLength(150)]
         public string EnglishName { get; set; }
+
+        public PreferedNameType PreferedName { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(32)]

@@ -31,7 +31,10 @@ namespace Keylol.Controllers
                 return NotFound();
             var articleDTO = new ArticleDTO(article)
             {
-                AuthorIdCode = article.Principal.User.IdCode
+                AuthorIdCode = article.Principal.User.IdCode,
+                AttachedPoints = article.AttachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
+                TypeName = article.Type.Name,
+                LikeCount = article.Likes.Count
             };
             return Ok(articleDTO);
         }
@@ -56,7 +59,10 @@ namespace Keylol.Controllers
                 return NotFound();
             var articleDTO = new ArticleDTO(article)
             {
-                AuthorIdCode = authorIdCode
+                AuthorIdCode = authorIdCode,
+                AttachedPoints = article.AttachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
+                TypeName = article.Type.Name,
+                LikeCount = article.Likes.Count
             };
             return Ok(articleDTO);
         }

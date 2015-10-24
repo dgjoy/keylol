@@ -8,19 +8,17 @@ namespace Keylol.Models.DTO
 {
     public class CommentDTO
     {
-        public CommentDTO(Comment comment)
+        public CommentDTO(Comment comment, bool includeContent = true)
         {
             Id = comment.Id;
-            Content = comment.Content;
+            if (includeContent)
+                Content = comment.Content;
             PublishTime = comment.PublishTime;
-            CommentatorId = comment.CommentatorId;
-            ArticleId = comment.ArticleId;
         }
 
         public string Id { get; set; }
         public string Content { get; set; }
         public DateTime PublishTime { get; set; }
-        public string CommentatorId { get; set; }
-        public string ArticleId { get; set; }
+        public UserInCommentDTO Commentotar { get; set; }
     }
 }

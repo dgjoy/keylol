@@ -30,5 +30,11 @@ namespace Keylol.Models.DTO
         public string AuthorIdCode { get; set; }
 
         public int SequenceNumberForAuthor { get; set; }
+
+        public List<NormalPointDTO> AttachedPoints { get; set; }
+
+        public string TypeName { get; set; }
+
+        public int LikeCount { get; set; }
     }
 }

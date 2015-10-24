@@ -233,6 +233,10 @@
     <Compile Include="Migrations\201510170529190_ArticleFullTextIndex.Designer.cs">
       <DependentUpon>201510170529190_ArticleFullTextIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510241320315_PointPreferedName.cs" />
+    <Compile Include="Migrations\201510241320315_PointPreferedName.Designer.cs">
+      <DependentUpon>201510241320315_PointPreferedName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\CommentReply.cs" />
     <Compile Include="Models\DTO\ArticleTypeDTO.cs" />
     <Compile Include="Models\DTO\CommentDTO.cs" />
@@ -305,6 +309,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510170529190_ArticleFullTextIndex.resx">
       <DependentUpon>201510170529190_ArticleFullTextIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510241320315_PointPreferedName.resx">
+      <DependentUpon>201510241320315_PointPreferedName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
