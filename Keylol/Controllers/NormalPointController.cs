@@ -1,8 +1,10 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -10,9 +12,22 @@ using Keylol.Models.ViewModels;
 namespace Keylol.Controllers
 {
     [Authorize]
-    [Route("normal-point")]
+    [RoutePrefix("normal-point")]
     public class NormalPointController : KeylolApiController
     {
+        [Route("{id}")]
+        [ResponseType(typeof(NormalPointDTO))]
+        public async Task<IHttpActionResult> Get(string id)
+        {
+            var point = await DbContext.NormalPoints.FindAsync(id);
+            if (point == null)
+                return NotFound();
+
+            return Ok(new NormalPointDTO(point));
+        }
+
+        [Route]
+        [ResponseType(typeof(List<NormalPointDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
         {
             return Ok((await DbContext.NormalPoints.SqlQuery(@"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
@@ -28,6 +43,8 @@ namespace Keylol.Controllers
         }
 
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Route]
+        [ResponseType(typeof(NormalPointDTO))]
         public async Task<IHttpActionResult> Post(NormalPointVM vm)
         {
             if (vm == null)

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -10,8 +11,11 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.Controllers
 {
     [Authorize]
+    [RoutePrefix("comment")]
     public class CommentController : KeylolApiController
     {
+        [Route]
+        [ResponseType(typeof(CommentDTO))]
         public async Task<IHttpActionResult> Post(CommentVM vm)
         {
             if (vm == null)

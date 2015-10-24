@@ -10,9 +10,10 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.Controllers
 {
     [Authorize]
-    [Route("user-point-subscription")]
+    [RoutePrefix("user-point-subscription")]
     public class UserPointSubscriptionController : KeylolApiController
     {
+        [Route]
         public async Task<IHttpActionResult> Post(string pointId)
         {
             var point = await DbContext.Points.FindAsync(pointId);
@@ -32,6 +33,7 @@ namespace Keylol.Controllers
             return Created($"user-point-subscription/{point.Id}", "Subscribed!");
         }
 
+        [Route]
         public async Task<IHttpActionResult> Delete(string pointId)
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());

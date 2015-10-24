@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -11,6 +12,7 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.Controllers
 {
     [Authorize]
+    [RoutePrefix("user")]
     public class UserController : KeylolApiController
     {
         private async Task<UserDTO> CreateUserDTOAsync(KeylolUser user, bool includeProfilePointBackgroundImage = false,
@@ -35,6 +37,8 @@ namespace Keylol.Controllers
             return userDTO;
         }
 
+        [Route("{id}")]
+        [ResponseType(typeof(UserDTO))]
         public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
             bool includeClaims = false, bool includeSteamBot = false, string idType = "Id")
         {
@@ -76,6 +80,8 @@ namespace Keylol.Controllers
 
         // Register
         [AllowAnonymous]
+        [Route]
+        [ResponseType(typeof(UserDTO))]
         public async Task<IHttpActionResult> Post(RegisterVM vm)
         {
             if (User.Identity.IsAuthenticated)
@@ -167,6 +173,7 @@ namespace Keylol.Controllers
         }
 
         // Change settings
+        [Route]
         public async Task<IHttpActionResult> Put(string id, SettingsVM vm)
         {
             if (User.Identity.GetUserId() != id)

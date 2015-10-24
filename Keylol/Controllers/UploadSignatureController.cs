@@ -5,16 +5,19 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Newtonsoft.Json.Linq;
 
 namespace Keylol.Controllers
 {
     [Authorize]
-    [Route("upload-signature")]
+    [RoutePrefix("upload-signature")]
     public class UploadSignatureController : KeylolApiController
     {
         private const string FormKey = "LaetquRR2LDCO0SezzqNNeTxjnQ=";
-
+        
+        [Route]
+        [ResponseType(typeof(string))]
         public IHttpActionResult Post(string policy)
         {
             var options = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(policy)));

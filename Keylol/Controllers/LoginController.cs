@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -11,10 +12,13 @@ using Microsoft.AspNet.Identity.Owin;
 namespace Keylol.Controllers
 {
     [Authorize]
+    [RoutePrefix("login")]
     public class LoginController : KeylolApiController
     {
         // Login
         [AllowAnonymous]
+        [Route]
+        [ResponseType(typeof(LoginLogDTO))]
         public async Task<IHttpActionResult> Post(LoginVM vm)
         {
             if (vm == null)
@@ -71,6 +75,8 @@ namespace Keylol.Controllers
 
         // Login using token
         [AllowAnonymous]
+        [Route("token/{steamLoginTokenId}")]
+        [ResponseType(typeof(LoginLogDTO))]
         public async Task<IHttpActionResult> Post(string steamLoginTokenId)
         {
             var token = await DbContext.SteamLoginTokens.FindAsync(steamLoginTokenId);
@@ -97,6 +103,7 @@ namespace Keylol.Controllers
         }
 
         // Logout
+        [Route]
         public IHttpActionResult Delete()
         {
             AuthenticationManager.SignOut();

@@ -1,7 +1,9 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -10,8 +12,11 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.Controllers
 {
     [Authorize]
+    [RoutePrefix("article")]
     public class ArticleController : KeylolApiController
     {
+        [Route("{id}")]
+        [ResponseType(typeof(ArticleDTO))]
         public async Task<IHttpActionResult> Get(string id)
         {
             var article = await DbContext.Articles.FindAsync(id);
@@ -24,6 +29,8 @@ namespace Keylol.Controllers
             return Ok(articleDTO);
         }
 
+        [Route("{authorIdCode}/{sequenceNumberForAuthor}")]
+        [ResponseType(typeof(ArticleDTO))]
         public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
             var article =
@@ -41,6 +48,8 @@ namespace Keylol.Controllers
             return Ok(articleDTO);
         }
 
+        [Route]
+        [ResponseType(typeof(List<ArticleDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
         {
             return Ok((await DbContext.Articles.SqlQuery(@"SELECT * FROM [dbo].[Entries] AS [t1] INNER JOIN (
@@ -53,6 +62,8 @@ namespace Keylol.Controllers
         }
 
         [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]
+        [Route]
+        [ResponseType(typeof(ArticleDTO))]
         public async Task<IHttpActionResult> Post(ArticleVM vm)
         {
             if (vm == null)
@@ -107,6 +118,7 @@ namespace Keylol.Controllers
             return Created($"article/{article.Id}", new ArticleDTO(article, false));
         }
 
+        [Route]
         public async Task<IHttpActionResult> Put(string id, ArticleVM vm)
         {
             if (vm == null)

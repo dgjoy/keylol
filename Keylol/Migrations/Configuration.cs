@@ -47,7 +47,7 @@ namespace Keylol.Migrations
             context.NormalPoints.AddOrUpdate(point => point.IdCode,
                 new NormalPoint
                 {
-                    AvatarImage = "d6fa208df2f1a15d2d14324cd1f3004c.jpg",
+                    AvatarImage = "keylol://avatars/d6fa208df2f1a15d2d14324cd1f3004c.jpg",
                     ChineseName = "军团要塞2",
                     EnglishName = "Team Fortress 2",
                     ChineseAliases = "絕地要塞2",
