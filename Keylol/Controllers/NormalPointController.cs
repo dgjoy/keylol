@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -17,19 +18,27 @@ namespace Keylol.Controllers
     [RoutePrefix("normal-point")]
     public class NormalPointController : KeylolApiController
     {
+        public enum IdType
+        {
+            Id,
+            IdCode
+        }
+
         /// <summary>
         /// 取得指定据点的资料
         /// </summary>
         /// <param name="id">据点 ID</param>
         /// <param name="includeStats">是否包含读者数和文章数，默认 false</param>
+        /// <param name="idType">Id 类型，默认 "Id"</param>
         [Route("{id}")]
         [ResponseType(typeof(NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
-        public async Task<IHttpActionResult> Get(string id, bool includeStats = false)
+        public async Task<IHttpActionResult> Get(string id, bool includeStats = false, IdType idType = IdType.Id)
         {
+            var pointQuery = DbContext.NormalPoints.Where(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
             if (includeStats)
             {
-                var pointEntry = await DbContext.NormalPoints.Where(p => p.Id == id).Select(p => new { point = p, articleCount = p.Articles.Count, subscriberCount = p.Subscribers.Count }).SingleOrDefaultAsync();
+                var pointEntry = await pointQuery.Select(p => new { point = p, articleCount = p.Articles.Count, subscriberCount = p.Subscribers.Count }).SingleOrDefaultAsync();
                 if (pointEntry == null)
                     return NotFound();
 
@@ -40,7 +49,7 @@ namespace Keylol.Controllers
                 });
             }
 
-            var point = await DbContext.NormalPoints.FindAsync(id);
+            var point = await pointQuery.SingleOrDefaultAsync();
             if (point == null)
                 return NotFound();
 
