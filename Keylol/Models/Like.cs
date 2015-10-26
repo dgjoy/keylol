@@ -14,6 +14,8 @@ namespace Keylol.Models
         public string OperatorId { get; set; }
 
         public virtual KeylolUser Operator { get; set; }
+
+        public bool Backout { get; set; } = false;
     }
 
     public class ArticleLike : Like

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -16,10 +18,53 @@ namespace Keylol.Controllers
     [RoutePrefix("user")]
     public class UserController : KeylolApiController
     {
-        private async Task<UserDTO> CreateUserDTOAsync(KeylolUser user, bool includeProfilePointBackgroundImage = false,
-            bool includeClaims = false, bool includeSteamBot = false)
+        public enum IdType
         {
-            var userDTO = new UserDTO(user);
+            Id,
+            IdCode,
+            UserName
+        }
+
+        /// <summary>
+        /// 根据 Id、UserName 或者 IdCode 取得一名用户
+        /// </summary>
+        /// <param name="id">用户 ID</param>
+        /// <param name="includeProfilePointBackgroundImage">是否包含用户据点背景图片，默认 false</param>
+        /// <param name="includeClaims">是否包含用户权限级别，默认 false</param>
+        /// <param name="includeSteamBot">是否包含用户所属 Steam 机器人（用户只能获取自己的机器人，除非是运维职员），默认 false</param>
+        /// <param name="includeStats">是否包含用户读者数和文章数，默认 false</param>
+        /// <param name="includeMoreOptions">是否包含更多杂项设置（例如通知偏好设置），默认 false</param>
+        /// <param name="idType">Id 类型，默认 "Id"</param>
+        [Route("{id}")]
+        [ResponseType(typeof (UserDTO))]
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
+        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
+            bool includeClaims = false, bool includeSteamBot = false, bool includeStats = false,
+            bool includeMoreOptions = false, IdType idType = IdType.Id)
+        {
+            KeylolUser user;
+            switch (idType)
+            {
+                case IdType.UserName:
+                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.UserName == id);
+                    break;
+
+                case IdType.IdCode:
+                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == id);
+                    break;
+
+                case IdType.Id:
+                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.Id == id);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
+            }
+
+            if (user == null)
+                return NotFound();
+
+            var userDTO = includeMoreOptions ? new UserWithMoreOptionsDTO(user) : new UserDTO(user);
 
             if (includeProfilePointBackgroundImage)
                 userDTO.ProfilePointBackgroundImage = user.ProfilePoint.BackgroundImage;
@@ -32,71 +77,38 @@ namespace Keylol.Controllers
 
             if (includeSteamBot)
             {
-                userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
+                var visitorId = User.Identity.GetUserId();
+                if (visitorId == user.Id || await UserManager.GetStaffClaimAsync(visitorId) == StaffClaim.Operator)
+                    userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
             }
 
-            return userDTO;
-        }
-
-        /// <summary>
-        /// 根据 Id、UserName 或者 IdCode 取得一名用户
-        /// </summary>
-        /// <param name="id">用户 ID</param>
-        /// <param name="includeProfilePointBackgroundImage">是否包含用户据点背景图片</param>
-        /// <param name="includeClaims">是否包含用户权限级别</param>
-        /// <param name="includeSteamBot">是否包含用户所属 Steam 机器人</param>
-        /// <param name="idType">Id 类型，可以是 ["Id", "UserName", "IdCode"] 中的一个值</param>
-        [Route("{id}")]
-        [ResponseType(typeof(UserDTO))]
-        [SwaggerResponse(404, "指定用户不存在")]
-        public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
-            bool includeClaims = false, bool includeSteamBot = false, string idType = "Id")
-        {
-            KeylolUser user;
-            switch (idType)
+            if (includeStats)
             {
-                case "UserName":
-                    user = await UserManager.FindByNameAsync(id);
-                    if (user == null)
-                        return NotFound();
-
-                    return Ok(await CreateUserDTOAsync(user, includeProfilePointBackgroundImage, includeClaims));
-
-                case "IdCode":
-                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == id);
-                    if (user == null)
-                        return NotFound();
-
-                    return Ok(await CreateUserDTOAsync(user, includeProfilePointBackgroundImage, includeClaims));
-
-                default:
-                    var visitorId = User.Identity.GetUserId();
-                    var staffClaim = await UserManager.GetStaffClaimAsync(visitorId);
-                    if (staffClaim != StaffClaim.Operator)
-                    {
-                        if (visitorId != id)
-                            includeSteamBot = false;
-                    }
-
-                    user = await UserManager.FindByIdAsync(id);
-                    if (user == null)
-                        return NotFound();
-
-                    return
-                        Ok(await CreateUserDTOAsync(user, includeProfilePointBackgroundImage, includeClaims,
-                            includeSteamBot));
+                var stats = await DbContext.Users.Where(u => u.Id == user.Id)
+                    .Select(u =>
+                        new
+                        {
+                            subscriberCount = u.ProfilePoint.Subscribers.Count,
+                            articleCount = u.ProfilePoint.Entries.OfType<Article>().Count()
+                        })
+                    .SingleOrDefaultAsync();
+                userDTO.SubscriberCount = stats.subscriberCount;
+                userDTO.ArticleCount = stats.articleCount;
             }
+
+            return Ok(userDTO);
         }
-        
+
         /// <summary>
         /// 注册一个新用户
         /// </summary>
         /// <param name="vm">用户相关属性</param>
         [AllowAnonymous]
         [Route]
-        [ResponseType(typeof(UserDTO))]
-        [SwaggerResponse(401, "已登录状态无法注册新用户")]
-        [SwaggerResponse(400, "存在无效的输入属性")]
+        [SwaggerResponseRemoveDefaults]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDTO))]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "已登录状态无法注册新用户")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(UserPostVM vm)
         {
             if (User.Identity.IsAuthenticated)
@@ -179,22 +191,17 @@ namespace Keylol.Controllers
             };
             DbContext.LoginLogs.Add(loginLog);
             await DbContext.SaveChangesAsync();
-            var userDTO = new UserDTO(user)
-            {
-                LoginLog = new LoginLogDTO(loginLog)
-            };
-
-            return Created($"user/{user.Id}", userDTO);
+            return Created($"user/{user.Id}", new LoginLogDTO(loginLog));
         }
-        
+
         /// <summary>
         /// 修改用户设置
         /// </summary>
         /// <param name="id">用户 ID</param>
         /// <param name="vm">用户相关属性</param>
         [Route("{id}")]
-        [SwaggerResponse(401, "当前登录用户无权编辑指定用户")]
-        [SwaggerResponse(400, "存在无效的输入属性")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "当前登录用户无权编辑指定用户")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Put(string id, UserPutVM vm)
         {
             if (User.Identity.GetUserId() != id)

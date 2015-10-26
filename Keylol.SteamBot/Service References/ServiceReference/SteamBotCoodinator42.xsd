@@ -19,39 +19,22 @@
   <xs:element name="SteamBotDTO" nillable="true" type="tns:SteamBotDTO" />
   <xs:complexType name="UserDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" name="AutoShareOnAcquiringNewGame" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnAddingFavorite" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnAddingNewFriend" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnAddingVideo" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnCreatingGroup" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnJoiningGroup" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnPublishingReview" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnUnlockingAchievement" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnUpdatingWishlist" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AutoShareOnUploadingScreenshot" type="xs:boolean" />
+      <xs:element minOccurs="0" name="ArticleCount" type="xs:int" />
       <xs:element minOccurs="0" name="AvatarImage" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="EmailNotifyOnAdvertisement" type="xs:boolean" />
-      <xs:element minOccurs="0" name="EmailNotifyOnArticleReplied" type="xs:boolean" />
-      <xs:element minOccurs="0" name="EmailNotifyOnCommentReplied" type="xs:boolean" />
-      <xs:element minOccurs="0" name="EmailNotifyOnEditorRecommended" type="xs:boolean" />
-      <xs:element minOccurs="0" name="EmailNotifyOnMessageReceived" type="xs:boolean" />
       <xs:element minOccurs="0" name="GamerTag" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="IdCode" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="LockoutEnabled" type="xs:boolean" />
       <xs:element minOccurs="0" name="LoginLog" nillable="true" type="tns:LoginLogDTO" />
-      <xs:element minOccurs="0" name="MessageNotifyOnArticleLiked" type="xs:boolean" />
-      <xs:element minOccurs="0" name="MessageNotifyOnArticleReplied" type="xs:boolean" />
-      <xs:element minOccurs="0" name="MessageNotifyOnCommentLiked" type="xs:boolean" />
-      <xs:element minOccurs="0" name="MessageNotifyOnCommentReplied" type="xs:boolean" />
-      <xs:element minOccurs="0" name="MessageNotifyOnEditorRecommended" type="xs:boolean" />
       <xs:element minOccurs="0" name="ProfilePointBackgroundImage" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="StaffClaim" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="StatusClaim" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamBot" nillable="true" type="tns:SteamBotDTO" />
       <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamId64" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamProfileName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SubscriberCount" type="xs:int" />
       <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>

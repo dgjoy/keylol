@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -20,11 +21,25 @@ namespace Keylol.Controllers
         /// 取得指定据点的资料
         /// </summary>
         /// <param name="id">据点 ID</param>
+        /// <param name="includeStats">是否包含读者数和文章数，默认 false</param>
         [Route("{id}")]
         [ResponseType(typeof(NormalPointDTO))]
-        [SwaggerResponse(404, "指定据点不存在")]
-        public async Task<IHttpActionResult> Get(string id)
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
+        public async Task<IHttpActionResult> Get(string id, bool includeStats = false)
         {
+            if (includeStats)
+            {
+                var pointEntry = await DbContext.NormalPoints.Where(p => p.Id == id).Select(p => new { point = p, articleCount = p.Articles.Count, subscriberCount = p.Subscribers.Count }).SingleOrDefaultAsync();
+                if (pointEntry == null)
+                    return NotFound();
+
+                return Ok(new NormalPointDTO(pointEntry.point)
+                {
+                    ArticleCount = pointEntry.articleCount,
+                    SubscriberCount = pointEntry.subscriberCount
+                });
+            }
+
             var point = await DbContext.NormalPoints.FindAsync(id);
             if (point == null)
                 return NotFound();
@@ -36,8 +51,8 @@ namespace Keylol.Controllers
         /// 根据关键字搜索对应据点
         /// </summary>
         /// <param name="keyword">关键字</param>
-        /// <param name="skip">起始位置</param>
-        /// <param name="take">获取数量，最大 50</param>
+        /// <param name="skip">起始位置，默认 0</param>
+        /// <param name="take">获取数量，最大 50，默认 5</param>
         [Route]
         [ResponseType(typeof(List<NormalPointDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
@@ -61,8 +76,9 @@ namespace Keylol.Controllers
         /// <param name="vm">据点相关属性</param>
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
-        [ResponseType(typeof(NormalPointDTO))]
-        [SwaggerResponse(400, "存在无效的输入属性")]
+        [SwaggerResponseRemoveDefaults]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(NormalPointDTO))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(NormalPointVM vm)
         {
             if (vm == null)

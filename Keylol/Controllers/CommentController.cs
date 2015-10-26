@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -18,39 +18,58 @@ namespace Keylol.Controllers
     [RoutePrefix("comment")]
     public class CommentController : KeylolApiController
     {
+        public enum OrderByType
+        {
+            PublishTime,
+            LikeCount
+        }
+
         /// <summary>
         /// 获取指定文章下的评论
         /// </summary>
         /// <param name="articleId">文章 ID</param>
-        /// <param name="orderBy">排序字段，可以为 ["PublishTime", "LikeCount"] 中的一个值</param>
-        /// <param name="desc">true 表示降序，false 表示升序</param>
-        /// <param name="skip">起始位置</param>
-        /// <param name="take">获取数量，最大 50</param>
+        /// <param name="orderBy">排序字段，默认 "PublishTime"</param>
+        /// <param name="desc">true 表示降序，false 表示升序，默认 false</param>
+        /// <param name="skip">起始位置，默认 0</param>
+        /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route]
         [ResponseType(typeof (List<CommentDTO>))]
-        public async Task<IHttpActionResult> Get(string articleId, string orderBy = "PublishTime", bool desc = false,
+        public async Task<IHttpActionResult> Get(string articleId, OrderByType orderBy = OrderByType.PublishTime,
+            bool desc = false,
             int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
-            var commentsQuery = DbContext.Comments.Include(c => c.Commentator).Where(comment => comment.ArticleId == articleId);
+            var commentsQuery = DbContext.Comments
+                .Where(comment => comment.ArticleId == articleId);
             switch (orderBy)
             {
-                case "PublishTime":
+                case OrderByType.PublishTime:
                     commentsQuery = desc
                         ? commentsQuery.OrderByDescending(c => c.PublishTime)
                         : commentsQuery.OrderBy(c => c.PublishTime);
                     break;
 
-                case "LikeCount":
+                case OrderByType.LikeCount:
                     commentsQuery = desc
                         ? commentsQuery.OrderByDescending(c => c.Likes.Count)
                         : commentsQuery.OrderBy(c => c.Likes.Count);
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(orderBy), orderBy, null);
             }
-            var comments = await commentsQuery.Skip(skip).Take(take).ToListAsync();
-            return Ok(comments.Select(comment => new CommentDTO(comment)
+            var commentEntries = await commentsQuery.Skip(skip).Take(take).Select(comment =>
+                new
+                {
+                    comment,
+                    likeCount = comment.Likes.Count(l => l.Backout == false),
+                    commentator = comment.Commentator
+                })
+                .ToListAsync();
+            return Ok(commentEntries.Select(entry => new CommentDTO(entry.comment)
             {
-                Commentotar = new UserInCommentDTO(comment.Commentator)
+                Commentotar = new UserInCommentDTO(entry.commentator),
+                LikeCount = entry.likeCount
             }).ToList());
         }
 
@@ -59,8 +78,9 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="vm">评论相关属性</param>
         [Route]
-        [ResponseType(typeof (CommentDTO))]
-        [SwaggerResponse(400, "存在无效的输入属性")]
+        [SwaggerResponseRemoveDefaults]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CommentDTO))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(CommentVM vm)
         {
             if (vm == null)

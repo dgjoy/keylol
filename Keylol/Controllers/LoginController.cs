@@ -1,12 +1,11 @@
 ﻿using System.Data.Entity;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Swashbuckle.Swagger.Annotations;
 
@@ -22,8 +21,9 @@ namespace Keylol.Controllers
         /// <param name="vm">登录所需相关属性</param>
         [AllowAnonymous]
         [Route]
-        [ResponseType(typeof(LoginLogDTO))]
-        [SwaggerResponse(400, "存在无效的输入属性")]
+        [SwaggerResponseRemoveDefaults]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(LoginLogDTO))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(LoginVM vm)
         {
             if (vm == null)
@@ -84,8 +84,9 @@ namespace Keylol.Controllers
         /// <param name="steamLoginTokenId">SteamLoginToken ID</param>
         [AllowAnonymous]
         [Route("token/{steamLoginTokenId}")]
-        [ResponseType(typeof(LoginLogDTO))]
-        [SwaggerResponse(401, "指定 SteamLoginToken 无效或未经过授权")]
+        [SwaggerResponseRemoveDefaults]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(LoginLogDTO))]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "指定 SteamLoginToken 无效或未经过授权")]
         public async Task<IHttpActionResult> Post(string steamLoginTokenId)
         {
             var token = await DbContext.SteamLoginTokens.FindAsync(steamLoginTokenId);

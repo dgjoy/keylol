@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
 
@@ -22,8 +20,9 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="policy">请求 Policy</param>
         [Route]
-        [ResponseType(typeof(string))]
-        [SwaggerResponse(400, "请求 Policy 无效")]
+        [SwaggerResponseRemoveDefaults]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(string))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "请求 Policy 无效")]
         public IHttpActionResult Post(string policy)
         {
             var options = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(policy)));
@@ -43,7 +42,7 @@ namespace Keylol.Controllers
             {
                 hash = md5.ComputeHash(Encoding.UTF8.GetBytes($"{policy}&{FormKey}"));
             }
-            return Ok(BitConverter.ToString(hash).Replace("-", string.Empty).ToLower());
+            return Created("upload-signature", BitConverter.ToString(hash).Replace("-", string.Empty).ToLower());
         }
     }
 }

@@ -28,30 +28,9 @@ namespace Keylol.Models.DTO
 
             // Ignore claims
 
-            AutoShareOnAcquiringNewGame = user.AutoShareOnAcquiringNewGame;
-            AutoShareOnAddingFavorite = user.AutoShareOnAddingFavorite;
-            AutoShareOnAddingNewFriend = user.AutoShareOnAddingNewFriend;
-            AutoShareOnAddingVideo = user.AutoShareOnAddingVideo;
-            AutoShareOnCreatingGroup = user.AutoShareOnCreatingGroup;
-            AutoShareOnJoiningGroup = user.AutoShareOnJoiningGroup;
-            AutoShareOnPublishingReview = user.AutoShareOnPublishingReview;
-            AutoShareOnUnlockingAchievement = user.AutoShareOnUnlockingAchievement;
-            AutoShareOnUpdatingWishlist = user.AutoShareOnUpdatingWishlist;
-            AutoShareOnUploadingScreenshot = user.AutoShareOnUploadingScreenshot;
-
-            EmailNotifyOnAdvertisement = user.EmailNotifyOnAdvertisement;
-            EmailNotifyOnArticleReplied = user.EmailNotifyOnArticleReplied;
-            EmailNotifyOnCommentReplied = user.EmailNotifyOnCommentReplied;
-            EmailNotifyOnEditorRecommended = user.EmailNotifyOnEditorRecommended;
-            EmailNotifyOnMessageReceived = user.EmailNotifyOnMessageReceived;
-
-            MessageNotifyOnArticleLiked = user.MessageNotifyOnArticleLiked;
-            MessageNotifyOnArticleReplied = user.MessageNotifyOnArticleReplied;
-            MessageNotifyOnCommentLiked = user.MessageNotifyOnCommentLiked;
-            MessageNotifyOnCommentReplied = user.MessageNotifyOnCommentReplied;
-            MessageNotifyOnEditorRecommended = user.MessageNotifyOnEditorRecommended;
-
             // Ignore SteamBot
+
+            // Ignore stats
         }
 
         [DataMember]
@@ -84,6 +63,43 @@ namespace Keylol.Models.DTO
 
         [DataMember]
         public LoginLogDTO LoginLog { get; set; }
+
+        [DataMember]
+        public SteamBotDTO SteamBot { get; set; }
+
+        [DataMember]
+        public int SubscriberCount { get; set; }
+        [DataMember]
+        public int ArticleCount { get; set; }
+    }
+
+    public class UserWithMoreOptionsDTO:UserDTO
+    {
+        public UserWithMoreOptionsDTO(KeylolUser user) : base(user)
+        {
+            AutoShareOnAcquiringNewGame = user.AutoShareOnAcquiringNewGame;
+            AutoShareOnAddingFavorite = user.AutoShareOnAddingFavorite;
+            AutoShareOnAddingNewFriend = user.AutoShareOnAddingNewFriend;
+            AutoShareOnAddingVideo = user.AutoShareOnAddingVideo;
+            AutoShareOnCreatingGroup = user.AutoShareOnCreatingGroup;
+            AutoShareOnJoiningGroup = user.AutoShareOnJoiningGroup;
+            AutoShareOnPublishingReview = user.AutoShareOnPublishingReview;
+            AutoShareOnUnlockingAchievement = user.AutoShareOnUnlockingAchievement;
+            AutoShareOnUpdatingWishlist = user.AutoShareOnUpdatingWishlist;
+            AutoShareOnUploadingScreenshot = user.AutoShareOnUploadingScreenshot;
+
+            EmailNotifyOnAdvertisement = user.EmailNotifyOnAdvertisement;
+            EmailNotifyOnArticleReplied = user.EmailNotifyOnArticleReplied;
+            EmailNotifyOnCommentReplied = user.EmailNotifyOnCommentReplied;
+            EmailNotifyOnEditorRecommended = user.EmailNotifyOnEditorRecommended;
+            EmailNotifyOnMessageReceived = user.EmailNotifyOnMessageReceived;
+
+            MessageNotifyOnArticleLiked = user.MessageNotifyOnArticleLiked;
+            MessageNotifyOnArticleReplied = user.MessageNotifyOnArticleReplied;
+            MessageNotifyOnCommentLiked = user.MessageNotifyOnCommentLiked;
+            MessageNotifyOnCommentReplied = user.MessageNotifyOnCommentReplied;
+            MessageNotifyOnEditorRecommended = user.MessageNotifyOnEditorRecommended;
+        }
 
         [DataMember]
         public bool AutoShareOnAddingNewFriend { get; set; }
@@ -127,9 +143,6 @@ namespace Keylol.Models.DTO
         public bool MessageNotifyOnArticleLiked { get; set; }
         [DataMember]
         public bool MessageNotifyOnCommentLiked { get; set; }
-
-        [DataMember]
-        public SteamBotDTO SteamBot { get; set; }
     }
 
     public class UserInCommentDTO

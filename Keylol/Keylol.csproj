@@ -202,6 +202,7 @@
     <Compile Include="App_Start\Startup.SignalR.cs" />
     <Compile Include="App_Start\Startup.WebAPI.cs" />
     <Compile Include="Controllers\ArticleTypeController.cs" />
+    <Compile Include="Controllers\LikeController.cs" />
     <Compile Include="Controllers\NormalPointController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
@@ -237,6 +238,10 @@
     <Compile Include="Migrations\201510241320315_PointPreferedName.Designer.cs">
       <DependentUpon>201510241320315_PointPreferedName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510260639362_LikeBackout.cs" />
+    <Compile Include="Migrations\201510260639362_LikeBackout.Designer.cs">
+      <DependentUpon>201510260639362_LikeBackout.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\CommentReply.cs" />
     <Compile Include="Models\DTO\ArticleTypeDTO.cs" />
     <Compile Include="Models\DTO\CommentDTO.cs" />
@@ -248,6 +253,7 @@
     <Compile Include="Models\SteamBot.cs" />
     <Compile Include="Models\SteamLoginToken.cs" />
     <Compile Include="Models\ViewModels\CommentVM.cs" />
+    <Compile Include="Models\ViewModels\LikeVM.cs" />
     <Compile Include="Models\ViewModels\NormalPointVM.cs" />
     <Compile Include="Models\ViewModels\SteamBotVM.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -312,6 +318,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510241320315_PointPreferedName.resx">
       <DependentUpon>201510241320315_PointPreferedName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510260639362_LikeBackout.resx">
+      <DependentUpon>201510260639362_LikeBackout.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

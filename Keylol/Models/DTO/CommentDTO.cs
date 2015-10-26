@@ -20,5 +20,6 @@ namespace Keylol.Models.DTO
         public string Content { get; set; }
         public DateTime PublishTime { get; set; }
         public UserInCommentDTO Commentotar { get; set; }
+        public int LikeCount { get; set; }
     }
 }

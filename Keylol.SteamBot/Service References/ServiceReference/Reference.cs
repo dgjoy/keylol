@@ -252,55 +252,13 @@ namespace Keylol.SteamBot.ServiceReference {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnAcquiringNewGameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnAddingFavoriteField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnAddingNewFriendField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnAddingVideoField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnCreatingGroupField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnJoiningGroupField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnPublishingReviewField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnUnlockingAchievementField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnUpdatingWishlistField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool AutoShareOnUploadingScreenshotField;
+        private int ArticleCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string AvatarImageField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string EmailField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool EmailNotifyOnAdvertisementField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool EmailNotifyOnArticleRepliedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool EmailNotifyOnCommentRepliedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool EmailNotifyOnEditorRecommendedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool EmailNotifyOnMessageReceivedField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string GamerTagField;
@@ -318,21 +276,6 @@ namespace Keylol.SteamBot.ServiceReference {
         private Keylol.SteamBot.ServiceReference.LoginLogDTO LoginLogField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool MessageNotifyOnArticleLikedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool MessageNotifyOnArticleRepliedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool MessageNotifyOnCommentLikedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool MessageNotifyOnCommentRepliedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool MessageNotifyOnEditorRecommendedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ProfilePointBackgroundImageField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -348,7 +291,13 @@ namespace Keylol.SteamBot.ServiceReference {
         private string SteamIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SteamId64Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SteamProfileNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int SubscriberCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UserNameField;
@@ -364,131 +313,14 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnAcquiringNewGame {
+        public int ArticleCount {
             get {
-                return this.AutoShareOnAcquiringNewGameField;
+                return this.ArticleCountField;
             }
             set {
-                if ((this.AutoShareOnAcquiringNewGameField.Equals(value) != true)) {
-                    this.AutoShareOnAcquiringNewGameField = value;
-                    this.RaisePropertyChanged("AutoShareOnAcquiringNewGame");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnAddingFavorite {
-            get {
-                return this.AutoShareOnAddingFavoriteField;
-            }
-            set {
-                if ((this.AutoShareOnAddingFavoriteField.Equals(value) != true)) {
-                    this.AutoShareOnAddingFavoriteField = value;
-                    this.RaisePropertyChanged("AutoShareOnAddingFavorite");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnAddingNewFriend {
-            get {
-                return this.AutoShareOnAddingNewFriendField;
-            }
-            set {
-                if ((this.AutoShareOnAddingNewFriendField.Equals(value) != true)) {
-                    this.AutoShareOnAddingNewFriendField = value;
-                    this.RaisePropertyChanged("AutoShareOnAddingNewFriend");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnAddingVideo {
-            get {
-                return this.AutoShareOnAddingVideoField;
-            }
-            set {
-                if ((this.AutoShareOnAddingVideoField.Equals(value) != true)) {
-                    this.AutoShareOnAddingVideoField = value;
-                    this.RaisePropertyChanged("AutoShareOnAddingVideo");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnCreatingGroup {
-            get {
-                return this.AutoShareOnCreatingGroupField;
-            }
-            set {
-                if ((this.AutoShareOnCreatingGroupField.Equals(value) != true)) {
-                    this.AutoShareOnCreatingGroupField = value;
-                    this.RaisePropertyChanged("AutoShareOnCreatingGroup");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnJoiningGroup {
-            get {
-                return this.AutoShareOnJoiningGroupField;
-            }
-            set {
-                if ((this.AutoShareOnJoiningGroupField.Equals(value) != true)) {
-                    this.AutoShareOnJoiningGroupField = value;
-                    this.RaisePropertyChanged("AutoShareOnJoiningGroup");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnPublishingReview {
-            get {
-                return this.AutoShareOnPublishingReviewField;
-            }
-            set {
-                if ((this.AutoShareOnPublishingReviewField.Equals(value) != true)) {
-                    this.AutoShareOnPublishingReviewField = value;
-                    this.RaisePropertyChanged("AutoShareOnPublishingReview");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnUnlockingAchievement {
-            get {
-                return this.AutoShareOnUnlockingAchievementField;
-            }
-            set {
-                if ((this.AutoShareOnUnlockingAchievementField.Equals(value) != true)) {
-                    this.AutoShareOnUnlockingAchievementField = value;
-                    this.RaisePropertyChanged("AutoShareOnUnlockingAchievement");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnUpdatingWishlist {
-            get {
-                return this.AutoShareOnUpdatingWishlistField;
-            }
-            set {
-                if ((this.AutoShareOnUpdatingWishlistField.Equals(value) != true)) {
-                    this.AutoShareOnUpdatingWishlistField = value;
-                    this.RaisePropertyChanged("AutoShareOnUpdatingWishlist");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AutoShareOnUploadingScreenshot {
-            get {
-                return this.AutoShareOnUploadingScreenshotField;
-            }
-            set {
-                if ((this.AutoShareOnUploadingScreenshotField.Equals(value) != true)) {
-                    this.AutoShareOnUploadingScreenshotField = value;
-                    this.RaisePropertyChanged("AutoShareOnUploadingScreenshot");
+                if ((this.ArticleCountField.Equals(value) != true)) {
+                    this.ArticleCountField = value;
+                    this.RaisePropertyChanged("ArticleCount");
                 }
             }
         }
@@ -515,71 +347,6 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.EmailField, value) != true)) {
                     this.EmailField = value;
                     this.RaisePropertyChanged("Email");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool EmailNotifyOnAdvertisement {
-            get {
-                return this.EmailNotifyOnAdvertisementField;
-            }
-            set {
-                if ((this.EmailNotifyOnAdvertisementField.Equals(value) != true)) {
-                    this.EmailNotifyOnAdvertisementField = value;
-                    this.RaisePropertyChanged("EmailNotifyOnAdvertisement");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool EmailNotifyOnArticleReplied {
-            get {
-                return this.EmailNotifyOnArticleRepliedField;
-            }
-            set {
-                if ((this.EmailNotifyOnArticleRepliedField.Equals(value) != true)) {
-                    this.EmailNotifyOnArticleRepliedField = value;
-                    this.RaisePropertyChanged("EmailNotifyOnArticleReplied");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool EmailNotifyOnCommentReplied {
-            get {
-                return this.EmailNotifyOnCommentRepliedField;
-            }
-            set {
-                if ((this.EmailNotifyOnCommentRepliedField.Equals(value) != true)) {
-                    this.EmailNotifyOnCommentRepliedField = value;
-                    this.RaisePropertyChanged("EmailNotifyOnCommentReplied");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool EmailNotifyOnEditorRecommended {
-            get {
-                return this.EmailNotifyOnEditorRecommendedField;
-            }
-            set {
-                if ((this.EmailNotifyOnEditorRecommendedField.Equals(value) != true)) {
-                    this.EmailNotifyOnEditorRecommendedField = value;
-                    this.RaisePropertyChanged("EmailNotifyOnEditorRecommended");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool EmailNotifyOnMessageReceived {
-            get {
-                return this.EmailNotifyOnMessageReceivedField;
-            }
-            set {
-                if ((this.EmailNotifyOnMessageReceivedField.Equals(value) != true)) {
-                    this.EmailNotifyOnMessageReceivedField = value;
-                    this.RaisePropertyChanged("EmailNotifyOnMessageReceived");
                 }
             }
         }
@@ -650,71 +417,6 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool MessageNotifyOnArticleLiked {
-            get {
-                return this.MessageNotifyOnArticleLikedField;
-            }
-            set {
-                if ((this.MessageNotifyOnArticleLikedField.Equals(value) != true)) {
-                    this.MessageNotifyOnArticleLikedField = value;
-                    this.RaisePropertyChanged("MessageNotifyOnArticleLiked");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool MessageNotifyOnArticleReplied {
-            get {
-                return this.MessageNotifyOnArticleRepliedField;
-            }
-            set {
-                if ((this.MessageNotifyOnArticleRepliedField.Equals(value) != true)) {
-                    this.MessageNotifyOnArticleRepliedField = value;
-                    this.RaisePropertyChanged("MessageNotifyOnArticleReplied");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool MessageNotifyOnCommentLiked {
-            get {
-                return this.MessageNotifyOnCommentLikedField;
-            }
-            set {
-                if ((this.MessageNotifyOnCommentLikedField.Equals(value) != true)) {
-                    this.MessageNotifyOnCommentLikedField = value;
-                    this.RaisePropertyChanged("MessageNotifyOnCommentLiked");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool MessageNotifyOnCommentReplied {
-            get {
-                return this.MessageNotifyOnCommentRepliedField;
-            }
-            set {
-                if ((this.MessageNotifyOnCommentRepliedField.Equals(value) != true)) {
-                    this.MessageNotifyOnCommentRepliedField = value;
-                    this.RaisePropertyChanged("MessageNotifyOnCommentReplied");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool MessageNotifyOnEditorRecommended {
-            get {
-                return this.MessageNotifyOnEditorRecommendedField;
-            }
-            set {
-                if ((this.MessageNotifyOnEditorRecommendedField.Equals(value) != true)) {
-                    this.MessageNotifyOnEditorRecommendedField = value;
-                    this.RaisePropertyChanged("MessageNotifyOnEditorRecommended");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public string ProfilePointBackgroundImage {
             get {
                 return this.ProfilePointBackgroundImageField;
@@ -780,6 +482,19 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SteamId64 {
+            get {
+                return this.SteamId64Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SteamId64Field, value) != true)) {
+                    this.SteamId64Field = value;
+                    this.RaisePropertyChanged("SteamId64");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string SteamProfileName {
             get {
                 return this.SteamProfileNameField;
@@ -788,6 +503,19 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.SteamProfileNameField, value) != true)) {
                     this.SteamProfileNameField = value;
                     this.RaisePropertyChanged("SteamProfileName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int SubscriberCount {
+            get {
+                return this.SubscriberCountField;
+            }
+            set {
+                if ((this.SubscriberCountField.Equals(value) != true)) {
+                    this.SubscriberCountField = value;
+                    this.RaisePropertyChanged("SubscriberCount");
                 }
             }
         }

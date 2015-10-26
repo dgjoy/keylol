@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Web.Http.ModelBinding;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -23,18 +23,28 @@ namespace Keylol.Controllers
         /// <param name="id">文章 ID</param>
         [Route("{id}")]
         [ResponseType(typeof (ArticleDTO))]
-        [SwaggerResponse(404, "指定文章不存在")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string id)
         {
-            var article = await DbContext.Articles.FindAsync(id);
-            if (article == null)
+            var articleEntry = await DbContext.Articles.Where(a => a.Id == id).Select(
+                a =>
+                    new
+                    {
+                        article = a,
+                        likeCount = a.Likes.Count(l => l.Backout == false),
+                        typeName = a.Type.Name,
+                        attachedPoints = a.AttachedPoints,
+                        authorIdCode = a.Principal.User.IdCode
+                    })
+                .SingleOrDefaultAsync();
+            if (articleEntry == null)
                 return NotFound();
-            var articleDTO = new ArticleDTO(article)
+            var articleDTO = new ArticleDTO(articleEntry.article)
             {
-                AuthorIdCode = article.Principal.User.IdCode,
-                AttachedPoints = article.AttachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
-                TypeName = article.Type.Name,
-                LikeCount = article.Likes.Count
+                AuthorIdCode = articleEntry.authorIdCode,
+                AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
+                TypeName = articleEntry.typeName,
+                LikeCount = articleEntry.likeCount
             };
             return Ok(articleDTO);
         }
@@ -46,23 +56,32 @@ namespace Keylol.Controllers
         /// <param name="sequenceNumberForAuthor">文章序号</param>
         [Route("{authorIdCode}/{sequenceNumberForAuthor}")]
         [ResponseType(typeof (ArticleDTO))]
-        [SwaggerResponse(404, "指定文章不存在")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
-            var article =
+            var articleEntry =
                 await
-                    DbContext.Articles.SingleOrDefaultAsync(
-                        a =>
-                            a.Principal.User.IdCode == authorIdCode &&
-                            a.SequenceNumberForAuthor == sequenceNumberForAuthor);
-            if (article == null)
+                    DbContext.Articles.Where(a =>
+                        a.Principal.User.IdCode == authorIdCode &&
+                        a.SequenceNumberForAuthor == sequenceNumberForAuthor)
+                        .Select(
+                            a =>
+                                new
+                                {
+                                    article = a,
+                                    likeCount = a.Likes.Count(l => l.Backout == false),
+                                    typeName = a.Type.Name,
+                                    attachedPoints = a.AttachedPoints
+                                })
+                        .SingleOrDefaultAsync();
+            if (articleEntry == null)
                 return NotFound();
-            var articleDTO = new ArticleDTO(article)
+            var articleDTO = new ArticleDTO(articleEntry.article)
             {
                 AuthorIdCode = authorIdCode,
-                AttachedPoints = article.AttachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
-                TypeName = article.Type.Name,
-                LikeCount = article.Likes.Count
+                AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
+                TypeName = articleEntry.typeName,
+                LikeCount = articleEntry.likeCount
             };
             return Ok(articleDTO);
         }
@@ -71,8 +90,8 @@ namespace Keylol.Controllers
         /// 根据关键字搜索对应文章
         /// </summary>
         /// <param name="keyword">关键字</param>
-        /// <param name="skip">起始位置</param>
-        /// <param name="take">获取数量，最大 50</param>
+        /// <param name="skip">起始位置，默认 0</param>
+        /// <param name="take">获取数量，最大 50，默认 5</param>
         [Route]
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
@@ -93,8 +112,9 @@ namespace Keylol.Controllers
         /// <param name="vm">文章相关属性</param>
         [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]
         [Route]
-        [ResponseType(typeof (ArticleDTO))]
-        [SwaggerResponse(400, "存在无效的输入属性")]
+        [SwaggerResponseRemoveDefaults]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (ArticleDTO))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(ArticlePostVM vm)
         {
             if (vm == null)
@@ -155,9 +175,9 @@ namespace Keylol.Controllers
         /// <param name="id">文章 Id</param>
         /// <param name="vm">文章相关属性</param>
         [Route("{id}")]
-        [SwaggerResponse(404, "指定文章不存在")]
-        [SwaggerResponse(401, "当前用户无权编辑这篇文章")]
-        [SwaggerResponse(400, "存在无效的输入属性")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Put(string id, ArticlePutVM vm)
         {
             if (vm == null)
