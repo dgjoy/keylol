@@ -13,6 +13,7 @@ namespace Keylol.Models.DTO
             Title = article.Title;
             if (includeContent)
                 Content = article.Content;
+            VoteForPointId = article.VoteForPointId;
             Vote = article.Vote;
             SequenceNumberForAuthor = article.SequenceNumberForAuthor;
         }
@@ -25,6 +26,8 @@ namespace Keylol.Models.DTO
 
         public string Content { get; set; }
 
+        public string VoteForPointId { get; set; }
+
         public VoteType? Vote { get; set; }
 
         public string AuthorIdCode { get; set; }
@@ -35,6 +38,8 @@ namespace Keylol.Models.DTO
 
         public string TypeName { get; set; }
 
-        public int LikeCount { get; set; }
+        public int? LikeCount { get; set; }
+
+        public bool? Liked { get; set; }
     }
 }

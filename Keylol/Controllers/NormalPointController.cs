@@ -31,29 +31,46 @@ namespace Keylol.Controllers
         /// <param name="includeStats">是否包含读者数和文章数，默认 false</param>
         /// <param name="idType">Id 类型，默认 "Id"</param>
         [Route("{id}")]
-        [ResponseType(typeof(NormalPointDTO))]
+        [ResponseType(typeof (NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
-        public async Task<IHttpActionResult> Get(string id, bool includeStats = false, IdType idType = IdType.Id)
+        public async Task<IHttpActionResult> Get(string id, bool includeStats = false, bool includeVotes = false,
+            IdType idType = IdType.Id)
         {
-            var pointQuery = DbContext.NormalPoints.Where(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
-            if (includeStats)
-            {
-                var pointEntry = await pointQuery.Select(p => new { point = p, articleCount = p.Articles.Count, subscriberCount = p.Subscribers.Count }).SingleOrDefaultAsync();
-                if (pointEntry == null)
-                    return NotFound();
+            var point = await DbContext.NormalPoints
+                .Where(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id)
+                .SingleOrDefaultAsync();
 
-                return Ok(new NormalPointDTO(pointEntry.point)
-                {
-                    ArticleCount = pointEntry.articleCount,
-                    SubscriberCount = pointEntry.subscriberCount
-                });
-            }
-
-            var point = await pointQuery.SingleOrDefaultAsync();
             if (point == null)
                 return NotFound();
 
-            return Ok(new NormalPointDTO(point));
+            var pointDTO = new NormalPointDTO(point);
+
+            if (includeStats)
+            {
+                var stats = await DbContext.NormalPoints
+                    .Where(p => p.Id == point.Id)
+                    .Select(p => new {articleCount = p.Articles.Count, subscriberCount = p.Subscribers.Count})
+                    .SingleAsync();
+                pointDTO.ArticleCount = stats.articleCount;
+                pointDTO.SubscriberCount = stats.subscriberCount;
+            }
+
+            if (includeVotes)
+            {
+                var votes = await DbContext.NormalPoints
+                    .Where(p => p.Id == point.Id)
+                    .Select(
+                        p => new
+                        {
+                            positiveArticleCount = p.VoteByArticles.Count(a => a.Vote == VoteType.Positive),
+                            negativeArticleCount = p.VoteByArticles.Count(a => a.Vote == VoteType.Negative)
+                        })
+                    .SingleAsync();
+                pointDTO.PositiveArticleCount = votes.positiveArticleCount;
+                pointDTO.NegativeArticleCount = votes.negativeArticleCount;
+            }
+
+            return Ok(pointDTO);
         }
 
         /// <summary>
@@ -63,7 +80,7 @@ namespace Keylol.Controllers
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 5</param>
         [Route]
-        [ResponseType(typeof(List<NormalPointDTO>))]
+        [ResponseType(typeof (List<NormalPointDTO>))]
         public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
         {
             if (take > 50) take = 50;
@@ -86,7 +103,7 @@ namespace Keylol.Controllers
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(NormalPointDTO))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(NormalPointVM vm)
         {

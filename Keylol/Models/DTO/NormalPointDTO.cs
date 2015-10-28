@@ -45,7 +45,9 @@ namespace Keylol.Models.DTO
         public string EnglishName { get; set; }
         public PreferedNameType PreferedName { get; set; }
         public string StoreLink { get; set; }
-        public int SubscriberCount { get; set; }
-        public int ArticleCount { get; set; }
+        public int? SubscriberCount { get; set; }
+        public int? ArticleCount { get; set; }
+        public int? PositiveArticleCount { get; set; }
+        public int? NegativeArticleCount { get; set; }
     }
 }

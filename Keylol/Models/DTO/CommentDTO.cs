@@ -14,12 +14,15 @@ namespace Keylol.Models.DTO
             if (includeContent)
                 Content = comment.Content;
             PublishTime = comment.PublishTime;
+            SequenceNumberForArticle = comment.SequenceNumberForArticle;
         }
 
         public string Id { get; set; }
         public string Content { get; set; }
         public DateTime PublishTime { get; set; }
         public UserInCommentDTO Commentotar { get; set; }
-        public int LikeCount { get; set; }
+        public int SequenceNumberForArticle { get; set; }
+        public int? LikeCount { get; set; }
+        public bool? Liked { get; set; }
     }
 }

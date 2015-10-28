@@ -80,6 +80,7 @@ namespace Keylol
             if (Regex.IsMatch(origin, _originPattern, RegexOptions.IgnoreCase))
             {
                 policy.Origins.Add(origin);
+                policy.ExposedHeaders.Add("X-Total-Record-Count");
             }
             return policy;
         }

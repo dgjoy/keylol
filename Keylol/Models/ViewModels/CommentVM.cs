@@ -16,6 +16,6 @@ namespace Keylol.Models.ViewModels
         public string ArticleId { get; set; }
 
         [Required]
-        public List<string> ReplyToCommentsId { get; set; }
+        public List<int> ReplyToCommentsSN { get; set; }
     }
 }

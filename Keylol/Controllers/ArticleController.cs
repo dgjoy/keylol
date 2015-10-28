@@ -26,12 +26,14 @@ namespace Keylol.Controllers
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string id)
         {
+            var userId = User.Identity.GetUserId();
             var articleEntry = await DbContext.Articles.Where(a => a.Id == id).Select(
                 a =>
                     new
                     {
                         article = a,
                         likeCount = a.Likes.Count(l => l.Backout == false),
+                        liked = a.Likes.Any(l => l.OperatorId == userId && l.Backout == false),
                         typeName = a.Type.Name,
                         attachedPoints = a.AttachedPoints,
                         authorIdCode = a.Principal.User.IdCode
@@ -44,7 +46,8 @@ namespace Keylol.Controllers
                 AuthorIdCode = articleEntry.authorIdCode,
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
                 TypeName = articleEntry.typeName,
-                LikeCount = articleEntry.likeCount
+                LikeCount = articleEntry.likeCount,
+                Liked = articleEntry.liked
             };
             return Ok(articleDTO);
         }
@@ -59,20 +62,20 @@ namespace Keylol.Controllers
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         public async Task<IHttpActionResult> Get(string authorIdCode, int sequenceNumberForAuthor)
         {
+            var userId = User.Identity.GetUserId();
             var articleEntry =
                 await
                     DbContext.Articles.Where(a =>
                         a.Principal.User.IdCode == authorIdCode &&
                         a.SequenceNumberForAuthor == sequenceNumberForAuthor)
-                        .Select(
-                            a =>
-                                new
-                                {
-                                    article = a,
-                                    likeCount = a.Likes.Count(l => l.Backout == false),
-                                    typeName = a.Type.Name,
-                                    attachedPoints = a.AttachedPoints
-                                })
+                        .Select(a => new
+                        {
+                            article = a,
+                            likeCount = a.Likes.Count(l => l.Backout == false),
+                            liked = a.Likes.Any(l => l.OperatorId == userId && l.Backout == false),
+                            typeName = a.Type.Name,
+                            attachedPoints = a.AttachedPoints
+                        })
                         .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
@@ -81,7 +84,8 @@ namespace Keylol.Controllers
                 AuthorIdCode = authorIdCode,
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
                 TypeName = articleEntry.typeName,
-                LikeCount = articleEntry.likeCount
+                LikeCount = articleEntry.likeCount,
+                Liked = articleEntry.liked
             };
             return Ok(articleDTO);
         }
@@ -135,7 +139,7 @@ namespace Keylol.Controllers
 
             var article = DbContext.Articles.Create();
 
-            if (type.AllowVote && vm.Vote != null)
+            if (type.AllowVote && vm.VoteForPointId != null)
             {
                 var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
                 if (voteForPoint == null)
@@ -158,12 +162,10 @@ namespace Keylol.Controllers
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
             article.Principal = (await UserManager.FindByIdAsync(User.Identity.GetUserId())).ProfilePoint;
-            article.SequenceNumberForAuthor =
-                (await
-                    DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
-                        .Select(a => a.SequenceNumberForAuthor)
-                        .DefaultIfEmpty(0)
-                        .MaxAsync()) + 1;
+            article.SequenceNumberForAuthor = (await DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
+                .Select(a => a.SequenceNumberForAuthor)
+                .DefaultIfEmpty(0)
+                .MaxAsync()) + 1;
             DbContext.Articles.Add(article);
             await DbContext.SaveChangesAsync();
             return Created($"article/{article.Id}", new ArticleDTO(article, false));
@@ -173,7 +175,7 @@ namespace Keylol.Controllers
         /// 编辑指定文章
         /// </summary>
         /// <param name="id">文章 Id</param>
-        /// <param name="vm">文章相关属性</param>
+        /// <param name="vm">文章相关属性，其中 Title, Content, TypeId 如果不提交表示不修改</param>
         [Route("{id}")]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
@@ -213,23 +215,20 @@ namespace Keylol.Controllers
                 type = article.Type;
             }
 
-            if (type.AllowVote)
+            if (type.AllowVote && vm.VoteForPointId != null)
             {
-                if (vm.VoteForPointId != null)
+                var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
+                if (voteForPoint == null)
                 {
-                    var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
-                    if (voteForPoint == null)
-                    {
-                        ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
-                        return BadRequest(ModelState);
-                    }
-                    if (voteForPoint.Type != NormalPointType.Game)
-                    {
-                        ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
-                        return BadRequest(ModelState);
-                    }
-                    article.VoteForPointId = voteForPoint.Id;
+                    ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
+                    return BadRequest(ModelState);
                 }
+                if (voteForPoint.Type != NormalPointType.Game)
+                {
+                    ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
+                    return BadRequest(ModelState);
+                }
+                article.VoteForPointId = voteForPoint.Id;
                 article.Vote = vm.Vote;
             }
             else
@@ -249,9 +248,8 @@ namespace Keylol.Controllers
                 article.Title = vm.Title;
             if (vm.Content != null)
                 article.Content = vm.Content;
-            if (vm.AttachedPointsId != null)
-                article.AttachedPoints =
-                    await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
+            article.AttachedPoints =
+                await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
             await DbContext.SaveChangesAsync();
             return Ok();
         }

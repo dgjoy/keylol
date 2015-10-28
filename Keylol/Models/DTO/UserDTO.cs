@@ -62,15 +62,12 @@ namespace Keylol.Models.DTO
         public string StaffClaim { get; set; }
 
         [DataMember]
-        public LoginLogDTO LoginLog { get; set; }
-
-        [DataMember]
         public SteamBotDTO SteamBot { get; set; }
 
         [DataMember]
-        public int SubscriberCount { get; set; }
+        public int? SubscriberCount { get; set; }
         [DataMember]
-        public int ArticleCount { get; set; }
+        public int? ArticleCount { get; set; }
     }
 
     public class UserWithMoreOptionsDTO:UserDTO

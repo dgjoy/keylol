@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
@@ -23,6 +24,9 @@ namespace Keylol.Models
         [Required]
         public string ArticleId { get; set; }
         public virtual Article Article { get; set; }
+
+        [Index]
+        public int SequenceNumberForArticle { get; set; }
 
         public virtual ICollection<CommentLike> Likes { get; set; }
         public virtual ICollection<CommentReply> CommentRepliesAsComment { get; set; }

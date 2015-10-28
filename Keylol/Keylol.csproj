@@ -242,6 +242,10 @@
     <Compile Include="Migrations\201510260639362_LikeBackout.Designer.cs">
       <DependentUpon>201510260639362_LikeBackout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510280238563_CommentSequenceNumberForArticle.cs" />
+    <Compile Include="Migrations\201510280238563_CommentSequenceNumberForArticle.Designer.cs">
+      <DependentUpon>201510280238563_CommentSequenceNumberForArticle.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\CommentReply.cs" />
     <Compile Include="Models\DTO\ArticleTypeDTO.cs" />
     <Compile Include="Models\DTO\CommentDTO.cs" />
@@ -321,6 +325,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510260639362_LikeBackout.resx">
       <DependentUpon>201510260639362_LikeBackout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510280238563_CommentSequenceNumberForArticle.resx">
+      <DependentUpon>201510280238563_CommentSequenceNumberForArticle.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
