@@ -54,8 +54,8 @@ namespace Keylol.Controllers
 
                 case OrderByType.LikeCount:
                     commentsQuery = desc
-                        ? commentsQuery.OrderByDescending(c => c.Likes.Count)
-                        : commentsQuery.OrderBy(c => c.Likes.Count);
+                        ? commentsQuery.OrderByDescending(c => c.Likes.Count(l => l.Backout == false))
+                        : commentsQuery.OrderBy(c => c.Likes.Count(l => l.Backout == false));
                     break;
 
                 default:

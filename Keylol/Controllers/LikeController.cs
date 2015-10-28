@@ -81,27 +81,19 @@ namespace Keylol.Controllers
         /// 撤销发出的认同
         /// </summary>
         /// <param name="vm">认同相关属性</param>
+        /// <param name="targetId">目标文章或评论 ID</param>
+        /// <param name="type">认同类型</param>
         [Route]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.NotFound, "当前用户并没有对指定的文章或评论发出过认同")]
-        public async Task<IHttpActionResult> Delete(LikeVM vm)
+        public async Task<IHttpActionResult> Delete(string targetId, LikeVM.LikeType type)
         {
-            if (vm == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var operatorId = User.Identity.GetUserId();
-
-            switch (vm.Type)
+            switch (type)
             {
                 case LikeVM.LikeType.ArticleLike:
                     var existArticleLike = await DbContext.ArticleLikes.SingleOrDefaultAsync(
-                        l => l.ArticleId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
+                        l => l.ArticleId == targetId && l.OperatorId == operatorId && l.Backout == false);
                     if (existArticleLike == null)
                         return NotFound();
                     existArticleLike.Backout = true;
@@ -109,7 +101,7 @@ namespace Keylol.Controllers
 
                 case LikeVM.LikeType.CommentLike:
                     var existCommentLike = await DbContext.CommentLikes.SingleOrDefaultAsync(
-                        l => l.CommentId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
+                        l => l.CommentId == targetId && l.OperatorId == operatorId && l.Backout == false);
                     if (existCommentLike == null)
                         return NotFound();
                     existCommentLike.Backout = true;

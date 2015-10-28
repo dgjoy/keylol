@@ -252,7 +252,7 @@ namespace Keylol.SteamBot.ServiceReference {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int ArticleCountField;
+        private System.Nullable<int> ArticleCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string AvatarImageField;
@@ -271,9 +271,6 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool LockoutEnabledField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private Keylol.SteamBot.ServiceReference.LoginLogDTO LoginLogField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ProfilePointBackgroundImageField;
@@ -297,7 +294,7 @@ namespace Keylol.SteamBot.ServiceReference {
         private string SteamProfileNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SubscriberCountField;
+        private System.Nullable<int> SubscriberCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UserNameField;
@@ -313,7 +310,7 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int ArticleCount {
+        public System.Nullable<int> ArticleCount {
             get {
                 return this.ArticleCountField;
             }
@@ -399,19 +396,6 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((this.LockoutEnabledField.Equals(value) != true)) {
                     this.LockoutEnabledField = value;
                     this.RaisePropertyChanged("LockoutEnabled");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public Keylol.SteamBot.ServiceReference.LoginLogDTO LoginLog {
-            get {
-                return this.LoginLogField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.LoginLogField, value) != true)) {
-                    this.LoginLogField = value;
-                    this.RaisePropertyChanged("LoginLog");
                 }
             }
         }
@@ -508,7 +492,7 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SubscriberCount {
+        public System.Nullable<int> SubscriberCount {
             get {
                 return this.SubscriberCountField;
             }
@@ -529,99 +513,6 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.UserNameField, value) != true)) {
                     this.UserNameField = value;
                     this.RaisePropertyChanged("UserName");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="LoginLogDTO", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
-    [System.SerializableAttribute()]
-    public partial class LoginLogDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IpField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.DateTime TimeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UserIdField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IdField, value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Ip {
-            get {
-                return this.IpField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IpField, value) != true)) {
-                    this.IpField = value;
-                    this.RaisePropertyChanged("Ip");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime Time {
-            get {
-                return this.TimeField;
-            }
-            set {
-                if ((this.TimeField.Equals(value) != true)) {
-                    this.TimeField = value;
-                    this.RaisePropertyChanged("Time");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string UserId {
-            get {
-                return this.UserIdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UserIdField, value) != true)) {
-                    this.UserIdField = value;
-                    this.RaisePropertyChanged("UserId");
                 }
             }
         }

@@ -35,9 +35,6 @@ namespace Keylol
 
             config.MapHttpAttributeRoutes();
 
-            config.Routes.MapHttpBatchRoute("Batch", "batch",
-                new DefaultHttpBatchHandler(server));
-
             app.UseWebApi(server);
         }
     }

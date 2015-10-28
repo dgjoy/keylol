@@ -11,7 +11,12 @@ namespace Keylol
     {
         private const string BaseUrl = "http://api.geetest.com";
         private const string Key = "444dcf8693daa76733c7ad1c6e2655d7";
-        private HttpClient Client { get; } = new HttpClient {BaseAddress = new Uri(BaseUrl)};
+
+        private HttpClient Client { get; } = new HttpClient
+        {
+            BaseAddress = new Uri(BaseUrl),
+            Timeout = TimeSpan.FromSeconds(2)
+        };
 
         public async Task<bool> ValidateAsync(string challenge, string seccode, string validate)
         {
@@ -22,9 +27,17 @@ namespace Keylol
                     new KeyValuePair<string, string>("seccode", seccode),
                     new KeyValuePair<string, string>("sdk", "csharp_2.15.7.23.1")
                 };
-                var result = await Client.PostAsync(GetApiEntry("/validate.php"), new FormUrlEncodedContent(postData));
-                if (await result.Content.ReadAsStringAsync() == MD5Encode(seccode))
+                try
+                {
+                    var result =
+                        await Client.PostAsync(GetApiEntry("/validate.php"), new FormUrlEncodedContent(postData));
+                    if (await result.Content.ReadAsStringAsync() == MD5Encode(seccode))
+                        return true;
+                }
+                catch (TaskCanceledException)
+                {
                     return true;
+                }
             }
             return false;
         }

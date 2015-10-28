@@ -289,13 +289,13 @@ namespace Keylol.SteamBot
 
                 _callbackManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
                 _callbackManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
-//                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
-//                {
-//                    foreach (var s in callback.Servers)
-//                    {
-//                        _botService.WriteLog(s.ToString());
-//                    }
-//                });
+                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
+                {
+                    foreach (var s in callback.Servers)
+                    {
+                        _botService.WriteLog(s.ToString());
+                    }
+                });
                 _callbackManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
                 _callbackManager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth);
                 _callbackManager.Subscribe<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged);
@@ -471,7 +471,8 @@ namespace Keylol.SteamBot
                             if (user == null)
                             {
                                 _steamFriends.AddFriend(friend.SteamID);
-                                _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg, "请输入您的绑定验证码");
+                                _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
+                                    "欢迎使用当前 Steam 账号加入其乐，请输入您在网页上获取的 8 位绑定验证码。");
                                 await _botService._coodinator.BroadcastBotOnFriendAddedAsync(Id);
                                 var timer = new Timer(300000) {AutoReset = false};
                                 timer.Elapsed += async (sender, args) =>
@@ -483,7 +484,7 @@ namespace Keylol.SteamBot
                                         null)
                                     {
                                         _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
-                                            "本次操作超时");
+                                            "抱歉，您的会话因超时被强制结束，机器人已将您从好友列表中暂时移除。若要加入其乐，请重新按照网页指示注册账号。");
                                         _steamFriends.RemoveFriend(friend.SteamID);
                                     }
                                 };
@@ -497,9 +498,13 @@ namespace Keylol.SteamBot
                                     await
                                         _botService._coodinator.SetUserStatusAsync(friend.SteamID.Render(true),
                                             StatusClaim.Normal);
+                                    _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
+                                        "您已成功与其乐机器人再次绑定，请务必不要将其乐机器人从好友列表中移除。");
                                 }
                                 else
                                 {
+                                    _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
+                                        "此 Steam 帐号已经与另外一位其乐机器人绑定，您即将被当前机器人从好友列表中移除。请通过口令组合登录并在设置中按提示重新添加机器人。");
                                     _steamFriends.RemoveFriend(friend.SteamID);
                                 }
                             }
@@ -516,9 +521,8 @@ namespace Keylol.SteamBot
                             }
                             else if (user.SteamBot.Id == Id)
                             {
-                                await
-                                    _botService._coodinator.SetUserStatusAsync(friend.SteamID.Render(true),
-                                        StatusClaim.Probationer);
+                                await _botService._coodinator.SetUserStatusAsync(friend.SteamID.Render(true),
+                                    StatusClaim.Probationer);
                             }
                             break;
 
@@ -545,11 +549,20 @@ namespace Keylol.SteamBot
                             .ToLower()
                         ))
                     {
-                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "绑定成功");
+                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                            "绑定成功，欢迎加入其乐！今后您可以向机器人发送对话快速登录社区，请勿将机器人从好友列表移除。");
+                        var timer = new Timer(3000) {AutoReset = false};
+                        timer.Elapsed += (sender, args) =>
+                        {
+                            _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                "若希望在其乐上获得符合游戏兴趣的据点推荐，请避免将 Steam 资料隐私设置为「仅自己可见」。");
+                        };
+                        timer.Start();
                     }
                     else
                     {
-                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "验证码无效");
+                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                            "您的输入无法被识别，请确认绑定验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
                     }
                 }
                 else
@@ -557,11 +570,12 @@ namespace Keylol.SteamBot
                     if (await _botService._coodinator.BindSteamUserWithLoginTokenAsync(
                         callback.Sender.Render(true), callback.Message))
                     {
-                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "登录成功");
+                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "欢迎回来，您已成功登录其乐社区。");
                     }
                     else
                     {
-                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "验证码无效");
+                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                            "您的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
                     }
                 }
             }
