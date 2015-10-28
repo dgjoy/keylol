@@ -278,6 +278,21 @@ namespace Keylol.SteamBot
                 _steamFriends = _steamClient.GetHandler<SteamFriends>();
                 _callbackManager = new CallbackManager(_steamClient);
 
+                _callbackManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
+                _callbackManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
+//                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
+//                {
+//                    foreach (var s in callback.Servers)
+//                    {
+//                        _botService.WriteLog(s.ToString());
+//                    }
+//                });
+                _callbackManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
+                _callbackManager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth);
+                _callbackManager.Subscribe<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged);
+                _callbackManager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendListUpdated);
+                _callbackManager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived);
+
                 Task.Run(() =>
                 {
                     while (_isRunning)
@@ -286,21 +301,6 @@ namespace Keylol.SteamBot
                     }
                     _botService.WriteLog($"Bot {Id} callback pump stopped.");
                 });
-
-                _callbackManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
-                _callbackManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
-                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
-                {
-                    foreach (var s in callback.Servers)
-                    {
-                        _botService.WriteLog(s.ToString());
-                    }
-                });
-                _callbackManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
-                _callbackManager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth);
-                _callbackManager.Subscribe<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged);
-                _callbackManager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendListUpdated);
-                _callbackManager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived);
 
                 _steamClient.Connect(_botService._cmServer);
             }
