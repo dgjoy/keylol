@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
     public abstract class Like
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [Index]
         public DateTime Time { get; set; } = DateTime.Now;
+
         public bool ReadByTargetUser { get; set; } = false;
         
         [Required]
@@ -15,6 +19,7 @@ namespace Keylol.Models
 
         public virtual KeylolUser Operator { get; set; }
 
+        [Index]
         public bool Backout { get; set; } = false;
     }
 

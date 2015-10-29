@@ -18,8 +18,13 @@ namespace Keylol.Models
         }
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [Index]
         public DateTime PublishTime { get; set; } = DateTime.Now;
         
+        [Index(IsUnique = true)]
+        public int SequenceNumber { get; set; }
+
         [Required]
         public string PrincipalId { get; set; }
 

@@ -19,6 +19,8 @@ namespace Keylol.Controllers
     [RoutePrefix("comment")]
     public class CommentController : KeylolApiController
     {
+        private static readonly object CommentSaveLock = new object();
+
         public enum OrderByType
         {
             SequenceNumberForAuthor,
@@ -33,12 +35,12 @@ namespace Keylol.Controllers
         /// <param name="orderBy">排序字段，默认 "SequenceNumberForAuthor"</param>
         /// <param name="desc">true 表示降序，false 表示升序，默认 false</param>
         /// <param name="skip">起始位置，默认 0</param>
-        /// <param name="take">获取数量，最大 50，默认 30</param>
+        /// <param name="take">获取数量，最大 50，默认 20</param>
         [Route]
         [ResponseType(typeof (List<CommentDTO>))]
         public async Task<HttpResponseMessage> Get(string articleId,
             OrderByType orderBy = OrderByType.SequenceNumberForAuthor,
-            bool desc = false, int skip = 0, int take = 30)
+            bool desc = false, int skip = 0, int take = 20)
         {
             var userId = User.Identity.GetUserId();
             if (take > 50) take = 50;
@@ -113,15 +115,18 @@ namespace Keylol.Controllers
                 .ToListAsync();
 
             var comment = DbContext.Comments.Create();
+            DbContext.Comments.Add(comment);
             comment.ArticleId = article.Id;
             comment.CommentatorId = User.Identity.GetUserId();
             comment.Content = vm.Content;
-            comment.SequenceNumberForArticle = (await DbContext.Comments.Where(c => c.ArticleId == article.Id)
-                .Select(c => c.SequenceNumberForArticle)
-                .DefaultIfEmpty(0)
-                .MaxAsync()) + 1;
-            DbContext.Comments.Add(comment);
-            await DbContext.SaveChangesAsync();
+            lock (CommentSaveLock)
+            {
+                comment.SequenceNumberForArticle = (DbContext.Comments.Where(c => c.ArticleId == article.Id)
+                    .Select(c => c.SequenceNumberForArticle)
+                    .DefaultIfEmpty(0)
+                    .Max()) + 1;
+                DbContext.SaveChanges();
+            }
             DbContext.CommentReplies.AddRange(replyToComments.Select(c => new CommentReply
             {
                 CommentId = c.Id,

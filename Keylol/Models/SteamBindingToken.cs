@@ -25,6 +25,7 @@ namespace Keylol.Models
         public string BrowserConnectionId { get; set; }
 
         [MaxLength(64)]
+        [Index]
         public string SteamId { get; set; }
 
         [Required]

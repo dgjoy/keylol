@@ -246,6 +246,14 @@
     <Compile Include="Migrations\201510280238563_CommentSequenceNumberForArticle.Designer.cs">
       <DependentUpon>201510280238563_CommentSequenceNumberForArticle.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510290601169_EntrySN.cs" />
+    <Compile Include="Migrations\201510290601169_EntrySN.Designer.cs">
+      <DependentUpon>201510290601169_EntrySN.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201510290724046_MoreIndexes.cs" />
+    <Compile Include="Migrations\201510290724046_MoreIndexes.Designer.cs">
+      <DependentUpon>201510290724046_MoreIndexes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\CommentReply.cs" />
     <Compile Include="Models\DTO\ArticleTypeDTO.cs" />
     <Compile Include="Models\DTO\CommentDTO.cs" />
@@ -328,6 +336,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510280238563_CommentSequenceNumberForArticle.resx">
       <DependentUpon>201510280238563_CommentSequenceNumberForArticle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510290601169_EntrySN.resx">
+      <DependentUpon>201510290601169_EntrySN.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510290724046_MoreIndexes.resx">
+      <DependentUpon>201510290724046_MoreIndexes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

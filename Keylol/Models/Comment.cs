@@ -13,6 +13,7 @@ namespace Keylol.Models
         [MaxLength(30000)]
         public string Content { get; set; }
 
+        [Index]
         public DateTime PublishTime { get; set; } = DateTime.Now;
 
         public bool ReadByArticleAuthor { get; set; } = false;

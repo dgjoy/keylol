@@ -6,16 +6,21 @@ namespace Keylol.Models.DTO
 {
     public class ArticleDTO
     {
-        public ArticleDTO(Article article, bool includeContent = true)
+        public ArticleDTO(Article article, bool includeContent = false, int truncateContentTo = 0)
         {
             Id = article.Id;
             PublishTime = article.PublishTime;
             Title = article.Title;
             if (includeContent)
-                Content = article.Content;
+            {
+                Content = truncateContentTo > 0 && truncateContentTo < article.Content.Length
+                    ? article.Content.Substring(0, truncateContentTo)
+                    : article.Content;
+            }
             VoteForPointId = article.VoteForPointId;
             Vote = article.Vote;
             SequenceNumberForAuthor = article.SequenceNumberForAuthor;
+            SequenceNumber = article.SequenceNumber;
         }
 
         public string Id { get; set; }
@@ -33,6 +38,8 @@ namespace Keylol.Models.DTO
         public string AuthorIdCode { get; set; }
 
         public int SequenceNumberForAuthor { get; set; }
+
+        public int SequenceNumber { get; set; }
 
         public List<NormalPointDTO> AttachedPoints { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -17,6 +18,8 @@ namespace Keylol.Controllers
     [RoutePrefix("article")]
     public class ArticleController : KeylolApiController
     {
+        private static readonly object ArticleSaveLock = new object();
+
         /// <summary>
         /// 根据 ID 取得一篇文章
         /// </summary>
@@ -41,7 +44,7 @@ namespace Keylol.Controllers
                 .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
-            var articleDTO = new ArticleDTO(articleEntry.article)
+            var articleDTO = new ArticleDTO(articleEntry.article, true)
             {
                 AuthorIdCode = articleEntry.authorIdCode,
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
@@ -79,7 +82,7 @@ namespace Keylol.Controllers
                         .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
-            var articleDTO = new ArticleDTO(articleEntry.article)
+            var articleDTO = new ArticleDTO(articleEntry.article, true)
             {
                 AuthorIdCode = authorIdCode,
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
@@ -90,15 +93,26 @@ namespace Keylol.Controllers
             return Ok(articleDTO);
         }
 
+        [Route("point/{normalPointId}")]
+        public async Task<IHttpActionResult> GetByNormalPointId(string normalPointId, int beforeSN = int.MaxValue,
+            int take = 50)
+        {
+            if (take > 50) take = 50;
+            var articles = await DbContext.Articles
+                .Where(a => a.AttachedPoints.Select(p => p.Id).Contains(normalPointId) && a.SequenceNumber < beforeSN)
+                .OrderByDescending(a => a.SequenceNumber).Take(take).ToListAsync();
+            return Ok(articles.Select(article => new ArticleDTO(article, true, 256)));
+        }
+
         /// <summary>
         /// 根据关键字搜索对应文章
         /// </summary>
         /// <param name="keyword">关键字</param>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 5</param>
-        [Route]
+        [Route("keyword/{keyword}")]
         [ResponseType(typeof (List<ArticleDTO>))]
-        public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
+        public async Task<IHttpActionResult> GetByKeyword(string keyword, int skip = 0, int take = 5)
         {
             if (take > 50) take = 50;
             return Ok((await DbContext.Articles.SqlQuery(@"SELECT * FROM [dbo].[Entries] AS [t1] INNER JOIN (
@@ -162,13 +176,17 @@ namespace Keylol.Controllers
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
             article.Principal = (await UserManager.FindByIdAsync(User.Identity.GetUserId())).ProfilePoint;
-            article.SequenceNumberForAuthor = (await DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
-                .Select(a => a.SequenceNumberForAuthor)
-                .DefaultIfEmpty(0)
-                .MaxAsync()) + 1;
             DbContext.Articles.Add(article);
-            await DbContext.SaveChangesAsync();
-            return Created($"article/{article.Id}", new ArticleDTO(article, false));
+            lock (ArticleSaveLock)
+            {
+                article.SequenceNumberForAuthor =
+                    (DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
+                        .Select(a => a.SequenceNumberForAuthor)
+                        .DefaultIfEmpty(0)
+                        .Max()) + 1;
+                DbContext.SaveChanges();
+            }
+            return Created($"article/{article.Id}", new ArticleDTO(article));
         }
 
         /// <summary>

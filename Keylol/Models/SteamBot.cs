@@ -19,15 +19,19 @@ namespace Keylol.Models
         public string SteamPassword { get; set; }
         
         [MaxLength(64)]
+        [Index]
         public string SteamId { get; set; }
 
+        [Index]
         public int FriendCount { get; set; } = 0;
 
         public int FriendUpperLimit { get; set; } = 50;
 
+        [Index]
         public bool Online { get; set; } = false;
 
         [MaxLength(128)]
+        [Index]
         public string SessionId { get; set; }
 
         public virtual ICollection<SteamBindingToken> BindingTokens { get; set; }

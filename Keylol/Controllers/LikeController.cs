@@ -15,9 +15,9 @@ namespace Keylol.Controllers
     public class LikeController : KeylolApiController
     {
         /// <summary>
-        /// 创建一个认同
+        /// 创建一个认可
         /// </summary>
-        /// <param name="vm">认同相关属性</param>
+        /// <param name="vm">认可相关属性</param>
         [Route]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (int))]
@@ -39,13 +39,22 @@ namespace Keylol.Controllers
             switch (vm.Type)
             {
                 case LikeVM.LikeType.ArticleLike:
-                    var existArticleLike =
-                        await
-                            DbContext.ArticleLikes.SingleOrDefaultAsync(
-                                l => l.ArticleId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
+                    var existArticleLike = await DbContext.ArticleLikes.SingleOrDefaultAsync(
+                        l => l.ArticleId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
                     if (existArticleLike != null)
                     {
-                        ModelState.AddModelError("vm.TargetId", "不能对同一篇文章重复认同。");
+                        ModelState.AddModelError("vm.TargetId", "不能对同一篇文章重复认可。");
+                        return BadRequest(ModelState);
+                    }
+                    var article = await DbContext.Articles.FindAsync(vm.TargetId);
+                    if (article == null)
+                    {
+                        ModelState.AddModelError("vm.TargetId", "指定文章不存在。");
+                        return BadRequest(ModelState);
+                    }
+                    if (article.PrincipalId == operatorId)
+                    {
+                        ModelState.AddModelError("vm.TargetId", "不能赞同自己发表的文章。");
                         return BadRequest(ModelState);
                     }
                     var articleLike = DbContext.ArticleLikes.Create();
@@ -54,13 +63,22 @@ namespace Keylol.Controllers
                     break;
 
                 case LikeVM.LikeType.CommentLike:
-                    var existCommentLike =
-                        await
-                            DbContext.CommentLikes.SingleOrDefaultAsync(
-                                l => l.CommentId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
+                    var existCommentLike = await DbContext.CommentLikes.SingleOrDefaultAsync(
+                        l => l.CommentId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
                     if (existCommentLike != null)
                     {
-                        ModelState.AddModelError("vm.TargetId", "不能对同一篇评论重复认同。");
+                        ModelState.AddModelError("vm.TargetId", "不能对同一篇评论重复认可。");
+                        return BadRequest(ModelState);
+                    }
+                    var comment = await DbContext.Comments.FindAsync(vm.TargetId);
+                    if (comment == null)
+                    {
+                        ModelState.AddModelError("vm.TargetId", "指定评论不存在。");
+                        return BadRequest(ModelState);
+                    }
+                    if (comment.CommentatorId == operatorId)
+                    {
+                        ModelState.AddModelError("vm.TargetId", "不能赞同自己发表的评论。");
                         return BadRequest(ModelState);
                     }
                     var commentLike = DbContext.CommentLikes.Create();
@@ -78,14 +96,14 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
-        /// 撤销发出的认同
+        /// 撤销发出的认可
         /// </summary>
-        /// <param name="vm">认同相关属性</param>
+        /// <param name="vm">认可相关属性</param>
         /// <param name="targetId">目标文章或评论 ID</param>
-        /// <param name="type">认同类型</param>
+        /// <param name="type">认可类型</param>
         [Route]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        [SwaggerResponse(HttpStatusCode.NotFound, "当前用户并没有对指定的文章或评论发出过认同")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "当前用户并没有对指定的文章或评论发出过认可")]
         public async Task<IHttpActionResult> Delete(string targetId, LikeVM.LikeType type)
         {
             var operatorId = User.Identity.GetUserId();
