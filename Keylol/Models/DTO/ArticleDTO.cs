@@ -48,5 +48,9 @@ namespace Keylol.Models.DTO
         public int? LikeCount { get; set; }
 
         public bool? Liked { get; set; }
+
+        public int? CommentCount { get; set; }
+
+        public SimpleUserDTO Author { get; set; }
     }
 }

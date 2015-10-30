@@ -93,15 +93,66 @@ namespace Keylol.Controllers
             return Ok(articleDTO);
         }
 
+        /// <summary>
+        /// 获取指定据点时间轴的文章
+        /// </summary>
+        /// <param name="normalPointId">据点 ID</param>
+        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的 ID，null 表示全部类型，默认 null</param>
+        /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
+        /// <param name="take">获取数量，最大 50，，默认 30</param>
         [Route("point/{normalPointId}")]
-        public async Task<IHttpActionResult> GetByNormalPointId(string normalPointId, int beforeSN = int.MaxValue,
-            int take = 50)
+        [ResponseType(typeof(List<ArticleDTO>))]
+        public async Task<IHttpActionResult> GetByNormalPointId(string normalPointId, string articleTypeFilter = null,
+            int beforeSN = int.MaxValue, int take = 30)
         {
             if (take > 50) take = 50;
-            var articles = await DbContext.Articles
-                .Where(a => a.AttachedPoints.Select(p => p.Id).Contains(normalPointId) && a.SequenceNumber < beforeSN)
-                .OrderByDescending(a => a.SequenceNumber).Take(take).ToListAsync();
+            var articleQuery =
+                DbContext.Articles.Where(
+                    a => a.AttachedPoints.Select(p => p.Id).Contains(normalPointId) && a.SequenceNumber < beforeSN);
+            if (articleTypeFilter != null)
+            {
+                var typesId = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                articleQuery = articleQuery.Where(a => typesId.Contains(a.TypeId));
+            }
+            var articleEntries = await articleQuery.OrderByDescending(a => a.SequenceNumber).Take(take).Select(
+                a => new
+                {
+                    article = a,
+                    likeCount = a.Likes.Count(l => l.Backout == false),
+                    commentCount = a.Comments.Count,
+                    typeName = a.Type.Name,
+                    author = a.Principal.User
+                }).ToListAsync();
+            return Ok(articleEntries.Select(entry =>
+                new ArticleDTO(entry.article, true, 256)
+                {
+                    LikeCount = entry.likeCount,
+                    CommentCount = entry.commentCount,
+                    TypeName = entry.typeName,
+                    Author = new SimpleUserDTO(entry.author)
+                }));
+        }
+
+        [Route("user/{userId}")]
+        public async Task<IHttpActionResult> GetByUserId(string userId, int beforeSN = int.MaxValue,
+            int take = 30)
+        {
+            if (take > 50) take = 50;
+            var userQuery = DbContext.Users.Where(u => u.Id == userId);
+            var articles = await userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Article>())
+                .Where(a => a.SequenceNumber < beforeSN)
+                .Union(userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
+                    .Select(l => l.Article)
+                    .Where(a => a.SequenceNumber < beforeSN))
+                .OrderByDescending(a => a.SequenceNumber).Take(50).ToListAsync();
             return Ok(articles.Select(article => new ArticleDTO(article, true, 256)));
+        }
+
+        [Route("subscription")]
+        public async Task<IHttpActionResult> GetBySubscription(int beforeSN = int.MaxValue, int take = 30)
+        {
+            if (take > 50) take = 50;
+            return Ok();
         }
 
         /// <summary>

@@ -142,9 +142,9 @@ namespace Keylol.Models.DTO
         public bool MessageNotifyOnCommentLiked { get; set; }
     }
 
-    public class UserInCommentDTO
+    public class SimpleUserDTO
     {
-        public UserInCommentDTO(KeylolUser user)
+        public SimpleUserDTO(KeylolUser user)
         {
             Id = user.Id;
             UserName = user.UserName;

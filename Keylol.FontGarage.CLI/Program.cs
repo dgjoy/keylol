@@ -45,7 +45,8 @@ namespace Keylol.FontGarage.CLI
                 "邮政服务",
                 "私信",
                 "▾▴",
-                "阅读"
+                "阅读",
+                "蒸汽动力进社区噪音零死角讨论独特鼓励机制志同合琴瑟合曲即日内欲知情关联注意成功错误认可论索取表单开设此据点"
             });
             SubsetFont("lisong-full.ttf", "lisong-", new[]
             {

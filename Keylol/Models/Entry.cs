@@ -13,10 +13,6 @@ namespace Keylol.Models
 
     public abstract class Entry
     {
-        protected Entry()
-        {
-        }
-
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Index]

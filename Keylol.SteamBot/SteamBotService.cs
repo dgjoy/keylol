@@ -46,6 +46,7 @@ namespace Keylol.SteamBot
             {
                 WriteLog("Communication channel faulted. Recreating...", EventLogEntryType.Error);
                 OnStop();
+                Thread.Sleep(3000);
                 OnStart(null);
             };
             return proxy;
@@ -105,7 +106,6 @@ namespace Keylol.SteamBot
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
                 _healthReportTimer.Start();
-                WriteLog("Timer started.");
             }
             catch (CommunicationException)
             {
@@ -117,7 +117,6 @@ namespace Keylol.SteamBot
             if (_healthReportTimer.Enabled)
             {
                 _healthReportTimer.Stop();
-                WriteLog("Timer stopped.");
             }
 
             if (_coodinator.State == CommunicationState.Faulted)
@@ -140,7 +139,6 @@ namespace Keylol.SteamBot
 
         private async Task ReportBotHealthAsync()
         {
-            WriteLog("Reporting health...");
             await _coodinator.UpdateBotsAsync(_bots.Select(bot =>
             {
                 var online = bot.State == Bot.BotState.LoggedOnOnline;
@@ -159,7 +157,6 @@ namespace Keylol.SteamBot
             if (_healthReportTimer.Enabled)
                 _healthReportTimer.Stop();
             _healthReportTimer.Start();
-            WriteLog("Timer restarted.");
         }
 
         private async Task ReportBotHealthAsync(Bot bot)
@@ -455,6 +452,7 @@ namespace Keylol.SteamBot
                         }));
                     foreach (var steamId in friendsToRemove)
                     {
+                        _botService.WriteLog($"Friend {steamId} removed. (Not Keylol user)");
                         _steamFriends.RemoveFriend(steamId);
                     }
                 }
@@ -527,6 +525,7 @@ namespace Keylol.SteamBot
                             break;
 
                         default:
+                            _botService.WriteLog($"Friend {friend.SteamID} removed. (Unknown relationship {friend.Relationship})");
                             _steamFriends.RemoveFriend(friend.SteamID);
                             break;
                     }

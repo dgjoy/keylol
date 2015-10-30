@@ -1,4 +1,5 @@
-﻿using Keylol;
+﻿using System.Diagnostics;
+using Keylol;
 using Microsoft.Owin;
 using Owin;
 
@@ -16,6 +17,16 @@ namespace Keylol
 
         public void Configuration(IAppBuilder app)
         {
+            app.Use(async (context, next) =>
+            {
+                var stopwatch = Stopwatch.StartNew();
+                context.Response.OnSendingHeaders(o =>
+                {
+                    stopwatch.Stop();
+                    context.Response.Headers.Set("X-Process-Time", stopwatch.ElapsedMilliseconds.ToString());
+                }, null);
+                await next.Invoke();
+            });
             UseAuth(app);
             UseSignalR(app);
             UseWebAPI(app);

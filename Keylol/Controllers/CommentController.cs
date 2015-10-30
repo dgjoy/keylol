@@ -75,7 +75,7 @@ namespace Keylol.Controllers
             var response = Request.CreateResponse(HttpStatusCode.OK,
                 commentEntries.Select(entry => new CommentDTO(entry.comment)
                 {
-                    Commentotar = new UserInCommentDTO(entry.commentator),
+                    Commentotar = new SimpleUserDTO(entry.commentator),
                     LikeCount = entry.likeCount,
                     Liked = entry.liked
                 }).ToList());
