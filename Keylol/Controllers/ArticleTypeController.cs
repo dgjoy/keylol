@@ -20,7 +20,7 @@ namespace Keylol.Controllers
         public async Task<IHttpActionResult> Get()
         {
             return
-                Ok((await DbContext.ArticleTypes.ToListAsync()).Select(articleType => new ArticleTypeDTO(articleType)));
+                Ok((await DbContext.ArticleTypes.AsNoTracking().ToListAsync()).Select(articleType => new ArticleTypeDTO(articleType)));
         }
     }
 }

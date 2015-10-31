@@ -44,7 +44,7 @@ namespace Keylol.Controllers
         {
             var userId = User.Identity.GetUserId();
             if (take > 50) take = 50;
-            var commentsQuery = DbContext.Comments
+            var commentsQuery = DbContext.Comments.AsNoTracking()
                 .Where(comment => comment.ArticleId == articleId);
             switch (orderBy)
             {
@@ -63,7 +63,7 @@ namespace Keylol.Controllers
                 default:
                     throw new ArgumentOutOfRangeException(nameof(orderBy), orderBy, null);
             }
-            var commentEntries = await commentsQuery.Skip(skip).Take(take).Select(comment =>
+            var commentEntries = await commentsQuery.Skip(() => skip).Take(() => take).Select(comment =>
                 new
                 {
                     comment,
@@ -75,7 +75,7 @@ namespace Keylol.Controllers
             var response = Request.CreateResponse(HttpStatusCode.OK,
                 commentEntries.Select(entry => new CommentDTO(entry.comment)
                 {
-                    Commentotar = new SimpleUserDTO(entry.commentator),
+                    Commentotar = new UserDTO(entry.commentator),
                     LikeCount = entry.likeCount,
                     Liked = entry.liked
                 }).ToList());

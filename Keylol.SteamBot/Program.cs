@@ -17,7 +17,7 @@ namespace Keylol.SteamBot
             if (Environment.UserInteractive)
             {
                 var service = new SteamBotService();
-                service.TestStartupAndStop(args);
+                service.ConsoleStartup(args);
             }
             else
             {

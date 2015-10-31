@@ -6,6 +6,13 @@ namespace Keylol.Models.DTO
 {
     public class ArticleDTO
     {
+        public enum TimelineReasonType
+        {
+            Like,
+            Publish,
+            Point
+        }
+
         public ArticleDTO(Article article, bool includeContent = false, int truncateContentTo = 0)
         {
             Id = article.Id;
@@ -51,6 +58,10 @@ namespace Keylol.Models.DTO
 
         public int? CommentCount { get; set; }
 
-        public SimpleUserDTO Author { get; set; }
+        public UserDTO Author { get; set; }
+
+        public TimelineReasonType? TimelineReason { get; set; }
+
+        public List<UserDTO> LikeByUsers { get; set; }
     }
 }

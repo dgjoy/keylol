@@ -11,7 +11,7 @@ using System.Web.Http.Cors;
 using System.Web.Http.Filters;
 using Microsoft.Owin;
 
-namespace Keylol
+namespace Keylol.Utilities
 {
     public class ClaimsAuthorizeAttribute : AuthorizationFilterAttribute
     {

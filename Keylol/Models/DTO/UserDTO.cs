@@ -8,29 +8,45 @@ namespace Keylol.Models.DTO
     [DataContract]
     public class UserDTO
     {
-        public UserDTO(KeylolUser user)
+        private KeylolUser _user;
+        public UserDTO(KeylolUser user, bool includeSteam = false, bool includeSecurity = false)
         {
+            _user = user;
             Id = user.Id;
             IdCode = user.IdCode;
             UserName = user.UserName;
             GamerTag = user.GamerTag;
-            Email = user.Email;
 
             // Ignore ProfilePointBackgroundImage
 
             AvatarImage = user.AvatarImage;
-            LockoutEnabled = user.LockoutEnabled;
-            SteamId = user.SteamId;
-            var steamId = new SteamID();
-            steamId.SetFromSteam3String(SteamId);
-            SteamId64 = steamId.ConvertToUInt64().ToString();
-            SteamProfileName = user.SteamProfileName;
+            
+            if (includeSteam)
+                IncludeSteam();
+
+            if (includeSecurity)
+                IncludeSecurity();
 
             // Ignore claims
 
             // Ignore SteamBot
 
             // Ignore stats
+        }
+
+        public void IncludeSecurity()
+        {
+            LockoutEnabled = _user.LockoutEnabled;
+            Email = _user.Email;
+        }
+
+        public void IncludeSteam()
+        {
+            SteamId = _user.SteamId;
+            var steamId = new SteamID();
+            steamId.SetFromSteam3String(SteamId);
+            SteamId64 = steamId.ConvertToUInt64().ToString();
+            SteamProfileName = _user.SteamProfileName;
         }
 
         [DataMember]
@@ -48,7 +64,7 @@ namespace Keylol.Models.DTO
         [DataMember]
         public string ProfilePointBackgroundImage { get; set; }
         [DataMember]
-        public bool LockoutEnabled { get; set; }
+        public bool? LockoutEnabled { get; set; }
         [DataMember]
         public string SteamId { get; set; }
         [DataMember]
@@ -140,21 +156,5 @@ namespace Keylol.Models.DTO
         public bool MessageNotifyOnArticleLiked { get; set; }
         [DataMember]
         public bool MessageNotifyOnCommentLiked { get; set; }
-    }
-
-    public class SimpleUserDTO
-    {
-        public SimpleUserDTO(KeylolUser user)
-        {
-            Id = user.Id;
-            UserName = user.UserName;
-            IdCode = user.IdCode;
-            AvatarImage = user.AvatarImage;
-        }
-
-        public string Id { get; set; }
-        public string UserName { get; set; }
-        public string IdCode { get; set; }
-        public string AvatarImage { get; set; }
     }
 }

@@ -193,9 +193,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\Attributes.cs" />
-    <Compile Include="App_Start\Geetest.cs" />
-    <Compile Include="App_Start\Extensions.cs" />
+    <Compile Include="Utilities\Attributes.cs" />
+    <Compile Include="Utilities\Geetest.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="App_Start\KeylolApiController.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
@@ -291,6 +291,7 @@
     <Compile Include="Services\SteamBotCoodinator.svc.cs">
       <DependentUpon>SteamBotCoodinator.svc</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\PredicateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Services\SteamBotCoodinator.svc" />

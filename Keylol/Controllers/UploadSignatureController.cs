@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http;
+using Keylol.Utilities;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
 

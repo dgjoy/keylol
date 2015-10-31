@@ -10,6 +10,7 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
@@ -30,7 +31,7 @@ namespace Keylol.Controllers
         /// <param name="id">据点 ID</param>
         /// <param name="includeStats">是否包含读者数和文章数，默认 false</param>
         /// <param name="includeVotes">是否包含好评文章数和差评文章数</param>
-        /// <param name="idType">Id 类型，默认 "Id"</param>
+        /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [ResponseType(typeof (NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]

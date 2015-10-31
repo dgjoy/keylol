@@ -98,7 +98,6 @@ namespace Keylol.Controllers
         /// <summary>
         /// 撤销发出的认可
         /// </summary>
-        /// <param name="vm">认可相关属性</param>
         /// <param name="targetId">目标文章或评论 ID</param>
         /// <param name="type">认可类型</param>
         [Route]

@@ -175,7 +175,7 @@ namespace Keylol.SteamBot
             await _coodinator.UpdateBotsAsync(new[] {vm});
         }
 
-        public void TestStartupAndStop(string[] args)
+        public void ConsoleStartup(string[] args)
         {
             Console.WriteLine("Running in console mode. Press Ctrl-M to stop.");
             OnStart(args);
@@ -452,8 +452,8 @@ namespace Keylol.SteamBot
                         }));
                     foreach (var steamId in friendsToRemove)
                     {
-                        _botService.WriteLog($"Friend {steamId} removed. (Not Keylol user)");
-                        _steamFriends.RemoveFriend(steamId);
+                        _botService.WriteLog($"Friend {steamId} should be removed. (Not Keylol user)");
+//                        _steamFriends.RemoveFriend(steamId);
                     }
                 }
                 foreach (var friend in callback.FriendList)
@@ -525,8 +525,8 @@ namespace Keylol.SteamBot
                             break;
 
                         default:
-                            _botService.WriteLog($"Friend {friend.SteamID} removed. (Unknown relationship {friend.Relationship})");
-                            _steamFriends.RemoveFriend(friend.SteamID);
+                            _botService.WriteLog($"Friend {friend.SteamID} should be removed. (Unknown relationship {friend.Relationship})");
+//                            _steamFriends.RemoveFriend(friend.SteamID);
                             break;
                     }
                 }

@@ -9,6 +9,7 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -31,16 +32,19 @@ namespace Keylol.Controllers
         /// <param name="id">用户 ID</param>
         /// <param name="includeProfilePointBackgroundImage">是否包含用户据点背景图片，默认 false</param>
         /// <param name="includeClaims">是否包含用户权限级别，默认 false</param>
-        /// <param name="includeSteamBot">是否包含用户所属 Steam 机器人（用户只能获取自己的机器人，除非是运维职员），默认 false</param>
+        /// <param name="includeSecurity">是否包含用户安全信息（邮箱、登录保护等），用户只能获取自己的安全信息（除非是运维职员），默认 false</param>
+        /// <param name="includeSteam">是否包含用户 Steam 信息，用户只能获取自己的 Steam 信息（除非是运维职员），默认 false</param>
+        /// <param name="includeSteamBot">是否包含用户所属 Steam 机器人（用户只能获取自己的机器人（除非是运维职员），默认 false</param>
         /// <param name="includeStats">是否包含用户读者数和文章数，默认 false</param>
         /// <param name="includeMoreOptions">是否包含更多杂项设置（例如通知偏好设置），默认 false</param>
-        /// <param name="idType">Id 类型，默认 "Id"</param>
+        /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [ResponseType(typeof (UserDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
         public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
-            bool includeClaims = false, bool includeSteamBot = false, bool includeStats = false,
-            bool includeMoreOptions = false, IdType idType = IdType.Id)
+            bool includeClaims = false, bool includeSecurity = false, bool includeSteam = false,
+            bool includeSteamBot = false, bool includeStats = false, bool includeMoreOptions = false,
+            IdType idType = IdType.Id)
         {
             KeylolUser user;
             switch (idType)
@@ -61,6 +65,9 @@ namespace Keylol.Controllers
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
             }
 
+            var visitorId = User.Identity.GetUserId();
+            var visitorStaffClaim = await UserManager.GetStaffClaimAsync(visitorId);
+
             if (user == null)
                 return NotFound();
 
@@ -75,10 +82,21 @@ namespace Keylol.Controllers
                 userDTO.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
             }
 
+            if (includeSecurity)
+            {
+                if (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator)
+                    userDTO.IncludeSecurity();
+            }
+
+            if (includeSteam)
+            {
+                if (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator)
+                    userDTO.IncludeSteam();
+            }
+
             if (includeSteamBot)
             {
-                var visitorId = User.Identity.GetUserId();
-                if (visitorId == user.Id || await UserManager.GetStaffClaimAsync(visitorId) == StaffClaim.Operator)
+                if (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator)
                     userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
             }
 

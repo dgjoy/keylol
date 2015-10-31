@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -84,7 +86,6 @@ namespace Keylol.Controllers
                 return NotFound();
             var articleDTO = new ArticleDTO(articleEntry.article, true)
             {
-                AuthorIdCode = authorIdCode,
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
                 TypeName = articleEntry.typeName,
                 LikeCount = articleEntry.likeCount,
@@ -97,24 +98,38 @@ namespace Keylol.Controllers
         /// 获取指定据点时间轴的文章
         /// </summary>
         /// <param name="normalPointId">据点 ID</param>
+        /// <param name="idType">ID 类型，默认 "Id"</param>
         /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的 ID，null 表示全部类型，默认 null</param>
         /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
-        /// <param name="take">获取数量，最大 50，，默认 30</param>
+        /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("point/{normalPointId}")]
-        [ResponseType(typeof(List<ArticleDTO>))]
-        public async Task<IHttpActionResult> GetByNormalPointId(string normalPointId, string articleTypeFilter = null,
-            int beforeSN = int.MaxValue, int take = 30)
+        [ResponseType(typeof (List<ArticleDTO>))]
+        public async Task<IHttpActionResult> GetByNormalPointId(string normalPointId,
+            NormalPointController.IdType idType, string articleTypeFilter = null, int beforeSN = int.MaxValue,
+            int take = 30)
         {
             if (take > 50) take = 50;
-            var articleQuery =
-                DbContext.Articles.Where(
-                    a => a.AttachedPoints.Select(p => p.Id).Contains(normalPointId) && a.SequenceNumber < beforeSN);
+            var articleQuery = DbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSN);
+            switch (idType)
+            {
+                case NormalPointController.IdType.Id:
+                    articleQuery = articleQuery.Where(a => a.AttachedPoints.Select(p => p.Id).Contains(normalPointId));
+                    break;
+
+                case NormalPointController.IdType.IdCode:
+                    articleQuery =
+                        articleQuery.Where(a => a.AttachedPoints.Select(p => p.IdCode).Contains(normalPointId));
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
+            }
             if (articleTypeFilter != null)
             {
                 var typesId = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
-                articleQuery = articleQuery.Where(a => typesId.Contains(a.TypeId));
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains<Article, string>(typesId, a => a.TypeId));
             }
-            var articleEntries = await articleQuery.OrderByDescending(a => a.SequenceNumber).Take(take).Select(
+            var articleEntries = await articleQuery.OrderByDescending(a => a.SequenceNumber).Take(() => take).Select(
                 a => new
                 {
                     article = a,
@@ -129,27 +144,108 @@ namespace Keylol.Controllers
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.typeName,
-                    Author = new SimpleUserDTO(entry.author)
+                    AuthorIdCode = entry.author.Id,
+                    Author = new UserDTO(entry.author)
                 }));
         }
 
+        /// <summary>
+        /// 获取指定用户时间轴的文章
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <param name="idType">ID 类型，默认 "Id"</param>
+        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的 ID，null 表示全部类型，默认 null</param>
+        /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
+        /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("user/{userId}")]
-        public async Task<IHttpActionResult> GetByUserId(string userId, int beforeSN = int.MaxValue,
-            int take = 30)
+        [ResponseType(typeof (List<ArticleDTO>))]
+        public async Task<IHttpActionResult> GetByUserId(string userId, UserController.IdType idType,
+            string articleTypeFilter = null, int beforeSN = int.MaxValue, int take = 30)
         {
             if (take > 50) take = 50;
-            var userQuery = DbContext.Users.Where(u => u.Id == userId);
-            var articles = await userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Article>())
+            IQueryable<KeylolUser> userQuery;
+            switch (idType)
+            {
+                case UserController.IdType.Id:
+                    userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
+                    break;
+
+                case UserController.IdType.IdCode:
+                    userQuery = DbContext.Users.AsNoTracking().Where(u => u.IdCode == userId);
+                    break;
+
+                case UserController.IdType.UserName:
+                    userQuery = DbContext.Users.AsNoTracking().Where(u => u.UserName == userId);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
+            }
+            var articleQuery = userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Article>())
                 .Where(a => a.SequenceNumber < beforeSN)
-                .Union(userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
-                    .Select(l => l.Article)
-                    .Where(a => a.SequenceNumber < beforeSN))
-                .OrderByDescending(a => a.SequenceNumber).Take(50).ToListAsync();
-            return Ok(articles.Select(article => new ArticleDTO(article, true, 256)));
+                .Select(a => new
+                {
+                    article = a,
+                    reason = ArticleDTO.TimelineReasonType.Publish,
+                    author = (KeylolUser) null
+                })
+                .Concat(userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
+                    .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN)
+                    .Select(l => new
+                    {
+                        article = l.Article,
+                        reason = ArticleDTO.TimelineReasonType.Like,
+                        author = l.Article.Principal.User
+                    }));
+            if (articleTypeFilter != null)
+            {
+                var typesId = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesId, a => a.article.TypeId, new
+                {
+                    article = (Article) null,
+                    reason = ArticleDTO.TimelineReasonType.Like,
+                    author = (KeylolUser) null
+                }));
+            }
+            var articleEntries = await articleQuery.GroupBy(e => e.article)
+                .OrderByDescending(g => g.Key.SequenceNumber).Take(() => take)
+                .Select(g => new
+                {
+                    article = g.Key,
+                    candicates = g,
+                    reason = g.Max(ee => ee.reason)
+                })
+                .Select(g => new
+                {
+                    g.article,
+                    g.reason,
+                    g.candicates.FirstOrDefault(e => e.reason == g.reason).author,
+                    likeCount = g.article.Likes.Count(l => l.Backout == false),
+                    commentCount = g.article.Comments.Count,
+                    typeName = g.article.Type.Name
+                })
+                .ToListAsync();
+            return Ok(articleEntries.Select(entry =>
+            {
+                var articleDTO = new ArticleDTO(entry.article, true, 256)
+                {
+                    TimelineReason = entry.reason,
+                    LikeCount = entry.likeCount,
+                    CommentCount = entry.commentCount,
+                    TypeName = entry.typeName
+                };
+                if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
+                {
+                    articleDTO.AuthorIdCode = entry.author.IdCode;
+                    articleDTO.Author = new UserDTO(entry.author);
+                }
+                return articleDTO;
+            }));
         }
 
         [Route("subscription")]
-        public async Task<IHttpActionResult> GetBySubscription(int beforeSN = int.MaxValue, int take = 30)
+        public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
+            int beforeSN = int.MaxValue, int take = 30)
         {
             if (take > 50) take = 50;
             return Ok();
@@ -171,7 +267,7 @@ namespace Keylol.Controllers
 	            ) AS [t2] ON [t1].[Id] = [t2].[KEY]
 	            ORDER BY [t2].[RANK] DESC
 	            OFFSET ({1}) ROWS FETCH NEXT ({2}) ROWS ONLY",
-                $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync()).Select(
+                $"\"{keyword}\" OR \"{keyword}*\"", skip, take).AsNoTracking().ToListAsync()).Select(
                     article => new ArticleDTO(article) {AuthorIdCode = article.Principal.User.IdCode}));
         }
 
@@ -179,7 +275,7 @@ namespace Keylol.Controllers
         /// 创建一篇文章
         /// </summary>
         /// <param name="vm">文章相关属性</param>
-        [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]
+//        [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]
         [Route]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (ArticleDTO))]
@@ -221,13 +317,16 @@ namespace Keylol.Controllers
                 article.Vote = vm.Vote;
             }
 
-            article.Type = type;
+            article.TypeId = type.Id;
             article.Title = vm.Title;
             article.Content = vm.Content;
             article.AttachedPoints =
-                await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
-            article.Principal = (await UserManager.FindByIdAsync(User.Identity.GetUserId())).ProfilePoint;
+                await DbContext.NormalPoints.Where(PredicateBuilder.Contains<NormalPoint, string>(vm.AttachedPointsId,
+                    point => point.Id)).ToListAsync();
+            article.PrincipalId = User.Identity.GetUserId();
             DbContext.Articles.Add(article);
+            article.SequenceNumber =
+                await DbContext.Database.SqlQuery<int>("SELECT NEXT VALUE FOR [dbo].[EntrySequence]").SingleAsync();
             lock (ArticleSaveLock)
             {
                 article.SequenceNumberForAuthor =
@@ -318,7 +417,8 @@ namespace Keylol.Controllers
             if (vm.Content != null)
                 article.Content = vm.Content;
             article.AttachedPoints =
-                await DbContext.NormalPoints.Where(point => vm.AttachedPointsId.Contains(point.Id)).ToListAsync();
+                await DbContext.NormalPoints.Where(PredicateBuilder.Contains<NormalPoint, string>(vm.AttachedPointsId,
+                    point => point.Id)).ToListAsync();
             await DbContext.SaveChangesAsync();
             return Ok();
         }

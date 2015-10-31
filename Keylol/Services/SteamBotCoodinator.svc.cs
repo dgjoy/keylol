@@ -14,7 +14,9 @@ using Keylol.Hubs;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Keylol.Services.Contracts;
+using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
+using StatusClaim = Keylol.Utilities.StatusClaim;
 
 namespace Keylol.Services
 {
@@ -56,7 +58,7 @@ namespace Keylol.Services
 
             using (var dbContext = new KeylolDbContext())
             {
-                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(5).ToListAsync();
+                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(() => 5).ToListAsync();
                 foreach (var bot in bots)
                 {
                     bot.Online = false;
@@ -95,7 +97,7 @@ namespace Keylol.Services
             {
                 var user =
                     await dbContext.Users.Include(u => u.SteamBot).SingleOrDefaultAsync(u => u.SteamId == steamId);
-                return user == null ? null : new UserDTO(user) {SteamBot = new SteamBotDTO(user.SteamBot)};
+                return user == null ? null : new UserDTO(user, true, true) {SteamBot = new SteamBotDTO(user.SteamBot)};
             }
         }
 
@@ -106,7 +108,9 @@ namespace Keylol.Services
                 var users =
                     await
                         dbContext.Users.Include(u => u.SteamBot).Where(u => steamIds.Contains(u.SteamId)).ToListAsync();
-                return users.Select(user => new UserDTO(user) {SteamBot = new SteamBotDTO(user.SteamBot)}).ToList();
+                return
+                    users.Select(user => new UserDTO(user, true, true) {SteamBot = new SteamBotDTO(user.SteamBot)})
+                        .ToList();
             }
         }
 

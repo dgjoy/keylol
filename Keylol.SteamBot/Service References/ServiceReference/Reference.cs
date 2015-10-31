@@ -270,7 +270,7 @@ namespace Keylol.SteamBot.ServiceReference {
         private string IdCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool LockoutEnabledField;
+        private System.Nullable<bool> LockoutEnabledField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ProfilePointBackgroundImageField;
@@ -388,7 +388,7 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool LockoutEnabled {
+        public System.Nullable<bool> LockoutEnabled {
             get {
                 return this.LockoutEnabledField;
             }
