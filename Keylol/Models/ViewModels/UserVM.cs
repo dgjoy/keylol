@@ -30,6 +30,9 @@ namespace Keylol.Models.ViewModels
 
         [Required]
         public string GeetestValidate { get; set; }
+
+        [Required]
+        public string InvitationCode { get; set; }
     }
 
     public class UserPutVM

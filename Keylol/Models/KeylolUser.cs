@@ -92,6 +92,9 @@ namespace Keylol.Models
         public string SteamBotId { get; set; }
         public virtual SteamBot SteamBot { get; set; }
 
+        public string InvitationCodeId { get; set; }
+        public virtual InvitationCode InvitationCode { get; set; }
+
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
         //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
 

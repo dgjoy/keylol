@@ -26,6 +26,20 @@ namespace Keylol.Controllers
             UserName
         }
 
+#if DEBUG
+        /// <summary>
+        /// 调试测试用
+        /// </summary>
+        [Route("test")]
+        [HttpGet]
+        public async Task<IHttpActionResult> Test()
+        {
+            await UserManager.SetStaffClaimAsync(User.Identity.GetUserId(), StaffClaim.Operator);
+            return Ok();
+        }
+#endif
+
+
         /// <summary>
         /// 根据 Id、UserName 或者 IdCode 取得一名用户
         /// </summary>
@@ -142,6 +156,7 @@ namespace Keylol.Controllers
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDTO))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "邀请码无效")]
         public async Task<IHttpActionResult> Post(UserPostVM vm)
         {
             if (vm == null)
@@ -158,6 +173,11 @@ namespace Keylol.Controllers
             {
                 ModelState.AddModelError("authCode", "true");
                 return BadRequest(ModelState);
+            }
+            var invitationCode = await DbContext.InvitationCodes.FindAsync(vm.InvitationCode);
+            if (invitationCode == null || invitationCode.UserByUserId != null)
+            {
+                return Unauthorized();
             }
             var steamBindingToken = await DbContext.SteamBindingTokens.FindAsync(vm.SteamBindingTokenId);
             if (steamBindingToken == null)
@@ -195,7 +215,8 @@ namespace Keylol.Controllers
                 SteamBindingTime = DateTime.Now,
                 SteamId = steamBindingToken.SteamId,
                 SteamProfileName = vm.SteamProfileName,
-                SteamBotId = steamBindingToken.BotId
+                SteamBotId = steamBindingToken.BotId,
+                InvitationCodeId = invitationCode.Id
             };
 
             var result = await UserManager.CreateAsync(user, vm.Password);

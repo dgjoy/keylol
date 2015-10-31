@@ -122,7 +122,7 @@ namespace Keylol.Controllers
         /// 创建一个据点
         /// </summary>
         /// <param name="vm">据点相关属性</param>
-//        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDTO))]

@@ -45,6 +45,7 @@ namespace Keylol.DAL
         public DbSet<SteamBindingToken> SteamBindingTokens { get; set; }
         public DbSet<SteamLoginToken> SteamLoginTokens { get; set; }
         public DbSet<SteamBot> SteamBots { get; set; }
+        public DbSet<InvitationCode> InvitationCodes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -87,6 +88,9 @@ namespace Keylol.DAL
             modelBuilder.Entity<Comment>()
                 .HasMany(comment => comment.CommentRepliesAsReply)
                 .WithRequired(reply => reply.Reply);
+            modelBuilder.Entity<InvitationCode>()
+                .HasOptional(c => c.UsedByUser)
+                .WithOptionalPrincipal(c => c.InvitationCode);
         }
 
         // Ignore validation error on unmodified properties

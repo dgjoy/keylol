@@ -368,7 +368,6 @@ namespace Keylol.Controllers
         /// 创建一篇文章
         /// </summary>
         /// <param name="vm">文章相关属性</param>
-//        [ClaimsAuthorize(StatusClaim.ClaimType, StatusClaim.Normal)]
         [Route]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (ArticleDTO))]
