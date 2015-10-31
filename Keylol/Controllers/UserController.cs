@@ -35,7 +35,9 @@ namespace Keylol.Controllers
         /// <param name="includeSecurity">是否包含用户安全信息（邮箱、登录保护等），用户只能获取自己的安全信息（除非是运维职员），默认 false</param>
         /// <param name="includeSteam">是否包含用户 Steam 信息，用户只能获取自己的 Steam 信息（除非是运维职员），默认 false</param>
         /// <param name="includeSteamBot">是否包含用户所属 Steam 机器人（用户只能获取自己的机器人（除非是运维职员），默认 false</param>
+        /// <param name="includeSubscribeCount">是否包含用户订阅数量（用户只能获取自己的订阅信息（除非是运维职员），默认 false</param>
         /// <param name="includeStats">是否包含用户读者数和文章数，默认 false</param>
+        /// <param name="includeSubscribed">是否包含该用户有没有被当前用户的信息，默认 false</param>
         /// <param name="includeMoreOptions">是否包含更多杂项设置（例如通知偏好设置），默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
@@ -43,8 +45,8 @@ namespace Keylol.Controllers
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
         public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
             bool includeClaims = false, bool includeSecurity = false, bool includeSteam = false,
-            bool includeSteamBot = false, bool includeStats = false, bool includeMoreOptions = false,
-            IdType idType = IdType.Id)
+            bool includeSteamBot = false, bool includeSubscribeCount = false, bool includeStats = false,
+            bool includeSubscribed = false, bool includeMoreOptions = false, IdType idType = IdType.Id)
         {
             KeylolUser user;
             switch (idType)
@@ -100,6 +102,12 @@ namespace Keylol.Controllers
                     userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
             }
 
+            if (includeSubscribeCount)
+            {
+                userDTO.SubscribedPointCount =
+                    await DbContext.Users.Where(u => u.Id == user.Id).SelectMany(u => u.SubscribedPoints).CountAsync();
+            }
+
             if (includeStats)
             {
                 var stats = await DbContext.Users.Where(u => u.Id == user.Id)
@@ -114,6 +122,14 @@ namespace Keylol.Controllers
                 userDTO.ArticleCount = stats.articleCount;
             }
 
+            if (includeSubscribed)
+            {
+                userDTO.Subscribed = await DbContext.Users.Where(u => u.Id == visitorId)
+                    .SelectMany(u => u.SubscribedPoints)
+                    .Select(p => p.Id)
+                    .ContainsAsync(user.Id);
+            }
+
             return Ok(userDTO);
         }
 
@@ -125,13 +141,9 @@ namespace Keylol.Controllers
         [Route]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDTO))]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "已登录状态无法注册新用户")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> Post(UserPostVM vm)
         {
-            if (User.Identity.IsAuthenticated)
-                return Unauthorized();
-
             if (vm == null)
             {
                 ModelState.AddModelError("vm", "Invalid view model.");

@@ -243,12 +243,105 @@ namespace Keylol.Controllers
             }));
         }
 
+        /// <summary>
+        /// 获取当前用户主订阅时间轴的文章
+        /// </summary>
+        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的 ID，null 表示全部类型，默认 null</param>
+        /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
+        /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("subscription")]
+        [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
             int beforeSN = int.MaxValue, int take = 30)
         {
             if (take > 50) take = 50;
-            return Ok();
+
+            var userId = User.Identity.GetUserId();
+            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
+            var profilePointsQuery = userQuery.SelectMany(u => u.SubscribedPoints.OfType<ProfilePoint>());
+
+            var normalPointListTypeHint = new List<NormalPoint>();
+            var userListTypeHint = new List<KeylolUser>();
+
+            var articleQuery =
+                userQuery.SelectMany(u => u.SubscribedPoints.OfType<NormalPoint>())
+                    .SelectMany(p => p.Articles)
+                    .Where(a => a.SequenceNumber < beforeSN)
+                    .Select(a => new
+                    {
+                        article = a,
+                        reason = ArticleDTO.TimelineReasonType.Point
+                    })
+                    .Concat(profilePointsQuery.SelectMany(p => p.Entries.OfType<Article>())
+                        .Where(a => a.SequenceNumber < beforeSN)
+                        .Select(a => new
+                        {
+                            article = a,
+                            reason = ArticleDTO.TimelineReasonType.Publish
+                        }))
+                    .Concat(profilePointsQuery.Select(p => p.User)
+                        .SelectMany(u => u.Likes.OfType<ArticleLike>())
+                        .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN)
+                        .Select(l => new
+                        {
+                            article = l.Article,
+                            reason = ArticleDTO.TimelineReasonType.Like
+                        }));
+
+            if (articleTypeFilter != null)
+            {
+                var typesId = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesId, a => a.article.TypeId, new
+                {
+                    article = (Article) null,
+                    reason = ArticleDTO.TimelineReasonType.Like
+                }));
+            }
+
+            var articleEntries = await articleQuery.GroupBy(e => e.article)
+                .OrderByDescending(g => g.Key.SequenceNumber).Take(() => take)
+                .Select(g => new
+                {
+                    article = g.Key,
+                    reason = g.Max(ee => ee.reason)
+                })
+                .Select(g => new
+                {
+                    g.article,
+                    g.reason,
+                    likedByUsers = g.article.Likes.Select(l => l.Operator),
+                    attachedPoints = g.article.AttachedPoints,
+                    author = g.article.Principal.User,
+                    likeCount = g.article.Likes.Count(l => l.Backout == false),
+                    commentCount = g.article.Comments.Count,
+                    typeName = g.article.Type.Name
+                })
+                .ToListAsync();
+
+            return Ok(articleEntries.Select(entry =>
+            {
+                var articleDTO = new ArticleDTO(entry.article, true, 256)
+                {
+                    TimelineReason = entry.reason,
+                    LikeCount = entry.likeCount,
+                    CommentCount = entry.commentCount,
+                    TypeName = entry.typeName,
+                    AuthorIdCode = entry.author.IdCode,
+                    Author = new UserDTO(entry.author)
+                };
+                switch (entry.reason)
+                {
+                    case ArticleDTO.TimelineReasonType.Point:
+                        articleDTO.AttachedPoints =
+                            entry.attachedPoints.Select(p => new NormalPointDTO(p, true)).ToList();
+                        break;
+
+                    case ArticleDTO.TimelineReasonType.Like:
+                        articleDTO.LikeByUsers = entry.likedByUsers.Select(u => new UserDTO(u)).ToList();
+                        break;
+                }
+                return articleDTO;
+            }));
         }
 
         /// <summary>

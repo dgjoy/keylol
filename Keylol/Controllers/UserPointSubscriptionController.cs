@@ -21,9 +21,11 @@ namespace Keylol.Controllers
         [ResponseType(typeof (bool))]
         public async Task<IHttpActionResult> Get(string pointId)
         {
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            var point = user.SubscribedPoints.SingleOrDefault(p => p.Id == pointId);
-            return Ok(point != null);
+            var userId = User.Identity.GetUserId();
+            return Ok(await DbContext.Users.Where(u => u.Id == userId)
+                .SelectMany(u => u.SubscribedPoints)
+                .Select(p => p.Id)
+                .ContainsAsync(pointId));
         }
 
         /// <summary>

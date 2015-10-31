@@ -12,6 +12,7 @@ namespace Keylol.Models.DTO
         {
             Id = point.Id;
             PreferedName = point.PreferedName;
+            IdCode = point.IdCode;
             if (nameOnly)
             {
                 switch (point.PreferedName)
@@ -31,7 +32,6 @@ namespace Keylol.Models.DTO
                 AvatarImage = point.AvatarImage;
                 BackgroundImage = point.BackgroundImage;
                 Type = point.Type;
-                IdCode = point.IdCode;
                 StoreLink = point.StoreLink;
             }
         }
@@ -49,5 +49,7 @@ namespace Keylol.Models.DTO
         public int? ArticleCount { get; set; }
         public int? PositiveArticleCount { get; set; }
         public int? NegativeArticleCount { get; set; }
+        public bool? Subscribed { get; set; }
+        public List<NormalPointDTO> AssociatedPoints { get; set; }
     }
 }

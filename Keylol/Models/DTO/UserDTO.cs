@@ -32,6 +32,8 @@ namespace Keylol.Models.DTO
             // Ignore SteamBot
 
             // Ignore stats
+
+            // Ignore subscribed
         }
 
         public void IncludeSecurity()
@@ -81,9 +83,15 @@ namespace Keylol.Models.DTO
         public SteamBotDTO SteamBot { get; set; }
 
         [DataMember]
+        public int? SubscribedPointCount { get; set; }
+
+        [DataMember]
         public int? SubscriberCount { get; set; }
         [DataMember]
         public int? ArticleCount { get; set; }
+
+        [DataMember]
+        public bool? Subscribed { get; set; }
     }
 
     public class UserWithMoreOptionsDTO:UserDTO

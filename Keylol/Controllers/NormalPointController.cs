@@ -11,6 +11,7 @@ using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Keylol.Utilities;
+using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
@@ -30,13 +31,15 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="id">据点 ID</param>
         /// <param name="includeStats">是否包含读者数和文章数，默认 false</param>
-        /// <param name="includeVotes">是否包含好评文章数和差评文章数</param>
+        /// <param name="includeVotes">是否包含好评文章数和差评文章数，默认 false</param>
+        /// <param name="includeSubscribed">是否包含据点有没有被当前用户订阅的信息，默认 false</param>
+        /// <param name="includeAssociated">是否包含关联据点信息，默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [ResponseType(typeof (NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
         public async Task<IHttpActionResult> Get(string id, bool includeStats = false, bool includeVotes = false,
-            IdType idType = IdType.Id)
+            bool includeSubscribed = false, bool includeAssociated = false, IdType idType = IdType.Id)
         {
             var point = await DbContext.NormalPoints
                 .Where(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id)
@@ -57,6 +60,15 @@ namespace Keylol.Controllers
                 pointDTO.SubscriberCount = stats.subscriberCount;
             }
 
+            if (includeSubscribed)
+            {
+                var userId = User.Identity.GetUserId();
+                pointDTO.Subscribed = await DbContext.Users.Where(u => u.Id == userId)
+                    .SelectMany(u => u.SubscribedPoints)
+                    .Select(p => p.Id)
+                    .ContainsAsync(point.Id);
+            }
+
             if (includeVotes)
             {
                 var votes = await DbContext.NormalPoints
@@ -70,6 +82,14 @@ namespace Keylol.Controllers
                     .SingleAsync();
                 pointDTO.PositiveArticleCount = votes.positiveArticleCount;
                 pointDTO.NegativeArticleCount = votes.negativeArticleCount;
+            }
+
+            if (includeAssociated)
+            {
+                pointDTO.AssociatedPoints =
+                    (await DbContext.NormalPoints.Where(p => p.Id == point.Id).SelectMany(p => p.AssociatedToPoints)
+                        .Union(DbContext.NormalPoints.Where(p => p.Id == point.Id).SelectMany(p => p.AssociatedByPoints))
+                        .ToListAsync()).Select(p => new NormalPointDTO(p, true)).ToList();
             }
 
             return Ok(pointDTO);
@@ -102,7 +122,7 @@ namespace Keylol.Controllers
         /// 创建一个据点
         /// </summary>
         /// <param name="vm">据点相关属性</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+//        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDTO))]
@@ -137,6 +157,8 @@ namespace Keylol.Controllers
             normalPoint.EnglishName = vm.EnglishName;
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
+            normalPoint.AssociatedToPoints =
+                await DbContext.NormalPoints.Where(p => vm.AssociatedPointsId.Contains(p.Id)).ToListAsync();
             normalPoint.Type = vm.Type;
             if (normalPoint.Type == NormalPointType.Game)
             {
