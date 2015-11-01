@@ -13,24 +13,23 @@ namespace Keylol.Migrations
                     {
                         Id = c.String(nullable: false, maxLength: 128),
                         GenerateTime = c.DateTime(nullable: false),
-                        UserByUserId = c.String(),
+                        Source = c.String(nullable: false, maxLength: 64),
+                        UsedByUser_Id = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .Index(t => t.GenerateTime);
+                .ForeignKey("dbo.KeylolUsers", t => t.UsedByUser_Id)
+                .Index(t => t.GenerateTime)
+                .Index(t => t.Source)
+                .Index(t => t.UsedByUser_Id);
             
-            AddColumn("dbo.KeylolUsers", "InvitationCodeId", c => c.String());
-            AddColumn("dbo.KeylolUsers", "InvitationCode_Id", c => c.String(maxLength: 128));
-            CreateIndex("dbo.KeylolUsers", "InvitationCode_Id");
-            AddForeignKey("dbo.KeylolUsers", "InvitationCode_Id", "dbo.InvitationCodes", "Id");
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.KeylolUsers", "InvitationCode_Id", "dbo.InvitationCodes");
+            DropForeignKey("dbo.InvitationCodes", "UsedByUser_Id", "dbo.KeylolUsers");
+            DropIndex("dbo.InvitationCodes", new[] { "UsedByUser_Id" });
+            DropIndex("dbo.InvitationCodes", new[] { "Source" });
             DropIndex("dbo.InvitationCodes", new[] { "GenerateTime" });
-            DropIndex("dbo.KeylolUsers", new[] { "InvitationCode_Id" });
-            DropColumn("dbo.KeylolUsers", "InvitationCode_Id");
-            DropColumn("dbo.KeylolUsers", "InvitationCodeId");
             DropTable("dbo.InvitationCodes");
         }
     }

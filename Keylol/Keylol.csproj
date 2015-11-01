@@ -194,9 +194,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\InvitationCodeController.cs" />
-    <Compile Include="Migrations\201510312017371_InvitationCode.cs" />
-    <Compile Include="Migrations\201510312017371_InvitationCode.Designer.cs">
-      <DependentUpon>201510312017371_InvitationCode.cs</DependentUpon>
+    <Compile Include="Migrations\201511011542501_InvitationCode.cs" />
+    <Compile Include="Migrations\201511011542501_InvitationCode.Designer.cs">
+      <DependentUpon>201511011542501_InvitationCode.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\InvitationCode.cs" />
@@ -351,8 +351,8 @@
     <EmbeddedResource Include="Migrations\201510290724046_MoreIndexes.resx">
       <DependentUpon>201510290724046_MoreIndexes.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510312017371_InvitationCode.resx">
-      <DependentUpon>201510312017371_InvitationCode.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201511011542501_InvitationCode.resx">
+      <DependentUpon>201511011542501_InvitationCode.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

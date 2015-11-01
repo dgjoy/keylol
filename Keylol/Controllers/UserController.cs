@@ -175,7 +175,7 @@ namespace Keylol.Controllers
                 return BadRequest(ModelState);
             }
             var invitationCode = await DbContext.InvitationCodes.FindAsync(vm.InvitationCode);
-            if (invitationCode == null || invitationCode.UserByUserId != null)
+            if (invitationCode == null || invitationCode.UsedByUser != null)
             {
                 return Unauthorized();
             }
@@ -216,7 +216,7 @@ namespace Keylol.Controllers
                 SteamId = steamBindingToken.SteamId,
                 SteamProfileName = vm.SteamProfileName,
                 SteamBotId = steamBindingToken.BotId,
-                InvitationCodeId = invitationCode.Id
+                InvitationCode = invitationCode
             };
 
             var result = await UserManager.CreateAsync(user, vm.Password);

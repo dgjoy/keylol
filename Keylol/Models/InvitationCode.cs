@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,11 @@ namespace Keylol.Models
         [Index]
         public DateTime GenerateTime { get; set; } = DateTime.Now;
 
-        public string UserByUserId { get; set; }
+        [Index]
+        [Required]
+        [MaxLength(64)]
+        public string Source { get; set; }
+        
         public virtual KeylolUser UsedByUser { get; set; }
     }
 }

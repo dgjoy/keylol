@@ -1,10 +1,6 @@
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Data.Entity.Validation;
 using System.Diagnostics;
-using System.Linq;
 using Keylol.Hubs;
 using Keylol.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -90,7 +86,7 @@ namespace Keylol.DAL
                 .WithRequired(reply => reply.Reply);
             modelBuilder.Entity<InvitationCode>()
                 .HasOptional(c => c.UsedByUser)
-                .WithOptionalPrincipal(c => c.InvitationCode);
+                .WithOptionalDependent(c => c.InvitationCode);
         }
 
         // Ignore validation error on unmodified properties
