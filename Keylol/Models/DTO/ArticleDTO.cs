@@ -40,6 +40,8 @@ namespace Keylol.Models.DTO
 
         public string VoteForPointId { get; set; }
 
+        public string VoteForPointName { get; set; }
+
         public VoteType? Vote { get; set; }
 
         public string AuthorIdCode { get; set; }

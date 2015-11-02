@@ -6,7 +6,7 @@ namespace Keylol.Models.ViewModels
     public class ArticlePostVM
     {
         [Required]
-        public string TypeId { get; set; }
+        public string TypeName { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -24,7 +24,7 @@ namespace Keylol.Models.ViewModels
 
     public class ArticlePutVM
     {
-        public string TypeId { get; set; }
+        public string TypeName { get; set; }
         
         public string Title { get; set; }
         

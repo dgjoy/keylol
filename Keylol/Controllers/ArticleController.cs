@@ -41,7 +41,8 @@ namespace Keylol.Controllers
                         liked = a.Likes.Any(l => l.OperatorId == userId && l.Backout == false),
                         typeName = a.Type.Name,
                         attachedPoints = a.AttachedPoints,
-                        authorIdCode = a.Principal.User.IdCode
+                        authorIdCode = a.Principal.User.IdCode,
+                        voteForPoint = a.VoteForPoint
                     })
                 .SingleOrDefaultAsync();
             if (articleEntry == null)
@@ -54,6 +55,17 @@ namespace Keylol.Controllers
                 LikeCount = articleEntry.likeCount,
                 Liked = articleEntry.liked
             };
+            if (articleEntry.voteForPoint != null)
+                switch (articleEntry.voteForPoint.PreferedName)
+                {
+                    case PreferedNameType.Chinese:
+                        articleDTO.VoteForPointName = articleEntry.voteForPoint.ChineseName;
+                        break;
+
+                    case PreferedNameType.English:
+                        articleDTO.VoteForPointName = articleEntry.voteForPoint.EnglishName;
+                        break;
+                }
             return Ok(articleDTO);
         }
 
@@ -79,7 +91,8 @@ namespace Keylol.Controllers
                             likeCount = a.Likes.Count(l => l.Backout == false),
                             liked = a.Likes.Any(l => l.OperatorId == userId && l.Backout == false),
                             typeName = a.Type.Name,
-                            attachedPoints = a.AttachedPoints
+                            attachedPoints = a.AttachedPoints,
+                            voteForPoint = a.VoteForPoint
                         })
                         .SingleOrDefaultAsync();
             if (articleEntry == null)
@@ -91,7 +104,30 @@ namespace Keylol.Controllers
                 LikeCount = articleEntry.likeCount,
                 Liked = articleEntry.liked
             };
+            if (articleEntry.voteForPoint != null)
+                switch (articleEntry.voteForPoint.PreferedName)
+                {
+                    case PreferedNameType.Chinese:
+                        articleDTO.VoteForPointName = articleEntry.voteForPoint.ChineseName;
+                        break;
+
+                    case PreferedNameType.English:
+                        articleDTO.VoteForPointName = articleEntry.voteForPoint.EnglishName;
+                        break;
+                }
             return Ok(articleDTO);
+        }
+
+        /// <summary>
+        /// 获取 5 篇全站热门文章
+        /// </summary>
+        [Route("hot")]
+        [ResponseType(typeof (List<ArticleDTO>))]
+        public async Task<IHttpActionResult> GetHot()
+        {
+            var articles = await DbContext.Articles.Where(a => a.PublishTime >= DbFunctions.AddDays(DateTime.Now, -14))
+                .OrderByDescending(a => a.Likes.Count(l => l.Backout == false)).Take(() => 5).ToListAsync();
+            return Ok(articles.Select(article => new ArticleDTO(article, true, 256)));
         }
 
         /// <summary>
@@ -99,7 +135,7 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="normalPointId">据点 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
-        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的 ID，null 表示全部类型，默认 null</param>
+        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
         /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("point/{normalPointId}")]
@@ -126,8 +162,9 @@ namespace Keylol.Controllers
             }
             if (articleTypeFilter != null)
             {
-                var typesId = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
-                articleQuery = articleQuery.Where(PredicateBuilder.Contains<Article, string>(typesId, a => a.TypeId));
+                var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                articleQuery =
+                    articleQuery.Where(PredicateBuilder.Contains<Article, string>(typesName, a => a.Type.Name));
             }
             var articleEntries = await articleQuery.OrderByDescending(a => a.SequenceNumber).Take(() => take).Select(
                 a => new
@@ -154,7 +191,7 @@ namespace Keylol.Controllers
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
-        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的 ID，null 表示全部类型，默认 null</param>
+        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
         /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("user/{userId}")]
@@ -199,8 +236,8 @@ namespace Keylol.Controllers
                     }));
             if (articleTypeFilter != null)
             {
-                var typesId = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
-                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesId, a => a.article.TypeId, new
+                var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesName, a => a.article.Type.Name, new
                 {
                     article = (Article) null,
                     reason = ArticleDTO.TimelineReasonType.Like,
@@ -246,7 +283,7 @@ namespace Keylol.Controllers
         /// <summary>
         /// 获取当前用户主订阅时间轴的文章
         /// </summary>
-        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的 ID，null 表示全部类型，默认 null</param>
+        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
         /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("subscription")]
@@ -259,9 +296,6 @@ namespace Keylol.Controllers
             var userId = User.Identity.GetUserId();
             var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
             var profilePointsQuery = userQuery.SelectMany(u => u.SubscribedPoints.OfType<ProfilePoint>());
-
-            var normalPointListTypeHint = new List<NormalPoint>();
-            var userListTypeHint = new List<KeylolUser>();
 
             var articleQuery =
                 userQuery.SelectMany(u => u.SubscribedPoints.OfType<NormalPoint>())
@@ -290,8 +324,8 @@ namespace Keylol.Controllers
 
             if (articleTypeFilter != null)
             {
-                var typesId = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
-                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesId, a => a.article.TypeId, new
+                var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesName, a => a.article.Type.Name, new
                 {
                     article = (Article) null,
                     reason = ArticleDTO.TimelineReasonType.Like
@@ -383,10 +417,10 @@ namespace Keylol.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var type = await DbContext.ArticleTypes.FindAsync(vm.TypeId);
+            var type = await DbContext.ArticleTypes.Where(t => t.Name == vm.TypeName).SingleOrDefaultAsync();
             if (type == null)
             {
-                ModelState.AddModelError("vm.TypeId", "Invalid article type.");
+                ModelState.AddModelError("vm.TypeName", "Invalid article type.");
                 return BadRequest(ModelState);
             }
 
@@ -435,7 +469,7 @@ namespace Keylol.Controllers
         /// 编辑指定文章
         /// </summary>
         /// <param name="id">文章 Id</param>
-        /// <param name="vm">文章相关属性，其中 Title, Content, TypeId 如果不提交表示不修改</param>
+        /// <param name="vm">文章相关属性，其中 Title, Content, TypeName 如果不提交表示不修改</param>
         [Route("{id}")]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
@@ -460,15 +494,15 @@ namespace Keylol.Controllers
                 return Unauthorized();
 
             ArticleType type;
-            if (vm.TypeId != null)
+            if (vm.TypeName != null)
             {
-                type = await DbContext.ArticleTypes.FindAsync(vm.TypeId);
+                type = await DbContext.ArticleTypes.Where(t => t.Name == vm.TypeName).SingleOrDefaultAsync();
                 if (type == null)
                 {
                     ModelState.AddModelError("vm.TypeId", "Invalid article type.");
                     return BadRequest(ModelState);
                 }
-                article.TypeId = vm.TypeId;
+                article.TypeId = type.Id;
             }
             else
             {
@@ -493,7 +527,7 @@ namespace Keylol.Controllers
             }
             else
             {
-                article.VoteForPoint = null;
+                article.VoteForPointId = null;
                 article.Vote = null;
             }
 
@@ -508,6 +542,8 @@ namespace Keylol.Controllers
                 article.Title = vm.Title;
             if (vm.Content != null)
                 article.Content = vm.Content;
+            article.AttachedPoints.Clear();
+            await DbContext.SaveChangesAsync();
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(PredicateBuilder.Contains<NormalPoint, string>(vm.AttachedPointsId,
                     point => point.Id)).ToListAsync();
