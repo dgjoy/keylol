@@ -10,6 +10,7 @@ namespace Keylol.Migrations
             AddColumn("dbo.Likes", "IgnoredByTargetUser", c => c.Boolean(nullable: false));
             AddColumn("dbo.Entries", "IgnoreNewLikes", c => c.Boolean());
             AddColumn("dbo.Entries", "IgnoreNewComments", c => c.Boolean());
+            Sql("UPDATE [dbo].[Entries] SET [IgnoreNewLikes] = 0, [IgnoreNewComments] = 0 WHERE [Discriminator] = 'Article'");
             AddColumn("dbo.Comments", "IgnoredByArticleAuthor", c => c.Boolean(nullable: false));
             AddColumn("dbo.Comments", "IgnoreNewLikes", c => c.Boolean(nullable: false));
             AddColumn("dbo.Comments", "IgnoreNewComments", c => c.Boolean(nullable: false));
