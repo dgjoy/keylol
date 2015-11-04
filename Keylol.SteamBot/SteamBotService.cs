@@ -178,14 +178,25 @@ namespace Keylol.SteamBot
         public void ConsoleStartup(string[] args)
         {
             Console.WriteLine("Running in console mode. Press Ctrl-M to stop.");
-            OnStart(args);
             while (true)
             {
-                var key = Console.ReadKey();
-                if (key.Modifiers == ConsoleModifiers.Control && key.Key == ConsoleKey.M)
-                    break;
+                try
+                {
+                    OnStart(args);
+                    while (true)
+                    {
+                        var key = Console.ReadKey();
+                        if (key.Modifiers == ConsoleModifiers.Control && key.Key == ConsoleKey.M)
+                            break;
+                    }
+                    OnStop();
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Fatal error! Try restarting service...");
+                    // ignored, auto restart service
+                }
             }
-            OnStop();
         }
 
         private class SteamBotCoodinatorCallbackHandler : ISteamBotCoodinatorCallback
@@ -525,7 +536,8 @@ namespace Keylol.SteamBot
                             break;
 
                         default:
-                            _botService.WriteLog($"Friend {friend.SteamID} should be removed. (Unknown relationship {friend.Relationship})");
+                            _botService.WriteLog(
+                                $"Friend {friend.SteamID} should be removed. (Unknown relationship {friend.Relationship})");
 //                            _steamFriends.RemoveFriend(friend.SteamID);
                             break;
                     }
