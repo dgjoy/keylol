@@ -45,6 +45,10 @@ namespace Keylol.Models
         
         [Index]
         public int SequenceNumberForAuthor { get; set; }
+
+        public bool IgnoreNewLikes { get; set; } = false;
+
+        public bool IgnoreNewComments { get; set; } = false;
         
         public virtual ICollection<NormalPoint> AttachedPoints { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }

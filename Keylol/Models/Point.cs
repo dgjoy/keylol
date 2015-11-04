@@ -28,6 +28,8 @@ namespace Keylol.Models
         public string BackgroundImage { get; set; } = string.Empty;
 
         public virtual ICollection<KeylolUser> Subscribers { get; set; }
+
+        public virtual ICollection<Favorite> FavoritedBy { get; set; }
     }
 
     public class NormalPoint : Point

@@ -13,6 +13,8 @@ namespace Keylol.Models
         public DateTime Time { get; set; } = DateTime.Now;
 
         public bool ReadByTargetUser { get; set; } = false;
+
+        public bool IgnoredByTargetUser { get; set; } = false;
         
         [Required]
         public string OperatorId { get; set; }

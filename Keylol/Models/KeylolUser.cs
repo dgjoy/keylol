@@ -94,6 +94,8 @@ namespace Keylol.Models
         
         public virtual InvitationCode InvitationCode { get; set; }
 
+        public virtual ICollection<Favorite> Favorites { get; set; }
+
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
         //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
 

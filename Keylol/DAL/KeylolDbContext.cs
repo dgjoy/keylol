@@ -42,6 +42,7 @@ namespace Keylol.DAL
         public DbSet<SteamLoginToken> SteamLoginTokens { get; set; }
         public DbSet<SteamBot> SteamBots { get; set; }
         public DbSet<InvitationCode> InvitationCodes { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

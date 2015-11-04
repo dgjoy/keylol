@@ -18,6 +18,8 @@ namespace Keylol.Models
 
         public bool ReadByArticleAuthor { get; set; } = false;
 
+        public bool IgnoredByArticleAuthor { get; set; } = false;
+
         [Required]
         public string CommentatorId { get; set; }
         public virtual KeylolUser Commentator { get; set; }
@@ -28,6 +30,10 @@ namespace Keylol.Models
 
         [Index]
         public int SequenceNumberForArticle { get; set; }
+
+        public bool IgnoreNewLikes { get; set; } = false;
+
+        public bool IgnoreNewComments { get; set; } = false;
 
         public virtual ICollection<CommentLike> Likes { get; set; }
         public virtual ICollection<CommentReply> CommentRepliesAsComment { get; set; }

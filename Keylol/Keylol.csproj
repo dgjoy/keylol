@@ -193,6 +193,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\FavoriteController.cs" />
     <Compile Include="Controllers\InvitationCodeController.cs" />
     <Compile Include="Migrations\201511011542501_InvitationCode.cs" />
     <Compile Include="Migrations\201511011542501_InvitationCode.Designer.cs">
@@ -202,7 +203,21 @@
     <Compile Include="Migrations\201511020937308_ArticleTypeName.Designer.cs">
       <DependentUpon>201511020937308_ArticleTypeName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201511040314156_Favorite.cs" />
+    <Compile Include="Migrations\201511040314156_Favorite.Designer.cs">
+      <DependentUpon>201511040314156_Favorite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511040324194_IgnoreNotification.cs" />
+    <Compile Include="Migrations\201511040324194_IgnoreNotification.Designer.cs">
+      <DependentUpon>201511040324194_IgnoreNotification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511040338567_FavoriteAddTime.cs" />
+    <Compile Include="Migrations\201511040338567_FavoriteAddTime.Designer.cs">
+      <DependentUpon>201511040338567_FavoriteAddTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
+    <Compile Include="Models\Favorite.cs" />
     <Compile Include="Models\InvitationCode.cs" />
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />
@@ -358,6 +373,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511020937308_ArticleTypeName.resx">
       <DependentUpon>201511020937308_ArticleTypeName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511040314156_Favorite.resx">
+      <DependentUpon>201511040314156_Favorite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511040324194_IgnoreNotification.resx">
+      <DependentUpon>201511040324194_IgnoreNotification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511040338567_FavoriteAddTime.resx">
+      <DependentUpon>201511040338567_FavoriteAddTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

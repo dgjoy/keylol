@@ -125,9 +125,16 @@ namespace Keylol.Controllers
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> GetHot()
         {
-            var articles = await DbContext.Articles.Where(a => a.PublishTime >= DbFunctions.AddDays(DateTime.Now, -14))
-                .OrderByDescending(a => a.Likes.Count(l => l.Backout == false)).Take(() => 5).ToListAsync();
-            return Ok(articles.Select(article => new ArticleDTO(article, true, 256)));
+            var articleEntries =
+                await DbContext.Articles.AsNoTracking()
+                    .Where(a => a.PublishTime >= DbFunctions.AddDays(DateTime.Now, -14))
+                    .OrderByDescending(a => a.Likes.Count(l => l.Backout == false)).Take(() => 5)
+                    .Select(a => new
+                    {
+                        article = a,
+                        authorIdCode = a.Principal.User.IdCode
+                    }).ToListAsync();
+            return Ok(articleEntries.Select(e => new ArticleDTO(e.article, true, 256) {AuthorIdCode = e.authorIdCode}));
         }
 
         /// <summary>
