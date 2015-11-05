@@ -188,7 +188,6 @@ namespace Keylol.Controllers
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.typeName,
-                    AuthorIdCode = entry.author.Id,
                     Author = new UserDTO(entry.author)
                 }));
         }
@@ -280,7 +279,6 @@ namespace Keylol.Controllers
                 };
                 if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
                 {
-                    articleDTO.AuthorIdCode = entry.author.IdCode;
                     articleDTO.Author = new UserDTO(entry.author);
                 }
                 return articleDTO;
@@ -367,7 +365,6 @@ namespace Keylol.Controllers
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.typeName,
-                    AuthorIdCode = entry.author.IdCode,
                     Author = new UserDTO(entry.author)
                 };
                 switch (entry.reason)
