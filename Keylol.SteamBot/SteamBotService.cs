@@ -107,8 +107,9 @@ namespace Keylol.SteamBot
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
                 _healthReportTimer.Start();
             }
-            catch (CommunicationException)
+            catch (Exception)
             {
+                // ignored
             }
         }
 
