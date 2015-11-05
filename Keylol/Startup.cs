@@ -3,6 +3,7 @@ using Keylol;
 using Keylol.Utilities;
 using Microsoft.Owin;
 using Owin;
+using WebApiThrottle;
 
 [assembly: OwinStartup(typeof (Startup))]
 
@@ -28,6 +29,11 @@ namespace Keylol
                 }, null);
                 await next.Invoke();
             });
+            app.Use(typeof (ThrottlingMiddleware),
+                ThrottlePolicy.FromStore(new PolicyConfigurationProvider()),
+                new PolicyMemoryCacheRepository(),
+                new MemoryCacheRepository(),
+                null);
             UseAuth(app);
             UseSignalR(app);
             UseWebAPI(app);
