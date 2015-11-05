@@ -41,6 +41,14 @@ namespace Keylol.Models
         [MaxLength(300000)]
         public string Content { get; set; }
 
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string ThumbnailImage { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(300000)]
+        public string UnstyledContent { get; set; } = string.Empty;
+
         public VoteType? Vote { get; set; }
         
         [Index]

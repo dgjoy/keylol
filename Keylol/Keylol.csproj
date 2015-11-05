@@ -50,6 +50,10 @@
     <DocumentationFile>bin\Keylol.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CsQuery, Version=1.3.3.249, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DevTrends.WCFDataAnnotations, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WCFDataAnnotations.1.1.0\lib\net40\DevTrends.WCFDataAnnotations.dll</HintPath>
       <Private>True</Private>
@@ -60,6 +64,10 @@
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HtmlSanitizer, Version=2.0.5735.24296, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlSanitizer.2.0.5735.24296\lib\net40\HtmlSanitizer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -218,6 +226,10 @@
     <Compile Include="Migrations\201511040338567_FavoriteAddTime.cs" />
     <Compile Include="Migrations\201511040338567_FavoriteAddTime.Designer.cs">
       <DependentUpon>201511040338567_FavoriteAddTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511051240136_ArticleUnstyledContent.cs" />
+    <Compile Include="Migrations\201511051240136_ArticleUnstyledContent.Designer.cs">
+      <DependentUpon>201511051240136_ArticleUnstyledContent.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
@@ -386,6 +398,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511040338567_FavoriteAddTime.resx">
       <DependentUpon>201511040338567_FavoriteAddTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511051240136_ArticleUnstyledContent.resx">
+      <DependentUpon>201511051240136_ArticleUnstyledContent.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

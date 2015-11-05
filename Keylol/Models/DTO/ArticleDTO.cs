@@ -17,15 +17,19 @@ namespace Keylol.Models.DTO
         {
         }
 
-        public ArticleDTO(Article article, bool includeContent = false, int truncateContentTo = 0)
+        public ArticleDTO(Article article, bool includeContent = false, int truncateContentTo = 0, bool includeThumbnailImage = false)
         {
             Id = article.Id;
             PublishTime = article.PublishTime;
             Title = article.Title;
             if (includeContent)
             {
-                Content = article.Content;
+                Content = truncateContentTo > 0 ? article.UnstyledContent : article.Content;
                 TruncateContent(truncateContentTo);
+            }
+            if (includeThumbnailImage)
+            {
+                ThumbnailImage = article.ThumbnailImage;
             }
             VoteForPointId = article.VoteForPointId;
             Vote = article.Vote;
@@ -73,6 +77,8 @@ namespace Keylol.Models.DTO
         public string Title { get; set; }
 
         public string Content { get; set; }
+
+        public string ThumbnailImage { get; set; }
 
         public string VoteForPointId { get; set; }
 

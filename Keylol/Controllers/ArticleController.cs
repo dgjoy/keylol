@@ -4,9 +4,14 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using CsQuery;
+using CsQuery.Output;
+using Ganss.XSS;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -183,7 +188,7 @@ namespace Keylol.Controllers
                     author = a.Principal.User
                 }).ToListAsync();
             return Ok(articleEntries.Select(entry =>
-                new ArticleDTO(entry.article, true, 256)
+                new ArticleDTO(entry.article, true, 256, true)
                 {
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
@@ -270,7 +275,7 @@ namespace Keylol.Controllers
                 .ToListAsync();
             return Ok(articleEntries.Select(entry =>
             {
-                var articleDTO = new ArticleDTO(entry.article, true, 256)
+                var articleDTO = new ArticleDTO(entry.article, true, 256, true)
                 {
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
@@ -359,7 +364,7 @@ namespace Keylol.Controllers
 
             return Ok(articleEntries.Select(entry =>
             {
-                var articleDTO = new ArticleDTO(entry.article, true, 256)
+                var articleDTO = new ArticleDTO(entry.article, true, 256, true)
                 {
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
@@ -425,7 +430,7 @@ namespace Keylol.Controllers
 	            [t3].[Id],
 	            [t3].[PublishTime],
 	            [t3].[Title],
-	            [t3].[Content],
+	            [t3].[UnstyledContent] AS [Content],
 	            [t3].[SequenceNumberForAuthor],
 	            [t3].[SequenceNumber],
 	            [t3].[TypeName],
@@ -515,6 +520,7 @@ namespace Keylol.Controllers
             article.TypeId = type.Id;
             article.Title = vm.Title;
             article.Content = vm.Content;
+            SanitizeArticle(article);
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(PredicateBuilder.Contains<NormalPoint, string>(vm.AttachedPointsId,
                     point => point.Id)).ToListAsync();
@@ -610,7 +616,10 @@ namespace Keylol.Controllers
             if (vm.Title != null)
                 article.Title = vm.Title;
             if (vm.Content != null)
+            {
                 article.Content = vm.Content;
+                SanitizeArticle(article);
+            }
             article.AttachedPoints.Clear();
             await DbContext.SaveChangesAsync();
             article.AttachedPoints =
@@ -618,6 +627,58 @@ namespace Keylol.Controllers
                     point => point.Id)).ToListAsync();
             await DbContext.SaveChangesAsync();
             return Ok();
+        }
+
+        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Route("unstyled-content/convert")]
+        public async Task<IHttpActionResult> UnstyledContentConvert()
+        {
+            var articles = await DbContext.Articles.Where(a => a.UnstyledContent == null).ToListAsync();
+            foreach (var article in articles)
+            {
+                SanitizeArticle(article);
+                if (article.ThumbnailImage == null)
+                    article.ThumbnailImage = string.Empty;
+            }
+            await DbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        private static void SanitizeArticle(Article article)
+        {
+            Config.HtmlEncoder = new HtmlEncoderMinimum();
+            var sanitizer = new HtmlSanitizer(new[] {"div", "br", "h1", "blockquote", "b", "i", "u", "img", "a"},
+                null,
+                new[] {"href", "src", "webp-src"});
+            var dom = CQ.Create(sanitizer.Sanitize(article.Content));
+            article.ThumbnailImage = string.Empty;
+            foreach (var img in dom["img"])
+            {
+                if (img.Attributes["src"] == null) continue;
+                if (img.Attributes["webp-src"] != null)
+                {
+                    if (string.IsNullOrEmpty(article.ThumbnailImage))
+                        article.ThumbnailImage = img.Attributes["webp-src"];
+                    img.RemoveAttribute("src");
+                    continue;
+                }
+                var match = Regex.Match(img.Attributes["src"], @"^(?:http:|https:)?\/\/keylol\.b0\.upaiyun\.com\/(.*)$",
+                    RegexOptions.IgnoreCase);
+                if (!match.Success)
+                {
+                    if (string.IsNullOrEmpty(article.ThumbnailImage))
+                        article.ThumbnailImage = img.Attributes["src"];
+                    continue;
+                }
+                img.RemoveAttribute("src");
+                img.Attributes["webp-src"] = "//keylol.b0.upaiyun.com/" + match.Groups[1].Value;
+                if (!match.Groups[1].Value.Contains("!"))
+                    img.Attributes["webp-src"] += "!article.image";
+                if (string.IsNullOrEmpty(article.ThumbnailImage))
+                    article.ThumbnailImage = img.Attributes["webp-src"];
+            }
+            article.Content = dom.Render();
+            article.UnstyledContent = dom.Render(OutputFormatters.PlainText);
         }
     }
 }

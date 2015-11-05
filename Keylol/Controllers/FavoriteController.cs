@@ -55,7 +55,7 @@ namespace Keylol.Controllers
             favorite.PointId = pointId;
             DbContext.Favorites.Add(favorite);
             await DbContext.SaveChangesAsync();
-            return Created($"favorite/{favorite.Id}", "Created!");
+            return Created($"favorite/{favorite.Id}", favorite.Id);
         }
 
         /// <summary>
