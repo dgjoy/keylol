@@ -99,23 +99,67 @@ namespace Keylol.Controllers
         /// 根据关键字搜索对应据点
         /// </summary>
         /// <param name="keyword">关键字</param>
+        /// <param name="full">是否获取完整的据点信息，包括读者文章数，订阅状态等，默认 false</param>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 5</param>
         [Route("keyword/{keyword}")]
         [ResponseType(typeof (List<NormalPointDTO>))]
-        public async Task<IHttpActionResult> Get(string keyword, int skip = 0, int take = 5)
+        public async Task<IHttpActionResult> Get(string keyword, bool full = false, int skip = 0, int take = 5)
         {
             if (take > 50) take = 50;
-            return Ok((await DbContext.NormalPoints.SqlQuery(@"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
-                    SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
-		                SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([EnglishName], [EnglishAliases]), {0})
-		                UNION ALL
-		                SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([ChineseName], [ChineseAliases]), {0})
-	                ) AS [t2] GROUP BY [t2].[KEY]
-                ) AS [t3] ON [t1].[Id] = [t3].[KEY]
-                ORDER BY [t3].[RANK] DESC
-                OFFSET ({1}) ROWS FETCH NEXT ({2}) ROWS ONLY",
-                $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync()).Select(point => new NormalPointDTO(point)));
+
+            if (!full)
+            {
+                return
+                    Ok((await DbContext.NormalPoints.SqlQuery(@"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
+                            SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
+		                        SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([EnglishName], [EnglishAliases]), {0})
+		                        UNION ALL
+		                        SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([ChineseName], [ChineseAliases]), {0})
+	                        ) AS [t2] GROUP BY [t2].[KEY]
+                        ) AS [t3] ON [t1].[Id] = [t3].[KEY]
+                        ORDER BY [t3].[RANK] DESC
+                        OFFSET ({1}) ROWS FETCH NEXT ({2}) ROWS ONLY",
+                        $"\"{keyword}\" OR \"{keyword}*\"", skip, take).AsNoTracking().ToListAsync()).Select(
+                            point => new NormalPointDTO(point)));
+            }
+
+            var points = await DbContext.Database.SqlQuery<NormalPointDTO>(@"SELECT
+                [t4].[Id],
+                [t4].[PreferedName],
+                [t4].[IdCode],
+                [t4].[ChineseName],
+                [t4].[EnglishName],
+                [t4].[AvatarImage],
+                [t4].[BackgroundImage],
+                [t4].[Type],
+	            (SELECT
+		            COUNT(1)
+		            FROM [dbo].[UserPointSubscriptions]
+		            WHERE [t4].[Id] = [dbo].[UserPointSubscriptions].[Point_Id]) AS [SubscriberCount],
+	            CASE WHEN (EXISTS (SELECT 1 FROM [dbo].[UserPointSubscriptions] WHERE [dbo].[UserPointSubscriptions].[Point_Id] = [t4].[Id] AND [dbo].[UserPointSubscriptions].[KeylolUser_Id] = {1})) THEN cast(1 as bit) ELSE cast(0 as bit) END AS [Subscribed],
+                (SELECT
+                    COUNT(1)
+                    FROM  [dbo].[ArticlePointPushes]
+                    INNER JOIN [dbo].[Entries] ON [dbo].[Entries].[Id] = [dbo].[ArticlePointPushes].[Article_Id]
+                    WHERE ([dbo].[Entries].[Discriminator] = N'Article') AND ([t4].[Id] = [dbo].[ArticlePointPushes].[NormalPoint_Id])) AS [ArticleCount]
+                FROM (SELECT * FROM [dbo].[NormalPoints] AS [t1]
+                    INNER JOIN (SELECT
+                        [t2].[KEY],
+                        SUM([t2].[RANK]) AS RANK
+                        FROM (SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([EnglishName], [EnglishAliases]), {0})
+                            UNION ALL
+                            SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([ChineseName], [ChineseAliases]), {0})) AS[t2]
+                        GROUP BY [t2].[KEY])
+                    AS[t3] ON [t1].[Id] = [t3].[KEY]
+                    ORDER BY [t3].[RANK] DESC
+                    OFFSET({2}) ROWS FETCH NEXT({3}) ROWS ONLY) AS [t4]",
+                $"\"{keyword}\" OR \"{keyword}*\"", User.Identity.GetUserId(), skip, take).ToListAsync();
+
+            for (var i = 1; i < points.Count; i++)
+                points[i].BackgroundImage = null;
+
+            return Ok(points);
         }
 
         /// <summary>

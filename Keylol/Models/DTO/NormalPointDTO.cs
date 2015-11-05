@@ -8,6 +8,10 @@ namespace Keylol.Models.DTO
 {
     public class NormalPointDTO
     {
+        public NormalPointDTO()
+        {
+        }
+
         public NormalPointDTO(NormalPoint point, bool nameOnly = false)
         {
             Id = point.Id;
