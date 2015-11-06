@@ -629,9 +629,12 @@ namespace Keylol.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// 净化此前未净化过的文章
+        /// </summary>
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
-        [Route("unstyled-content/convert")]
-        public async Task<IHttpActionResult> UnstyledContentConvert()
+        [Route("sanitize")]
+        public async Task<IHttpActionResult> PutSanitize()
         {
             var articles = await DbContext.Articles.Where(a => a.UnstyledContent == null).ToListAsync();
             foreach (var article in articles)

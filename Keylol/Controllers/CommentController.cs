@@ -10,6 +10,7 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -97,6 +98,7 @@ namespace Keylol.Controllers
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
+        [ResponseType(typeof (List<CommentDTO>))]
         public async Task<IHttpActionResult> Get(MyCommentType type = MyCommentType.Received, int skip = 0,
             int take = 30)
         {
@@ -238,6 +240,15 @@ namespace Keylol.Controllers
             comment.ArticleId = article.Id;
             comment.CommentatorId = User.Identity.GetUserId();
             comment.Content = vm.Content;
+            if (comment.CommentatorId == article.PrincipalId)
+            {
+                comment.IgnoredByArticleAuthor = true;
+                comment.ReadByArticleAuthor = true;
+            }
+            else if (article.IgnoreNewComments)
+            {
+                comment.IgnoredByArticleAuthor = true;
+            }
             lock (CommentSaveLock)
             {
                 comment.SequenceNumberForArticle = (DbContext.Comments.Where(c => c.ArticleId == article.Id)
@@ -249,11 +260,40 @@ namespace Keylol.Controllers
             DbContext.CommentReplies.AddRange(replyToComments.Select(c => new CommentReply
             {
                 CommentId = c.Id,
+                IgnoredByCommentAuthor = c.CommentatorId == comment.CommentatorId || c.IgnoreNewComments,
+                ReadByCommentAuthor = c.CommentatorId == comment.CommentatorId,
                 ReplyId = comment.Id
             }));
             await DbContext.SaveChangesAsync();
 
             return Created($"comment/{comment.Id}", new CommentDTO(comment, false));
+        }
+
+        /// <summary>
+        /// 重新计算评论忽略状态
+        /// </summary>
+        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Route("recalculate-ignored")]
+        public async Task<IHttpActionResult> PutRecalculateIgnored()
+        {
+            foreach (var comment in await (from article in DbContext.Articles
+                from comment in article.Comments
+                where article.PrincipalId == comment.CommentatorId
+                select comment).ToListAsync())
+            {
+                comment.IgnoredByArticleAuthor = true;
+                comment.ReadByArticleAuthor = true;
+            }
+            foreach (var commentReply in await (from comment in DbContext.Comments
+                from commentReply in comment.CommentRepliesAsComment
+                where commentReply.Reply.CommentatorId == comment.CommentatorId
+                select commentReply).ToListAsync())
+            {
+                commentReply.IgnoredByCommentAuthor = true;
+                commentReply.ReadByCommentAuthor = true;
+            }
+            await DbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }
