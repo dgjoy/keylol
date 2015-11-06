@@ -53,6 +53,7 @@ namespace Keylol.Controllers
         /// <param name="includeStats">是否包含用户读者数和文章数，默认 false</param>
         /// <param name="includeSubscribed">是否包含该用户有没有被当前用户的信息，默认 false</param>
         /// <param name="includeMoreOptions">是否包含更多杂项设置（例如通知偏好设置），默认 false</param>
+        /// <param name="includeCommentLike">是否包含用户有无新的评论和认同，用户只能获取自己的信息（除非是运维职员），默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [ResponseType(typeof (UserDTO))]
@@ -60,7 +61,8 @@ namespace Keylol.Controllers
         public async Task<IHttpActionResult> Get(string id, bool includeProfilePointBackgroundImage = false,
             bool includeClaims = false, bool includeSecurity = false, bool includeSteam = false,
             bool includeSteamBot = false, bool includeSubscribeCount = false, bool includeStats = false,
-            bool includeSubscribed = false, bool includeMoreOptions = false, IdType idType = IdType.Id)
+            bool includeSubscribed = false, bool includeMoreOptions = false, bool includeCommentLike = false,
+            IdType idType = IdType.Id)
         {
             KeylolUser user;
             switch (idType)
@@ -98,23 +100,14 @@ namespace Keylol.Controllers
                 userDTO.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
             }
 
-            if (includeSecurity)
-            {
-                if (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator)
-                    userDTO.IncludeSecurity();
-            }
+            if (includeSecurity && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+                userDTO.IncludeSecurity();
 
-            if (includeSteam)
-            {
-                if (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator)
-                    userDTO.IncludeSteam();
-            }
+            if (includeSteam && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+                userDTO.IncludeSteam();
 
-            if (includeSteamBot)
-            {
-                if (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator)
-                    userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
-            }
+            if (includeSteamBot && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+                userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
 
             if (includeSubscribeCount)
             {
@@ -142,6 +135,30 @@ namespace Keylol.Controllers
                     .SelectMany(u => u.SubscribedPoints)
                     .Select(p => p.Id)
                     .ContainsAsync(user.Id);
+            }
+
+            if (includeCommentLike && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+            {
+                userDTO.HasNewComment =
+                    (await DbContext.CommentReplies.Where(r =>
+                        r.Comment.CommentatorId == user.Id &&
+                        r.IgnoredByCommentAuthor == false &&
+                        r.ReadByCommentAuthor == false).AnyAsync()) ||
+                    (await DbContext.Comments.Where(c =>
+                        c.Article.PrincipalId == user.Id &&
+                        c.IgnoredByArticleAuthor == false &&
+                        c.ReadByArticleAuthor == false).AnyAsync());
+                userDTO.HasNewLike =
+                    (await DbContext.ArticleLikes.Where(l =>
+                        l.Backout == false &&
+                        l.Article.PrincipalId == user.Id &&
+                        l.IgnoredByTargetUser == false &&
+                        l.ReadByTargetUser == false).AnyAsync()) ||
+                    (await DbContext.CommentLikes.Where(l =>
+                        l.Backout == false &&
+                        l.Comment.CommentatorId == user.Id &&
+                        l.IgnoredByTargetUser == false &&
+                        l.ReadByTargetUser == false).AnyAsync());
             }
 
             return Ok(userDTO);

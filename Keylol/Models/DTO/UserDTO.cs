@@ -111,6 +111,12 @@ namespace Keylol.Models.DTO
 
         [DataMember]
         public bool? Subscribed { get; set; }
+
+        [DataMember]
+        public bool? HasNewComment { get; set; }
+
+        [DataMember]
+        public bool? HasNewLike { get; set; }
     }
 
     public class UserWithMoreOptionsDTO : UserDTO

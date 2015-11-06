@@ -72,7 +72,7 @@ namespace Keylol.Models.DTO
 
         public string Id { get; set; }
 
-        public DateTime PublishTime { get; set; }
+        public DateTime? PublishTime { get; set; }
 
         public string Title { get; set; }
 
@@ -86,9 +86,9 @@ namespace Keylol.Models.DTO
 
         public VoteType? Vote { get; set; }
 
-        public int SequenceNumberForAuthor { get; set; }
+        public int? SequenceNumberForAuthor { get; set; }
 
-        public int SequenceNumber { get; set; }
+        public int? SequenceNumber { get; set; }
 
         public List<NormalPointDTO> AttachedPoints { get; set; }
 
