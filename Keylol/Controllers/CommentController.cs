@@ -148,8 +148,8 @@ namespace Keylol.Controllers
                             SequenceNumberForAuthor = e.article.SequenceNumberForAuthor
                         },
                         ReplyToComment = e.replyToComment == null ? null : new CommentDTO(e.replyToComment, true, 32),
-                        Read = e.read
-                    });
+                        ReadByTargetUser = e.read
+                    }).ToList();
                     foreach (var entry in commentEntries)
                     {
                         if (entry.commentReply == null)
@@ -267,6 +267,29 @@ namespace Keylol.Controllers
             await DbContext.SaveChangesAsync();
 
             return Created($"comment/{comment.Id}", new CommentDTO(comment, false));
+        }
+
+        /// <summary>
+        /// 设置是否忽略指定评论以后的认可提醒
+        /// </summary>
+        /// <param name="id">评论 ID</param>
+        /// <param name="ignore">是否忽略</param>
+        [Route("{id}/ignore")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定评论不存在")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权对该评论进行操作")]
+        public async Task<IHttpActionResult> PutIgnoreNewLikes(string id, bool ignore)
+        {
+            var comment = await DbContext.Comments.FindAsync(id);
+            if (comment == null)
+                return NotFound();
+
+            var userId = User.Identity.GetUserId();
+            if (userId != comment.CommentatorId)
+                return Unauthorized();
+
+            comment.IgnoreNewLikes = ignore;
+            await DbContext.SaveChangesAsync();
+            return Ok();
         }
 
         /// <summary>

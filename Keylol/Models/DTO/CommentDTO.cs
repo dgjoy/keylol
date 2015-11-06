@@ -33,6 +33,6 @@ namespace Keylol.Models.DTO
         public UserDTO ReplyToUser { get; set; }
         public CommentDTO ReplyToComment { get; set; }
         public bool? ReplyToMultipleUser { get; set; }
-        public bool? Read { get; set; }
+        public bool? ReadByTargetUser { get; set; }
     }
 }
