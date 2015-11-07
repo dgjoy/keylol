@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Keylol.Models.DTO
 {
@@ -123,5 +124,7 @@ namespace Keylol.Models.DTO
         public string AuthorAvatarImage { get; set; }
 
         #endregion
+        
+        internal int? Count { get; set; }
     }
 }

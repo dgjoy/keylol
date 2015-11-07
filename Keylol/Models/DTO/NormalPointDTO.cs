@@ -55,5 +55,7 @@ namespace Keylol.Models.DTO
         public int? NegativeArticleCount { get; set; }
         public bool? Subscribed { get; set; }
         public List<NormalPointDTO> AssociatedPoints { get; set; }
+
+        internal int? Count { get; set; }
     }
 }

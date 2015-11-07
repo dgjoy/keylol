@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -396,12 +397,13 @@ namespace Keylol.Controllers
         /// <param name="take">获取数量，最大 50，默认 5</param>
         [Route("keyword/{keyword}")]
         [ResponseType(typeof (List<ArticleDTO>))]
-        public async Task<IHttpActionResult> GetByKeyword(string keyword, bool full = false, int skip = 0, int take = 5)
+        public async Task<HttpResponseMessage> GetByKeyword(string keyword, bool full = false, int skip = 0,
+            int take = 5)
         {
             if (take > 50) take = 50;
 
             if (!full)
-                return Ok(await DbContext.Database.SqlQuery<ArticleDTO>(@"SELECT
+                return Request.CreateResponse(HttpStatusCode.OK, await DbContext.Database.SqlQuery<ArticleDTO>(@"SELECT
 	                [t3].[Id],
 	                [t3].[PublishTime],
 	                [t3].[Title],
@@ -427,6 +429,7 @@ namespace Keylol.Controllers
                     $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync());
 
             var articles = (await DbContext.Database.SqlQuery<ArticleDTO>(@"SELECT
+                [t3].[Count],
 	            [t3].[Id],
 	            [t3].[PublishTime],
 	            [t3].[Title],
@@ -448,6 +451,7 @@ namespace Keylol.Controllers
                     FROM [dbo].[Likes]
                     WHERE ([dbo].[Likes].[Discriminator] = N'ArticleLike') AND ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
 	            FROM (SELECT
+                    COUNT(1) OVER() AS [Count],
 		            [t1].*,
 		            [t4].[Name] AS [TypeName],
 		            [t5].[Id] AS [AuthorId],
@@ -469,7 +473,9 @@ namespace Keylol.Controllers
             for (var i = 1; i < articles.Count(); i++)
                 articles[i].AuthorProfilePointBackgroundImage = null;
 
-            return Ok(articles);
+            var response = Request.CreateResponse(HttpStatusCode.OK, articles);
+            response.Headers.Add("X-Total-Record-Count", articles.Count > 0 ? articles[0].Count.ToString() : "0");
+            return response;
         }
 
         /// <summary>
