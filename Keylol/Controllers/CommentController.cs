@@ -99,7 +99,7 @@ namespace Keylol.Controllers
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
         [ResponseType(typeof (List<CommentDTO>))]
-        public async Task<IHttpActionResult> Get(MyCommentType type = MyCommentType.Received, int skip = 0,
+        public async Task<IHttpActionResult> GetMy(MyCommentType type = MyCommentType.Received, int skip = 0,
             int take = 30)
         {
             if (take > 50) take = 50;

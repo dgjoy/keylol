@@ -34,7 +34,7 @@ namespace Keylol.Controllers
         /// <param name="take">获取数量，默认 30</param>
         [Route("my")]
         [ResponseType(typeof (List<LikeDTO>))]
-        public async Task<IHttpActionResult> Get(MyLikeType type = MyLikeType.All, int skip = 0, int take = 30)
+        public async Task<IHttpActionResult> GetMy(MyLikeType type = MyLikeType.All, int skip = 0, int take = 30)
         {
             var userId = User.Identity.GetUserId();
             switch (type)

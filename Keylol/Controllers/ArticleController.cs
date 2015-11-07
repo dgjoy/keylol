@@ -204,12 +204,13 @@ namespace Keylol.Controllers
         /// <param name="userId">用户 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
+        /// <param name="publishOnly">是否仅获取发表的文章（不获取认可的文章）</param>
         /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("user/{userId}")]
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> GetByUserId(string userId, UserController.IdType idType,
-            string articleTypeFilter = null, int beforeSN = int.MaxValue, int take = 30)
+            string articleTypeFilter = null, bool publishOnly = false, int beforeSN = int.MaxValue, int take = 30)
         {
             if (take > 50) take = 50;
             IQueryable<KeylolUser> userQuery;
@@ -237,8 +238,9 @@ namespace Keylol.Controllers
                     article = a,
                     reason = ArticleDTO.TimelineReasonType.Publish,
                     author = (KeylolUser) null
-                })
-                .Concat(userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
+                });
+            if (!publishOnly)
+                articleQuery = articleQuery.Concat(userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
                     .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN)
                     .Select(l => new
                     {
