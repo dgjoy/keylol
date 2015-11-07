@@ -234,6 +234,7 @@
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\LikeDTO.cs" />
+    <Compile Include="Models\DTO\SubscribedPointDTO.cs" />
     <Compile Include="Models\Favorite.cs" />
     <Compile Include="Models\InvitationCode.cs" />
     <Compile Include="Utilities\Attributes.cs" />
