@@ -198,6 +198,7 @@ namespace Keylol.SteamBot
                     // ignored, auto restart service
                 }
             }
+            // ReSharper disable once FunctionNeverReturns
         }
 
         private class SteamBotCoodinatorCallbackHandler : ISteamBotCoodinatorCallback
@@ -287,8 +288,8 @@ namespace Keylol.SteamBot
                 _steamFriends = _steamClient.GetHandler<SteamFriends>();
                 _callbackManager = new CallbackManager(_steamClient);
 
-                _callbackManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
-                _callbackManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
+                _callbackManager.Subscribe(SafeCallback<SteamClient.ConnectedCallback>(OnConnected));
+                _callbackManager.Subscribe(SafeCallback<SteamClient.DisconnectedCallback>(OnDisconnected));
 //                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
 //                {
 //                    foreach (var s in callback.Servers)
@@ -296,22 +297,31 @@ namespace Keylol.SteamBot
 //                        _botService.WriteLog(s.ToString());
 //                    }
 //                });
-                _callbackManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
-                _callbackManager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth);
-                _callbackManager.Subscribe<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged);
-                _callbackManager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendListUpdated);
-                _callbackManager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived);
+                _callbackManager.Subscribe(SafeCallback<SteamUser.LoggedOnCallback>(OnLoggedOn));
+                _callbackManager.Subscribe(SafeCallback<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth));
+                _callbackManager.Subscribe(SafeCallback<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged));
+                _callbackManager.Subscribe(SafeCallback<SteamFriends.FriendsListCallback>(OnFriendListUpdated));
+                _callbackManager.Subscribe(SafeCallback<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived));
 
                 Task.Run(() =>
                 {
                     while (_isRunning)
                     {
-                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(500));
+                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(100));
                     }
                     _botService.WriteLog($"Bot {Id} callback pump stopped.");
                 });
 
                 _steamClient.Connect(_botService._cmServer);
+            }
+
+            private Action<T> SafeCallback<T>(Action<T> action) where T : CallbackMsg
+            {
+                return callbackMsg =>
+                {
+                    if (_isRunning)
+                        action(callbackMsg);
+                };
             }
 
             public void RemoveFriend(string steamId)
