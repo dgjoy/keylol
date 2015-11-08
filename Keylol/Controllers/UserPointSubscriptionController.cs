@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -37,11 +38,12 @@ namespace Keylol.Controllers
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
+        [ResponseType(typeof (List<SubscribedPointDTO>))]
         public async Task<IHttpActionResult> GetMy(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
             var userId = User.Identity.GetUserId();
-            var userQuery = DbContext.Users.Where(u => u.Id == userId);
+            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
             return Ok((await userQuery.SelectMany(u => u.SubscribedPoints.OfType<NormalPoint>())
                 .Select(p => new
                 {
