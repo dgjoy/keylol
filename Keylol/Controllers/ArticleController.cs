@@ -532,6 +532,10 @@ namespace Keylol.Controllers
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(PredicateBuilder.Contains<NormalPoint, string>(vm.AttachedPointsId,
                     point => point.Id)).ToListAsync();
+            foreach (var attachedPoint in article.AttachedPoints)
+            {
+                attachedPoint.LastActivityTime = DateTime.Now;
+            }
             article.PrincipalId = User.Identity.GetUserId();
             DbContext.Articles.Add(article);
             article.SequenceNumber =
@@ -633,6 +637,10 @@ namespace Keylol.Controllers
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(PredicateBuilder.Contains<NormalPoint, string>(vm.AttachedPointsId,
                     point => point.Id)).ToListAsync();
+            foreach (var attachedPoint in article.AttachedPoints)
+            {
+                attachedPoint.LastActivityTime = DateTime.Now;
+            }
             await DbContext.SaveChangesAsync();
             return Ok();
         }

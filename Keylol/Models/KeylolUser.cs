@@ -25,6 +25,7 @@ namespace Keylol.Models
         [StringLength(5, MinimumLength = 5)]
         public string IdCode { get; set; }
 
+        [Index]
         public DateTime RegisterTime { get; set; } = DateTime.Now;
 
         [Required]
@@ -50,8 +51,6 @@ namespace Keylol.Models
         public string SteamProfileName { get; set; } = string.Empty;
 
         public DateTime SteamBindingTime { get; set; }
-
-        public bool SteamBindingLockEnabled { get; set; } = false;
 
         // Auto share options
         public bool AutoShareOnAddingNewFriend { get; set; } = false;

@@ -69,6 +69,9 @@ namespace Keylol.Models
 
         public DateTime CreateTime { get; set; } = DateTime.Now;
 
+        [Index]
+        public DateTime LastActivityTime { get; set; } = DateTime.Now;
+
         public virtual ICollection<KeylolUser> Staffs { get; set; }
         public virtual ICollection<NormalPoint> AssociatedToPoints { get; set; }
         public virtual ICollection<NormalPoint> AssociatedByPoints { get; set; }

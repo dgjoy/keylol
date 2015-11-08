@@ -28,6 +28,18 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
+        /// 获取五个最近活跃的据点
+        /// </summary>
+        [Route("active")]
+        [ResponseType(typeof (List<NormalPointDTO>))]
+        public async Task<IHttpActionResult> GetActive()
+        {
+            return Ok((await DbContext.NormalPoints.AsNoTracking()
+                .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
+                .ToListAsync()).Select(point => new NormalPointDTO(point)));
+        }
+
+        /// <summary>
         /// 取得指定据点的资料
         /// </summary>
         /// <param name="id">据点 ID</param>
