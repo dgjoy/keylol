@@ -102,7 +102,7 @@ namespace Keylol.Controllers
                 pointDTO.AssociatedPoints =
                     (await DbContext.NormalPoints.Where(p => p.Id == point.Id).SelectMany(p => p.AssociatedToPoints)
                         .Union(DbContext.NormalPoints.Where(p => p.Id == point.Id).SelectMany(p => p.AssociatedByPoints))
-                        .ToListAsync()).Select(p => new NormalPointDTO(p, true)).ToList();
+                        .ToListAsync()).Select(p => new NormalPointDTO(p)).ToList();
             }
 
             return Ok(pointDTO);
