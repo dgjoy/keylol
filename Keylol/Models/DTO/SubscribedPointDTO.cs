@@ -11,6 +11,6 @@ namespace Keylol.Models.DTO
         public NormalPointDTO NormalPoint { get; set; }
         public UserDTO User { get; set; }
         public int? ArticleCount { get; set; }
-        public int? SubscribedConut { get; set; }
+        public int? SubscriberCount { get; set; }
     }
 }

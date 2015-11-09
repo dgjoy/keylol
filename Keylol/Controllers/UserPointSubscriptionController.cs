@@ -67,7 +67,7 @@ namespace Keylol.Controllers
                     User = e.user == null ? null : new UserDTO(e.user),
                     NormalPoint = e.point == null ? null : new NormalPointDTO(e.point),
                     ArticleCount = e.articleCount,
-                    SubscribedConut = e.subscriberCount
+                    SubscriberCount = e.subscriberCount
                 }));
         }
 
