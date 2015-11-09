@@ -140,7 +140,7 @@ namespace Keylol.Controllers
                         article = a,
                         authorIdCode = a.Principal.User.IdCode
                     }).ToListAsync();
-            return Ok(articleEntries.Select(e => new ArticleDTO(e.article, true, 256) {AuthorIdCode = e.authorIdCode}));
+            return Ok(articleEntries.Select(e => new ArticleDTO(e.article, true, 100) {AuthorIdCode = e.authorIdCode}));
         }
 
         /// <summary>
@@ -436,6 +436,7 @@ namespace Keylol.Controllers
 	            [t3].[PublishTime],
 	            [t3].[Title],
 	            [t3].[UnstyledContent] AS [Content],
+                [t3].[ThumbnailImage],
 	            [t3].[SequenceNumberForAuthor],
 	            [t3].[SequenceNumber],
 	            [t3].[TypeName],
