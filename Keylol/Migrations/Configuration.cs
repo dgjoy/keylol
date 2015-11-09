@@ -44,21 +44,6 @@ namespace Keylol.Migrations
                     Description = "声画、模组、插件、汉化"
                 });
 
-            context.NormalPoints.AddOrUpdate(point => point.IdCode,
-                new NormalPoint
-                {
-                    AvatarImage = "keylol://avatars/d6fa208df2f1a15d2d14324cd1f3004c.jpg",
-                    ChineseName = "军团要塞2",
-                    EnglishName = "Team Fortress 2",
-                    PreferedName = PreferedNameType.Chinese,
-                    ChineseAliases = "絕地要塞2",
-                    EnglishAliases = "tf2,tf,tfc",
-                    IdCode = "TMFT2",
-                    Type = NormalPointType.Game,
-                    StoreLink = "http://store.steampowered.com/app/440/",
-                    BackgroundImage = "d6fa208df2f1a15d2d14324cd1f3004c.jpg"
-                });
-
 #if !DEBUG
             var credentials =
                 @"keylol_bot_1 YrXF9LGfHkTJYW8HE4GE8YpJ|keylol_bot_2 NWG8SUTuXKGBkK7g4dXHCWdU|keylol_bot_3 EXc897fp5cg2akUpzazwRCk2|keylol_bot_4 LNFLNCvmSmr2EJHqRNHjpNVt|keylol_bot_5 AVw9sFHWQuZ9jx4xc8cwA5ny"
