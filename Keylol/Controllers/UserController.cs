@@ -46,7 +46,7 @@ namespace Keylol.Controllers
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
-        [ResponseType(typeof(List<UserDTO>))]
+        [ResponseType(typeof (List<UserDTO>))]
         public async Task<IHttpActionResult> GetMy(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
@@ -83,7 +83,7 @@ namespace Keylol.Controllers
         /// <param name="includeStats">是否包含用户读者数和文章数，默认 false</param>
         /// <param name="includeSubscribed">是否包含该用户有没有被当前用户的信息，默认 false</param>
         /// <param name="includeMoreOptions">是否包含更多杂项设置（例如通知偏好设置），默认 false</param>
-        /// <param name="includeCommentLike">是否包含用户有无新的评论和认同，用户只能获取自己的信息（除非是运维职员），默认 false</param>
+        /// <param name="includeCommentLike">是否包含用户有无新的评论和认可，用户只能获取自己的信息（除非是运维职员），默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [ResponseType(typeof (UserDTO))]
@@ -278,7 +278,11 @@ namespace Keylol.Controllers
                 }
                 return BadRequest(ModelState);
             }
+
             DbContext.SteamBindingTokens.Remove(steamBindingToken);
+            user.SequenceNumber =
+                await DbContext.Database.SqlQuery<int>("SELECT NEXT VALUE FOR [dbo].[UserSequence]").SingleAsync();
+            await DbContext.SaveChangesAsync();
 
             // Auto login
             await SignInManager.SignInAsync(user, true, true);
@@ -289,6 +293,7 @@ namespace Keylol.Controllers
             };
             DbContext.LoginLogs.Add(loginLog);
             await DbContext.SaveChangesAsync();
+
             return Created($"user/{user.Id}", new LoginLogDTO(loginLog));
         }
 

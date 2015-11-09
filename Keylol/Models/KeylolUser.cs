@@ -51,6 +51,9 @@ namespace Keylol.Models
         public string SteamProfileName { get; set; } = string.Empty;
 
         public DateTime SteamBindingTime { get; set; }
+        
+        [Index]
+        public int SequenceNumber { get; set; }
 
         // Auto share options
         public bool AutoShareOnAddingNewFriend { get; set; } = false;
