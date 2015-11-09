@@ -230,7 +230,9 @@ namespace Keylol.Controllers
                 ModelState.AddModelError("vm.IdCode", "Only 5 uppercase letters and digits are allowed in IdCode.");
                 return BadRequest(ModelState);
             }
-            if (await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == vm.IdCode) != null)
+
+            if (await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == vm.IdCode) != null ||
+                !IsIdCodeLegit(vm.IdCode))
             {
                 ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
                 return BadRequest(ModelState);
@@ -363,6 +365,37 @@ namespace Keylol.Controllers
                 return BadRequest(ModelState);
             }
             return Ok();
+        }
+
+        private bool IsIdCodeLegit(string idCode)
+        {
+            if (new[]
+            {
+                @"^([A-Z0-9])\1{4}$",
+                @"^0000\d$",
+                @"^\d0000$",
+                @"^TEST.$",
+                @"^.TEST$"
+            }.Any(pattern => Regex.IsMatch(idCode, pattern)))
+                return false;
+
+            if (new[]
+            {
+                "12345",
+                "54321",
+                "ADMIN",
+                "STAFF",
+                "KEYLO",
+                "KYLOL",
+                "KEYLL",
+                "VALVE",
+                "STEAM",
+                "CHINA",
+                "JAPAN"
+            }.Contains(idCode))
+                return false;
+
+            return true;
         }
 
         //        public IHttpActionResult Login(string returnUrl)
