@@ -12,7 +12,7 @@ namespace Keylol.Models.DTO
         {
         }
 
-        public NormalPointDTO(NormalPoint point, bool nameOnly = false)
+        public NormalPointDTO(NormalPoint point, bool nameOnly = false, bool includeAliases = false)
         {
             Id = point.Id;
             PreferedName = point.PreferedName;
@@ -37,6 +37,12 @@ namespace Keylol.Models.DTO
                 BackgroundImage = point.BackgroundImage;
                 Type = point.Type;
                 StoreLink = point.StoreLink;
+
+                if (includeAliases)
+                {
+                    EnglishAliases = point.EnglishAliases;
+                    ChineseAliases = point.ChineseAliases;
+                }
             }
         }
 
@@ -47,6 +53,8 @@ namespace Keylol.Models.DTO
         public string IdCode { get; set; }
         public string ChineseName { get; set; }
         public string EnglishName { get; set; }
+        public string EnglishAliases { get; set; }
+        public string ChineseAliases { get; set; }
         public PreferedNameType PreferedName { get; set; }
         public string StoreLink { get; set; }
         public int? SubscriberCount { get; set; }

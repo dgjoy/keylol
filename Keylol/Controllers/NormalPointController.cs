@@ -99,10 +99,9 @@ namespace Keylol.Controllers
 
             if (includeAssociated)
             {
-                pointDTO.AssociatedPoints =
-                    (await DbContext.NormalPoints.Where(p => p.Id == point.Id).SelectMany(p => p.AssociatedToPoints)
-                        .Union(DbContext.NormalPoints.Where(p => p.Id == point.Id).SelectMany(p => p.AssociatedByPoints))
-                        .ToListAsync()).Select(p => new NormalPointDTO(p)).ToList();
+                pointDTO.AssociatedPoints = (await DbContext.NormalPoints.Where(p => p.Id == point.Id)
+                    .SelectMany(p => p.AssociatedToPoints)
+                    .ToListAsync()).Select(p => new NormalPointDTO(p)).ToList();
             }
 
             return Ok(pointDTO);
@@ -182,6 +181,36 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
+        /// 获取所有据点列表
+        /// </summary>
+        /// <param name="skip">起始位置，默认 0</param>
+        /// <param name="take">获取数量，最大 50，默认 20</param>
+        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Route("list")]
+        [ResponseType(typeof (List<NormalPointDTO>))]
+        public async Task<HttpResponseMessage> GetList(int skip = 0, int take = 20)
+        {
+            if (take > 50) take = 50;
+            var response = Request.CreateResponse(HttpStatusCode.OK,
+                ((await DbContext.NormalPoints.OrderBy(p => p.CreateTime)
+                    .Skip(() => skip).Take(() => take)
+                    .Select(p => new
+                    {
+                        point = p,
+                        articleCount = p.Articles.Count,
+                        subscriberCount = p.Subscribers.Count,
+                        associatedPoints = p.AssociatedToPoints
+                    }).ToListAsync()).Select(entry => new NormalPointDTO(entry.point, false, true)
+                    {
+                        ArticleCount = entry.articleCount,
+                        SubscriberCount = entry.subscriberCount,
+                        AssociatedPoints = entry.associatedPoints.Select(p => new NormalPointDTO(p, true)).ToList()
+                    })));
+            response.Headers.Add("X-Total-Record-Count", (await DbContext.NormalPoints.CountAsync()).ToString());
+            return response;
+        }
+
+        /// <summary>
         /// 创建一个据点
         /// </summary>
         /// <param name="vm">据点相关属性</param>
@@ -203,12 +232,12 @@ namespace Keylol.Controllers
 
             if (!Regex.IsMatch(vm.IdCode, @"^[A-Z0-9]{5}$"))
             {
-                ModelState.AddModelError("vm.IdCode", "Only 5 uppercase letters and digits are allowed in IdCode.");
+                ModelState.AddModelError("vm.IdCode", "识别码只允许使用 5 位数字或大写字母");
                 return BadRequest(ModelState);
             }
             if (await DbContext.NormalPoints.SingleOrDefaultAsync(u => u.IdCode == vm.IdCode) != null)
             {
-                ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
+                ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
                 return BadRequest(ModelState);
             }
 
@@ -227,7 +256,7 @@ namespace Keylol.Controllers
             {
                 if (string.IsNullOrEmpty(vm.StoreLink))
                 {
-                    ModelState.AddModelError("vm.StoreLink", "Invalid store link for game point.");
+                    ModelState.AddModelError("vm.StoreLink", "游戏据点的商店链接不能为空");
                     return BadRequest(ModelState);
                 }
                 normalPoint.StoreLink = vm.StoreLink;
@@ -237,6 +266,61 @@ namespace Keylol.Controllers
             await DbContext.SaveChangesAsync();
 
             return Created($"normal-point/{normalPoint.Id}", new NormalPointDTO(normalPoint));
+        }
+
+        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Route("{id}")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
+        public async Task<IHttpActionResult> Put(string id, NormalPointVM vm)
+        {
+            var normalPoint = await DbContext.NormalPoints.FindAsync(id);
+            if (normalPoint == null)
+                return NotFound();
+
+            if (vm == null)
+            {
+                ModelState.AddModelError("vm", "Invalid view model.");
+                return BadRequest(ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!Regex.IsMatch(vm.IdCode, @"^[A-Z0-9]{5}$"))
+            {
+                ModelState.AddModelError("vm.IdCode", "识别码只允许使用 5 位数字或大写字母");
+                return BadRequest(ModelState);
+            }
+            if (vm.IdCode != normalPoint.IdCode &&
+                await DbContext.NormalPoints.SingleOrDefaultAsync(u => u.IdCode == vm.IdCode) != null)
+            {
+                ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
+                return BadRequest(ModelState);
+            }
+
+            normalPoint.IdCode = vm.IdCode;
+            normalPoint.BackgroundImage = vm.BackgroundImage;
+            normalPoint.AvatarImage = vm.AvatarImage;
+            normalPoint.ChineseName = vm.ChineseName;
+            normalPoint.EnglishName = vm.EnglishName;
+            normalPoint.ChineseAliases = vm.ChineseAliases;
+            normalPoint.EnglishAliases = vm.EnglishAliases;
+            normalPoint.Type = vm.Type;
+            if (normalPoint.Type == NormalPointType.Game)
+            {
+                if (string.IsNullOrEmpty(vm.StoreLink))
+                {
+                    ModelState.AddModelError("vm.StoreLink", "游戏据点的商店链接不能为空");
+                    return BadRequest(ModelState);
+                }
+                normalPoint.StoreLink = vm.StoreLink;
+            }
+            normalPoint.AssociatedToPoints.Clear();
+            await DbContext.SaveChangesAsync();
+            normalPoint.AssociatedToPoints =
+                await DbContext.NormalPoints.Where(p => vm.AssociatedPointsId.Contains(p.Id)).ToListAsync();
+            await DbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }

@@ -317,14 +317,16 @@ namespace Keylol.Controllers
                     .Select(a => new
                     {
                         article = a,
-                        reason = ArticleDTO.TimelineReasonType.Point
+                        reason = ArticleDTO.TimelineReasonType.Point,
+                        likedByUser = (KeylolUser) null
                     })
                     .Concat(profilePointsQuery.SelectMany(p => p.Entries.OfType<Article>())
                         .Where(a => a.SequenceNumber < beforeSN)
                         .Select(a => new
                         {
                             article = a,
-                            reason = ArticleDTO.TimelineReasonType.Publish
+                            reason = ArticleDTO.TimelineReasonType.Publish,
+                            likedByUser = (KeylolUser) null
                         }))
                     .Concat(profilePointsQuery.Select(p => p.User)
                         .SelectMany(u => u.Likes.OfType<ArticleLike>())
@@ -332,7 +334,8 @@ namespace Keylol.Controllers
                         .Select(l => new
                         {
                             article = l.Article,
-                            reason = ArticleDTO.TimelineReasonType.Like
+                            reason = ArticleDTO.TimelineReasonType.Like,
+                            likedByUser = l.Operator
                         }));
 
             if (articleTypeFilter != null)
@@ -341,7 +344,8 @@ namespace Keylol.Controllers
                 articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesName, a => a.article.Type.Name, new
                 {
                     article = (Article) null,
-                    reason = ArticleDTO.TimelineReasonType.Like
+                    reason = ArticleDTO.TimelineReasonType.Like,
+                    likedByUser = (KeylolUser) null
                 }));
             }
 
@@ -350,13 +354,16 @@ namespace Keylol.Controllers
                 .Select(g => new
                 {
                     article = g.Key,
+                    likedByUsers = g.Where(e => e.reason == ArticleDTO.TimelineReasonType.Like)
+                        .Take(3)
+                        .Select(e => e.likedByUser),
                     reason = g.Max(ee => ee.reason)
                 })
                 .Select(g => new
                 {
                     g.article,
                     g.reason,
-                    likedByUsers = g.article.Likes.Select(l => l.Operator),
+                    g.likedByUsers,
                     attachedPoints = g.article.AttachedPoints,
                     author = g.article.Principal.User,
                     likeCount = g.article.Likes.Count(l => l.Backout == false),
