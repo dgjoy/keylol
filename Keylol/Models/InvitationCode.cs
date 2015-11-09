@@ -10,7 +10,7 @@ namespace Keylol.Models
 {
     public class InvitationCode
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Id { get; set; }
 
         [Index]
         public DateTime GenerateTime { get; set; } = DateTime.Now;

@@ -27,19 +27,6 @@ namespace Keylol.Controllers
             UserName
         }
 
-#if DEBUG
-        /// <summary>
-        /// 调试测试用
-        /// </summary>
-        [Route("test")]
-        [HttpGet]
-        public async Task<IHttpActionResult> Test()
-        {
-            await UserManager.SetStaffClaimAsync(User.Identity.GetUserId(), StaffClaim.Operator);
-            return Ok();
-        }
-#endif
-
         /// <summary>
         /// 获取当前用户的读者
         /// </summary>

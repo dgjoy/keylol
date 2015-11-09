@@ -10,6 +10,7 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
+using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers
@@ -18,6 +19,25 @@ namespace Keylol.Controllers
     [RoutePrefix("invitation-code")]
     public class InvitationCodeController : KeylolApiController
     {
+//        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+//        [Route("generate")]
+//        public async Task<IHttpActionResult> Get()
+//        {
+//            var random = new Random();
+//            var codes = new List<InvitationCode>();
+//            for (var i = 0; i < 4; i++)
+//            {
+//                codes.Add(new InvitationCode
+//                {
+//                    Id = $"3101-{random.Next(0, 10000).ToString("D4")}-{random.Next(0, 10000).ToString("D4")}",
+//                    Source = "KYLO-STAFF"
+//                });
+//            }
+//            DbContext.InvitationCodes.AddRange(codes);
+//            await DbContext.SaveChangesAsync();
+//            return Ok(codes.Select(code => new InvitationCodeDTO(code)));
+//        }
+
         /// <summary>
         /// 验证一个邀请码是否正确
         /// </summary>

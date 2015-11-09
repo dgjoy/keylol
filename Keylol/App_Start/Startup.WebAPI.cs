@@ -22,6 +22,7 @@ namespace Keylol
 
             config.EnableCors(_corsPolicyProvider);
 
+#if DEBUG
             config.EnableSwagger(c =>
             {
                 c.SingleApiVersion("v1", "Keylol REST API")
@@ -32,6 +33,7 @@ namespace Keylol
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.XML"));
                 c.DescribeAllEnumsAsStrings();
             }).EnableSwaggerUi();
+#endif
 
             config.MapHttpAttributeRoutes();
 
