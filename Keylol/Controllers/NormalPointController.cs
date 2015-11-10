@@ -139,7 +139,7 @@ namespace Keylol.Controllers
             var points = await DbContext.Database.SqlQuery<NormalPointDTO>(@"SELECT
                 [t4].[Count],
                 [t4].[Id],
-                [t4].[PreferedName],
+                [t4].[PreferredName],
                 [t4].[IdCode],
                 [t4].[ChineseName],
                 [t4].[EnglishName],
@@ -247,6 +247,7 @@ namespace Keylol.Controllers
             normalPoint.AvatarImage = vm.AvatarImage;
             normalPoint.ChineseName = vm.ChineseName;
             normalPoint.EnglishName = vm.EnglishName;
+            normalPoint.PreferredName = vm.PreferredName;
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
             normalPoint.AssociatedToPoints =
@@ -303,6 +304,7 @@ namespace Keylol.Controllers
             normalPoint.AvatarImage = vm.AvatarImage;
             normalPoint.ChineseName = vm.ChineseName;
             normalPoint.EnglishName = vm.EnglishName;
+            normalPoint.PreferredName = vm.PreferredName;
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
             normalPoint.Type = vm.Type;

@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Keylol.Models.ViewModels
 {
-    public class NormalPointVM {
+    public class NormalPointVM
+    {
         [Required(AllowEmptyStrings = true)]
         public string BackgroundImage { get; set; }
-        
+
         public NormalPointType Type { get; set; }
 
         [Required(AllowEmptyStrings = true)]
@@ -25,12 +26,15 @@ namespace Keylol.Models.ViewModels
         [Required]
         public string EnglishName { get; set; }
 
+        [Required]
+        public PreferredNameType PreferredName { get; set; }
+
         [Required(AllowEmptyStrings = true)]
         public string EnglishAliases { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         public string ChineseAliases { get; set; }
-        
+
         [Required]
         public List<string> AssociatedPointsId { get; set; }
 

@@ -13,7 +13,7 @@ namespace Keylol.Models
         Platform
     }
 
-    public enum PreferedNameType
+    public enum PreferredNameType
     {
         Chinese,
         English
@@ -53,7 +53,7 @@ namespace Keylol.Models
         [MaxLength(150)]
         public string EnglishName { get; set; }
 
-        public PreferedNameType PreferedName { get; set; }
+        public PreferredNameType PreferredName { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(32)]

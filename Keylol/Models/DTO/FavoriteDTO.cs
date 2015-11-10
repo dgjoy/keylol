@@ -32,13 +32,13 @@ namespace Keylol.Models.DTO
                 {
                     Type = PointType.NormalPoint;
                     IdCode = normalPoint.IdCode;
-                    switch (normalPoint.PreferedName)
+                    switch (normalPoint.PreferredName)
                     {
-                        case PreferedNameType.Chinese:
+                        case PreferredNameType.Chinese:
                             Name = normalPoint.ChineseName;
                             break;
 
-                        case PreferedNameType.English:
+                        case PreferredNameType.English:
                             Name = normalPoint.EnglishName;
                             break;
 

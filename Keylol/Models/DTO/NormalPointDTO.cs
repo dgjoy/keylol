@@ -15,16 +15,16 @@ namespace Keylol.Models.DTO
         public NormalPointDTO(NormalPoint point, bool nameOnly = false, bool includeAliases = false)
         {
             Id = point.Id;
-            PreferedName = point.PreferedName;
+            PreferredName = point.PreferredName;
             IdCode = point.IdCode;
             if (nameOnly)
             {
-                switch (point.PreferedName)
+                switch (point.PreferredName)
                 {
-                    case PreferedNameType.Chinese:
+                    case PreferredNameType.Chinese:
                         ChineseName = point.ChineseName;
                         break;
-                    case PreferedNameType.English:
+                    case PreferredNameType.English:
                         EnglishName = point.EnglishName;
                         break;
                 }
@@ -55,7 +55,7 @@ namespace Keylol.Models.DTO
         public string EnglishName { get; set; }
         public string EnglishAliases { get; set; }
         public string ChineseAliases { get; set; }
-        public PreferedNameType PreferedName { get; set; }
+        public PreferredNameType PreferredName { get; set; }
         public string StoreLink { get; set; }
         public int? SubscriberCount { get; set; }
         public int? ArticleCount { get; set; }

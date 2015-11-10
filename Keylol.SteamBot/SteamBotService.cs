@@ -474,8 +474,8 @@ namespace Keylol.SteamBot
                         }));
                     foreach (var steamId in friendsToRemove)
                     {
-                        _botService.WriteLog($"Friend {steamId} should be removed. (Not Keylol user)");
-//                        _steamFriends.RemoveFriend(steamId);
+                        _steamFriends.RemoveFriend(steamId);
+                        _botService.WriteLog($"Friend {steamId} has been removed. (Not Keylol user)");
                     }
                 }
                 foreach (var friend in callback.FriendList)

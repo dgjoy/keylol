@@ -62,13 +62,13 @@ namespace Keylol.Controllers
                 Liked = articleEntry.liked
             };
             if (articleEntry.voteForPoint != null)
-                switch (articleEntry.voteForPoint.PreferedName)
+                switch (articleEntry.voteForPoint.PreferredName)
                 {
-                    case PreferedNameType.Chinese:
+                    case PreferredNameType.Chinese:
                         articleDTO.VoteForPointName = articleEntry.voteForPoint.ChineseName;
                         break;
 
-                    case PreferedNameType.English:
+                    case PreferredNameType.English:
                         articleDTO.VoteForPointName = articleEntry.voteForPoint.EnglishName;
                         break;
                 }
@@ -111,13 +111,13 @@ namespace Keylol.Controllers
                 Liked = articleEntry.liked
             };
             if (articleEntry.voteForPoint != null)
-                switch (articleEntry.voteForPoint.PreferedName)
+                switch (articleEntry.voteForPoint.PreferredName)
                 {
-                    case PreferedNameType.Chinese:
+                    case PreferredNameType.Chinese:
                         articleDTO.VoteForPointName = articleEntry.voteForPoint.ChineseName;
                         break;
 
-                    case PreferedNameType.English:
+                    case PreferredNameType.English:
                         articleDTO.VoteForPointName = articleEntry.voteForPoint.EnglishName;
                         break;
                 }

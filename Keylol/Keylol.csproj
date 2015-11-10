@@ -239,6 +239,10 @@
     <Compile Include="Migrations\201511091209274_UserSN.Designer.cs">
       <DependentUpon>201511091209274_UserSN.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201511100402565_RenamePreferedName.cs" />
+    <Compile Include="Migrations\201511100402565_RenamePreferedName.Designer.cs">
+      <DependentUpon>201511100402565_RenamePreferedName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\LikeDTO.cs" />
@@ -417,6 +421,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511091209274_UserSN.resx">
       <DependentUpon>201511091209274_UserSN.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511100402565_RenamePreferedName.resx">
+      <DependentUpon>201511100402565_RenamePreferedName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
