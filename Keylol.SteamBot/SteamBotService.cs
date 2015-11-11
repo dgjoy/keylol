@@ -23,10 +23,11 @@ namespace Keylol.SteamBot
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Keylol Steam Bot Service");
 
-        private readonly Timer _healthReportTimer = new Timer(60000) {AutoReset = false};
+        private readonly Timer _healthReportTimer = new Timer(60000);
         private IPEndPoint _cmServer;
         private readonly object _consoleInputLock = new object();
         private readonly object _consoleOutputLock = new object();
+        private bool _isRunning = false;
 
         public SteamBotService()
         {
@@ -104,6 +105,7 @@ namespace Keylol.SteamBot
                 WriteLog($"CM Server: {_cmServer}");
                 var bots = await _coodinator.AllocateBotsAsync();
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
+                _isRunning = true;
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
                 _healthReportTimer.Start();
             }
@@ -115,10 +117,8 @@ namespace Keylol.SteamBot
 
         protected override void OnStop()
         {
-            if (_healthReportTimer.Enabled)
-            {
-                _healthReportTimer.Stop();
-            }
+            _isRunning = false;
+            _healthReportTimer.Stop();
 
             if (_coodinator.State == CommunicationState.Faulted)
                 _coodinator.Abort();
@@ -155,9 +155,6 @@ namespace Keylol.SteamBot
                 }
                 return vm;
             }).ToArray());
-            if (_healthReportTimer.Enabled)
-                _healthReportTimer.Stop();
-            _healthReportTimer.Start();
         }
 
         private async Task ReportBotHealthAsync(Bot bot)
@@ -179,26 +176,14 @@ namespace Keylol.SteamBot
         public void ConsoleStartup(string[] args)
         {
             Console.WriteLine("Running in console mode. Press Ctrl-M to stop.");
+            OnStart(args);
             while (true)
             {
-                try
-                {
-                    OnStart(args);
-                    while (true)
-                    {
-                        var key = Console.ReadKey();
-                        if (key.Modifiers == ConsoleModifiers.Control && key.Key == ConsoleKey.M)
-                            break;
-                    }
-                    OnStop();
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Fatal error! Try restarting service...");
-                    // ignored, auto restart service
-                }
+                var key = Console.ReadKey();
+                if (key.Modifiers == ConsoleModifiers.Control && key.Key == ConsoleKey.M)
+                    break;
             }
-            // ReSharper disable once FunctionNeverReturns
+            OnStop();
         }
 
         private class SteamBotCoodinatorCallbackHandler : ISteamBotCoodinatorCallback
@@ -236,7 +221,6 @@ namespace Keylol.SteamBot
             private readonly CallbackManager _callbackManager;
             private readonly SteamUser _steamUser;
             private readonly SteamFriends _steamFriends;
-            private bool _isRunning = true;
             private BotState _state = BotState.Disconnected;
 
             public string Id { get; }
@@ -305,7 +289,7 @@ namespace Keylol.SteamBot
 
                 Task.Run(() =>
                 {
-                    while (_isRunning)
+                    while (_botService._isRunning)
                     {
                         _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(100));
                     }
@@ -319,7 +303,7 @@ namespace Keylol.SteamBot
             {
                 return callbackMsg =>
                 {
-                    if (_isRunning)
+                    if (_botService._isRunning)
                         action(callbackMsg);
                 };
             }
@@ -617,7 +601,6 @@ namespace Keylol.SteamBot
                 {
                     State = BotState.Disposing;
                     _botService.WriteLog($"Bot {Id} is disposing...");
-                    _isRunning = false;
                     _steamClient.Disconnect();
                 }
                 _disposed = true;

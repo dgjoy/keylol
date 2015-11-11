@@ -585,7 +585,7 @@ namespace Keylol.Controllers
                 return NotFound();
 
             var editorId = User.Identity.GetUserId();
-            if (article.PrincipalId != editorId)
+            if (article.PrincipalId != editorId && await UserManager.GetStaffClaimAsync(editorId) != StaffClaim.Operator)
                 return Unauthorized();
 
             ArticleType type;
