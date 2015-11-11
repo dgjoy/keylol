@@ -29,6 +29,8 @@ namespace Keylol.Controllers
             {"2002", "STCN-LEADER"},
             {"2301", "TAOBAO-BUYER"},
             {"2302", "SONKWO-BUYER"},
+            {"2501", "EVENT-INDIE1122"},
+            {"2601", "SCUT-RELATIVES"},
             {"3001", "STCN-STAFF"},
             {"3101", "KYLO-STAFF"},
             {"3102", "KYLO-TEST"}
