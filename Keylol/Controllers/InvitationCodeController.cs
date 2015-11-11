@@ -19,24 +19,20 @@ namespace Keylol.Controllers
     [RoutePrefix("invitation-code")]
     public class InvitationCodeController : KeylolApiController
     {
-//        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
-//        [Route("generate")]
-//        public async Task<IHttpActionResult> Get()
-//        {
-//            var random = new Random();
-//            var codes = new List<InvitationCode>();
-//            for (var i = 0; i < 4; i++)
-//            {
-//                codes.Add(new InvitationCode
-//                {
-//                    Id = $"3101-{random.Next(0, 10000).ToString("D4")}-{random.Next(0, 10000).ToString("D4")}",
-//                    Source = "KYLO-STAFF"
-//                });
-//            }
-//            DbContext.InvitationCodes.AddRange(codes);
-//            await DbContext.SaveChangesAsync();
-//            return Ok(codes.Select(code => new InvitationCodeDTO(code)));
-//        }
+        private Dictionary<string, string> _sourceLookup = new Dictionary<string, string>
+        {
+            {"1001", "STCN-CREATOR"},
+            {"1201", "ZHIHU-CREATOR"},
+            {"1401", "TIEBA-CREATOR"},
+            {"1501", "EMAIL-CREATOR"},
+            {"2001", "STCN-LOTTERY"},
+            {"2002", "STCN-LEADER"},
+            {"2301", "TAOBAO-BUYER"},
+            {"2302", "SONKWO-BUYER"},
+            {"3001", "STCN-STAFF"},
+            {"3101", "KYLO-STAFF"},
+            {"3102", "KYLO-TEST"}
+        };
 
         /// <summary>
         /// 验证一个邀请码是否正确
@@ -78,19 +74,36 @@ namespace Keylol.Controllers
         /// <summary>
         /// 生成邀请码
         /// </summary>
-        /// <param name="source">邀请码来源，用于统计追踪</param>
+        /// <param name="prefix">邀请码前缀</param>
         /// <param name="number">生成数量，最大 20000，默认 1</param>
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (List<InvitationCodeDTO>))]
-        public async Task<IHttpActionResult> Post(string source, int number = 1)
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (string))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
+        public async Task<IHttpActionResult> Post(string prefix, int number = 1)
         {
             if (number > 20000) number = 20000;
-            var codes = Enumerable.Range(0, number).Select(i => new InvitationCode {Source = source}).ToList();
+            if (!_sourceLookup.ContainsKey(prefix))
+            {
+                ModelState.AddModelError("sourceCode", "邀请码前缀无效");
+                return BadRequest(ModelState);
+            }
+            var source = _sourceLookup[prefix];
+
+            var random = new Random();
+            var codes = new List<InvitationCode>();
+            for (var i = 0; i < number; i++)
+            {
+                codes.Add(new InvitationCode
+                {
+                    Id = $"{prefix}-{random.Next(0, 10000).ToString("D4")}-{random.Next(0, 10000).ToString("D4")}",
+                    Source = source
+                });
+            }
             DbContext.InvitationCodes.AddRange(codes);
             await DbContext.SaveChangesAsync();
-            return Created("invitation-code", codes.Select(c => new InvitationCodeDTO(c, true)));
+            return Created("invitation-code", $"{source}\n{string.Join("\n", codes.Select(c => c.Id))}");
         }
     }
 }
