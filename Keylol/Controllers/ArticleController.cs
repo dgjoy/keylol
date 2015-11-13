@@ -144,6 +144,24 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
+        /// 获取 5 篇全站最新文章
+        /// </summary>
+        [Route("latest")]
+        [ResponseType(typeof (List<ArticleDTO>))]
+        public async Task<IHttpActionResult> GetLatest()
+        {
+            var articleEntries =
+                await DbContext.Articles.AsNoTracking()
+                    .OrderByDescending(a => a.SequenceNumber).Take(() => 5)
+                    .Select(a => new
+                    {
+                        article = a,
+                        authorIdCode = a.Principal.User.IdCode
+                    }).ToListAsync();
+            return Ok(articleEntries.Select(e => new ArticleDTO(e.article, true, 100) {AuthorIdCode = e.authorIdCode}));
+        }
+
+        /// <summary>
         /// 获取指定据点时间轴的文章
         /// </summary>
         /// <param name="normalPointId">据点 ID</param>

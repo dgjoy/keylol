@@ -34,6 +34,7 @@ namespace Keylol.Models
 
     public class NormalPoint : Point
     {
+        [Index]
         public NormalPointType Type { get; set; }
 
         [Required(AllowEmptyStrings = true)]

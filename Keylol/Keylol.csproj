@@ -243,6 +243,10 @@
     <Compile Include="Migrations\201511100402565_RenamePreferedName.Designer.cs">
       <DependentUpon>201511100402565_RenamePreferedName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201511130746328_NormalPointTypeIndex.cs" />
+    <Compile Include="Migrations\201511130746328_NormalPointTypeIndex.Designer.cs">
+      <DependentUpon>201511130746328_NormalPointTypeIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\LikeDTO.cs" />
@@ -424,6 +428,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511100402565_RenamePreferedName.resx">
       <DependentUpon>201511100402565_RenamePreferedName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511130746328_NormalPointTypeIndex.resx">
+      <DependentUpon>201511130746328_NormalPointTypeIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

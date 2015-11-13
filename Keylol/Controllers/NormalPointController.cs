@@ -40,6 +40,34 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
+        /// 获取每种据点类型下最近活跃的五个据点
+        /// </summary>
+        [Route("active-of-each-type")]
+        [ResponseType(typeof (Dictionary<NormalPointType, List<NormalPointDTO>>))]
+        public async Task<IHttpActionResult> GetActiveOfEachType()
+        {
+            return Ok(new Dictionary<NormalPointType, List<NormalPointDTO>>
+            {
+                [NormalPointType.Game] = (await DbContext.NormalPoints.AsNoTracking()
+                    .Where(p => p.Type == NormalPointType.Game)
+                    .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
+                    .ToListAsync()).Select(point => new NormalPointDTO(point, true)).ToList(),
+                [NormalPointType.Genre] = (await DbContext.NormalPoints.AsNoTracking()
+                    .Where(p => p.Type == NormalPointType.Genre)
+                    .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
+                    .ToListAsync()).Select(point => new NormalPointDTO(point, true)).ToList(),
+                [NormalPointType.Manufacturer] = (await DbContext.NormalPoints.AsNoTracking()
+                    .Where(p => p.Type == NormalPointType.Manufacturer)
+                    .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
+                    .ToListAsync()).Select(point => new NormalPointDTO(point, true)).ToList(),
+                [NormalPointType.Platform] = (await DbContext.NormalPoints.AsNoTracking()
+                    .Where(p => p.Type == NormalPointType.Platform)
+                    .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
+                    .ToListAsync()).Select(point => new NormalPointDTO(point, true)).ToList()
+            });
+        }
+
+        /// <summary>
         /// 取得指定据点的资料
         /// </summary>
         /// <param name="id">据点 ID</param>
