@@ -27,7 +27,7 @@ namespace Keylol.SteamBot
         private IPEndPoint _cmServer;
         private readonly object _consoleInputLock = new object();
         private readonly object _consoleOutputLock = new object();
-        private bool _isRunning = false;
+        private bool _isRunning;
 
         public SteamBotService()
         {
@@ -532,7 +532,7 @@ namespace Keylol.SteamBot
 
                         default:
                             _botService.WriteLog(
-                                $"Friend {friend.SteamID} should be removed. (Unknown relationship {friend.Relationship})");
+                                $"Friend {friend.SteamID} has unknown relationship {friend.Relationship}.", EventLogEntryType.Warning);
 //                            _steamFriends.RemoveFriend(friend.SteamID);
                             break;
                     }

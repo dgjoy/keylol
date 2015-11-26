@@ -65,6 +65,15 @@ namespace Keylol.Migrations
 //                    FriendUpperLimit = 200
 //                });
 //            }
+
+
+            // 测试用机器人
+//            context.SteamBots.AddOrUpdate(bot => bot.SteamUserName, new Models.SteamBot
+//            {
+//                SteamUserName = "keylol_bot_test_1",
+//                SteamPassword = "fvZyELZWpW8SEy4UXaysz2HQ",
+//                FriendUpperLimit = 200
+//            });
         }
     }
 }
