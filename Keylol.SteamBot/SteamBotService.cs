@@ -372,7 +372,7 @@ namespace Keylol.SteamBot
                     case EResult.OK:
                         State = BotState.LoggedOnNotOnline;
                         _webAPIUserNonce = callback.WebAPIUserNonce;
-                        _steamFriends.SetPersonaName("其乐机器人 Keylol.comm");
+                        _steamFriends.SetPersonaName("其乐机器人 Keylol.com");
                         _callbackManager.Subscribe(_steamFriends.SetPersonaState(EPersonaState.Online),
                             SafeCallback<SteamFriends.PersonaChangeCallback>(async personaChangeCallback =>
                             {
