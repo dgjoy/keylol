@@ -23,6 +23,14 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="UpdateCookies">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="cookies" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="SetUserStatus">
     <xs:complexType>
       <xs:sequence>

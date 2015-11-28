@@ -264,6 +264,12 @@ namespace Keylol.SteamBot.ServiceReference {
         private string GamerTagField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> HasNewCommentField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> HasNewLikeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string IdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -292,6 +298,12 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SteamProfileNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> SubscribedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<int> SubscribedPointCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.Nullable<int> SubscriberCountField;
@@ -357,6 +369,32 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.GamerTagField, value) != true)) {
                     this.GamerTagField = value;
                     this.RaisePropertyChanged("GamerTag");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> HasNewComment {
+            get {
+                return this.HasNewCommentField;
+            }
+            set {
+                if ((this.HasNewCommentField.Equals(value) != true)) {
+                    this.HasNewCommentField = value;
+                    this.RaisePropertyChanged("HasNewComment");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> HasNewLike {
+            get {
+                return this.HasNewLikeField;
+            }
+            set {
+                if ((this.HasNewLikeField.Equals(value) != true)) {
+                    this.HasNewLikeField = value;
+                    this.RaisePropertyChanged("HasNewLike");
                 }
             }
         }
@@ -492,6 +530,32 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> Subscribed {
+            get {
+                return this.SubscribedField;
+            }
+            set {
+                if ((this.SubscribedField.Equals(value) != true)) {
+                    this.SubscribedField = value;
+                    this.RaisePropertyChanged("Subscribed");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> SubscribedPointCount {
+            get {
+                return this.SubscribedPointCountField;
+            }
+            set {
+                if ((this.SubscribedPointCountField.Equals(value) != true)) {
+                    this.SubscribedPointCountField = value;
+                    this.RaisePropertyChanged("SubscribedPointCount");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Nullable<int> SubscriberCount {
             get {
                 return this.SubscriberCountField;
@@ -542,6 +606,12 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
         System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateCookies")]
+        void UpdateCookies(string botId, string cookies);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateCookies")]
+        System.Threading.Tasks.Task UpdateCookiesAsync(string botId, string cookies);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus")]
         void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
@@ -647,6 +717,14 @@ namespace Keylol.SteamBot.ServiceReference {
         
         public System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms) {
             return base.Channel.UpdateBotsAsync(vms);
+        }
+        
+        public void UpdateCookies(string botId, string cookies) {
+            base.Channel.UpdateCookies(botId, cookies);
+        }
+        
+        public System.Threading.Tasks.Task UpdateCookiesAsync(string botId, string cookies) {
+            return base.Channel.UpdateCookiesAsync(botId, cookies);
         }
         
         public void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status) {

@@ -247,6 +247,10 @@
     <Compile Include="Migrations\201511130746328_NormalPointTypeIndex.Designer.cs">
       <DependentUpon>201511130746328_NormalPointTypeIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201511281349596_BotCookies.cs" />
+    <Compile Include="Migrations\201511281349596_BotCookies.Designer.cs">
+      <DependentUpon>201511281349596_BotCookies.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\LikeDTO.cs" />
@@ -431,6 +435,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511130746328_NormalPointTypeIndex.resx">
       <DependentUpon>201511130746328_NormalPointTypeIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511281349596_BotCookies.resx">
+      <DependentUpon>201511281349596_BotCookies.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -74,6 +74,12 @@ namespace Keylol.Migrations
 //                SteamPassword = "fvZyELZWpW8SEy4UXaysz2HQ",
 //                FriendUpperLimit = 200
 //            });
+//            context.SteamBots.AddOrUpdate(bot => bot.SteamUserName, new Models.SteamBot
+//            {
+//                SteamUserName = "keylol_bot_test_2",
+//                SteamPassword = "bGGDWcAXCz2KhmmZ7sywwNGg",
+//                FriendUpperLimit = 200
+//            });
         }
     }
 }

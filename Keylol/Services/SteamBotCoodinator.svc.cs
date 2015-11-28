@@ -58,7 +58,9 @@ namespace Keylol.Services
 
             using (var dbContext = new KeylolDbContext())
             {
-                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null).Take(() => 5).ToListAsync();
+                var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null && bot.Enabled)
+                    .Take(() => 5)
+                    .ToListAsync();
                 foreach (var bot in bots)
                 {
                     bot.Online = false;
@@ -87,6 +89,16 @@ namespace Keylol.Services
                     if (vms[i].Online != null)
                         bots[i].Online = vms[i].Online.Value;
                 }
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateCookies(string botId, string cookies)
+        {
+            using (var dbContext = new KeylolDbContext())
+            {
+                var bot = await dbContext.SteamBots.FindAsync(botId);
+                bot.Cookies = cookies;
                 await dbContext.SaveChangesAsync();
             }
         }

@@ -34,6 +34,11 @@ namespace Keylol.Models
         [Index]
         public string SessionId { get; set; }
 
+        public string Cookies { get; set; }
+
+        [Index]
+        public bool Enabled { get; set; } = true;
+
         public virtual ICollection<SteamBindingToken> BindingTokens { get; set; }
 
         public virtual ICollection<KeylolUser> Users { get; set; }

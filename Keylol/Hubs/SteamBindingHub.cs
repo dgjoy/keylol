@@ -56,8 +56,9 @@ namespace Keylol.Hubs
         {
             var bots =
                 await
-                    _dbContext.SteamBots.Where(
-                        b => b.Online && b.SessionId != null && b.SteamId != null && b.FriendCount < b.FriendUpperLimit).ToListAsync();
+                    _dbContext.SteamBots.Where(b =>
+                        b.Online && b.SessionId != null && b.SteamId != null && b.FriendCount < b.FriendUpperLimit &&
+                        b.Enabled).ToListAsync();
             var random = new Random();
             var bot = bots.Skip(random.Next(0, bots.Count)).FirstOrDefault();
             if (bot == null)

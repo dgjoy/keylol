@@ -23,6 +23,8 @@
       <xs:element minOccurs="0" name="AvatarImage" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="GamerTag" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="HasNewComment" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="HasNewLike" nillable="true" type="xs:boolean" />
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="IdCode" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="LockoutEnabled" nillable="true" type="xs:boolean" />
@@ -33,6 +35,8 @@
       <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamId64" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamProfileName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Subscribed" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SubscribedPointCount" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="SubscriberCount" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
     </xs:sequence>

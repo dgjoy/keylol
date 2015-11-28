@@ -20,6 +20,9 @@ namespace Keylol.Services.Contracts
         Task UpdateBots(IList<SteamBotVM> vms);
 
         [OperationContract(IsOneWay = true)]
+        Task UpdateCookies(string botId, string cookies);
+
+        [OperationContract(IsOneWay = true)]
         Task SetUserStatus(string steamId, Contracts.StatusClaim status);
 
         [OperationContract(IsOneWay = true)]

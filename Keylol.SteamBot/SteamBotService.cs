@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Cache;
 using System.Security.Cryptography;
 using System.ServiceModel;
 using System.ServiceProcess;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using System.Web;
 using Keylol.SteamBot.ServiceReference;
 using SteamKit2;
 using Timer = System.Timers.Timer;
@@ -23,8 +28,7 @@ namespace Keylol.SteamBot
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Keylol Steam Bot Service");
 
-        private readonly Timer _healthReportTimer = new Timer(60000);
-        private IPEndPoint _cmServer;
+        private readonly Timer _healthReportTimer = new Timer(60*1000); // 60s
         private readonly object _consoleInputLock = new object();
         private readonly object _consoleOutputLock = new object();
         private bool _isRunning;
@@ -96,22 +100,25 @@ namespace Keylol.SteamBot
             try
             {
                 Directory.CreateDirectory(_appDataFolder);
+                WriteLog($"Application data location: {_appDataFolder}");
                 _coodinator = CreateProxy();
                 WriteLog("Channel created.");
                 WriteLog($"Coodinator endpoint: {_coodinator.Endpoint.Address}");
-                var cmServer = await _coodinator.GetCMServerAsync();
-                var parts = cmServer.Split(':');
-                _cmServer = new IPEndPoint(IPAddress.Parse(parts[0]), int.Parse(parts[1]));
-                WriteLog($"CM Server: {_cmServer}");
+//                var cmServer = await _coodinator.GetCMServerAsync();
+//                var parts = cmServer.Split(':');
+//                _cmServer = new IPEndPoint(IPAddress.Parse(parts[0]), int.Parse(parts[1]));
+//                WriteLog($"CM Server: {_cmServer}");
+                await SteamDirectory.Initialize(148);
+                WriteLog("CM server list loaded.");
                 var bots = await _coodinator.AllocateBotsAsync();
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 _isRunning = true;
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
                 _healthReportTimer.Start();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // ignored
+                WriteLog(e.Message, EventLogEntryType.Warning);
             }
         }
 
@@ -215,6 +222,9 @@ namespace Keylol.SteamBot
                 Disposing
             }
 
+            private const string SteamCommunityDomain = "steamcommunity.com";
+            private const string SteamCommunityUrlBase = "http://steamcommunity.com/";
+
             private readonly SteamBotService _botService;
             private readonly SteamUser.LogOnDetails _logOnDetails = new SteamUser.LogOnDetails();
             private readonly SteamClient _steamClient = new SteamClient();
@@ -222,6 +232,10 @@ namespace Keylol.SteamBot
             private readonly SteamUser _steamUser;
             private readonly SteamFriends _steamFriends;
             private BotState _state = BotState.Disconnected;
+            private uint _loginKeyUniqueId;
+            private string _webAPIUserNonce;
+            private CookieContainer _cookies;
+            private readonly Timer _cookiesCheckTimer = new Timer(10*60*1000); // 10min
 
             public string Id { get; }
 
@@ -232,7 +246,7 @@ namespace Keylol.SteamBot
                 {
                     if (_state != value)
                     {
-                        _botService.WriteLog($"Bot {Id} state changed: {_state} -> {value}.");
+                        WriteLog($"State changed: {_state} -> {value}.");
                         _state = value;
                     }
                 }
@@ -261,11 +275,11 @@ namespace Keylol.SteamBot
                 Id = botCredentials.Id;
                 _logOnDetails.Username = botCredentials.SteamUserName;
                 _logOnDetails.Password = botCredentials.SteamPassword;
-                var sfhPath = Path.Combine(_botService._appDataFolder, $"{Id}.sfh");
+                var sfhPath = Path.Combine(_botService._appDataFolder, $"{_logOnDetails.Username}.sfh");
                 if (File.Exists(sfhPath))
                 {
                     _logOnDetails.SentryFileHash = File.ReadAllBytes(sfhPath);
-                    _botService.WriteLog($"Use sentry file hash from {Id}.sfh.");
+                    WriteLog($"Use sentry file hash from {_logOnDetails.Username}.sfh.");
                 }
 
                 _steamUser = _steamClient.GetHandler<SteamUser>();
@@ -278,14 +292,17 @@ namespace Keylol.SteamBot
 //                {
 //                    foreach (var s in callback.Servers)
 //                    {
-//                        _botService.WriteLog(s.ToString());
+//                        WriteLog(s.ToString());
 //                    }
 //                });
                 _callbackManager.Subscribe(SafeCallback<SteamUser.LoggedOnCallback>(OnLoggedOn));
                 _callbackManager.Subscribe(SafeCallback<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth));
+                _callbackManager.Subscribe(SafeCallback<SteamUser.LoginKeyCallback>(OnLoginKeyReceived));
                 _callbackManager.Subscribe(SafeCallback<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged));
                 _callbackManager.Subscribe(SafeCallback<SteamFriends.FriendsListCallback>(OnFriendListUpdated));
                 _callbackManager.Subscribe(SafeCallback<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived));
+
+                _cookiesCheckTimer.Elapsed += CookiesCheckTimerOnElapsed;
 
                 Task.Run(() =>
                 {
@@ -293,10 +310,10 @@ namespace Keylol.SteamBot
                     {
                         _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(100));
                     }
-                    _botService.WriteLog($"Bot {Id} callback pump stopped.");
+                    WriteLog("Callback pump stopped.");
                 });
 
-                _steamClient.Connect(_botService._cmServer);
+                _steamClient.Connect();
             }
 
             private Action<T> SafeCallback<T>(Action<T> action) where T : CallbackMsg
@@ -315,6 +332,11 @@ namespace Keylol.SteamBot
                 _steamFriends.RemoveFriend(id);
             }
 
+            private void WriteLog(string message, EventLogEntryType type = EventLogEntryType.Information)
+            {
+                _botService.WriteLog($"[{_logOnDetails.Username}] {message}", type);
+            }
+
             #region SteamKit Callback
 
             #region SteamClient
@@ -324,7 +346,7 @@ namespace Keylol.SteamBot
                 if (callback.Result == EResult.OK)
                 {
                     State = BotState.ConnectedNotLoggedOn;
-                    _botService.WriteLog($"Bot {Id} connected.");
+                    WriteLog("Connected.");
                     _steamUser.LogOn(_logOnDetails);
                 }
             }
@@ -334,10 +356,10 @@ namespace Keylol.SteamBot
                 State = BotState.Disconnected;
                 if (!callback.UserInitiated)
                 {
-                    _botService.WriteLog($"Bot {Id} disconnected. Try reconnecting...",
+                    WriteLog("Disconnected. Try reconnecting...",
                         EventLogEntryType.Warning);
                     await Task.Delay(TimeSpan.FromSeconds(2));
-                    _steamClient.Connect(_botService._cmServer);
+                    _steamClient.Connect();
                 }
             }
 
@@ -351,20 +373,26 @@ namespace Keylol.SteamBot
                 {
                     case EResult.OK:
                         State = BotState.LoggedOnNotOnline;
-                        _steamFriends.SetPersonaName("其乐机器人 Keylol.com");
-                        _steamFriends.SetPersonaState(EPersonaState.Online);
+                        _webAPIUserNonce = callback.WebAPIUserNonce;
+                        _steamFriends.SetPersonaName("其乐机器人 Keylol.comm");
+                        _callbackManager.Subscribe(_steamFriends.SetPersonaState(EPersonaState.Online),
+                            SafeCallback<SteamFriends.PersonaChangeCallback>(async personaChangeCallback =>
+                            {
+                                State = BotState.LoggedOnOnline;
+                                WriteLog("Successfully logged on.", EventLogEntryType.SuccessAudit);
+                                await _botService.ReportBotHealthAsync(this);
+                            }));
                         break;
 
                     case EResult.AccountLogonDenied:
                     case EResult.InvalidLoginAuthCode:
                         State = BotState.MachineAuthPending;
-                        _botService.WriteLog($"Bot {Id} need auth code to log on.",
-                            EventLogEntryType.FailureAudit);
+                        WriteLog("Need auth code to log on.", EventLogEntryType.FailureAudit);
                         lock (_botService._consoleInputLock)
                         {
                             if (Environment.UserInteractive)
                             {
-                                Console.WriteLine($"Please input auth code for bot {Id}:");
+                                Console.WriteLine("Please input auth code for this bot:");
                                 var authCode = Console.ReadLine();
                                 _logOnDetails.AuthCode = authCode;
                             }
@@ -372,8 +400,7 @@ namespace Keylol.SteamBot
                         break;
 
                     default:
-                        _botService.WriteLog($"Bot {Id} failed to log on: {callback.Result}.",
-                            EventLogEntryType.FailureAudit);
+                        WriteLog($"Failed to log on: {callback.Result}.", EventLogEntryType.FailureAudit);
                         break;
                 }
             }
@@ -386,10 +413,10 @@ namespace Keylol.SteamBot
                     hash = sha1.ComputeHash(callback.Data);
                 }
 
-                File.WriteAllBytes(Path.Combine(_botService._appDataFolder, $"{Id}.sfh"), hash);
+                File.WriteAllBytes(Path.Combine(_botService._appDataFolder, $"{_logOnDetails.Username}.sfh"), hash);
                 // .sfh means Sentry File Hash
                 _logOnDetails.SentryFileHash = hash;
-                _botService.WriteLog($"Sentry file hash has been written to {Id}.sfh.");
+                WriteLog($"Sentry file hash has been written to {_logOnDetails.Username}.sfh.");
 
                 var authResponse = new SteamUser.MachineAuthDetails
                 {
@@ -410,6 +437,13 @@ namespace Keylol.SteamBot
                 _steamUser.SendMachineAuthResponse(authResponse);
             }
 
+            private async void OnLoginKeyReceived(SteamUser.LoginKeyCallback callback)
+            {
+                _loginKeyUniqueId = callback.UniqueID;
+                await UpdateCookiesAsync();
+                _cookiesCheckTimer.Start();
+            }
+
             #endregion
 
             #region SteamFriend
@@ -417,18 +451,9 @@ namespace Keylol.SteamBot
             private async void OnPersonaStateChanged(SteamFriends.PersonaStateCallback callback)
             {
                 if (!callback.FriendID.IsIndividualAccount) return;
-                if (callback.FriendID == _steamUser.SteamID)
-                {
-                    if (callback.State != EPersonaState.Online) return;
-                    State = BotState.LoggedOnOnline;
-                    _botService.WriteLog($"Bot {Id} successfully logged on.", EventLogEntryType.SuccessAudit);
-                    await _botService.ReportBotHealthAsync(this);
-                }
-                else
-                {
-                    await _botService._coodinator.SetUserSteamProfileNameAsync(callback.FriendID.Render(true),
-                        callback.Name);
-                }
+                if (callback.FriendID == _steamUser.SteamID) return;
+                await _botService._coodinator.SetUserSteamProfileNameAsync(callback.FriendID.Render(true),
+                    callback.Name);
             }
 
             private async void OnFriendListUpdated(SteamFriends.FriendsListCallback callback)
@@ -459,7 +484,7 @@ namespace Keylol.SteamBot
                     foreach (var steamId in friendsToRemove)
                     {
                         _steamFriends.RemoveFriend(steamId);
-                        _botService.WriteLog($"Friend {steamId} has been removed. (Not Keylol user)");
+                        WriteLog($"Friend {steamId} has been removed. (Not Keylol user)");
                     }
                 }
                 foreach (var friend in callback.FriendList)
@@ -531,8 +556,8 @@ namespace Keylol.SteamBot
                             break;
 
                         default:
-                            _botService.WriteLog(
-                                $"Friend {friend.SteamID} has unknown relationship {friend.Relationship}.", EventLogEntryType.Warning);
+                            WriteLog($"Friend {friend.SteamID} has unknown relationship {friend.Relationship}.",
+                                EventLogEntryType.Warning);
 //                            _steamFriends.RemoveFriend(friend.SteamID);
                             break;
                     }
@@ -590,6 +615,145 @@ namespace Keylol.SteamBot
 
             #endregion
 
+            #region Cookies Check
+
+            private async Task<HttpWebResponse> RequestAsync(string url, string method, NameValueCollection data = null,
+                bool ajax = true, string referer = "")
+            {
+                // Append the data to the URL for GET-requests
+                var isGetMethod = method.ToLower() == "get";
+                var dataString = data == null
+                    ? null
+                    : string.Join("&", Array.ConvertAll(data.AllKeys,
+                        key => $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(data[key])}"));
+
+                if (isGetMethod && !string.IsNullOrEmpty(dataString))
+                {
+                    url += (url.Contains("?") ? "&" : "?") + dataString;
+                }
+
+                // Setup the request
+                var request = (HttpWebRequest) WebRequest.Create(url);
+                request.Method = method;
+                request.Accept = "application/json, text/javascript;q=0.9, */*;q=0.5";
+                request.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
+                // request.Host is set automatically
+                request.UserAgent =
+                    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36";
+                request.Referer = string.IsNullOrEmpty(referer) ? "http://steamcommunity.com/trade/1" : referer;
+                request.Timeout = 50000; // Timeout after 50 seconds
+                request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Revalidate);
+                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+
+                if (ajax)
+                {
+                    request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+                    request.Headers.Add("X-Prototype-Version", "1.7");
+                }
+
+                // Cookies
+                request.CookieContainer = _cookies;
+
+                // Write the data to the body for POST and other methods
+                if (!isGetMethod && !string.IsNullOrEmpty(dataString))
+                {
+                    var dataBytes = Encoding.UTF8.GetBytes(dataString);
+                    request.ContentLength = dataBytes.Length;
+
+                    using (var requestStream = await request.GetRequestStreamAsync())
+                    {
+                        await requestStream.WriteAsync(dataBytes, 0, dataBytes.Length);
+                    }
+                }
+
+                // Get the response
+                return await request.GetResponseAsync() as HttpWebResponse;
+            }
+
+            private async void CookiesCheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+            {
+                using (var response = await RequestAsync(SteamCommunityUrlBase, "HEAD"))
+                {
+                    var cookieIsValid = response.Cookies["steamLogin"] == null ||
+                                        !response.Cookies["steamLogin"].Value.Equals("deleted");
+                    if (cookieIsValid) return;
+                    WriteLog("Invalid cookies detected.", EventLogEntryType.Warning);
+                    _callbackManager.Subscribe(_steamUser.RequestWebAPIUserNonce(),
+                        SafeCallback<SteamUser.WebAPIUserNonceCallback>(async callback =>
+                        {
+                            if (callback.Result == EResult.OK)
+                                _webAPIUserNonce = callback.Nonce;
+                            await UpdateCookiesAsync();
+                        }));
+                }
+            }
+
+            private async Task UpdateCookiesAsync()
+            {
+                using (dynamic userAuth = WebAPI.GetAsyncInterface("ISteamUserAuth"))
+                {
+                    // generate an AES session key
+                    var sessionKey = CryptoHelper.GenerateRandomBlock(32);
+
+                    // RSA encrypt it with the public key for the universe we're on
+                    byte[] encryptedSessionKey;
+                    using (var rsa = new RSACrypto(KeyDictionary.GetPublicKey(_steamClient.ConnectedUniverse)))
+                    {
+                        encryptedSessionKey = rsa.Encrypt(sessionKey);
+                    }
+
+                    var loginKey = new byte[20];
+                    Array.Copy(Encoding.ASCII.GetBytes(_webAPIUserNonce), loginKey, _webAPIUserNonce.Length);
+
+                    // AES encrypt the loginkey with our session key
+                    var encryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
+
+                    for (var i = 1; i <= 3; i++)
+                    {
+                        if (i == 1)
+                            WriteLog("Try acquiring cookies...");
+                        else
+                            WriteLog($"Try acquiring cookies... [{i}]", EventLogEntryType.Warning);
+                        try
+                        {
+                            KeyValue authResult =
+                                await userAuth.AuthenticateUser(steamid: _steamClient.SteamID.ConvertToUInt64(),
+                                    sessionkey: HttpUtility.UrlEncode(encryptedSessionKey),
+                                    encrypted_loginkey: HttpUtility.UrlEncode(encryptedLoginKey),
+                                    method: "POST",
+                                    secure: true);
+
+                            _cookies = new CookieContainer();
+
+                            _cookies.Add(new Cookie("sessionid",
+                                Convert.ToBase64String(Encoding.UTF8.GetBytes(_loginKeyUniqueId.ToString())),
+                                string.Empty,
+                                SteamCommunityDomain));
+
+                            _cookies.Add(new Cookie("steamLogin", authResult["token"].AsString(),
+                                string.Empty,
+                                SteamCommunityDomain));
+
+                            _cookies.Add(new Cookie("steamLoginSecure", authResult["tokensecure"].AsString(),
+                                string.Empty,
+                                SteamCommunityDomain));
+
+                            await _botService._coodinator.UpdateCookiesAsync(Id,
+                                _cookies.GetCookieHeader(new Uri(SteamCommunityUrlBase)));
+                            WriteLog("Cookies acquired.", EventLogEntryType.SuccessAudit);
+                            return;
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    WriteLog("Failed to get cookies.", EventLogEntryType.FailureAudit);
+                }
+            }
+
+            #endregion
+
             #region IDisposable Members and Helpers
 
             private bool _disposed;
@@ -600,7 +764,8 @@ namespace Keylol.SteamBot
                 if (disposing)
                 {
                     State = BotState.Disposing;
-                    _botService.WriteLog($"Bot {Id} is disposing...");
+                    WriteLog("Disposing...");
+                    _cookiesCheckTimer.Stop();
                     _steamClient.Disconnect();
                 }
                 _disposed = true;
