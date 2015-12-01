@@ -59,9 +59,6 @@
   <wsdl:message name="ISteamBotCoodinator_UpdateBots_InputMessage">
     <wsdl:part name="parameters" element="tns:UpdateBots" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoodinator_UpdateCookies_InputMessage">
-    <wsdl:part name="parameters" element="tns:UpdateCookies" />
-  </wsdl:message>
   <wsdl:message name="ISteamBotCoodinator_SetUserStatus_InputMessage">
     <wsdl:part name="parameters" element="tns:SetUserStatus" />
   </wsdl:message>
@@ -115,9 +112,6 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateBots">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots" message="tns:ISteamBotCoodinator_UpdateBots_InputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateCookies">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/UpdateCookies" message="tns:ISteamBotCoodinator_UpdateCookies_InputMessage" />
-    </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetUserStatus">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus" message="tns:ISteamBotCoodinator_SetUserStatus_InputMessage" />
     </wsdl:operation>
@@ -168,12 +162,6 @@
     </wsdl:operation>
     <wsdl:operation name="UpdateBots">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/UpdateBots" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-    </wsdl:operation>
-    <wsdl:operation name="UpdateCookies">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/UpdateCookies" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

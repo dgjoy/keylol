@@ -93,16 +93,6 @@ namespace Keylol.Services
             }
         }
 
-        public async Task UpdateCookies(string botId, string cookies)
-        {
-            using (var dbContext = new KeylolDbContext())
-            {
-                var bot = await dbContext.SteamBots.FindAsync(botId);
-                bot.Cookies = cookies;
-                await dbContext.SaveChangesAsync();
-            }
-        }
-
         public async Task<UserDTO> GetUserBySteamId(string steamId)
         {
             using (var dbContext = new KeylolDbContext())

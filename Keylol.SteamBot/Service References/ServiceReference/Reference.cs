@@ -607,12 +607,6 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
         System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateCookies")]
-        void UpdateCookies(string botId, string cookies);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateCookies")]
-        System.Threading.Tasks.Task UpdateCookiesAsync(string botId, string cookies);
-        
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus")]
         void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
         
@@ -717,14 +711,6 @@ namespace Keylol.SteamBot.ServiceReference {
         
         public System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms) {
             return base.Channel.UpdateBotsAsync(vms);
-        }
-        
-        public void UpdateCookies(string botId, string cookies) {
-            base.Channel.UpdateCookies(botId, cookies);
-        }
-        
-        public System.Threading.Tasks.Task UpdateCookiesAsync(string botId, string cookies) {
-            return base.Channel.UpdateCookiesAsync(botId, cookies);
         }
         
         public void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status) {

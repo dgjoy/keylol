@@ -251,6 +251,10 @@
     <Compile Include="Migrations\201511281349596_BotCookies.Designer.cs">
       <DependentUpon>201511281349596_BotCookies.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512010526059_RemoveBotCookies.cs" />
+    <Compile Include="Migrations\201512010526059_RemoveBotCookies.Designer.cs">
+      <DependentUpon>201512010526059_RemoveBotCookies.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\LikeDTO.cs" />
@@ -438,6 +442,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511281349596_BotCookies.resx">
       <DependentUpon>201511281349596_BotCookies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512010526059_RemoveBotCookies.resx">
+      <DependentUpon>201512010526059_RemoveBotCookies.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
