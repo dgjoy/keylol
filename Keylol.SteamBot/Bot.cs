@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Cache;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Web;
 using Keylol.SteamBot.ServiceReference;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SteamKit2;
 
 namespace Keylol.SteamBot
@@ -27,9 +28,6 @@ namespace Keylol.SteamBot
             Disposing
         }
 
-        private const string SteamCommunityDomain = "steamcommunity.com";
-        private const string SteamCommunityUrlBase = "http://steamcommunity.com/";
-
         private readonly SteamBotService _botService;
         private readonly SteamUser.LogOnDetails _logOnDetails = new SteamUser.LogOnDetails();
         private readonly SteamClient _steamClient = new SteamClient();
@@ -37,9 +35,9 @@ namespace Keylol.SteamBot
         private readonly SteamUser _steamUser;
         private readonly SteamFriends _steamFriends;
         private uint _loginKeyUniqueId;
-        private string _webAPIUserNonce;
-        private readonly CookieContainer _cookies = new CookieContainer();
-        private readonly Timer _cookiesCheckTimer = new Timer(5*1000); // 10min
+        private string _webApiUserNonce;
+        private readonly Timer _cookiesCheckTimer = new Timer(10*60*1000); // 10min
+        private readonly Crawler _crawler;
 
         public string Id { get; }
 
@@ -64,6 +62,7 @@ namespace Keylol.SteamBot
 
         public Bot(SteamBotService botService, SteamBotDTO botCredentials)
         {
+            _crawler = new Crawler();
             _botService = botService;
             Id = botCredentials.Id;
             _logOnDetails.Username = botCredentials.SteamUserName;
@@ -81,13 +80,6 @@ namespace Keylol.SteamBot
 
             _callbackManager.Subscribe(SafeCallback<SteamClient.ConnectedCallback>(OnConnected));
             _callbackManager.Subscribe(SafeCallback<SteamClient.DisconnectedCallback>(OnDisconnected));
-            //                _callbackManager.Subscribe<SteamClient.CMListCallback>(callback =>
-            //                {
-            //                    foreach (var s in callback.Servers)
-            //                    {
-            //                        WriteLog(s.ToString());
-            //                    }
-            //                });
             _callbackManager.Subscribe(SafeCallback<SteamUser.LoggedOnCallback>(OnLoggedOn));
             _callbackManager.Subscribe(SafeCallback<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth));
             _callbackManager.Subscribe(SafeCallback<SteamUser.LoginKeyCallback>(OnLoginKeyReceived));
@@ -186,7 +178,7 @@ namespace Keylol.SteamBot
             {
                 case EResult.OK:
                     State = BotState.LoggedOnNotOnline;
-                    _webAPIUserNonce = callback.WebAPIUserNonce;
+                    _webApiUserNonce = callback.WebAPIUserNonce;
                     _steamFriends.SetPersonaName("其乐机器人 Keylol.com");
                     _callbackManager.Subscribe(_steamFriends.SetPersonaState(EPersonaState.Online),
                         SafeCallback<SteamFriends.PersonaChangeCallback>(async personaChangeCallback =>
@@ -392,7 +384,7 @@ namespace Keylol.SteamBot
             {
                 if (
                     await
-                        _botService.Coodinator.BindSteamUserWithBindingTokenAsync(callback.Message, Id,
+                        _botService.Coodinator.BindSteamUserWithBindingTokenAsync(callback.Message.Trim(), Id,
                             friendSteamId,
                             _steamFriends.GetFriendPersonaName(callback.Sender),
                             BitConverter.ToString(_steamFriends.GetFriendAvatar(callback.Sender))
@@ -418,14 +410,82 @@ namespace Keylol.SteamBot
             }
             else
             {
-                if (await _botService.Coodinator.BindSteamUserWithLoginTokenAsync(friendSteamId, callback.Message))
+                var match = Regex.Match(callback.Message, @"^\s*(\d{4})\s*$");
+                if (match.Success)
                 {
-                    _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "欢迎回来，您已成功登录其乐社区。");
+                    if (
+                        await
+                            _botService.Coodinator.BindSteamUserWithLoginTokenAsync(friendSteamId, match.Groups[1].Value))
+                    {
+                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "欢迎回来，您已成功登录其乐社区。");
+                    }
+                    else
+                    {
+                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                            "您的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
+                    }
                 }
                 else
                 {
-                    _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
-                        "您的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
+                    var resultStream = await Utils.Retry(async () =>
+                        await _crawler.HttpClient.GetStreamAsync(
+                            $"http://www.tuling123.com/openapi/api?key={Crawler.TuringRobotApiKey}&info={HttpUtility.UrlEncode(callback.Message)}&userid={callback.Sender.ConvertToUInt64()}"));
+                    if (resultStream == null) return;
+                    using (var reader = new StreamReader(resultStream))
+                    {
+                        var result = JToken.ReadFrom(new JsonTextReader(reader));
+                        switch ((int) result["code"])
+                        {
+                            case 100000: // 文字类
+                            {
+                                _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                    (string) result["text"]);
+                                break;
+                            }
+
+                            case 200000: // 链接类
+                            {
+                                _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                    $"{(string) result["text"]}\n{(string) result["url"]}");
+                                break;
+                            }
+
+                            case 302000: // 新闻
+                            {
+                                _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                    $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(news => $"{news["article"]}\n{news["detailurl"]}"))}");
+                                break;
+                            }
+
+                            case 305000: // 列车
+                            {
+                                _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                    $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(train => $"{train["trainnum"]}\n{train["start"]} --> {train["terminal"]}\n{train["starttime"]} --> {train["endtime"]}"))}");
+                                break;
+                            }
+
+                            case 306000: // 航班
+                            {
+                                _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                    $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(flight => $"{flight["flight"]}\n{flight["starttime"]} --> {flight["endtime"]}"))}");
+                                break;
+                            }
+
+                            case 308000: // 菜谱
+                            {
+                                _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                    $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(dish => $"{dish["name"]}\n{dish["info"]}\n{dish["detailurl"]}"))}");
+                                break;
+                            }
+
+                            default:
+                            {
+                                _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
+                                    (string) result["text"]);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -436,64 +496,12 @@ namespace Keylol.SteamBot
 
         #region Cookies Check
 
-        private async Task<HttpWebResponse> RequestAsync(string url, string method, NameValueCollection data = null,
-            bool ajax = true, string referer = "")
-        {
-            // Append the data to the URL for GET-requests
-            var isGetMethod = method.ToLower() == "get";
-            var dataString = data == null
-                ? null
-                : string.Join("&", Array.ConvertAll(data.AllKeys,
-                    key => $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(data[key])}"));
-
-            if (isGetMethod && !string.IsNullOrEmpty(dataString))
-            {
-                url += (url.Contains("?") ? "&" : "?") + dataString;
-            }
-
-            // Setup the request
-            var request = (HttpWebRequest) WebRequest.Create(url);
-            request.Method = method;
-            request.Accept = "application/json, text/javascript;q=0.9, */*;q=0.5";
-            request.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
-            // request.Host is set automatically
-            request.UserAgent =
-                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36";
-            request.Referer = string.IsNullOrEmpty(referer) ? "http://steamcommunity.com/trade/1" : referer;
-            request.Timeout = 50000; // Timeout after 50 seconds
-            request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Revalidate);
-            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-
-            if (ajax)
-            {
-                request.Headers.Add("X-Requested-With", "XMLHttpRequest");
-                request.Headers.Add("X-Prototype-Version", "1.7");
-            }
-
-            // Cookies
-            request.CookieContainer = _cookies;
-
-            // Write the data to the body for POST and other methods
-            if (!isGetMethod && !string.IsNullOrEmpty(dataString))
-            {
-                var dataBytes = Encoding.UTF8.GetBytes(dataString);
-                request.ContentLength = dataBytes.Length;
-
-                using (var requestStream = await request.GetRequestStreamAsync())
-                {
-                    await requestStream.WriteAsync(dataBytes, 0, dataBytes.Length);
-                }
-            }
-
-            // Get the response
-            return await request.GetResponseAsync() as HttpWebResponse;
-        }
-
         private async void CookiesCheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             try
             {
-                using (var response = await RequestAsync(SteamCommunityUrlBase, "HEAD"))
+                using (var response =
+                    await Utils.Retry(async () => await _crawler.RequestAsync(Crawler.SteamCommunityUrlBase, "HEAD")))
                 {
                     var cookieIsValid = response.Cookies["steamLogin"] == null ||
                                         !response.Cookies["steamLogin"].Value.Equals("deleted");
@@ -503,7 +511,7 @@ namespace Keylol.SteamBot
                         SafeCallback<SteamUser.WebAPIUserNonceCallback>(async callback =>
                         {
                             if (callback.Result == EResult.OK)
-                                _webAPIUserNonce = callback.Nonce;
+                                _webApiUserNonce = callback.Nonce;
                             await UpdateCookiesAsync();
                         }));
                 }
@@ -516,62 +524,58 @@ namespace Keylol.SteamBot
 
         private async Task UpdateCookiesAsync()
         {
-            using (dynamic userAuth = WebAPI.GetAsyncInterface("ISteamUserAuth"))
+            // generate an AES session key
+            var sessionKey = CryptoHelper.GenerateRandomBlock(32);
+
+            // RSA encrypt it with the public key for the universe we're on
+            byte[] encryptedSessionKey;
+            using (var rsa = new RSACrypto(KeyDictionary.GetPublicKey(_steamClient.ConnectedUniverse)))
             {
-                // generate an AES session key
-                var sessionKey = CryptoHelper.GenerateRandomBlock(32);
-
-                // RSA encrypt it with the public key for the universe we're on
-                byte[] encryptedSessionKey;
-                using (var rsa = new RSACrypto(KeyDictionary.GetPublicKey(_steamClient.ConnectedUniverse)))
-                {
-                    encryptedSessionKey = rsa.Encrypt(sessionKey);
-                }
-
-                var loginKey = new byte[20];
-                Array.Copy(Encoding.ASCII.GetBytes(_webAPIUserNonce), loginKey, _webAPIUserNonce.Length);
-
-                // AES encrypt the loginkey with our session key
-                var encryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
-
-                for (var i = 1; i <= SteamBotService.GlobalMaxRetryCount; i++)
-                {
-                    if (i == 1)
-                        WriteLog("Try acquiring cookies...");
-                    else
-                        WriteLog($"Try acquiring cookies... [{i}]", EventLogEntryType.Warning);
-                    try
-                    {
-                        KeyValue authResult =
-                            await userAuth.AuthenticateUser(steamid: _steamClient.SteamID.ConvertToUInt64(),
-                                sessionkey: HttpUtility.UrlEncode(encryptedSessionKey),
-                                encrypted_loginkey: HttpUtility.UrlEncode(encryptedLoginKey),
-                                method: "POST",
-                                secure: true);
-                        
-                        _cookies.Add(new Cookie("sessionid",
-                            Convert.ToBase64String(Encoding.UTF8.GetBytes(_loginKeyUniqueId.ToString())),
-                            string.Empty,
-                            SteamCommunityDomain));
-
-                        _cookies.Add(new Cookie("steamLogin", authResult["token"].AsString(),
-                            string.Empty,
-                            SteamCommunityDomain));
-
-                        _cookies.Add(new Cookie("steamLoginSecure", authResult["tokensecure"].AsString(),
-                            string.Empty,
-                            SteamCommunityDomain));
-
-                        WriteLog("Cookies acquired.", EventLogEntryType.SuccessAudit);
-                        return;
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-                WriteLog("Failed to get cookies.", EventLogEntryType.FailureAudit);
+                encryptedSessionKey = rsa.Encrypt(sessionKey);
             }
+
+            var loginKey = new byte[20];
+            Array.Copy(Encoding.ASCII.GetBytes(_webApiUserNonce), loginKey, _webApiUserNonce.Length);
+
+            // AES encrypt the loginkey with our session key
+            var encryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
+
+            var success = await Utils.Retry(async () =>
+            {
+                using (dynamic userAuth = WebAPI.GetAsyncInterface("ISteamUserAuth"))
+                {
+                    KeyValue authResult =
+                        await userAuth.AuthenticateUser(steamid: _steamClient.SteamID.ConvertToUInt64(),
+                            sessionkey: HttpUtility.UrlEncode(encryptedSessionKey),
+                            encrypted_loginkey: HttpUtility.UrlEncode(encryptedLoginKey),
+                            method: "POST",
+                            secure: true);
+
+                    _crawler.Cookies.Add(new Cookie("sessionid",
+                        Convert.ToBase64String(Encoding.UTF8.GetBytes(_loginKeyUniqueId.ToString())),
+                        string.Empty,
+                        Crawler.SteamCommunityDomain));
+
+                    _crawler.Cookies.Add(new Cookie("steamLogin", authResult["token"].AsString(),
+                        string.Empty,
+                        Crawler.SteamCommunityDomain));
+
+                    _crawler.Cookies.Add(new Cookie("steamLoginSecure", authResult["tokensecure"].AsString(),
+                        string.Empty,
+                        Crawler.SteamCommunityDomain));
+
+                    WriteLog("Cookies acquired.", EventLogEntryType.SuccessAudit);
+                }
+            }, i =>
+            {
+                if (i == 1)
+                    WriteLog("Try acquiring cookies...");
+                else
+                    WriteLog($"Try acquiring cookies... [{i}]", EventLogEntryType.Warning);
+            });
+
+            if (!success)
+                WriteLog("Failed to get cookies.", EventLogEntryType.FailureAudit);
         }
 
         #endregion

@@ -27,10 +27,11 @@ namespace Keylol.SteamBot
 
         public static object ConsoleInputLock { get; } = new object();
 
-        public static uint GlobalMaxRetryCount { get; set; } = 3;
-
         private Bot[] _bots;
         private readonly Timer _healthReportTimer = new Timer(60*1000); // 60s
+
+        public const uint GlobalMaxRetryCount = 3;
+        public const int GlobalRetryCooldownDuration = 2000;
 
         public SteamBotService()
         {
@@ -60,7 +61,7 @@ namespace Keylol.SteamBot
             {
                 WriteLog("Communication channel faulted. Recreating...", EventLogEntryType.Error);
                 OnStop();
-                Thread.Sleep(3000);
+                Thread.Sleep(GlobalRetryCooldownDuration);
                 OnStart(null);
             };
             return proxy;
@@ -113,15 +114,17 @@ namespace Keylol.SteamBot
                 Coodinator = CreateProxy();
                 WriteLog("Channel created.");
                 WriteLog($"Coodinator endpoint: {Coodinator.Endpoint.Address}");
-//                var cmServer = await Coodinator.GetCMServerAsync();
-//                var parts = cmServer.Split(':');
-//                _cmServer = new IPEndPoint(IPAddress.Parse(parts[0]), int.Parse(parts[1]));
-//                WriteLog($"CM Server: {_cmServer}");
                 var bots = await Coodinator.AllocateBotsAsync();
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
                 CMClient.Servers.Clear();
-                CMClient.Servers.TryAddRange((await SteamDirectory.LoadAsync(46)).Take(15));
+                CMClient.Servers.TryAddRange((await Utils.Retry(async () => await SteamDirectory.LoadAsync(46), i =>
+                {
+                    if (i == 1)
+                        WriteLog("Loading CM server list...");
+                    else
+                        WriteLog($"Loading CM server list... [{i}]", EventLogEntryType.Warning);
+                }, uint.MaxValue)).Take(15));
                 WriteLog("CM server list loaded.");
                 IsRunning = true;
                 foreach (var bot in _bots)
