@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Keylol.SteamBot
 
         public static object ConsoleInputLock { get; } = new object();
 
-        private Bot[] _bots;
+        private Dictionary<string, Bot> _bots = new Dictionary<string, Bot>();
         private readonly Timer _healthReportTimer = new Timer(60*1000); // 60s
 
         public const uint GlobalMaxRetryCount = 3;
@@ -36,17 +37,7 @@ namespace Keylol.SteamBot
         public SteamBotService()
         {
             InitializeComponent();
-            _healthReportTimer.Elapsed += async (sender, args) =>
-            {
-                try
-                {
-                    await ReportBotHealthAsync();
-                }
-                catch (Exception)
-                {
-                    // ignore
-                }
-            };
+            _healthReportTimer.Elapsed += (sender, args) => { ReportBotHealthAsync().Wait(); };
         }
 
         private SteamBotCoodinatorClient CreateProxy()
@@ -116,7 +107,10 @@ namespace Keylol.SteamBot
                 WriteLog($"Coodinator endpoint: {Coodinator.Endpoint.Address}");
                 var bots = await Coodinator.AllocateBotsAsync();
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
-                _bots = bots.Select(bot => new Bot(this, bot)).ToArray();
+                foreach (var bot in bots)
+                {
+                    _bots[bot.Id] = new Bot(this, bot);
+                }
                 CMClient.Servers.Clear();
                 CMClient.Servers.TryAddRange((await Utils.Retry(async () => await SteamDirectory.LoadAsync(46), i =>
                 {
@@ -127,7 +121,7 @@ namespace Keylol.SteamBot
                 }, uint.MaxValue)).Take(15));
                 WriteLog("CM server list loaded.");
                 IsRunning = true;
-                foreach (var bot in _bots)
+                foreach (var bot in _bots.Values)
                 {
                     bot.Start();
                 }
@@ -135,7 +129,7 @@ namespace Keylol.SteamBot
             }
             catch (CommunicationException e)
             {
-                WriteLog(e.Message, EventLogEntryType.Warning);
+                WriteLog($"Communication exception occurred: {e.Message}", EventLogEntryType.Warning);
             }
         }
 
@@ -151,20 +145,16 @@ namespace Keylol.SteamBot
 
             WriteLog("Channel destroyed.");
 
-            if (_bots != null)
+            foreach (var bot in _bots.Values)
             {
-                foreach (var bot in _bots)
-                {
-                    bot.Dispose();
-                }
-                _bots = null;
-                Thread.Sleep(1000);
+                bot.Dispose();
             }
+            _bots.Clear();
         }
 
         private async Task ReportBotHealthAsync()
         {
-            await Coodinator.UpdateBotsAsync(_bots.Select(bot =>
+            await Coodinator.UpdateBotsAsync(_bots.Values.Select(bot =>
             {
                 var online = bot.State == Bot.BotState.LoggedOnOnline;
                 var vm = new SteamBotVM
@@ -205,9 +195,18 @@ namespace Keylol.SteamBot
 
             public void RemoveSteamFriend(string botId, string steamId)
             {
-                var bot = _botService._bots.SingleOrDefault(b => b.Id == botId);
-                if (bot != null && bot.State == Bot.BotState.LoggedOnOnline)
+                Bot bot;
+                if (!_botService._bots.TryGetValue(botId, out bot)) return;
+                if (bot.State == Bot.BotState.LoggedOnOnline)
                     bot.RemoveFriend(steamId);
+            }
+
+            public void SendMessage(string botId, string steamId, string message)
+            {
+                Bot bot;
+                if (!_botService._bots.TryGetValue(botId, out bot)) return;
+                if (bot.State == Bot.BotState.LoggedOnOnline)
+                    bot.SendMessage(steamId, message);
             }
         }
     }

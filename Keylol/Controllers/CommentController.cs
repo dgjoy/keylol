@@ -10,6 +10,8 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Keylol.Services;
+using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -231,7 +233,7 @@ namespace Keylol.Controllers
                 return BadRequest(ModelState);
             }
 
-            var replyToComments = await DbContext.Comments
+            var replyToComments = await DbContext.Comments.Include(c => c.Commentator.SteamBot)
                 .Where(c => c.ArticleId == article.Id && vm.ReplyToCommentsSN.Contains(c.SequenceNumberForArticle))
                 .ToListAsync();
 
@@ -257,14 +259,47 @@ namespace Keylol.Controllers
                     .Max()) + 1;
                 DbContext.SaveChanges();
             }
-            DbContext.CommentReplies.AddRange(replyToComments.Select(c => new CommentReply
+            var commentReplies = replyToComments.Select(c => new CommentReply
             {
-                CommentId = c.Id,
+                Comment = c,
                 IgnoredByCommentAuthor = c.CommentatorId == comment.CommentatorId || c.IgnoreNewComments,
                 ReadByCommentAuthor = c.CommentatorId == comment.CommentatorId,
                 ReplyId = comment.Id
-            }));
+            }).ToList();
+            DbContext.CommentReplies.AddRange(commentReplies);
             await DbContext.SaveChangesAsync();
+
+            var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
+                .SingleAsync(u => u.Id == article.PrincipalId);
+            var notifiedArticleAuthor = false;
+            const int truncateContentTo = 512;
+            var truncatedContent = truncateContentTo < comment.Content.Length
+                ? $"{comment.Content.Substring(0, truncateContentTo)} …"
+                : comment.Content;
+            foreach (var replyToUser in
+                commentReplies.Where(cr => !cr.IgnoredByCommentAuthor)
+                    .Select(cr => cr.Comment.Commentator)
+                    .Distinct())
+            {
+                if (replyToUser.Id == articleAuthor.Id)
+                    notifiedArticleAuthor = true;
+                ISteamBotCoodinatorCallback callback;
+                if (SteamBotCoodinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId,
+                    out callback))
+                {
+                    callback.SendMessage(replyToUser.SteamBotId, replyToUser.SteamId,
+                        $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
+                }
+            }
+            if (!notifiedArticleAuthor && !comment.IgnoredByArticleAuthor)
+            {
+                ISteamBotCoodinatorCallback callback;
+                if (SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                {
+                    callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
+                        $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
+                }
+            }
 
             return Created($"comment/{comment.Id}", new CommentDTO(comment, false));
         }

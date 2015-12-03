@@ -52,6 +52,9 @@ namespace Keylol.Services.Contracts
     {
         [OperationContract(IsOneWay = true)]
         void RemoveSteamFriend(string botId, string steamId);
+
+        [OperationContract(IsOneWay = true)]
+        void SendMessage(string botId, string steamId, string message);
     }
 
     [DataContract]

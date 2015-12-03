@@ -9,6 +9,8 @@ using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
+using Keylol.Services;
+using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -233,6 +235,7 @@ namespace Keylol.Controllers
                 return BadRequest(ModelState);
 
             var operatorId = User.Identity.GetUserId();
+            var @operator = await DbContext.Users.SingleAsync(u => u.Id == operatorId);
 
             Like like;
             switch (vm.Type)
@@ -261,6 +264,17 @@ namespace Keylol.Controllers
                     articleLike.IgnoredByTargetUser = article.IgnoreNewLikes;
                     articleLike.ArticleId = vm.TargetId;
                     like = articleLike;
+                    if (!articleLike.IgnoredByTargetUser)
+                    {
+                        var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
+                            .SingleAsync(u => u.Id == article.PrincipalId);
+                        ISteamBotCoodinatorCallback callback;
+                        if (SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                        {
+                            callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
+                                $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
+                        }
+                    }
                     break;
                 }
 
@@ -273,7 +287,8 @@ namespace Keylol.Controllers
                         ModelState.AddModelError("vm.TargetId", "不能对同一篇评论重复认可。");
                         return BadRequest(ModelState);
                     }
-                    var comment = await DbContext.Comments.FindAsync(vm.TargetId);
+                    var comment =
+                        await DbContext.Comments.Include(c => c.Article).SingleOrDefaultAsync(c => c.Id == vm.TargetId);
                     if (comment == null)
                     {
                         ModelState.AddModelError("vm.TargetId", "指定评论不存在。");
@@ -288,6 +303,18 @@ namespace Keylol.Controllers
                     commentLike.IgnoredByTargetUser = comment.IgnoreNewLikes;
                     commentLike.CommentId = vm.TargetId;
                     like = commentLike;
+                    if (!commentLike.IgnoredByTargetUser)
+                    {
+                        var commentAuthor = await DbContext.Users.Include(u => u.SteamBot)
+                            .SingleAsync(u => u.Id == comment.CommentatorId);
+                        var articleAuthor = await DbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
+                        ISteamBotCoodinatorCallback callback;
+                        if (SteamBotCoodinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
+                        {
+                            callback.SendMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
+                                $"@{@operator.UserName} 认可了你在 《{comment.Article.Title}》 下的评论：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{comment.Article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
+                        }
+                    }
                     break;
                 }
 

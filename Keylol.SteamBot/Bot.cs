@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
+using System.ServiceModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -79,13 +80,13 @@ namespace Keylol.SteamBot
             _callbackManager = new CallbackManager(_steamClient);
 
             _callbackManager.Subscribe(SafeCallback<SteamClient.ConnectedCallback>(OnConnected));
-            _callbackManager.Subscribe(SafeCallback<SteamClient.DisconnectedCallback>(OnDisconnected));
+            _callbackManager.Subscribe(SafeCallbackAsync<SteamClient.DisconnectedCallback>(OnDisconnected));
             _callbackManager.Subscribe(SafeCallback<SteamUser.LoggedOnCallback>(OnLoggedOn));
             _callbackManager.Subscribe(SafeCallback<SteamUser.UpdateMachineAuthCallback>(OnUpdateMachineAuth));
-            _callbackManager.Subscribe(SafeCallback<SteamUser.LoginKeyCallback>(OnLoginKeyReceived));
-            _callbackManager.Subscribe(SafeCallback<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged));
-            _callbackManager.Subscribe(SafeCallback<SteamFriends.FriendsListCallback>(OnFriendListUpdated));
-            _callbackManager.Subscribe(SafeCallback<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived));
+            _callbackManager.Subscribe(SafeCallbackAsync<SteamUser.LoginKeyCallback>(OnLoginKeyReceived));
+            _callbackManager.Subscribe(SafeCallbackAsync<SteamFriends.PersonaStateCallback>(OnPersonaStateChanged));
+            _callbackManager.Subscribe(SafeCallbackAsync<SteamFriends.FriendsListCallback>(OnFriendListUpdated));
+            _callbackManager.Subscribe(SafeCallbackAsync<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived));
 
             _cookiesCheckTimer.Elapsed += CookiesCheckTimerOnElapsed;
         }
@@ -96,7 +97,23 @@ namespace Keylol.SteamBot
             {
                 while (_botService.IsRunning)
                 {
-                    _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(100));
+                    try
+                    {
+                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(100));
+                    }
+                    catch (CommunicationException e)
+                    {
+                        WriteLog($"Communication exception occurred: {e.Message}", EventLogEntryType.Warning);
+                        break;
+                    }
+                    catch (AggregateException e)
+                    {
+                        WriteLog($"Ignore unexpected exception: {e.InnerException.Message}", EventLogEntryType.Warning);
+                    }
+                    catch (Exception e)
+                    {
+                        WriteLog($"Ignore unexpected exception: {e.Message}", EventLogEntryType.Warning);
+                    }
                 }
                 WriteLog("Callback pump stopped.");
             });
@@ -111,6 +128,22 @@ namespace Keylol.SteamBot
                 if (_botService.IsRunning)
                     action(callbackMsg);
             };
+        }
+
+        private Action<T> SafeCallbackAsync<T>(Func<T, Task> action) where T : CallbackMsg
+        {
+            return callbackMsg =>
+            {
+                if (_botService.IsRunning)
+                    action(callbackMsg).Wait();
+            };
+        }
+
+        public void SendMessage(string steamId, string message)
+        {
+            var id = new SteamID();
+            id.SetFromSteam3String(steamId);
+            _steamFriends.SendChatMessage(id, EChatEntryType.ChatMsg, message);
         }
 
         public void RemoveFriend(string steamId)
@@ -155,7 +188,7 @@ namespace Keylol.SteamBot
             }
         }
 
-        private async void OnDisconnected(SteamClient.DisconnectedCallback callback)
+        private async Task OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
             State = BotState.Disconnected;
             if (!callback.UserInitiated)
@@ -242,7 +275,7 @@ namespace Keylol.SteamBot
             _steamUser.SendMachineAuthResponse(authResponse);
         }
 
-        private async void OnLoginKeyReceived(SteamUser.LoginKeyCallback callback)
+        private async Task OnLoginKeyReceived(SteamUser.LoginKeyCallback callback)
         {
             _loginKeyUniqueId = callback.UniqueID;
             await UpdateCookiesAsync();
@@ -253,7 +286,7 @@ namespace Keylol.SteamBot
 
         #region SteamFriend
 
-        private async void OnPersonaStateChanged(SteamFriends.PersonaStateCallback callback)
+        private async Task OnPersonaStateChanged(SteamFriends.PersonaStateCallback callback)
         {
             if (!callback.FriendID.IsIndividualAccount) return;
             if (callback.FriendID == _steamUser.SteamID) return;
@@ -262,7 +295,7 @@ namespace Keylol.SteamBot
             await _botService.Coodinator.SetUserSteamProfileNameAsync(steamId, callback.Name);
         }
 
-        private async void OnFriendListUpdated(SteamFriends.FriendsListCallback callback)
+        private async Task OnFriendListUpdated(SteamFriends.FriendsListCallback callback)
         {
             if (!callback.Incremental)
             {
@@ -312,11 +345,11 @@ namespace Keylol.SteamBot
                                 "欢迎使用当前 Steam 账号加入其乐，请输入您在网页上获取的 8 位绑定验证码。");
                             await _botService.Coodinator.BroadcastBotOnFriendAddedAsync(Id);
                             var timer = new Timer(300000) {AutoReset = false};
-                            timer.Elapsed += async (sender, args) =>
+                            timer.Elapsed += (sender, args) =>
                             {
                                 if (_steamFriends.GetFriendRelationship(friend.SteamID) ==
                                     EFriendRelationship.Friend &&
-                                    await _botService.Coodinator.GetUserBySteamIdAsync(friendSteamId) == null)
+                                    _botService.Coodinator.GetUserBySteamId(friendSteamId) == null)
                                 {
                                     _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
                                         "抱歉，您的会话因超时被强制结束，机器人已将您从好友列表中暂时移除。若要加入其乐，请重新按照网页指示注册账号。");
@@ -371,7 +404,7 @@ namespace Keylol.SteamBot
             await ReportBotHealthAsync();
         }
 
-        private async void OnFriendMessageReceived(SteamFriends.FriendMsgCallback callback)
+        private async Task OnFriendMessageReceived(SteamFriends.FriendMsgCallback callback)
         {
             if (callback.EntryType != EChatEntryType.ChatMsg) return;
 
@@ -496,29 +529,22 @@ namespace Keylol.SteamBot
 
         #region Cookies Check
 
-        private async void CookiesCheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private void CookiesCheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            try
+            using (var response =
+                Utils.Retry(async () => await _crawler.RequestAsync(Crawler.SteamCommunityUrlBase, "HEAD")).Result)
             {
-                using (var response =
-                    await Utils.Retry(async () => await _crawler.RequestAsync(Crawler.SteamCommunityUrlBase, "HEAD")))
-                {
-                    var cookieIsValid = response.Cookies["steamLogin"] == null ||
-                                        !response.Cookies["steamLogin"].Value.Equals("deleted");
-                    if (cookieIsValid) return;
-                    WriteLog("Invalid cookies detected.", EventLogEntryType.Warning);
-                    _callbackManager.Subscribe(_steamUser.RequestWebAPIUserNonce(),
-                        SafeCallback<SteamUser.WebAPIUserNonceCallback>(async callback =>
-                        {
-                            if (callback.Result == EResult.OK)
-                                _webApiUserNonce = callback.Nonce;
-                            await UpdateCookiesAsync();
-                        }));
-                }
-            }
-            catch (Exception)
-            {
-                // ignore
+                var cookieIsValid = response.Cookies["steamLogin"] == null ||
+                                    !response.Cookies["steamLogin"].Value.Equals("deleted");
+                if (cookieIsValid) return;
+                WriteLog("Invalid cookies detected.", EventLogEntryType.Warning);
+                _callbackManager.Subscribe(_steamUser.RequestWebAPIUserNonce(),
+                    SafeCallback<SteamUser.WebAPIUserNonceCallback>(async callback =>
+                    {
+                        if (callback.Result == EResult.OK)
+                            _webApiUserNonce = callback.Nonce;
+                        await UpdateCookiesAsync();
+                    }));
             }
         }
 

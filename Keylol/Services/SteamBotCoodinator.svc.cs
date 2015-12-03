@@ -27,7 +27,7 @@ namespace Keylol.Services
         private bool _botAllocated;
         private readonly string _sessionId = OperationContext.Current.SessionId;
 
-        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients =
+        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients { get; } =
             new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
 
         public SteamBotCoodinator()

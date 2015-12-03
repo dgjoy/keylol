@@ -104,6 +104,9 @@
   <wsdl:message name="ISteamBotCoodinator_RemoveSteamFriend_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:RemoveSteamFriend" />
   </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_SendMessage_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:SendMessage" />
+  </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="ISteamBotCoodinator">
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="AllocateBots">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots" message="tns:ISteamBotCoodinator_AllocateBots_InputMessage" />
@@ -146,6 +149,9 @@
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="RemoveSteamFriend">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/RemoveSteamFriend" message="tns:ISteamBotCoodinator_RemoveSteamFriend_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendMessage">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/SendMessage" message="tns:ISteamBotCoodinator_SendMessage_OutputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetHttpBinding_ISteamBotCoodinator" type="tns:ISteamBotCoodinator">
@@ -237,6 +243,12 @@
     </wsdl:operation>
     <wsdl:operation name="RemoveSteamFriend">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/RemoveSteamFriend" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendMessage">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/SendMessage" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

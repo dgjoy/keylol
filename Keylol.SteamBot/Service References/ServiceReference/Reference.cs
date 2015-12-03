@@ -667,6 +667,9 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/RemoveSteamFriend")]
         void RemoveSteamFriend(string botId, string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SendMessage")]
+        void SendMessage(string botId, string steamId, string message);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
