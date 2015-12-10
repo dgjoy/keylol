@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol", "Keylol\Keylol.csproj", "{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}"
 EndProject
@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.SteamBot", "Keylol.S
 		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB} = {567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.Models", "Keylol.Models\Keylol.Models.csproj", "{B6C4CDB8-070E-422C-B243-1D488AC1548A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

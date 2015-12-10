@@ -28,7 +28,7 @@ namespace Keylol.SteamBot
 
         public static object ConsoleInputLock { get; } = new object();
 
-        private Dictionary<string, Bot> _bots = new Dictionary<string, Bot>();
+        private readonly Dictionary<string, Bot> _bots = new Dictionary<string, Bot>();
         private readonly Timer _healthReportTimer = new Timer(60*1000); // 60s
 
         public const uint GlobalMaxRetryCount = 3;

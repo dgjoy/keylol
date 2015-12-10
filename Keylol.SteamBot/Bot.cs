@@ -214,7 +214,7 @@ namespace Keylol.SteamBot
                     _webApiUserNonce = callback.WebAPIUserNonce;
                     _steamFriends.SetPersonaName("其乐机器人 Keylol.com");
                     _callbackManager.Subscribe(_steamFriends.SetPersonaState(EPersonaState.Online),
-                        SafeCallback<SteamFriends.PersonaChangeCallback>(async personaChangeCallback =>
+                        SafeCallbackAsync<SteamFriends.PersonaChangeCallback>(async personaChangeCallback =>
                         {
                             State = BotState.LoggedOnOnline;
                             WriteLog("Successfully logged on.", EventLogEntryType.SuccessAudit);
@@ -539,7 +539,7 @@ namespace Keylol.SteamBot
                 if (cookieIsValid) return;
                 WriteLog("Invalid cookies detected.", EventLogEntryType.Warning);
                 _callbackManager.Subscribe(_steamUser.RequestWebAPIUserNonce(),
-                    SafeCallback<SteamUser.WebAPIUserNonceCallback>(async callback =>
+                    SafeCallbackAsync<SteamUser.WebAPIUserNonceCallback>(async callback =>
                     {
                         if (callback.Result == EResult.OK)
                             _webApiUserNonce = callback.Nonce;

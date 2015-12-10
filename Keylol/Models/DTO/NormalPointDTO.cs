@@ -36,7 +36,15 @@ namespace Keylol.Models.DTO
                 AvatarImage = point.AvatarImage;
                 BackgroundImage = point.BackgroundImage;
                 Type = point.Type;
-                StoreLink = point.StoreLink;
+
+                if (point.Type == NormalPointType.Game)
+                {
+                    SteamAppId = point.SteamAppId;
+                    DisplayAliases = point.DisplayAliases;
+                    ReleaseDate = point.ReleaseDate;
+                    CoverImage = point.CoverImage;
+                }
+
 
                 if (includeAliases)
                 {
@@ -56,7 +64,22 @@ namespace Keylol.Models.DTO
         public string EnglishAliases { get; set; }
         public string ChineseAliases { get; set; }
         public PreferredNameType PreferredName { get; set; }
-        public string StoreLink { get; set; }
+
+        #region Game Point Only
+
+        public int? SteamAppId { get; set; }
+        public string DisplayAliases { get; set; }
+        public DateTime? ReleaseDate { get; set; }
+        public string CoverImage { get; set; }
+        public List<NormalPointDTO> DeveloperPoints { get; set; }
+        public List<NormalPointDTO> PublisherPoints { get; set; }
+        public List<NormalPointDTO> GenrePoints { get; set; }
+        public List<NormalPointDTO> TagPoints { get; set; }
+        public List<NormalPointDTO> MajorPlatformPoints { get; set; }
+        public List<NormalPointDTO> MinorPlatformPoints { get; set; }
+
+        #endregion
+        
         public int? SubscriberCount { get; set; }
         public int? ArticleCount { get; set; }
         public int? PositiveArticleCount { get; set; }

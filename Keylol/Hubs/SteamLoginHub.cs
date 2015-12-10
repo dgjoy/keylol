@@ -5,8 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Keylol.DAL;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Microsoft.AspNet.SignalR;
 

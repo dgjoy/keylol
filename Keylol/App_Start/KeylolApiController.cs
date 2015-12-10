@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using System.Web.Http;
-using Keylol.DAL;
+using Keylol.Models.DAL;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;

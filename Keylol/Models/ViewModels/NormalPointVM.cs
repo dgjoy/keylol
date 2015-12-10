@@ -35,9 +35,34 @@ namespace Keylol.Models.ViewModels
         [Required(AllowEmptyStrings = true)]
         public string ChineseAliases { get; set; }
 
+        [Required(AllowEmptyStrings = true)]
+        public string Description { get; set; }
+
         [Required]
         public List<string> AssociatedPointsId { get; set; }
 
-        public string StoreLink { get; set; }
+        #region Game Point Only
+
+        public int? SteamAppId { get; set; }
+
+        public string DisplayAliases { get; set; }
+
+        public DateTime? ReleaseDate { get; set; }
+
+        public string CoverImage { get; set; }
+
+        public List<string> DeveloperPointsId { get; set; }
+
+        public List<string> PublisherPointsId { get; set; }
+
+        public List<string> GenrePointsId { get; set; }
+
+        public List<string> TagPointsId { get; set; }
+
+        public List<string> MajorPlatformPointsId { get; set; }
+
+        public List<string> MinorPlatformPointsId { get; set; }
+
+        #endregion
     }
 }

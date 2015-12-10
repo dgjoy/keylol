@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
 using Keylol;
+using Keylol.Hubs;
+using Keylol.Models.DAL;
 using Keylol.Utilities;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Owin;
 using WebApiThrottle;
@@ -19,6 +22,14 @@ namespace Keylol
 
         public void Configuration(IAppBuilder app)
         {
+#if DEBUG
+            var debugInfoHub = GlobalHost.ConnectionManager.GetHubContext<DebugInfoHub, IDebugInfoHubClient>();
+            KeylolDbContext.LogAction = s =>
+            {
+                debugInfoHub.Clients.All.Write(s);
+                Debug.Write(s);
+            };
+#endif
             app.Use(async (context, next) =>
             {
                 var stopwatch = Stopwatch.StartNew();

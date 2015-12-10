@@ -1,6 +1,6 @@
 ﻿using System;
-using Keylol.DAL;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;

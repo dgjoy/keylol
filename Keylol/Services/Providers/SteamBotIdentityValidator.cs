@@ -3,7 +3,7 @@ using System.IdentityModel.Selectors;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Security;
-using Keylol.DAL;
+using Keylol.Models.DAL;
 
 namespace Keylol.Services.Providers
 {

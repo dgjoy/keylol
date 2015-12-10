@@ -207,60 +207,10 @@
   <ItemGroup>
     <Compile Include="Controllers\FavoriteController.cs" />
     <Compile Include="Controllers\InvitationCodeController.cs" />
-    <Compile Include="Migrations\201511011542501_InvitationCode.cs" />
-    <Compile Include="Migrations\201511011542501_InvitationCode.Designer.cs">
-      <DependentUpon>201511011542501_InvitationCode.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511020937308_ArticleTypeName.cs" />
-    <Compile Include="Migrations\201511020937308_ArticleTypeName.Designer.cs">
-      <DependentUpon>201511020937308_ArticleTypeName.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511040314156_Favorite.cs" />
-    <Compile Include="Migrations\201511040314156_Favorite.Designer.cs">
-      <DependentUpon>201511040314156_Favorite.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511040324194_IgnoreNotification.cs" />
-    <Compile Include="Migrations\201511040324194_IgnoreNotification.Designer.cs">
-      <DependentUpon>201511040324194_IgnoreNotification.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511040338567_FavoriteAddTime.cs" />
-    <Compile Include="Migrations\201511040338567_FavoriteAddTime.Designer.cs">
-      <DependentUpon>201511040338567_FavoriteAddTime.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511051240136_ArticleUnstyledContent.cs" />
-    <Compile Include="Migrations\201511051240136_ArticleUnstyledContent.Designer.cs">
-      <DependentUpon>201511051240136_ArticleUnstyledContent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511080849556_NormalPointLastActivityTime.cs" />
-    <Compile Include="Migrations\201511080849556_NormalPointLastActivityTime.Designer.cs">
-      <DependentUpon>201511080849556_NormalPointLastActivityTime.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511091209274_UserSN.cs" />
-    <Compile Include="Migrations\201511091209274_UserSN.Designer.cs">
-      <DependentUpon>201511091209274_UserSN.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511100402565_RenamePreferedName.cs" />
-    <Compile Include="Migrations\201511100402565_RenamePreferedName.Designer.cs">
-      <DependentUpon>201511100402565_RenamePreferedName.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511130746328_NormalPointTypeIndex.cs" />
-    <Compile Include="Migrations\201511130746328_NormalPointTypeIndex.Designer.cs">
-      <DependentUpon>201511130746328_NormalPointTypeIndex.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201511281349596_BotCookies.cs" />
-    <Compile Include="Migrations\201511281349596_BotCookies.Designer.cs">
-      <DependentUpon>201511281349596_BotCookies.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512010526059_RemoveBotCookies.cs" />
-    <Compile Include="Migrations\201512010526059_RemoveBotCookies.Designer.cs">
-      <DependentUpon>201512010526059_RemoveBotCookies.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\LikeDTO.cs" />
     <Compile Include="Models\DTO\SubscribedPointDTO.cs" />
-    <Compile Include="Models\Favorite.cs" />
-    <Compile Include="Models\InvitationCode.cs" />
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />
     <Compile Include="Utilities\Extensions.cs" />
@@ -277,79 +227,25 @@
     <Compile Include="Controllers\UploadSignatureController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UserPointSubscriptionController.cs" />
-    <Compile Include="DAL\KeylolDbConfiguration.cs" />
     <Compile Include="Hubs\DebugInfoHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
     <Compile Include="Hubs\SteamBindingHub.cs" />
-    <Compile Include="Migrations\201510111634394_Initial.cs" />
-    <Compile Include="Migrations\201510111634394_Initial.Designer.cs">
-      <DependentUpon>201510111634394_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510150622331_ChineseAliases.cs" />
-    <Compile Include="Migrations\201510150622331_ChineseAliases.Designer.cs">
-      <DependentUpon>201510150622331_ChineseAliases.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510150709088_PointsFullTextIndex.cs" />
-    <Compile Include="Migrations\201510150709088_PointsFullTextIndex.Designer.cs">
-      <DependentUpon>201510150709088_PointsFullTextIndex.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510150923476_PointAvatarImageCreateTime.cs" />
-    <Compile Include="Migrations\201510150923476_PointAvatarImageCreateTime.Designer.cs">
-      <DependentUpon>201510150923476_PointAvatarImageCreateTime.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510170529190_ArticleFullTextIndex.cs" />
-    <Compile Include="Migrations\201510170529190_ArticleFullTextIndex.Designer.cs">
-      <DependentUpon>201510170529190_ArticleFullTextIndex.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510241320315_PointPreferedName.cs" />
-    <Compile Include="Migrations\201510241320315_PointPreferedName.Designer.cs">
-      <DependentUpon>201510241320315_PointPreferedName.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510260639362_LikeBackout.cs" />
-    <Compile Include="Migrations\201510260639362_LikeBackout.Designer.cs">
-      <DependentUpon>201510260639362_LikeBackout.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510280238563_CommentSequenceNumberForArticle.cs" />
-    <Compile Include="Migrations\201510280238563_CommentSequenceNumberForArticle.Designer.cs">
-      <DependentUpon>201510280238563_CommentSequenceNumberForArticle.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510290601169_EntrySN.cs" />
-    <Compile Include="Migrations\201510290601169_EntrySN.Designer.cs">
-      <DependentUpon>201510290601169_EntrySN.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510290724046_MoreIndexes.cs" />
-    <Compile Include="Migrations\201510290724046_MoreIndexes.Designer.cs">
-      <DependentUpon>201510290724046_MoreIndexes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CommentReply.cs" />
     <Compile Include="Models\DTO\CommentDTO.cs" />
     <Compile Include="Models\DTO\NormalPointDTO.cs" />
     <Compile Include="Models\DTO\SteamLoginTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBindingTokenDTO.cs" />
     <Compile Include="Models\DTO\SteamBotDTO.cs" />
-    <Compile Include="Models\SteamBindingToken.cs" />
-    <Compile Include="Models\SteamBot.cs" />
-    <Compile Include="Models\SteamLoginToken.cs" />
     <Compile Include="Models\ViewModels\CommentVM.cs" />
     <Compile Include="Models\ViewModels\LikeVM.cs" />
     <Compile Include="Models\ViewModels\NormalPointVM.cs" />
     <Compile Include="Models\ViewModels\SteamBotVM.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="DAL\KeylolDbContext.cs" />
     <Compile Include="Models\DTO\ArticleDTO.cs" />
     <Compile Include="Models\DTO\LogDTO.cs" />
     <Compile Include="Models\DTO\UserDTO.cs" />
-    <Compile Include="Models\Entry.cs" />
-    <Compile Include="Models\ArticleType.cs" />
-    <Compile Include="Models\Comment.cs" />
-    <Compile Include="Models\Log.cs" />
-    <Compile Include="Models\Like.cs" />
-    <Compile Include="Models\Point.cs" />
     <Compile Include="Models\ViewModels\ArticleVM.cs" />
     <Compile Include="Models\ViewModels\LoginVM.cs" />
     <Compile Include="Provider\KeylolOAuthProvider.cs" />
     <Compile Include="Models\ViewModels\UserVM.cs" />
-    <Compile Include="Models\KeylolUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Contracts\ISteamBotCoodinator.cs" />
     <Compile Include="Services\Providers\SteamBotIdentityValidator.cs" />
@@ -377,75 +273,13 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\keylol CN.pubxml" />
-    <None Include="Properties\PublishProfiles\keylol-dev.pubxml" />
+    <None Include="Properties\PublishProfiles\keylol-dev - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201510111634394_Initial.resx">
-      <DependentUpon>201510111634394_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510150622331_ChineseAliases.resx">
-      <DependentUpon>201510150622331_ChineseAliases.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510150709088_PointsFullTextIndex.resx">
-      <DependentUpon>201510150709088_PointsFullTextIndex.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510150923476_PointAvatarImageCreateTime.resx">
-      <DependentUpon>201510150923476_PointAvatarImageCreateTime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510170529190_ArticleFullTextIndex.resx">
-      <DependentUpon>201510170529190_ArticleFullTextIndex.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510241320315_PointPreferedName.resx">
-      <DependentUpon>201510241320315_PointPreferedName.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510260639362_LikeBackout.resx">
-      <DependentUpon>201510260639362_LikeBackout.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510280238563_CommentSequenceNumberForArticle.resx">
-      <DependentUpon>201510280238563_CommentSequenceNumberForArticle.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510290601169_EntrySN.resx">
-      <DependentUpon>201510290601169_EntrySN.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510290724046_MoreIndexes.resx">
-      <DependentUpon>201510290724046_MoreIndexes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511011542501_InvitationCode.resx">
-      <DependentUpon>201511011542501_InvitationCode.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511020937308_ArticleTypeName.resx">
-      <DependentUpon>201511020937308_ArticleTypeName.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511040314156_Favorite.resx">
-      <DependentUpon>201511040314156_Favorite.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511040324194_IgnoreNotification.resx">
-      <DependentUpon>201511040324194_IgnoreNotification.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511040338567_FavoriteAddTime.resx">
-      <DependentUpon>201511040338567_FavoriteAddTime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511051240136_ArticleUnstyledContent.resx">
-      <DependentUpon>201511051240136_ArticleUnstyledContent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511080849556_NormalPointLastActivityTime.resx">
-      <DependentUpon>201511080849556_NormalPointLastActivityTime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511091209274_UserSN.resx">
-      <DependentUpon>201511091209274_UserSN.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511100402565_RenamePreferedName.resx">
-      <DependentUpon>201511100402565_RenamePreferedName.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511130746328_NormalPointTypeIndex.resx">
-      <DependentUpon>201511130746328_NormalPointTypeIndex.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201511281349596_BotCookies.resx">
-      <DependentUpon>201511281349596_BotCookies.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512010526059_RemoveBotCookies.resx">
-      <DependentUpon>201512010526059_RemoveBotCookies.cs</DependentUpon>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Keylol.Models\Keylol.Models.csproj">
+      <Project>{b6c4cdb8-070e-422c-b243-1d488ac1548a}</Project>
+      <Name>Keylol.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
