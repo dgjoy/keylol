@@ -273,10 +273,19 @@ namespace Keylol.Controllers
             normalPoint.Type = vm.Type;
             normalPoint.AssociatedToPoints =
                 await DbContext.NormalPoints.Where(p => vm.AssociatedPointsId.Contains(p.Id)).ToListAsync();
-            if (normalPoint.Type == NormalPointType.Game &&
-                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.Full))
+//            if (normalPoint.Type == NormalPointType.Game &&
+//                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.Full))
+//            {
+//                return BadRequest(ModelState);
+//            }
+            if (normalPoint.Type == NormalPointType.Game)
             {
-                return BadRequest(ModelState);
+                if (string.IsNullOrEmpty(vm.StoreLink))
+                {
+                    ModelState.AddModelError("vm.StoreLink", "游戏据点商店链接不能为空");
+                    return BadRequest(ModelState);
+                }
+                normalPoint.StoreLink = vm.StoreLink;
             }
             DbContext.NormalPoints.Add(normalPoint);
             await DbContext.SaveChangesAsync();
@@ -323,22 +332,31 @@ namespace Keylol.Controllers
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
             normalPoint.Type = vm.Type;
-            if (normalPoint.Type == NormalPointType.Game &&
-                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.ExceptCollectionProperties))
+//            if (normalPoint.Type == NormalPointType.Game &&
+//                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.ExceptCollectionProperties))
+//            {
+//                return BadRequest(ModelState);
+//            }
+            if (normalPoint.Type == NormalPointType.Game)
             {
-                return BadRequest(ModelState);
+                if (string.IsNullOrEmpty(vm.StoreLink))
+                {
+                    ModelState.AddModelError("vm.StoreLink", "游戏据点商店链接不能为空");
+                    return BadRequest(ModelState);
+                }
+                normalPoint.StoreLink = vm.StoreLink;
             }
             normalPoint.AssociatedToPoints.Clear();
-            normalPoint.DeveloperPoints.Clear();
-            normalPoint.PublisherPoints.Clear();
-            normalPoint.GenrePoints.Clear();
-            normalPoint.TagPoints.Clear();
-            normalPoint.MajorPlatformPoints.Clear();
-            normalPoint.MinorPlatformForPoints.Clear();
+//            normalPoint.DeveloperPoints.Clear();
+//            normalPoint.PublisherPoints.Clear();
+//            normalPoint.GenrePoints.Clear();
+//            normalPoint.TagPoints.Clear();
+//            normalPoint.MajorPlatformPoints.Clear();
+//            normalPoint.MinorPlatformForPoints.Clear();
             await DbContext.SaveChangesAsync();
             normalPoint.AssociatedToPoints =
                 await DbContext.NormalPoints.Where(p => vm.AssociatedPointsId.Contains(p.Id)).ToListAsync();
-            await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.OnlyCollectionProperties);
+//            await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.OnlyCollectionProperties);
             await DbContext.SaveChangesAsync();
             return Ok();
         }

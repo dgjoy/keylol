@@ -39,6 +39,7 @@ namespace Keylol.Models.DTO
 
                 if (point.Type == NormalPointType.Game)
                 {
+                    StoreLink = point.StoreLink;
                     SteamAppId = point.SteamAppId;
                     DisplayAliases = point.DisplayAliases;
                     ReleaseDate = point.ReleaseDate;
@@ -79,13 +80,20 @@ namespace Keylol.Models.DTO
         public List<NormalPointDTO> MinorPlatformPoints { get; set; }
 
         #endregion
-        
+
         public int? SubscriberCount { get; set; }
         public int? ArticleCount { get; set; }
         public int? PositiveArticleCount { get; set; }
         public int? NegativeArticleCount { get; set; }
         public bool? Subscribed { get; set; }
+
+        #region Obselete
+
         public List<NormalPointDTO> AssociatedPoints { get; set; }
+
+        public string StoreLink { get; set; }
+
+        #endregion
 
         internal int? Count { get; set; }
     }

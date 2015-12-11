@@ -35,11 +35,17 @@ namespace Keylol.Models.ViewModels
         [Required(AllowEmptyStrings = true)]
         public string ChineseAliases { get; set; }
 
-        [Required(AllowEmptyStrings = true)]
-        public string Description { get; set; }
+//        [Required(AllowEmptyStrings = true)]
+//        public string Description { get; set; }
+
+        #region Obselete
 
         [Required]
         public List<string> AssociatedPointsId { get; set; }
+
+        public string StoreLink { get; set; }
+
+        #endregion
 
         #region Game Point Only
 

@@ -80,7 +80,7 @@ namespace Keylol.Models
         [Required(AllowEmptyStrings = true)]
         public string DisplayAliases { get; set; } = string.Empty;
 
-        public DateTime ReleaseDate { get; set; }
+        public DateTime ReleaseDate { get; set; } = DateTime.Now;
 
         [Required(AllowEmptyStrings = true)]
         public string CoverImage { get; set; } = string.Empty;
