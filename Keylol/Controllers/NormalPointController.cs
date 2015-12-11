@@ -195,9 +195,6 @@ namespace Keylol.Controllers
                     OFFSET({2}) ROWS FETCH NEXT({3}) ROWS ONLY) AS [t4]",
                 $"\"{keyword}\" OR \"{keyword}*\"", User.Identity.GetUserId(), skip, take).ToListAsync();
 
-            for (var i = 1; i < points.Count; i++)
-                points[i].BackgroundImage = null;
-
             var response = Request.CreateResponse(HttpStatusCode.OK, points);
             response.Headers.Add("X-Total-Record-Count", points.Count > 0 ? points[0].Count.ToString() : "0");
             return response;

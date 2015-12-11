@@ -62,16 +62,7 @@ namespace Keylol.Controllers
                 Liked = articleEntry.liked
             };
             if (articleEntry.voteForPoint != null)
-                switch (articleEntry.voteForPoint.PreferredName)
-                {
-                    case PreferredNameType.Chinese:
-                        articleDTO.VoteForPointName = articleEntry.voteForPoint.ChineseName;
-                        break;
-
-                    case PreferredNameType.English:
-                        articleDTO.VoteForPointName = articleEntry.voteForPoint.EnglishName;
-                        break;
-                }
+                articleDTO.VoteForPoint = new NormalPointDTO(articleEntry.voteForPoint, true);
             return Ok(articleDTO);
         }
 
@@ -111,16 +102,7 @@ namespace Keylol.Controllers
                 Liked = articleEntry.liked
             };
             if (articleEntry.voteForPoint != null)
-                switch (articleEntry.voteForPoint.PreferredName)
-                {
-                    case PreferredNameType.Chinese:
-                        articleDTO.VoteForPointName = articleEntry.voteForPoint.ChineseName;
-                        break;
-
-                    case PreferredNameType.English:
-                        articleDTO.VoteForPointName = articleEntry.voteForPoint.EnglishName;
-                        break;
-                }
+                articleDTO.VoteForPoint = new NormalPointDTO(articleEntry.voteForPoint, true);
             return Ok(articleDTO);
         }
 
@@ -204,7 +186,8 @@ namespace Keylol.Controllers
                     likeCount = a.Likes.Count(l => l.Backout == false),
                     commentCount = a.Comments.Count,
                     typeName = a.Type.Name,
-                    author = a.Principal.User
+                    author = a.Principal.User,
+                    voteForPoint = a.VoteForPoint
                 }).ToListAsync();
             return Ok(articleEntries.Select(entry =>
                 new ArticleDTO(entry.article, true, 256, true)
@@ -212,7 +195,8 @@ namespace Keylol.Controllers
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.typeName,
-                    Author = new UserDTO(entry.author)
+                    Author = new UserDTO(entry.author),
+                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
                 }));
         }
 
@@ -289,6 +273,7 @@ namespace Keylol.Controllers
                     g.article,
                     g.reason,
                     g.candicates.FirstOrDefault(e => e.reason == g.reason).author,
+                    voteForPoint = g.article.VoteForPoint,
                     likeCount = g.article.Likes.Count(l => l.Backout == false),
                     commentCount = g.article.Comments.Count,
                     typeName = g.article.Type.Name
@@ -301,8 +286,15 @@ namespace Keylol.Controllers
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
-                    TypeName = entry.typeName
+                    TypeName = entry.typeName,
+                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
                 };
+                if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                {
+                    articleDTO.ThumbnailImage = entry.voteForPoint != null
+                        ? $"keylol://{entry.voteForPoint.BackgroundImage}"
+                        : null;
+                }
                 if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
                 {
                     articleDTO.Author = new UserDTO(entry.author);
@@ -330,11 +322,12 @@ namespace Keylol.Controllers
 
             var articleQuery =
                 userQuery.SelectMany(u => u.SubscribedPoints.OfType<NormalPoint>())
-                    .SelectMany(p => p.Articles)
-                    .Where(a => a.SequenceNumber < beforeSN)
-                    .Select(a => new
+                    .SelectMany(p => p.Articles.Select(a => new {article = a, fromPoint = p}))
+                    .Where(e => e.article.SequenceNumber < beforeSN)
+                    .Select(e => new
                     {
-                        article = a,
+                        e.article,
+                        e.fromPoint,
                         reason = ArticleDTO.TimelineReasonType.Point,
                         likedByUser = (KeylolUser) null
                     })
@@ -343,6 +336,7 @@ namespace Keylol.Controllers
                         .Select(a => new
                         {
                             article = a,
+                            fromPoint = (NormalPoint) null,
                             reason = ArticleDTO.TimelineReasonType.Publish,
                             likedByUser = (KeylolUser) null
                         }))
@@ -352,6 +346,7 @@ namespace Keylol.Controllers
                         .Select(l => new
                         {
                             article = l.Article,
+                            fromPoint = (NormalPoint) null,
                             reason = ArticleDTO.TimelineReasonType.Like,
                             likedByUser = l.Operator
                         }));
@@ -362,6 +357,7 @@ namespace Keylol.Controllers
                 articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesName, a => a.article.Type.Name, new
                 {
                     article = (Article) null,
+                    fromPoint = (NormalPoint) null,
                     reason = ArticleDTO.TimelineReasonType.Like,
                     likedByUser = (KeylolUser) null
                 }));
@@ -375,6 +371,7 @@ namespace Keylol.Controllers
                     likedByUsers = g.Where(e => e.reason == ArticleDTO.TimelineReasonType.Like)
                         .Take(3)
                         .Select(e => e.likedByUser),
+                    fromPoints = g.Where(e => e.fromPoint != null).Select(e => e.fromPoint),
                     reason = g.Max(ee => ee.reason)
                 })
                 .Select(g => new
@@ -382,7 +379,8 @@ namespace Keylol.Controllers
                     g.article,
                     g.reason,
                     g.likedByUsers,
-                    attachedPoints = g.article.AttachedPoints,
+                    g.fromPoints,
+                    voteForPoint = g.article.VoteForPoint,
                     author = g.article.Principal.User,
                     likeCount = g.article.Likes.Count(l => l.Backout == false),
                     commentCount = g.article.Comments.Count,
@@ -398,13 +396,21 @@ namespace Keylol.Controllers
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.typeName,
-                    Author = new UserDTO(entry.author)
+                    Author = new UserDTO(entry.author),
+                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
                 };
+                if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                {
+                    articleDTO.ThumbnailImage = entry.voteForPoint != null
+                        ? $"keylol://{entry.voteForPoint.BackgroundImage}"
+                        : null;
+                }
                 switch (entry.reason)
                 {
                     case ArticleDTO.TimelineReasonType.Point:
-                        articleDTO.AttachedPoints =
-                            entry.attachedPoints.Select(p => new NormalPointDTO(p, true)).ToList();
+                        if (!entry.fromPoints.Select(p => p.Id).Contains(entry.voteForPoint?.Id))
+                            articleDTO.AttachedPoints =
+                                entry.fromPoints.Select(p => new NormalPointDTO(p, true)).ToList();
                         break;
 
                     case ArticleDTO.TimelineReasonType.Like:
@@ -461,7 +467,11 @@ namespace Keylol.Controllers
 	            [t3].[PublishTime],
 	            [t3].[Title],
 	            [t3].[UnstyledContent] AS [Content],
-                [t3].[ThumbnailImage],
+                CASE WHEN [t3].[ThumbnailImage] = '' THEN
+                    'keylol://' + [t3].[VoteForPointBackgroundImage]
+                ELSE
+                    [t3].[ThumbnailImage]
+                END AS [ThumbnailImage],
 	            [t3].[SequenceNumberForAuthor],
 	            [t3].[SequenceNumber],
 	            [t3].[TypeName],
@@ -469,7 +479,11 @@ namespace Keylol.Controllers
 	            [t3].[AuthorIdCode],
 	            [t3].[AuthorUserName],
 	            [t3].[AuthorAvatarImage],
-	            [t3].[AuthorProfilePointBackgroundImage],
+                [t3].[VoteForPointId],
+                [t3].[VoteForPointPreferredName],
+                [t3].[VoteForPointIdCode],
+                [t3].[VoteForPointChineseName],
+                [t3].[VoteForPointEnglishName],
 	            (SELECT
                     COUNT(1)
                     FROM [dbo].[Comments]
@@ -486,20 +500,28 @@ namespace Keylol.Controllers
 		            [t5].[IdCode] AS [AuthorIdCode],
 		            [t5].[UserName] AS [AuthorUserName],
 		            [t5].[AvatarImage] AS [AuthorAvatarImage],
-		            [t6].[BackgroundImage] AS [AuthorProfilePointBackgroundImage]
+                    [t7].[PreferredName] AS [VoteForPointPreferredName],
+                    [t7].[IdCode] AS [VoteForPointIdCode],
+                    [t7].[ChineseName] AS [VoteForPointChineseName],
+                    [t7].[EnglishName] AS [VoteForPointEnglishName],
+                    [t7].[BackgroundImage] AS [VoteForPointBackgroundImage]
 		            FROM [dbo].[Entries] AS [t1]
 		            INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Entries], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
                     LEFT OUTER JOIN [dbo].[ArticleTypes] AS [t4] ON [t1].[TypeId] = [t4].[Id]
                     LEFT OUTER JOIN [dbo].[KeylolUsers] AS [t5] ON [t5].[Id] = [t1].[PrincipalId]
                     LEFT OUTER JOIN [dbo].[ProfilePoints] AS [t6] ON [t6].[Id] = [t1].[PrincipalId]
+                    LEFT OUTER JOIN [dbo].[NormalPoints] AS [t7] ON [t7].[Id] = [t1].[VoteForPointId]
                     ORDER BY [t2].[RANK] DESC, [t1].[SequenceNumber] DESC
                     OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
                 $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync())
-                .Select(a => a.UnflattenAuthor().TruncateContent(256))
+                .Select(a =>
+                {
+                    if (a.VoteForPointId != null)
+                        a.UnflattenVoteForPoint();
+                    a.UnflattenAuthor().TruncateContent(256);
+                    return a;
+                })
                 .ToList();
-
-            for (var i = 1; i < articles.Count(); i++)
-                articles[i].AuthorProfilePointBackgroundImage = null;
 
             var response = Request.CreateResponse(HttpStatusCode.OK, articles);
             response.Headers.Add("X-Total-Record-Count", articles.Count > 0 ? articles[0].Count.ToString() : "0");

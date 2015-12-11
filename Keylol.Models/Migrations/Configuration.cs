@@ -5,7 +5,7 @@ using Keylol.Models.DAL;
 using Keylol.Models;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.Migrations
+namespace Keylol.Models.Migrations
 {
     internal sealed class Configuration : DbMigrationsConfiguration<KeylolDbContext>
     {

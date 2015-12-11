@@ -48,6 +48,7 @@ namespace Keylol.Controllers
                 .Select(p => new
                 {
                     user = (KeylolUser) null,
+                    userProfilePoint = (ProfilePoint) null,
                     point = p,
                     articleCount = p.Articles.Count,
                     subscriberCount = p.Subscribers.Count
@@ -56,6 +57,7 @@ namespace Keylol.Controllers
                     .Select(p => new
                     {
                         user = p.User,
+                        userProfilePoint = p.User.ProfilePoint,
                         point = (NormalPoint) null,
                         articleCount = p.Entries.OfType<Article>().Count(),
                         subscriberCount = p.Subscribers.Count
@@ -64,7 +66,10 @@ namespace Keylol.Controllers
                 .Skip(() => skip).Take(() => take)
                 .ToListAsync()).Select(e => new SubscribedPointDTO
                 {
-                    User = e.user == null ? null : new UserDTO(e.user),
+                    User =
+                        e.user == null
+                            ? null
+                            : new UserDTO(e.user) {ProfilePointBackgroundImage = e.userProfilePoint.BackgroundImage},
                     NormalPoint = e.point == null ? null : new NormalPointDTO(e.point),
                     ArticleCount = e.articleCount,
                     SubscriberCount = e.subscriberCount

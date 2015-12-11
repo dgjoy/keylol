@@ -43,6 +43,7 @@ namespace Keylol.Controllers
                 .Select(u => new
                 {
                     user = u,
+                    profilePoint = u.ProfilePoint,
                     articleCount = u.ProfilePoint.Entries.OfType<Article>().Count(),
                     subscriberCount = u.ProfilePoint.Subscribers.Count
                 })
@@ -51,6 +52,7 @@ namespace Keylol.Controllers
                 .ToListAsync())
                 .Select(entry => new UserDTO(entry.user)
                 {
+                    ProfilePointBackgroundImage = entry.profilePoint.BackgroundImage,
                     ArticleCount = entry.articleCount,
                     SubscriberCount = entry.subscriberCount
                 }));

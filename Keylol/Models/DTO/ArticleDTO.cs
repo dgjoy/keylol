@@ -32,7 +32,6 @@ namespace Keylol.Models.DTO
             {
                 ThumbnailImage = article.ThumbnailImage;
             }
-            VoteForPointId = article.VoteForPointId;
             Vote = article.Vote;
             SequenceNumberForAuthor = article.SequenceNumberForAuthor;
             SequenceNumber = article.SequenceNumber;
@@ -64,6 +63,35 @@ namespace Keylol.Models.DTO
             return this;
         }
 
+        public ArticleDTO FlattenVoteForPoint()
+        {
+            VoteForPointId = VoteForPoint.Id;
+            VoteForPointPreferredName = VoteForPoint.PreferredName;
+            VoteForPointIdCode = VoteForPoint.IdCode;
+            VoteForPointChineseName = VoteForPoint.ChineseName;
+            VoteForPointEnglishName = VoteForPoint.EnglishName;
+            VoteForPoint = null;
+            return this;
+        }
+
+        public ArticleDTO UnflattenVoteForPoint()
+        {
+            VoteForPoint = new NormalPointDTO
+            {
+                Id = VoteForPointId,
+                PreferredName = VoteForPointPreferredName ?? PreferredNameType.English,
+                IdCode = VoteForPointIdCode,
+                ChineseName = VoteForPointChineseName,
+                EnglishName = VoteForPointEnglishName
+            };
+            VoteForPointId = null;
+            VoteForPointPreferredName = null;
+            VoteForPointIdCode = null;
+            VoteForPointChineseName = VoteForPoint.ChineseName;
+            VoteForPointEnglishName = VoteForPoint.EnglishName;
+            return this;
+        }
+
         public ArticleDTO TruncateContent(int size)
         {
             if (size > 0 && size < Content.Length)
@@ -80,10 +108,6 @@ namespace Keylol.Models.DTO
         public string Content { get; set; }
 
         public string ThumbnailImage { get; set; }
-
-        public string VoteForPointId { get; set; }
-
-        public string VoteForPointName { get; set; }
 
         public VoteType? Vote { get; set; }
 
@@ -105,8 +129,6 @@ namespace Keylol.Models.DTO
 
         public List<UserDTO> LikeByUsers { get; set; }
 
-        public string AuthorProfilePointBackgroundImage { get; set; }
-
         #region If Author is not flattened
 
         public UserDTO Author { get; set; }
@@ -124,7 +146,28 @@ namespace Keylol.Models.DTO
         public string AuthorAvatarImage { get; set; }
 
         #endregion
-        
+
+        #region If VoteForPoint is not flattened
+
+        public NormalPointDTO VoteForPoint { get; set; }
+
+        #endregion
+
+        #region If VoteForPoint is flattened
+
+        public string VoteForPointId { get; set; }
+
+        public PreferredNameType? VoteForPointPreferredName { get; set; }
+
+        public string VoteForPointIdCode { get; set; }
+
+        public string VoteForPointChineseName { get; set; }
+
+        public string VoteForPointEnglishName { get; set; }
+
+        #endregion
+
+
         internal int? Count { get; set; }
     }
 }
