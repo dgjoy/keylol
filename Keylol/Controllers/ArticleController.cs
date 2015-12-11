@@ -190,14 +190,25 @@ namespace Keylol.Controllers
                     voteForPoint = a.VoteForPoint
                 }).ToListAsync();
             return Ok(articleEntries.Select(entry =>
-                new ArticleDTO(entry.article, true, 256, true)
+            {
+                var articleDTO = new ArticleDTO(entry.article, true, 256, true)
                 {
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.typeName,
                     Author = new UserDTO(entry.author),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
-                }));
+                };
+                if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                {
+                    articleDTO.ThumbnailImage = entry.voteForPoint != null
+                        ? $"keylol://{entry.voteForPoint.BackgroundImage}"
+                        : null;
+                }
+                if (articleDTO.ThumbnailImage != null)
+                    articleDTO.TruncateContent(128);
+                return articleDTO;
+            }));
         }
 
         /// <summary>
@@ -295,6 +306,8 @@ namespace Keylol.Controllers
                         ? $"keylol://{entry.voteForPoint.BackgroundImage}"
                         : null;
                 }
+                if (articleDTO.ThumbnailImage != null)
+                    articleDTO.TruncateContent(128);
                 if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
                 {
                     articleDTO.Author = new UserDTO(entry.author);
@@ -405,6 +418,8 @@ namespace Keylol.Controllers
                         ? $"keylol://{entry.voteForPoint.BackgroundImage}"
                         : null;
                 }
+                if (articleDTO.ThumbnailImage != null)
+                    articleDTO.TruncateContent(128);
                 switch (entry.reason)
                 {
                     case ArticleDTO.TimelineReasonType.Point:
@@ -519,6 +534,10 @@ namespace Keylol.Controllers
                     if (a.VoteForPointId != null)
                         a.UnflattenVoteForPoint();
                     a.UnflattenAuthor().TruncateContent(256);
+                    if (!string.IsNullOrEmpty(a.ThumbnailImage))
+                        a.TruncateContent(128);
+                    else
+                        a.ThumbnailImage = null;
                     return a;
                 })
                 .ToList();
