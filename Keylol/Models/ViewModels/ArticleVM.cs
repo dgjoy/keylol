@@ -19,7 +19,7 @@ namespace Keylol.Models.ViewModels
 
         public string VoteForPointId { get; set; }
 
-        public VoteType? Vote { get; set; }
+        public int? Vote { get; set; }
     }
 
     public class ArticlePutVM
@@ -34,6 +34,6 @@ namespace Keylol.Models.ViewModels
 
         public string VoteForPointId { get; set; }
 
-        public VoteType? Vote { get; set; }
+        public int? Vote { get; set; }
     }
 }

@@ -83,8 +83,7 @@ namespace Keylol.Models.DTO
 
         public int? SubscriberCount { get; set; }
         public int? ArticleCount { get; set; }
-        public int? PositiveArticleCount { get; set; }
-        public int? NegativeArticleCount { get; set; }
+        public Dictionary<int, int> VoteStats { get; set; }
         public bool? Subscribed { get; set; }
 
         #region Obselete

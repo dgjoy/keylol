@@ -109,7 +109,7 @@ namespace Keylol.Models.DTO
 
         public string ThumbnailImage { get; set; }
 
-        public VoteType? Vote { get; set; }
+        public int? Vote { get; set; }
 
         public int? SequenceNumberForAuthor { get; set; }
 

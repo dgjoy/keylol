@@ -112,12 +112,21 @@ namespace Keylol.Controllers
                     .Select(
                         p => new
                         {
-                            positiveArticleCount = p.VoteByArticles.Count(a => a.Vote == VoteType.Positive),
-                            negativeArticleCount = p.VoteByArticles.Count(a => a.Vote == VoteType.Negative)
+                            level1 = p.VoteByArticles.Count(a => a.Vote == 1),
+                            level2 = p.VoteByArticles.Count(a => a.Vote == 2),
+                            level3 = p.VoteByArticles.Count(a => a.Vote == 3),
+                            level4 = p.VoteByArticles.Count(a => a.Vote == 4),
+                            level5 = p.VoteByArticles.Count(a => a.Vote == 5)
                         })
                     .SingleAsync();
-                pointDTO.PositiveArticleCount = votes.positiveArticleCount;
-                pointDTO.NegativeArticleCount = votes.negativeArticleCount;
+                pointDTO.VoteStats = new Dictionary<int, int>
+                {
+                    [1] = votes.level1,
+                    [2] = votes.level2,
+                    [3] = votes.level3,
+                    [4] = votes.level4,
+                    [5] = votes.level5
+                };
             }
 
             if (includeAssociated)
