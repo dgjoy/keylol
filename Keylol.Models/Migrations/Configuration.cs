@@ -16,6 +16,12 @@ namespace Keylol.Models.Migrations
 
         protected override void Seed(KeylolDbContext context)
         {
+//            context.ArticleTypes.AddOrUpdate(type => type.Name, new ArticleType
+//            {
+//                Name = "简评",
+//                Description = "简评、刺猬、简评、刺猬",
+//                AllowVote = true
+//            });
 //            context.ArticleTypes.AddOrUpdate(type => type.Name,
 //                new ArticleType()
 //                {

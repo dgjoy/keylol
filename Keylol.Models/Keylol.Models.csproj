@@ -161,6 +161,10 @@
     <Compile Include="Migrations\201512100428457_MorePointProperties.Designer.cs">
       <DependentUpon>201512100428457_MorePointProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512120737335_FiveLevelVote.cs" />
+    <Compile Include="Migrations\201512120737335_FiveLevelVote.Designer.cs">
+      <DependentUpon>201512120737335_FiveLevelVote.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -237,6 +241,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512100428457_MorePointProperties.resx">
       <DependentUpon>201512100428457_MorePointProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512120737335_FiveLevelVote.resx">
+      <DependentUpon>201512120737335_FiveLevelVote.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

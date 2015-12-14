@@ -205,7 +205,7 @@ namespace Keylol.Controllers
                         ? $"keylol://{entry.voteForPoint.BackgroundImage}"
                         : null;
                 }
-                if (articleDTO.ThumbnailImage != null)
+                if (articleDTO.ThumbnailImage != null && articleDTO.TypeName != "简评")
                     articleDTO.TruncateContent(128);
                 return articleDTO;
             }));
@@ -306,7 +306,7 @@ namespace Keylol.Controllers
                         ? $"keylol://{entry.voteForPoint.BackgroundImage}"
                         : null;
                 }
-                if (articleDTO.ThumbnailImage != null)
+                if (articleDTO.ThumbnailImage != null && articleDTO.TypeName != "简评")
                     articleDTO.TruncateContent(128);
                 if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
                 {
@@ -418,7 +418,7 @@ namespace Keylol.Controllers
                         ? $"keylol://{entry.voteForPoint.BackgroundImage}"
                         : null;
                 }
-                if (articleDTO.ThumbnailImage != null)
+                if (articleDTO.ThumbnailImage != null && articleDTO.TypeName != "简评")
                     articleDTO.TruncateContent(128);
                 switch (entry.reason)
                 {
@@ -534,7 +534,7 @@ namespace Keylol.Controllers
                     if (a.VoteForPointId != null)
                         a.UnflattenVoteForPoint();
                     a.UnflattenAuthor().TruncateContent(256);
-                    if (!string.IsNullOrEmpty(a.ThumbnailImage))
+                    if (!string.IsNullOrEmpty(a.ThumbnailImage) && a.TypeName != "简评")
                         a.TruncateContent(128);
                     else
                         a.ThumbnailImage = null;
@@ -589,13 +589,31 @@ namespace Keylol.Controllers
                     return BadRequest(ModelState);
                 }
                 article.VoteForPointId = voteForPoint.Id;
-                article.Vote = vm.Vote;
+                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 0 ? 0 : vm.Vote);
             }
 
             article.TypeId = type.Id;
             article.Title = vm.Title;
             article.Content = vm.Content;
-            SanitizeArticle(article);
+            if (type.Name == "简评")
+            {
+                if (vm.Content.Length > 199)
+                {
+                    ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
+                    return BadRequest(ModelState);
+                }
+                if (vm.VoteForPointId == null)
+                {
+                    ModelState.AddModelError("vm.VoteForPointId", "简评必须选择一个评价对象");
+                    return BadRequest(ModelState);
+                }
+                article.UnstyledContent = article.Content;
+                article.ThumbnailImage = string.Empty;
+            }
+            else
+            {
+                SanitizeArticle(article);
+            }
             article.AttachedPoints =
                 await DbContext.NormalPoints.Where(PredicateBuilder.Contains<NormalPoint, string>(vm.AttachedPointsId,
                     point => point.Id)).ToListAsync();
@@ -677,7 +695,7 @@ namespace Keylol.Controllers
                     return BadRequest(ModelState);
                 }
                 article.VoteForPointId = voteForPoint.Id;
-                article.Vote = vm.Vote;
+                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 0 ? 0 : vm.Vote);
             }
             else
             {
@@ -697,7 +715,25 @@ namespace Keylol.Controllers
             if (vm.Content != null)
             {
                 article.Content = vm.Content;
-                SanitizeArticle(article);
+                if (type.Name == "简评")
+                {
+                    if (vm.Content.Length > 199)
+                    {
+                        ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
+                        return BadRequest(ModelState);
+                    }
+                    if (vm.VoteForPointId == null)
+                    {
+                        ModelState.AddModelError("vm.VoteForPointId", "简评必须选择一个评价对象");
+                        return BadRequest(ModelState);
+                    }
+                    article.UnstyledContent = article.Content;
+                    article.ThumbnailImage = string.Empty;
+                }
+                else
+                {
+                    SanitizeArticle(article);
+                }
             }
             article.AttachedPoints.Clear();
             await DbContext.SaveChangesAsync();

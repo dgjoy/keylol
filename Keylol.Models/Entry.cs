@@ -49,7 +49,7 @@ namespace Keylol.Models
         [MaxLength(300000)]
         public string UnstyledContent { get; set; } = string.Empty;
 
-        public VoteType? Vote { get; set; }
+        public int? Vote { get; set; }
         
         [Index]
         public int SequenceNumberForAuthor { get; set; }
