@@ -255,6 +255,7 @@
       <DependentUpon>SteamBotCoodinator.svc</DependentUpon>
     </Compile>
     <Compile Include="Utilities\PredicateBuilder.cs" />
+    <Compile Include="Utilities\Upyun.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Services\SteamBotCoodinator.svc" />

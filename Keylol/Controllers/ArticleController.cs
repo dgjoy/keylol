@@ -792,35 +792,35 @@ namespace Keylol.Controllers
         private static void SanitizeArticle(Article article)
         {
             Config.HtmlEncoder = new HtmlEncoderMinimum();
-            var sanitizer = new HtmlSanitizer(new[] {"div", "br", "h1", "blockquote", "b", "i", "u", "img", "a"},
-                null,
-                new[] {"href", "src", "webp-src"});
+            var sanitizer =
+                new HtmlSanitizer(
+                    new[]
+                    {
+                        "br", "span", "a", "img", "b", "strong", "i", "strike", "u", "p", "blockquote", "h1", "hr",
+                        "comment", "spoiler"
+                    },
+                    null,
+                    new[] {"src", "alt", "width", "height", "data-non-image", "href"},
+                    null,
+                    new[] {"text-align"});
             var dom = CQ.Create(sanitizer.Sanitize(article.Content));
             article.ThumbnailImage = string.Empty;
             foreach (var img in dom["img"])
             {
                 if (img.Attributes["src"] == null) continue;
-                if (img.Attributes["webp-src"] != null)
+                var fileName = Upyun.ExtractFileName(img.Attributes["src"]);
+                string url;
+                if (string.IsNullOrEmpty(fileName))
                 {
-                    if (string.IsNullOrEmpty(article.ThumbnailImage))
-                        article.ThumbnailImage = img.Attributes["webp-src"];
+                    url = img.Attributes["src"];
+                }
+                else
+                {
                     img.RemoveAttribute("src");
-                    continue;
+                    url = img.Attributes["webp-src"] = Upyun.CustomVersionUrl(fileName, "article.image");
                 }
-                var match = Regex.Match(img.Attributes["src"], @"^(?:http:|https:)?\/\/keylol\.b0\.upaiyun\.com\/(.*)$",
-                    RegexOptions.IgnoreCase);
-                if (!match.Success)
-                {
-                    if (string.IsNullOrEmpty(article.ThumbnailImage))
-                        article.ThumbnailImage = img.Attributes["src"];
-                    continue;
-                }
-                img.RemoveAttribute("src");
-                img.Attributes["webp-src"] = "//keylol.b0.upaiyun.com/" + match.Groups[1].Value;
-                if (!match.Groups[1].Value.Contains("!"))
-                    img.Attributes["webp-src"] += "!article.image";
                 if (string.IsNullOrEmpty(article.ThumbnailImage))
-                    article.ThumbnailImage = img.Attributes["webp-src"];
+                    article.ThumbnailImage = url;
             }
             article.Content = dom.Render();
             article.UnstyledContent = dom.Render(OutputFormatters.PlainText);
