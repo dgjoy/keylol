@@ -31,7 +31,7 @@ namespace Keylol.Controllers
             if ((string) options["save-key"] != "{filemd5}{.suffix}")
                 return BadRequest();
 
-            if ((int)options["expiration"] > DateTime.Now.UnixTimestamp() + 120)
+            if ((int)options["expiration"] > DateTime.Now.UnixTimestamp() + 330)
                 return BadRequest();
 
             var range = ((string) options["content-length-range"]).Split(',').Select(int.Parse).ToList();
