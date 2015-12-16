@@ -764,7 +764,7 @@ namespace Keylol.Controllers
                         "comment", "spoiler"
                     },
                     null,
-                    new[] {"src", "alt", "width", "height", "data-non-image", "href"},
+                    new[] {"src", "alt", "width", "height", "data-non-image", "href", "style"},
                     null,
                     new[] {"text-align"});
             var dom = CQ.Create(sanitizer.Sanitize(article.Content));
