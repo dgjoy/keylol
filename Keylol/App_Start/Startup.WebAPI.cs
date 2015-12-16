@@ -23,6 +23,7 @@ namespace Keylol
             config.EnableCors(_corsPolicyProvider);
 
 #if DEBUG
+            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
             config.EnableSwagger(c =>
             {
                 c.SingleApiVersion("v1", "Keylol REST API")
