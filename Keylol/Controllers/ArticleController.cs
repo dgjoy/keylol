@@ -761,7 +761,7 @@ namespace Keylol.Controllers
                     new[]
                     {
                         "br", "span", "a", "img", "b", "strong", "i", "strike", "u", "p", "blockquote", "h1", "hr",
-                        "comment", "spoiler"
+                        "comment", "spoiler", "table", "colgroup", "col", "thead", "tr", "th", "tbody", "td"
                     },
                     null,
                     new[] {"src", "alt", "width", "height", "data-non-image", "href", "style"},
