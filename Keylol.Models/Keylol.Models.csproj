@@ -165,7 +165,20 @@
     <Compile Include="Migrations\201512120737335_FiveLevelVote.Designer.cs">
       <DependentUpon>201512120737335_FiveLevelVote.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601121436133_PointNameInStore.cs" />
+    <Compile Include="Migrations\201601121436133_PointNameInStore.Designer.cs">
+      <DependentUpon>201601121436133_PointNameInStore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601121721257_PointFieldLength.cs" />
+    <Compile Include="Migrations\201601121721257_PointFieldLength.Designer.cs">
+      <DependentUpon>201601121721257_PointFieldLength.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601121727146_SeriesPoint.cs" />
+    <Compile Include="Migrations\201601121727146_SeriesPoint.Designer.cs">
+      <DependentUpon>201601121727146_SeriesPoint.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamBindingToken.cs" />
@@ -244,6 +257,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512120737335_FiveLevelVote.resx">
       <DependentUpon>201512120737335_FiveLevelVote.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601121436133_PointNameInStore.resx">
+      <DependentUpon>201601121436133_PointNameInStore.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601121721257_PointFieldLength.resx">
+      <DependentUpon>201601121721257_PointFieldLength.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601121727146_SeriesPoint.resx">
+      <DependentUpon>201601121727146_SeriesPoint.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

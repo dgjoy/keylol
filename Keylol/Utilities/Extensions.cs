@@ -31,6 +31,24 @@ namespace Keylol.Utilities
             }
             return s;
         }
+
+        public static IEnumerable<IEnumerable<T>> AllCombinations<T>(this IEnumerable<T> items, int count)
+        {
+            var i = 0;
+            var list = items as IList<T> ?? items.ToList();
+            foreach (var item in list)
+            {
+                if (count == 1)
+                    yield return new[] {item};
+                else
+                {
+                    foreach (var result in list.Skip(i + 1).AllCombinations(count - 1))
+                        yield return new T[] {item}.Concat(result);
+                }
+
+                ++i;
+            }
+        }
     }
 
     public static class StatusClaim

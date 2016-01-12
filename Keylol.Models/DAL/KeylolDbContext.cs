@@ -117,6 +117,12 @@ namespace Keylol.Models.DAL
                 .Map(t => t.MapLeftKey("GamePoint_Id")
                     .MapRightKey("MinorPlatformPoint_Id")
                     .ToTable("GameMinorPlatformPointAssociations"));
+            modelBuilder.Entity<NormalPoint>()
+                .HasMany(p => p.SeriesPoints)
+                .WithMany(p => p.SeriesForPoints)
+                .Map(t => t.MapLeftKey("GamePoint_Id")
+                    .MapRightKey("SeriesPoint_Id")
+                    .ToTable("GameSeriesPointAssociations"));
         }
 
         // Ignore validation error on unmodified properties

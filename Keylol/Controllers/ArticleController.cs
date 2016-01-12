@@ -575,8 +575,13 @@ namespace Keylol.Controllers
 
             var article = DbContext.Articles.Create();
 
-            if (type.AllowVote && vm.VoteForPointId != null)
+            if (type.AllowVote)
             {
+                if (vm.VoteForPointId == null)
+                {
+                    ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
+                    return BadRequest(ModelState);
+                }
                 var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
                 if (voteForPoint == null)
                 {
@@ -589,7 +594,7 @@ namespace Keylol.Controllers
                     return BadRequest(ModelState);
                 }
                 article.VoteForPointId = voteForPoint.Id;
-                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 0 ? 0 : vm.Vote);
+                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 1 ? 1 : vm.Vote);
             }
 
             article.TypeId = type.Id;
@@ -600,11 +605,6 @@ namespace Keylol.Controllers
                 if (vm.Content.Length > 199)
                 {
                     ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
-                    return BadRequest(ModelState);
-                }
-                if (vm.VoteForPointId == null)
-                {
-                    ModelState.AddModelError("vm.VoteForPointId", "简评必须选择一个评价对象");
                     return BadRequest(ModelState);
                 }
                 article.UnstyledContent = article.Content;
@@ -681,8 +681,13 @@ namespace Keylol.Controllers
                 type = article.Type;
             }
 
-            if (type.AllowVote && vm.VoteForPointId != null)
+            if (type.AllowVote)
             {
+                if (vm.VoteForPointId == null)
+                {
+                    ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
+                    return BadRequest(ModelState);
+                }
                 var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
                 if (voteForPoint == null)
                 {
@@ -695,7 +700,7 @@ namespace Keylol.Controllers
                     return BadRequest(ModelState);
                 }
                 article.VoteForPointId = voteForPoint.Id;
-                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 0 ? 0 : vm.Vote);
+                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 1 ? 1 : vm.Vote);
             }
             else
             {
@@ -720,11 +725,6 @@ namespace Keylol.Controllers
                     if (vm.Content.Length > 199)
                     {
                         ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
-                        return BadRequest(ModelState);
-                    }
-                    if (vm.VoteForPointId == null)
-                    {
-                        ModelState.AddModelError("vm.VoteForPointId", "简评必须选择一个评价对象");
                         return BadRequest(ModelState);
                     }
                     article.UnstyledContent = article.Content;
