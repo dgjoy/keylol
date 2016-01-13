@@ -20,11 +20,14 @@ namespace Keylol.Models.ViewModels
         [Required]
         public string IdCode { get; set; }
 
-        [Required]
+        [Required(AllowEmptyStrings = true)]
         public string ChineseName { get; set; }
 
         [Required]
         public string EnglishName { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        public string NameInSteamStore { get; set; }
 
         [Required]
         public PreferredNameType PreferredName { get; set; }
@@ -35,17 +38,8 @@ namespace Keylol.Models.ViewModels
         [Required(AllowEmptyStrings = true)]
         public string ChineseAliases { get; set; }
 
-//        [Required(AllowEmptyStrings = true)]
-//        public string Description { get; set; }
-
-        #region Obselete
-
-        [Required]
-        public List<string> AssociatedPointsId { get; set; }
-
-        public string StoreLink { get; set; }
-
-        #endregion
+        [Required(AllowEmptyStrings = true)]
+        public string Description { get; set; }
 
         #region Game Point Only
 
@@ -68,6 +62,8 @@ namespace Keylol.Models.ViewModels
         public List<string> MajorPlatformPointsId { get; set; }
 
         public List<string> MinorPlatformPointsId { get; set; }
+
+        public List<string> SeriesPointsId { get; set; }
 
         #endregion
     }

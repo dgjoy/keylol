@@ -771,24 +771,6 @@ namespace Keylol.Controllers
             return Ok();
         }
 
-        /// <summary>
-        /// 净化此前未净化过的文章
-        /// </summary>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
-        [Route("sanitize")]
-        public async Task<IHttpActionResult> PutSanitize()
-        {
-            var articles = await DbContext.Articles.Where(a => a.UnstyledContent == null).ToListAsync();
-            foreach (var article in articles)
-            {
-                SanitizeArticle(article);
-                if (article.ThumbnailImage == null)
-                    article.ThumbnailImage = string.Empty;
-            }
-            await DbContext.SaveChangesAsync();
-            return Ok();
-        }
-
         private static void SanitizeArticle(Article article)
         {
             Config.HtmlEncoder = new HtmlEncoderMinimum();
@@ -807,17 +789,23 @@ namespace Keylol.Controllers
             article.ThumbnailImage = string.Empty;
             foreach (var img in dom["img"])
             {
-                if (img.Attributes["src"] == null) continue;
-                var fileName = Upyun.ExtractFileName(img.Attributes["src"]);
-                string url;
-                if (string.IsNullOrEmpty(fileName))
+                var url = string.Empty;
+                if (string.IsNullOrEmpty(img.Attributes["src"]))
                 {
-                    url = img.Attributes["src"];
+                    img.Remove();
                 }
                 else
                 {
-                    img.RemoveAttribute("src");
-                    url = img.Attributes["webp-src"] = Upyun.CustomVersionUrl(fileName, "article.image");
+                    var fileName = Upyun.ExtractFileName(img.Attributes["src"]);
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        url = img.Attributes["src"];
+                    }
+                    else
+                    {
+                        url = img.Attributes["article-image-src"] = $"keylol://{fileName}";
+                        img.RemoveAttribute("src");
+                    }
                 }
                 if (string.IsNullOrEmpty(article.ThumbnailImage))
                     article.ThumbnailImage = url;

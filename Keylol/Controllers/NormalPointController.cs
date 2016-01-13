@@ -73,13 +73,12 @@ namespace Keylol.Controllers
         /// <param name="includeStats">是否包含读者数和文章数，默认 false</param>
         /// <param name="includeVotes">是否包含好评文章数和差评文章数，默认 false</param>
         /// <param name="includeSubscribed">是否包含据点有没有被当前用户订阅的信息，默认 false</param>
-        /// <param name="includeAssociated">是否包含关联据点信息，默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [ResponseType(typeof (NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
         public async Task<IHttpActionResult> Get(string id, bool includeStats = false, bool includeVotes = false,
-            bool includeSubscribed = false, bool includeAssociated = false, IdType idType = IdType.Id)
+            bool includeSubscribed = false, IdType idType = IdType.Id)
         {
             var point = await DbContext.NormalPoints
                 .Where(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id)
@@ -131,13 +130,6 @@ namespace Keylol.Controllers
                     [4] = votes.level4,
                     [5] = votes.level5
                 };
-            }
-
-            if (includeAssociated)
-            {
-                pointDTO.AssociatedPoints = (await DbContext.NormalPoints.Where(p => p.Id == point.Id)
-                    .SelectMany(p => p.AssociatedToPoints)
-                    .ToListAsync()).Select(p => new NormalPointDTO(p)).ToList();
             }
 
             return Ok(pointDTO);
@@ -231,13 +223,11 @@ namespace Keylol.Controllers
                     {
                         point = p,
                         articleCount = p.Articles.Count,
-                        subscriberCount = p.Subscribers.Count,
-                        associatedPoints = p.AssociatedToPoints
+                        subscriberCount = p.Subscribers.Count
                     }).ToListAsync()).Select(entry => new NormalPointDTO(entry.point, false, true)
                     {
                         ArticleCount = entry.articleCount,
-                        SubscriberCount = entry.subscriberCount,
-                        AssociatedPoints = entry.associatedPoints.Select(p => new NormalPointDTO(p, true)).ToList()
+                        SubscriberCount = entry.subscriberCount
                     })));
             response.Headers.Add("X-Total-Record-Count", (await DbContext.NormalPoints.CountAsync()).ToString());
             return response;
@@ -339,6 +329,7 @@ namespace Keylol.Controllers
                         }
                     }
                     gamePoint.IdCode = await GenerateIdCode(gamePoint.EnglishName);
+                    DbContext.NormalPoints.Add(gamePoint);
                     var genrePointsMap = new Dictionary<string, NormalPoint>();
                     var manufacturerPointsMap = new Dictionary<string, NormalPoint>();
                     foreach (var pair in genreNames.Concat(tags).Distinct()
@@ -386,7 +377,6 @@ namespace Keylol.Controllers
                         gamePoint.AvatarImage =
                             $"keylol://steam/app-icons/{appId}/{(string) root["apps"][appId.ToString()]["common"]["icon"]}";
                     }
-                    DbContext.NormalPoints.Add(gamePoint);
                     await DbContext.SaveChangesAsync();
                     return Created($"normal-point/{gamePoint.Id}", new NormalPointDTO(gamePoint));
                 }
@@ -424,7 +414,7 @@ namespace Keylol.Controllers
                 ModelState.AddModelError("vm.IdCode", "识别码只允许使用 5 位数字或大写字母");
                 return BadRequest(ModelState);
             }
-            if (await DbContext.NormalPoints.SingleOrDefaultAsync(u => u.IdCode == vm.IdCode) != null)
+            if (await DbContext.NormalPoints.AnyAsync(u => u.IdCode == vm.IdCode))
             {
                 ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
                 return BadRequest(ModelState);
@@ -440,21 +430,11 @@ namespace Keylol.Controllers
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
             normalPoint.Type = vm.Type;
-            normalPoint.AssociatedToPoints =
-                await DbContext.NormalPoints.Where(p => vm.AssociatedPointsId.Contains(p.Id)).ToListAsync();
-//            if (normalPoint.Type == NormalPointType.Game &&
-//                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.Full))
-//            {
-//                return BadRequest(ModelState);
-//            }
-            if (normalPoint.Type == NormalPointType.Game)
+            normalPoint.Description = vm.Description;
+            if (normalPoint.Type == NormalPointType.Game &&
+                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.Full))
             {
-                if (string.IsNullOrEmpty(vm.StoreLink))
-                {
-                    ModelState.AddModelError("vm.StoreLink", "游戏据点商店链接不能为空");
-                    return BadRequest(ModelState);
-                }
-                normalPoint.StoreLink = vm.StoreLink;
+                return BadRequest(ModelState);
             }
             DbContext.NormalPoints.Add(normalPoint);
             await DbContext.SaveChangesAsync();
@@ -501,31 +481,21 @@ namespace Keylol.Controllers
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
             normalPoint.Type = vm.Type;
-//            if (normalPoint.Type == NormalPointType.Game &&
-//                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.ExceptCollectionProperties))
-//            {
-//                return BadRequest(ModelState);
-//            }
-            if (normalPoint.Type == NormalPointType.Game)
+            normalPoint.Description = vm.Description;
+            if (normalPoint.Type == NormalPointType.Game &&
+                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.ExceptCollectionProperties))
             {
-                if (string.IsNullOrEmpty(vm.StoreLink))
-                {
-                    ModelState.AddModelError("vm.StoreLink", "游戏据点商店链接不能为空");
-                    return BadRequest(ModelState);
-                }
-                normalPoint.StoreLink = vm.StoreLink;
+                return BadRequest(ModelState);
             }
             normalPoint.AssociatedToPoints.Clear();
-//            normalPoint.DeveloperPoints.Clear();
-//            normalPoint.PublisherPoints.Clear();
-//            normalPoint.GenrePoints.Clear();
-//            normalPoint.TagPoints.Clear();
-//            normalPoint.MajorPlatformPoints.Clear();
-//            normalPoint.MinorPlatformForPoints.Clear();
+            normalPoint.DeveloperPoints.Clear();
+            normalPoint.PublisherPoints.Clear();
+            normalPoint.GenrePoints.Clear();
+            normalPoint.TagPoints.Clear();
+            normalPoint.MajorPlatformPoints.Clear();
+            normalPoint.MinorPlatformForPoints.Clear();
             await DbContext.SaveChangesAsync();
-            normalPoint.AssociatedToPoints =
-                await DbContext.NormalPoints.Where(p => vm.AssociatedPointsId.Contains(p.Id)).ToListAsync();
-//            await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.OnlyCollectionProperties);
+            await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.OnlyCollectionProperties);
             await DbContext.SaveChangesAsync();
             return Ok();
         }
@@ -592,6 +562,11 @@ namespace Keylol.Controllers
                     ModelState.AddModelError("vm.MinorPlatformPointsId", "游戏据点必须填写次要平台据点");
                     return false;
                 }
+                if (vm.SeriesPointsId == null)
+                {
+                    ModelState.AddModelError("vm.SeriesPointsId", "游戏据点必须填写系列据点");
+                    return false;
+                }
                 normalPoint.SteamAppId = vm.SteamAppId.Value;
                 normalPoint.DisplayAliases = vm.DisplayAliases;
                 normalPoint.ReleaseDate = vm.ReleaseDate.Value;
@@ -611,6 +586,8 @@ namespace Keylol.Controllers
                     await DbContext.NormalPoints.Where(p => vm.MajorPlatformPointsId.Contains(p.Id)).ToListAsync();
                 normalPoint.MinorPlatformForPoints =
                     await DbContext.NormalPoints.Where(p => vm.MinorPlatformPointsId.Contains(p.Id)).ToListAsync();
+                normalPoint.SeriesPoints =
+                    await DbContext.NormalPoints.Where(p => vm.SeriesPointsId.Contains(p.Id)).ToListAsync();
             }
             return true;
         }
