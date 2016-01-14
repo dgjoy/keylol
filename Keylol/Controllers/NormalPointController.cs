@@ -375,7 +375,7 @@ namespace Keylol.Controllers
                     if ((bool) root["success"])
                     {
                         gamePoint.AvatarImage =
-                            $"keylol://steam/app-icons/{appId}/{(string) root["apps"][appId.ToString()]["common"]["icon"]}";
+                            $"keylol://steam/app-icons/{appId}-{(string) root["apps"][appId.ToString()]["common"]["icon"]}";
                     }
                     await DbContext.SaveChangesAsync();
                     return Created($"normal-point/{gamePoint.Id}", new NormalPointDTO(gamePoint));
