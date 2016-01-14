@@ -16,7 +16,7 @@ namespace Keylol.Controllers
     [RoutePrefix("database-migration")]
     public class DatabaseMigrationController : KeylolApiController
     {
-        [Route("perform-latest-migration")]
+        [Route("v1")]
         public async Task<IHttpActionResult> Get()
         {
             foreach (var normalPoint in DbContext.NormalPoints)
@@ -39,6 +39,16 @@ namespace Keylol.Controllers
                 if (backgroundImageMatch.Success)
                 {
                     normalPoint.BackgroundImage = $"keylol://{backgroundImageMatch.Groups[1].Value}";
+                }
+            }
+
+            // ProfilePoint BackgroundImage
+            foreach (var profilePoint in DbContext.ProfilePoints)
+            {
+                var backgroundImageMatch = Regex.Match(profilePoint.BackgroundImage, @"^([0-9A-Z\.]+)$", RegexOptions.IgnoreCase);
+                if (backgroundImageMatch.Success)
+                {
+                    profilePoint.BackgroundImage = $"keylol://{backgroundImageMatch.Groups[1].Value}";
                 }
             }
 
