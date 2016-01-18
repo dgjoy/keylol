@@ -29,16 +29,16 @@ namespace Keylol.Controllers.Article
 
             [Required]
             public string Content { get; set; }
-            
+
             public List<string> AttachedPointsId { get; set; }
 
             public string VoteForPointId { get; set; }
 
             public int? Vote { get; set; }
 
-            public List<string> Goodness { get; set; }
+            public List<string> Pros { get; set; }
 
-            public List<string> Badness { get; set; }
+            public List<string> Cons { get; set; }
         }
 
         /// <summary>
@@ -85,7 +85,13 @@ namespace Keylol.Controllers.Article
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
                     return BadRequest(ModelState);
                 }
-                var voteForPoint = await DbContext.NormalPoints.FindAsync(vm.VoteForPointId);
+                var voteForPoint = await DbContext.NormalPoints
+                    .Include(p => p.DeveloperPoints)
+                    .Include(p => p.PublisherPoints)
+                    .Include(p => p.SeriesPoints)
+                    .Include(p => p.GenrePoints)
+                    .Include(p => p.TagPoints)
+                    .SingleOrDefaultAsync(p => p.Id == vm.VoteForPointId);
                 if (voteForPoint == null)
                 {
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
@@ -98,14 +104,14 @@ namespace Keylol.Controllers.Article
                 }
                 article.VoteForPointId = voteForPoint.Id;
                 article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 1 ? 1 : vm.Vote);
-                
-                if (vm.Goodness == null)
-                    vm.Goodness = new List<string>();
-                article.Goodness = JsonConvert.SerializeObject(vm.Goodness);
 
-                if (vm.Badness == null)
-                    vm.Badness = new List<string>();
-                article.Badness = JsonConvert.SerializeObject(vm.Badness);
+                if (vm.Pros == null)
+                    vm.Pros = new List<string>();
+                article.Pros = JsonConvert.SerializeObject(vm.Pros);
+
+                if (vm.Cons == null)
+                    vm.Cons = new List<string>();
+                article.Cons = JsonConvert.SerializeObject(vm.Cons);
 
                 article.AttachedPoints = voteForPoint.DeveloperPoints
                     .Concat(voteForPoint.PublisherPoints)
@@ -118,8 +124,8 @@ namespace Keylol.Controllers.Article
             {
                 article.Vote = null;
                 article.VoteForPointId = null;
-                article.Goodness = string.Empty;
-                article.Badness = string.Empty;
+                article.Pros = string.Empty;
+                article.Cons = string.Empty;
 
                 if (vm.AttachedPointsId == null)
                 {
@@ -169,7 +175,7 @@ namespace Keylol.Controllers.Article
                     SanitizeArticle(article, false);
                 }
             }
-            
+
             await DbContext.SaveChangesAsync();
             return Ok();
         }

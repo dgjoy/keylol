@@ -29,8 +29,7 @@ namespace Keylol.Controllers.NormalPoint
             bool includeSubscribed = false, IdType idType = IdType.Id)
         {
             var point = await DbContext.NormalPoints
-                .Where(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
 
             if (point == null)
                 return NotFound();

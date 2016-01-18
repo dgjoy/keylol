@@ -65,11 +65,11 @@ namespace Keylol.Models
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(5000)]
-        public string Goodness { get; set; } = string.Empty;
+        public string Pros { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(5000)]
-        public string Badness { get; set; } = string.Empty;
+        public string Cons { get; set; } = string.Empty;
 
         public virtual ICollection<NormalPoint> AttachedPoints { get; set; }
 

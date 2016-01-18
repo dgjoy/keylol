@@ -237,6 +237,7 @@
     <Compile Include="Controllers\Login\DeleteOneByCurrentUser.cs" />
     <Compile Include="Controllers\Login\CreateOneFromSteamLoginToken.cs" />
     <Compile Include="Controllers\Login\CreateOneFromPassword.cs" />
+    <Compile Include="Controllers\NormalPoint\GetListOfRelated.cs" />
     <Compile Include="Controllers\NormalPoint\UpdateOneById.cs" />
     <Compile Include="Controllers\NormalPoint\CreateOneManually.cs" />
     <Compile Include="Controllers\NormalPoint\CreateOneFromSteamAppId.cs" />

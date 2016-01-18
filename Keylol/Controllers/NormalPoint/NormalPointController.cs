@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Models;
 using Keylol.Models.ViewModels;
 using Keylol.Utilities;
 
@@ -17,6 +18,21 @@ namespace Keylol.Controllers.NormalPoint
         {
             Id,
             IdCode
+        }
+
+        private static string GetPreferredName(Models.NormalPoint point)
+        {
+            switch (point.PreferredName)
+            {
+                case PreferredNameType.Chinese:
+                    return point.ChineseName;
+
+                case PreferredNameType.English:
+                    return point.EnglishName;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(point));
+            }
         }
 
         private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint, NormalPointVM vm,
