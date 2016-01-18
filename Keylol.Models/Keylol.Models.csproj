@@ -177,6 +177,10 @@
     <Compile Include="Migrations\201601121727146_SeriesPoint.Designer.cs">
       <DependentUpon>201601121727146_SeriesPoint.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601180803411_ArticleGoodnessBadness.cs" />
+    <Compile Include="Migrations\201601180803411_ArticleGoodnessBadness.Designer.cs">
+      <DependentUpon>201601180803411_ArticleGoodnessBadness.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -266,6 +270,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601121727146_SeriesPoint.resx">
       <DependentUpon>201601121727146_SeriesPoint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601180803411_ArticleGoodnessBadness.resx">
+      <DependentUpon>201601180803411_ArticleGoodnessBadness.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

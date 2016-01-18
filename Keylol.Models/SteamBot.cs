@@ -17,7 +17,7 @@ namespace Keylol.Models
         [Required]
         [MaxLength(64)]
         public string SteamPassword { get; set; }
-        
+
         [MaxLength(64)]
         [Index]
         public string SteamId { get; set; }
