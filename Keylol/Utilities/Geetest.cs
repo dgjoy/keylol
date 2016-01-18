@@ -10,7 +10,7 @@ namespace Keylol.Utilities
     public class Geetest
     {
         private const string BaseUrl = "http://api.geetest.com";
-        private const string Key = "444dcf8693daa76733c7ad1c6e2655d7";
+        private const string Key = "8ccb633300fb4a3cf9c6412783a7d12b";
 
         private HttpClient Client { get; } = new HttpClient
         {
