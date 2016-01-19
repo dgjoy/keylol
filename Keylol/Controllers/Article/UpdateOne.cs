@@ -132,6 +132,11 @@ namespace Keylol.Controllers.Article
                     ModelState.AddModelError("vm.AttachedPointsId", "非评价类文章必须手动推送据点");
                     return BadRequest(ModelState);
                 }
+                if (vm.AttachedPointsId.Count > 50)
+                {
+                    ModelState.AddModelError("vm.AttachedPointsId", "推送据点数量太多");
+                    return BadRequest(ModelState);
+                }
                 article.AttachedPoints = await DbContext.NormalPoints
                     .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(vm.AttachedPointsId,
                         point => point.Id)).ToListAsync();

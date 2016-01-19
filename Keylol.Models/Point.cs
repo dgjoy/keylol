@@ -10,7 +10,8 @@ namespace Keylol.Models
         Game,
         Genre,
         Manufacturer,
-        Platform
+        Platform,
+        Unspecified
     }
 
     public enum PreferredNameType
