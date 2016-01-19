@@ -106,11 +106,9 @@ namespace Keylol.Controllers.Article
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
                 {
-                    articleDTO.ThumbnailImage = entry.voteForPoint != null
-                        ? $"keylol://{entry.voteForPoint.BackgroundImage}"
-                        : null;
+                    articleDTO.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }
-                if (articleDTO.ThumbnailImage != null && articleDTO.TypeName != "简评")
+                if (articleDTO.TypeName != "简评")
                     articleDTO.TruncateContent(128);
                 if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
                 {

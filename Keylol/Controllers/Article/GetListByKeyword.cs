@@ -59,7 +59,7 @@ namespace Keylol.Controllers.Article
 	            [t3].[Title],
 	            [t3].[UnstyledContent] AS [Content],
                 CASE WHEN [t3].[ThumbnailImage] = '' THEN
-                    'keylol://' + [t3].[VoteForPointBackgroundImage]
+                    [t3].[VoteForPointBackgroundImage]
                 ELSE
                     [t3].[ThumbnailImage]
                 END AS [ThumbnailImage],
@@ -110,7 +110,7 @@ namespace Keylol.Controllers.Article
                     if (a.VoteForPointId != null)
                         a.UnflattenVoteForPoint();
                     a.UnflattenAuthor().TruncateContent(256);
-                    if (!string.IsNullOrEmpty(a.ThumbnailImage) && a.TypeName != "简评")
+                    if (a.TypeName != "简评")
                         a.TruncateContent(128);
                     else
                         a.ThumbnailImage = null;
