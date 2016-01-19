@@ -36,87 +36,84 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint, NormalPointVM vm,
-            PopulateGamePointMode populateMode)
+            string editorStaffClaim)
         {
-            if (populateMode != PopulateGamePointMode.OnlyCollectionProperties)
+            if (vm.SteamAppId == null)
             {
-                if (vm.SteamAppId == null)
-                {
-                    ModelState.AddModelError("vm.SteamAppId", "游戏据点的 App ID 不能为空");
-                    return false;
-                }
-                if (vm.DisplayAliases == null)
-                {
-                    ModelState.AddModelError("vm.DisplayAliases", "游戏据点必须填写别名");
-                    return false;
-                }
-                if (vm.ReleaseDate == null)
-                {
-                    ModelState.AddModelError("vm.ReleaseDate", "游戏据点的面世日期不能为空");
-                    return false;
-                }
-                if (string.IsNullOrEmpty(vm.CoverImage))
-                {
-                    ModelState.AddModelError("vm.CoverImage", "游戏据点的封面图片不能为空");
-                    return false;
-                }
-                if (vm.DeveloperPointsId == null)
-                {
-                    ModelState.AddModelError("vm.DeveloperPointsId", "游戏据点必须填写开发商据点");
-                    return false;
-                }
-                if (vm.PublisherPointsId == null)
-                {
-                    ModelState.AddModelError("vm.PublisherPointsId", "游戏据点必须填写发行商据点");
-                    return false;
-                }
-                if (vm.GenrePointsId == null)
-                {
-                    ModelState.AddModelError("vm.GenrePointsId", "游戏据点必须填写类型据点");
-                    return false;
-                }
-                if (vm.TagPointsId == null)
-                {
-                    ModelState.AddModelError("vm.TagPointsId", "游戏据点必须填写特性据点");
-                    return false;
-                }
-                if (vm.MajorPlatformPointsId == null)
-                {
-                    ModelState.AddModelError("vm.MajorPlatformPointsId", "游戏据点必须填写主要平台据点");
-                    return false;
-                }
-                if (vm.MinorPlatformPointsId == null)
-                {
-                    ModelState.AddModelError("vm.MinorPlatformPointsId", "游戏据点必须填写次要平台据点");
-                    return false;
-                }
-                if (vm.SeriesPointsId == null)
-                {
-                    ModelState.AddModelError("vm.SeriesPointsId", "游戏据点必须填写系列据点");
-                    return false;
-                }
-                normalPoint.SteamAppId = vm.SteamAppId.Value;
-                normalPoint.DisplayAliases = vm.DisplayAliases;
+                ModelState.AddModelError("vm.SteamAppId", "游戏据点的 App ID 不能为空");
+                return false;
+            }
+            if (vm.DisplayAliases == null)
+            {
+                ModelState.AddModelError("vm.DisplayAliases", "游戏据点必须填写别名");
+                return false;
+            }
+            if (vm.ReleaseDate == null)
+            {
+                ModelState.AddModelError("vm.ReleaseDate", "游戏据点的面世日期不能为空");
+                return false;
+            }
+            if (string.IsNullOrEmpty(vm.CoverImage))
+            {
+                ModelState.AddModelError("vm.CoverImage", "游戏据点的封面图片不能为空");
+                return false;
+            }
+            if (vm.DeveloperPointsId == null)
+            {
+                ModelState.AddModelError("vm.DeveloperPointsId", "游戏据点必须填写开发商据点");
+                return false;
+            }
+            if (vm.PublisherPointsId == null)
+            {
+                ModelState.AddModelError("vm.PublisherPointsId", "游戏据点必须填写发行商据点");
+                return false;
+            }
+            if (vm.GenrePointsId == null)
+            {
+                ModelState.AddModelError("vm.GenrePointsId", "游戏据点必须填写类型据点");
+                return false;
+            }
+            if (vm.TagPointsId == null)
+            {
+                ModelState.AddModelError("vm.TagPointsId", "游戏据点必须填写特性据点");
+                return false;
+            }
+            if (vm.MajorPlatformPointsId == null)
+            {
+                ModelState.AddModelError("vm.MajorPlatformPointsId", "游戏据点必须填写主要平台据点");
+                return false;
+            }
+            if (vm.MinorPlatformPointsId == null)
+            {
+                ModelState.AddModelError("vm.MinorPlatformPointsId", "游戏据点必须填写次要平台据点");
+                return false;
+            }
+            if (vm.SeriesPointsId == null)
+            {
+                ModelState.AddModelError("vm.SeriesPointsId", "游戏据点必须填写系列据点");
+                return false;
+            }
+            normalPoint.SteamAppId = vm.SteamAppId.Value;
+            normalPoint.DisplayAliases = vm.DisplayAliases;
+            if (editorStaffClaim == StaffClaim.Operator)
                 normalPoint.ReleaseDate = vm.ReleaseDate.Value;
-                normalPoint.CoverImage = vm.CoverImage;
-            }
-            if (populateMode != PopulateGamePointMode.ExceptCollectionProperties)
-            {
-                normalPoint.DeveloperPoints =
-                    await DbContext.NormalPoints.Where(p => vm.DeveloperPointsId.Contains(p.Id)).ToListAsync();
-                normalPoint.PublisherPoints =
-                    await DbContext.NormalPoints.Where(p => vm.PublisherPointsId.Contains(p.Id)).ToListAsync();
-                normalPoint.GenrePoints =
-                    await DbContext.NormalPoints.Where(p => vm.GenrePointsId.Contains(p.Id)).ToListAsync();
-                normalPoint.TagPoints =
-                    await DbContext.NormalPoints.Where(p => vm.TagPointsId.Contains(p.Id)).ToListAsync();
-                normalPoint.MajorPlatformPoints =
-                    await DbContext.NormalPoints.Where(p => vm.MajorPlatformPointsId.Contains(p.Id)).ToListAsync();
-                normalPoint.MinorPlatformForPoints =
-                    await DbContext.NormalPoints.Where(p => vm.MinorPlatformPointsId.Contains(p.Id)).ToListAsync();
-                normalPoint.SeriesPoints =
-                    await DbContext.NormalPoints.Where(p => vm.SeriesPointsId.Contains(p.Id)).ToListAsync();
-            }
+            normalPoint.CoverImage = vm.CoverImage;
+
+            normalPoint.DeveloperPoints =
+                await DbContext.NormalPoints.Where(p => vm.DeveloperPointsId.Contains(p.Id)).ToListAsync();
+            normalPoint.PublisherPoints =
+                await DbContext.NormalPoints.Where(p => vm.PublisherPointsId.Contains(p.Id)).ToListAsync();
+            normalPoint.GenrePoints =
+                await DbContext.NormalPoints.Where(p => vm.GenrePointsId.Contains(p.Id)).ToListAsync();
+            normalPoint.TagPoints =
+                await DbContext.NormalPoints.Where(p => vm.TagPointsId.Contains(p.Id)).ToListAsync();
+            normalPoint.MajorPlatformPoints =
+                await DbContext.NormalPoints.Where(p => vm.MajorPlatformPointsId.Contains(p.Id)).ToListAsync();
+            normalPoint.MinorPlatformForPoints =
+                await DbContext.NormalPoints.Where(p => vm.MinorPlatformPointsId.Contains(p.Id)).ToListAsync();
+            normalPoint.SeriesPoints =
+                await DbContext.NormalPoints.Where(p => vm.SeriesPointsId.Contains(p.Id)).ToListAsync();
+
             return true;
         }
 

@@ -57,7 +57,7 @@ namespace Keylol.Controllers.NormalPoint
             normalPoint.Type = vm.Type;
             normalPoint.Description = vm.Description;
             if (normalPoint.Type == NormalPointType.Game &&
-                !await PopulateGamePointAttributes(normalPoint, vm, PopulateGamePointMode.Full))
+                !await PopulateGamePointAttributes(normalPoint, vm, StaffClaim.Operator))
             {
                 return BadRequest(ModelState);
             }

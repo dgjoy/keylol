@@ -65,7 +65,7 @@ namespace Keylol.Controllers.NormalPoint
                     gamePoint.CoverImage = $"keylol://steam/app-headers/{appId}";
                     gamePoint.Description = dom[".game_description_snippet"].Text().Trim();
                     var genreNames = new List<string>();
-                    var tags = dom[".popular_tags a.app_tag"].Select(child => child.InnerText.Trim()).ToList();
+                    var tags = dom[".popular_tags a.app_tag"].Select(child => child.InnerText.Trim()).Take(5).ToList();
                     var developerNames = new List<string>();
                     var publisherNames = new List<string>();
                     foreach (var child in dom[".game_details .details_block"].First().Find("b"))
@@ -162,7 +162,23 @@ namespace Keylol.Controllers.NormalPoint
                             $"keylol://steam/app-icons/{appId}-{(string) root["apps"][appId.ToString()]["common"]["icon"]}";
                     }
                     await DbContext.SaveChangesAsync();
-                    return Created($"normal-point/{gamePoint.Id}", new NormalPointDTO(gamePoint));
+                    return Created($"normal-point/{gamePoint.Id}", new NormalPointDTO(gamePoint, false, true)
+                    {
+                        Description = gamePoint.Description,
+                        SteamAppId = gamePoint.SteamAppId,
+                        DisplayAliases = gamePoint.DisplayAliases,
+                        CoverImage = gamePoint.CoverImage,
+                        ReleaseDate = gamePoint.ReleaseDate,
+                        DeveloperPoints = gamePoint.DeveloperPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                        PublisherPoints = gamePoint.PublisherPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                        SeriesPoints = gamePoint.SeriesPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                        GenrePoints = gamePoint.GenrePoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                        TagPoints = gamePoint.TagPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                        MajorPlatformPoints =
+                            gamePoint.MajorPlatformPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                        MinorPlatformPoints =
+                            gamePoint.MinorPlatformPoints.Select(p => new NormalPointDTO(p, true)).ToList()
+                    });
                 }
             }
             catch (Exception e)

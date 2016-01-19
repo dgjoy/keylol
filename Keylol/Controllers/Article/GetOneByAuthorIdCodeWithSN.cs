@@ -41,7 +41,7 @@ namespace Keylol.Controllers.Article
                         .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
-            var articleDTO = new ArticleDTO(articleEntry.article, true)
+            var articleDTO = new ArticleDTO(articleEntry.article, true, includeProsCons: true, includeSummary: true)
             {
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
                 TypeName = articleEntry.typeName,

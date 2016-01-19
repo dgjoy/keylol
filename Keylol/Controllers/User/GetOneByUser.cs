@@ -36,6 +36,7 @@ namespace Keylol.Controllers.User
         /// <param name="includeSubscribed">是否包含该用户有没有被当前用户的信息，默认 false</param>
         /// <param name="includeMoreOptions">是否包含更多杂项设置（例如通知偏好设置），默认 false</param>
         /// <param name="includeCommentLike">是否包含用户有无新的评论和认可，用户只能获取自己的信息（除非是运维职员），默认 false</param>
+        /// <param name="includeReviewStats">是否包含用户评测文章数和简评数，默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [HttpGet]
@@ -45,7 +46,7 @@ namespace Keylol.Controllers.User
             bool includeClaims = false, bool includeSecurity = false, bool includeSteam = false,
             bool includeSteamBot = false, bool includeSubscribeCount = false, bool includeStats = false,
             bool includeSubscribed = false, bool includeMoreOptions = false, bool includeCommentLike = false,
-            IdType idType = IdType.Id)
+            bool includeReviewStats = false, IdType idType = IdType.Id)
         {
             KeylolUser user;
             switch (idType)
@@ -110,6 +111,20 @@ namespace Keylol.Controllers.User
                     .SingleOrDefaultAsync();
                 userDTO.SubscriberCount = stats.subscriberCount;
                 userDTO.ArticleCount = stats.articleCount;
+            }
+
+            if (includeReviewStats)
+            {
+                var reviewStats = await DbContext.Users.Where(u => u.Id == user.Id)
+                    .Select(u => new
+                    {
+                        reviewCount = u.ProfilePoint.Entries.OfType<Models.Article>().Count(a => a.Type.Name == "评"),
+                        shortReviewCount =
+                            u.ProfilePoint.Entries.OfType<Models.Article>().Count(a => a.Type.Name == "简评")
+                    })
+                    .SingleOrDefaultAsync();
+                userDTO.ReviewCount = reviewStats.reviewCount;
+                userDTO.ShortReviewCount = reviewStats.shortReviewCount;
             }
 
             if (includeSubscribed)
