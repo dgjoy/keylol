@@ -1,9 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using CsQuery;
 using CsQuery.Output;
 using Keylol.Utilities;
+using Newtonsoft.Json;
 
 namespace Keylol.Controllers
 {
@@ -16,6 +18,7 @@ namespace Keylol.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
+            // 迁移方法需要保证幂等性
             foreach (var normalPoint in DbContext.NormalPoints)
             {
                 // NormalPoint StoreLink -> SteamAppId
@@ -54,6 +57,12 @@ namespace Keylol.Controllers
 
             foreach (var article in DbContext.Articles)
             {
+                // Pros, Cons Fix
+                if (article.Pros == null)
+                    article.Pros = article.Type.AllowVote ? "[]" : string.Empty;
+                if (article.Cons == null)
+                    article.Cons = article.Type.AllowVote ? "[]" : string.Empty;
+
                 // Article Content webp-src, ThumbnailImage URI Fix
                 Config.HtmlEncoder = new HtmlEncoderMinimum();
                 var dom = CQ.Create(article.Content);
