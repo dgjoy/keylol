@@ -48,13 +48,13 @@ namespace Keylol.Models.DTO
         public string Id { get; set; }
         public string AvatarImage { get; set; }
         public string BackgroundImage { get; set; }
-        public NormalPointType Type { get; set; }
+        public NormalPointType? Type { get; set; }
         public string IdCode { get; set; }
         public string ChineseName { get; set; }
         public string EnglishName { get; set; }
         public string EnglishAliases { get; set; }
         public string ChineseAliases { get; set; }
-        public PreferredNameType PreferredName { get; set; }
+        public PreferredNameType? PreferredName { get; set; }
         public string Description { get; set; }
         public string NameInSteamStore { get; set; }
 
