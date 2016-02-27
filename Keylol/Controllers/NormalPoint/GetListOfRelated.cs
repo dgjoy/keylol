@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
@@ -26,7 +24,6 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="id">游戏据点 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
-        /// <returns></returns>
         [Route("{id}/related")]
         [HttpGet]
         [ResponseType(typeof (List<GetListOfRelatedEntryDTO>))]

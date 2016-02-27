@@ -73,6 +73,16 @@ namespace Keylol.Models.DTO
 
         #endregion
 
+        #region Platform / Manufacture Point Only
+
+        public int? GameCountAsDeveloper { get; set; }
+        public int? GameCountAsPublisher { get; set; }
+        public int? GameCountAsGenre { get; set; }
+        public int? GameCountAsTag { get; set; }
+        public int? GameCountAsSeries { get; set; }
+
+        #endregion
+
         public int? SubscriberCount { get; set; }
         public int? ArticleCount { get; set; }
         public Dictionary<int, int> VoteStats { get; set; }
