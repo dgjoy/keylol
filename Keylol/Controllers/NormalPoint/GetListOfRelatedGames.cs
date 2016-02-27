@@ -16,7 +16,9 @@ namespace Keylol.Controllers.NormalPoint
         public class GetListOfRelatedGamesEntryDTO
         {
             public string Id { get; set; }
-            public string Name { get; set; }
+            public string ChineseName { get; set; }
+            public string EnglishName { get; set; }
+            public string AvatarImage { get; set; }
             public string IdCode { get; set; }
         }
 
@@ -77,7 +79,9 @@ namespace Keylol.Controllers.NormalPoint
             {
                 Id = p.Id,
                 IdCode = p.IdCode,
-                Name = GetPreferredName(p)
+                ChineseName = p.ChineseName,
+                EnglishName = p.EnglishName,
+                AvatarImage = p.AvatarImage
             }));
         }
     }
