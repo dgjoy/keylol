@@ -19,7 +19,7 @@ namespace Keylol.Controllers.User
         [Route("my")]
         [HttpGet]
         [ResponseType(typeof (List<UserDTO>))]
-        public async Task<IHttpActionResult> GetOneByCurrentUser(int skip = 0, int take = 30)
+        public async Task<IHttpActionResult> GetListOfSubscribersByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
             var userId = User.Identity.GetUserId();

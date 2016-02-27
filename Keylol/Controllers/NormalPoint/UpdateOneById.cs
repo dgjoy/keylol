@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.ViewModels;
+using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -72,6 +73,7 @@ namespace Keylol.Controllers.NormalPoint
                 return BadRequest(ModelState);
             }
             await DbContext.SaveChangesAsync();
+            await RedisProvider.Delete($"point:{normalPoint.Id}:related");
             return Ok();
         }
     }

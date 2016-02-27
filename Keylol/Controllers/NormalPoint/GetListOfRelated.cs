@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
+using Keylol.Provider;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.NormalPoint
@@ -31,16 +33,16 @@ namespace Keylol.Controllers.NormalPoint
         public async Task<IHttpActionResult> GetListOfRelated(string id, IdType idType = IdType.Id)
         {
             var point = await DbContext.NormalPoints
-                .Include(p => p.DeveloperPoints)
-                .Include(p => p.PublisherPoints)
-                .Include(p => p.SeriesPoints)
-                .Include(p => p.GenrePoints)
-                .Include(p => p.TagPoints)
                 .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
             if (point == null || point.Type != NormalPointType.Game)
                 return NotFound();
 
-            return Ok(point.DeveloperPoints
+            var cacheKey = $"point:{point.Id}:related";
+            var cache = await RedisProvider.Get(cacheKey);
+            if (cache.HasValue)
+                return Ok(RedisProvider.Deserialize(cache, true));
+
+            var result = point.DeveloperPoints
                 .Concat(point.PublisherPoints)
                 .Concat(point.SeriesPoints)
                 .Concat(point.GenrePoints)
@@ -51,7 +53,9 @@ namespace Keylol.Controllers.NormalPoint
                     Id = p.Id,
                     IdCode = p.IdCode,
                     Name = GetPreferredName(p)
-                }));
+                }).ToList();
+            await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(30));
+            return Ok(result);
         }
     }
 }

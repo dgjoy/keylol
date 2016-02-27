@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.ViewModels;
+using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
@@ -182,6 +183,7 @@ namespace Keylol.Controllers.Article
             }
 
             await DbContext.SaveChangesAsync();
+            await RedisProvider.Delete($"user:{article.PrincipalId}:profile.timeline");
             return Ok();
         }
     }

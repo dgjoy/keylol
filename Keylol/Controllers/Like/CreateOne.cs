@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models.ViewModels;
+using Keylol.Provider;
 using Keylol.Services;
 using Keylol.Services.Contracts;
 using Microsoft.AspNet.Identity;
@@ -74,6 +75,7 @@ namespace Keylol.Controllers.Like
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
                         }
                     }
+                    await RedisProvider.Delete($"user:{operatorId}:profile.timeline");
                     break;
                 }
 

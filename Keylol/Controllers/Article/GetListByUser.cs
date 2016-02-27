@@ -7,7 +7,9 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Controllers.User;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Keylol.Models.DTO;
+using Keylol.Provider;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.Article
@@ -29,25 +31,34 @@ namespace Keylol.Controllers.Article
         public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
             string articleTypeFilter = null, bool publishOnly = false, int beforeSN = int.MaxValue, int take = 30)
         {
-            if (take > 50) take = 50;
-            IQueryable<KeylolUser> userQuery;
+            KeylolUser user;
             switch (idType)
             {
                 case UserController.IdType.Id:
-                    userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
+                    user = await DbContext.Users.AsNoTracking().SingleAsync(u => u.Id == userId);
                     break;
 
                 case UserController.IdType.IdCode:
-                    userQuery = DbContext.Users.AsNoTracking().Where(u => u.IdCode == userId);
+                    user = await DbContext.Users.AsNoTracking().SingleAsync(u => u.IdCode == userId);
                     break;
 
                 case UserController.IdType.UserName:
-                    userQuery = DbContext.Users.AsNoTracking().Where(u => u.UserName == userId);
+                    user = await DbContext.Users.AsNoTracking().SingleAsync(u => u.UserName == userId);
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
             }
+            var cacheKey = $"user:{user.Id}:profile.timeline";
+            if (articleTypeFilter == null && publishOnly && beforeSN == int.MaxValue)
+            {
+                var cache = await RedisProvider.Get(cacheKey);
+                if (cache.HasValue)
+                    return Ok(RedisProvider.Deserialize(cache, true));
+            }
+
+            if (take > 50) take = 50;
+            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == user.Id);
             var articleQuery = userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Models.Article>())
                 .Where(a => a.SequenceNumber < beforeSN)
                 .Select(a => new
@@ -94,7 +105,7 @@ namespace Keylol.Controllers.Article
                     typeName = g.article.Type.Name
                 })
                 .ToListAsync();
-            return Ok(articleEntries.Select(entry =>
+            var result = articleEntries.Select(entry =>
             {
                 var articleDTO = new ArticleDTO(entry.article, true, 256, true)
                 {
@@ -115,7 +126,9 @@ namespace Keylol.Controllers.Article
                     articleDTO.Author = new UserDTO(entry.author);
                 }
                 return articleDTO;
-            }));
+            }).ToList();
+            await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
+            return Ok(result);
         }
     }
 }
