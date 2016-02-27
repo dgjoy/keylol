@@ -185,6 +185,10 @@
     <Compile Include="Migrations\201601181213390_ArticleProsConsRename.Designer.cs">
       <DependentUpon>201601181213390_ArticleProsConsRename.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602270943177_NormalPointReleaseDateIndex.cs" />
+    <Compile Include="Migrations\201602270943177_NormalPointReleaseDateIndex.Designer.cs">
+      <DependentUpon>201602270943177_NormalPointReleaseDateIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -280,6 +284,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601181213390_ArticleProsConsRename.resx">
       <DependentUpon>201601181213390_ArticleProsConsRename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602270943177_NormalPointReleaseDateIndex.resx">
+      <DependentUpon>201602270943177_NormalPointReleaseDateIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

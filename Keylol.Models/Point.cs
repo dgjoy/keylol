@@ -86,6 +86,7 @@ namespace Keylol.Models
         [MaxLength(256)]
         public string DisplayAliases { get; set; } = string.Empty;
 
+        [Index]
         public DateTime ReleaseDate { get; set; } = DateTime.Now;
 
         [Required(AllowEmptyStrings = true)]

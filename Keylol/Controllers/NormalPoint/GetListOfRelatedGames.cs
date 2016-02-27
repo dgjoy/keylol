@@ -7,21 +7,14 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
+using Keylol.Models.DTO;
+using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.NormalPoint
 {
     public partial class NormalPointController
     {
-        public class GetListOfRelatedGamesEntryDTO
-        {
-            public string Id { get; set; }
-            public string ChineseName { get; set; }
-            public string EnglishName { get; set; }
-            public string AvatarImage { get; set; }
-            public string IdCode { get; set; }
-        }
-
         public enum PointRelationship
         {
             Developer,
@@ -36,52 +29,75 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="id">据点 ID</param>
         /// <param name="relationship">该厂商或类型据点与想要获取游戏据点的关系</param>
+        /// <param name="includeStats">是否包含据点的读者数、文章数、订阅状态，默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
+        /// <param name="skip">起始位置，默认 0</param>
+        /// <param name="take">获取数量，最大 50，默认 9</param>
         [Route("{id}/games")]
         [HttpGet]
-        [ResponseType(typeof (List<GetListOfRelatedGamesEntryDTO>))]
+        [ResponseType(typeof (List<NormalPointDTO>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是厂商或类型据点")]
         public async Task<IHttpActionResult> GetListOfRelatedGames(string id, PointRelationship relationship,
-            IdType idType = IdType.Id)
+            bool includeStats = false, IdType idType = IdType.Id, int skip = 0, int take = 9)
         {
+            if (take > 50)
+                take = 50;
+
             var point = await DbContext.NormalPoints
                 .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
             if (point == null || (point.Type != NormalPointType.Manufacturer && point.Type != NormalPointType.Genre))
                 return NotFound();
 
-            IEnumerable<Models.NormalPoint> points;
+            var queryBase = DbContext.NormalPoints.Where(p => p.Id == point.Id);
+            IQueryable<Models.NormalPoint> queryNext;
             switch (relationship)
             {
                 case PointRelationship.Developer:
-                    points = point.DeveloperForPoints;
+                    queryNext = queryBase.SelectMany(p => p.DeveloperForPoints);
                     break;
 
                 case PointRelationship.Publisher:
-                    points = point.PublisherForPoints;
+                    queryNext = queryBase.SelectMany(p => p.PublisherForPoints);
                     break;
 
                 case PointRelationship.Series:
-                    points = point.SeriesForPoints;
+                    queryNext = queryBase.SelectMany(p => p.SeriesForPoints);
                     break;
 
                 case PointRelationship.Genre:
-                    points = point.GenreForPoints;
+                    queryNext = queryBase.SelectMany(p => p.GenreForPoints);
                     break;
 
                 case PointRelationship.Tag:
-                    points = point.TagForPoints;
+                    queryNext = queryBase.SelectMany(p => p.TagForPoints);
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(relationship), relationship, null);
             }
-            return Ok(points.Select(p => new GetListOfRelatedGamesEntryDTO
+            var points = await queryNext.OrderByDescending(p => p.ReleaseDate)
+                .Skip(() => skip).Take(() => take).ToListAsync();
+            var userId = User.Identity.GetUserId();
+            return Ok(points.Select(p =>
             {
-                Id = p.Id,
-                IdCode = p.IdCode,
-                ChineseName = p.ChineseName,
-                EnglishName = p.EnglishName,
-                AvatarImage = p.AvatarImage
+                var dto = new NormalPointDTO(p)
+                {
+                    ReleaseDate = p.ReleaseDate
+                };
+                if (includeStats)
+                {
+                    dto.SubscriberCount = DbContext.NormalPoints.Where(np => np.Id == p.Id)
+                        .Select(np => np.Subscribers.Count)
+                        .Single();
+                    dto.ArticleCount = DbContext.NormalPoints.Where(np => np.Id == p.Id)
+                        .Select(np => np.Articles.Count)
+                        .Single();
+                    dto.Subscribed = DbContext.NormalPoints.Where(np => np.Id == p.Id)
+                        .SelectMany(np => np.Subscribers)
+                        .Select(u => u.Id)
+                        .Contains(userId);
+                }
+                return dto;
             }));
         }
     }
