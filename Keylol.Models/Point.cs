@@ -75,6 +75,7 @@ namespace Keylol.Models
 
         #region Game Point Only
 
+        //TODO: 部署上线后删除
         [Required(AllowEmptyStrings = true)]
         [MaxLength(512)]
         public string StoreLink { get; set; } = string.Empty;

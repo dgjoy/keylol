@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -23,6 +24,7 @@ namespace Keylol.Controllers.NormalPoint
         /// <param name="includeSubscribed">是否包含据点有没有被当前用户订阅的信息，默认 false</param>
         /// <param name="includeRelated">对于游戏据点，表示是否包含相关据点、别名、发行时间、App ID；对于厂商、类型据点，表示是否包含该据点旗下游戏数量。默认 false</param>
         /// <param name="includeCoverDescription">是否包含封面图片和据点描述</param>
+        /// <param name="includeMore">如果为真，则获取据点所有额外信息，如中文索引、英文索引、商店匹配名</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
         [HttpGet]
@@ -30,7 +32,7 @@ namespace Keylol.Controllers.NormalPoint
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
         public async Task<IHttpActionResult> GetOneById(string id, bool includeStats = false, bool includeVotes = false,
             bool includeSubscribed = false, bool includeRelated = false, bool includeCoverDescription = false,
-            IdType idType = IdType.Id)
+            bool includeMore = false, IdType idType = IdType.Id)
         {
             var point = await DbContext.NormalPoints
                 .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
@@ -122,6 +124,13 @@ namespace Keylol.Controllers.NormalPoint
                 if (point.Type == NormalPointType.Game)
                     pointDTO.CoverImage = point.CoverImage;
                 pointDTO.Description = point.Description;
+            }
+
+            if (includeMore)
+            {
+                pointDTO.ChineseAliases = point.ChineseAliases;
+                pointDTO.EnglishAliases = point.EnglishAliases;
+                pointDTO.NameInSteamStore = point.NameInSteamStore;
             }
 
             return Ok(pointDTO);

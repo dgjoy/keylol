@@ -93,6 +93,7 @@ namespace Keylol.Controllers.NormalPoint
                             case "Title:":
                                 gamePoint.NameInSteamStore = values[0];
                                 gamePoint.EnglishName = values[0];
+                                gamePoint.PreferredName = PreferredNameType.English;
                                 break;
 
                             case "Genre:":
@@ -166,7 +167,6 @@ namespace Keylol.Controllers.NormalPoint
                     {
                         Description = gamePoint.Description,
                         SteamAppId = gamePoint.SteamAppId,
-                        DisplayAliases = gamePoint.DisplayAliases,
                         CoverImage = gamePoint.CoverImage,
                         ReleaseDate = gamePoint.ReleaseDate,
                         DeveloperPoints = gamePoint.DeveloperPoints.Select(p => new NormalPointDTO(p, true)).ToList(),

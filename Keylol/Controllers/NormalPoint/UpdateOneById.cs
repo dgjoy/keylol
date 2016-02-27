@@ -52,19 +52,22 @@ namespace Keylol.Controllers.NormalPoint
                 return BadRequest(ModelState);
             }
             var editorStaffClaim = await UserManager.GetStaffClaimAsync(User.Identity.GetUserId());
-            normalPoint.IdCode = vm.IdCode;
+            if (editorStaffClaim == StaffClaim.Operator)
+            {
+                normalPoint.EnglishName = vm.EnglishName;
+                normalPoint.IdCode = vm.IdCode;
+                normalPoint.PreferredName = vm.PreferredName;
+                if (normalPoint.Type == NormalPointType.Genre || normalPoint.Type == NormalPointType.Manufacturer)
+                    normalPoint.NameInSteamStore = vm.NameInSteamStore;
+            }
             normalPoint.BackgroundImage = vm.BackgroundImage;
             normalPoint.AvatarImage = vm.AvatarImage;
             normalPoint.ChineseName = vm.ChineseName;
-            if (editorStaffClaim == StaffClaim.Operator)
-                normalPoint.EnglishName = vm.EnglishName;
-            normalPoint.PreferredName = vm.PreferredName;
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
-            normalPoint.Type = vm.Type;
             normalPoint.Description = vm.Description;
             if (normalPoint.Type == NormalPointType.Game &&
-                !await PopulateGamePointAttributes(normalPoint, vm, editorStaffClaim))
+                !await PopulateGamePointAttributes(normalPoint, vm, editorStaffClaim, true))
             {
                 return BadRequest(ModelState);
             }

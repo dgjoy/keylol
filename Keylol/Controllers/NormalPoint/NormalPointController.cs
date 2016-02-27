@@ -36,7 +36,7 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint, NormalPointVM vm,
-            string editorStaffClaim)
+            string editorStaffClaim, bool keepSteamAppId = false)
         {
             if (vm.SteamAppId == null)
             {
@@ -93,10 +93,13 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.SeriesPointsId", "游戏据点必须填写系列据点");
                 return false;
             }
-            normalPoint.SteamAppId = vm.SteamAppId.Value;
-            normalPoint.DisplayAliases = vm.DisplayAliases;
             if (editorStaffClaim == StaffClaim.Operator)
+            {
+                if (!keepSteamAppId)
+                    normalPoint.SteamAppId = vm.SteamAppId.Value;
                 normalPoint.ReleaseDate = vm.ReleaseDate.Value;
+            }
+            normalPoint.DisplayAliases = vm.DisplayAliases;
             normalPoint.CoverImage = vm.CoverImage;
 
             normalPoint.DeveloperPoints =

@@ -56,6 +56,7 @@ namespace Keylol.Models.DTO
         public string ChineseAliases { get; set; }
         public PreferredNameType PreferredName { get; set; }
         public string Description { get; set; }
+        public string NameInSteamStore { get; set; }
 
         #region Game Point Only
 
