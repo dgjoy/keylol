@@ -117,6 +117,12 @@ namespace Keylol.Models.DTO
 
         [DataMember]
         public bool? HasNewLike { get; set; }
+
+        [DataMember]
+        public int? ReviewCount { get; set; }
+
+        [DataMember]
+        public int? ShortReviewCount { get; set; }
     }
 
     public class UserWithMoreOptionsDTO : UserDTO

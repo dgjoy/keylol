@@ -10,7 +10,8 @@ namespace Keylol.Models
         Game,
         Genre,
         Manufacturer,
-        Platform
+        Platform,
+        Unspecified
     }
 
     public enum PreferredNameType
@@ -90,7 +91,7 @@ namespace Keylol.Models
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
         public string CoverImage { get; set; } = string.Empty;
-        
+
         public virtual ICollection<NormalPoint> DeveloperPoints { get; set; }
 
         public virtual ICollection<NormalPoint> PublisherPoints { get; set; }
@@ -108,11 +109,17 @@ namespace Keylol.Models
         #endregion
 
         public virtual ICollection<NormalPoint> DeveloperForPoints { get; set; }
+
         public virtual ICollection<NormalPoint> PublisherForPoints { get; set; }
+
         public virtual ICollection<NormalPoint> GenreForPoints { get; set; }
+
         public virtual ICollection<NormalPoint> TagForPoints { get; set; }
+
         public virtual ICollection<NormalPoint> MajorPlatformForPoints { get; set; }
+
         public virtual ICollection<NormalPoint> MinorPlatformForPoints { get; set; }
+
         public virtual ICollection<NormalPoint> SeriesForPoints { get; set; }
 
         public DateTime CreateTime { get; set; } = DateTime.Now;
@@ -121,9 +128,13 @@ namespace Keylol.Models
         public DateTime LastActivityTime { get; set; } = DateTime.Now;
 
         public virtual ICollection<KeylolUser> Staffs { get; set; }
+
         public virtual ICollection<NormalPoint> AssociatedToPoints { get; set; }
+
         public virtual ICollection<NormalPoint> AssociatedByPoints { get; set; }
+
         public virtual ICollection<Article> Articles { get; set; }
+
         public virtual ICollection<Article> VoteByArticles { get; set; }
     }
 

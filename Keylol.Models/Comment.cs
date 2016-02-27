@@ -22,10 +22,12 @@ namespace Keylol.Models
 
         [Required]
         public string CommentatorId { get; set; }
+
         public virtual KeylolUser Commentator { get; set; }
-        
+
         [Required]
         public string ArticleId { get; set; }
+
         public virtual Article Article { get; set; }
 
         [Index]
@@ -36,7 +38,9 @@ namespace Keylol.Models
         public bool IgnoreNewComments { get; set; } = false;
 
         public virtual ICollection<CommentLike> Likes { get; set; }
+
         public virtual ICollection<CommentReply> CommentRepliesAsComment { get; set; }
+
         public virtual ICollection<CommentReply> CommentRepliesAsReply { get; set; }
     }
 }

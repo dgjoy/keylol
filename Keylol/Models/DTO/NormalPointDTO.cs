@@ -37,15 +37,6 @@ namespace Keylol.Models.DTO
                 BackgroundImage = point.BackgroundImage;
                 Type = point.Type;
 
-                if (point.Type == NormalPointType.Game)
-                {
-                    SteamAppId = point.SteamAppId;
-                    DisplayAliases = point.DisplayAliases;
-                    ReleaseDate = point.ReleaseDate;
-                    CoverImage = point.CoverImage;
-                }
-
-
                 if (includeAliases)
                 {
                     EnglishAliases = point.EnglishAliases;

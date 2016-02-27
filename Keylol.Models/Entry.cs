@@ -17,7 +17,7 @@ namespace Keylol.Models
 
         [Index]
         public DateTime PublishTime { get; set; } = DateTime.Now;
-        
+
         [Index(IsUnique = true)]
         public int SequenceNumber { get; set; }
 
@@ -31,6 +31,7 @@ namespace Keylol.Models
     {
         [Required]
         public string TypeId { get; set; }
+
         public virtual ArticleType Type { get; set; }
 
         [Required]
@@ -50,21 +51,36 @@ namespace Keylol.Models
         public string UnstyledContent { get; set; } = string.Empty;
 
         public int? Vote { get; set; }
-        
+
         [Index]
         public int SequenceNumberForAuthor { get; set; }
 
         public bool IgnoreNewLikes { get; set; } = false;
 
         public bool IgnoreNewComments { get; set; } = false;
-        
-        public virtual ICollection<NormalPoint> AttachedPoints { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<ArticleLike> Likes { get; set; }
-        public virtual ICollection<EditLog> EditLogs { get; set; }
+
         public string VoteForPointId { get; set; }
+
         public virtual NormalPoint VoteForPoint { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(5000)]
+        public string Pros { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(5000)]
+        public string Cons { get; set; } = string.Empty;
+
+        public virtual ICollection<NormalPoint> AttachedPoints { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
+
+        public virtual ICollection<ArticleLike> Likes { get; set; }
+
+        public virtual ICollection<EditLog> EditLogs { get; set; }
     }
 
-    public class Status : Entry {}
+    public class Status : Entry
+    {
+    }
 }

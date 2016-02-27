@@ -1,0 +1,26 @@
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
+using Keylol.Models.DTO;
+
+namespace Keylol.Controllers.NormalPoint
+{
+    public partial class NormalPointController
+    {
+        /// <summary>
+        ///     获取五个最近活跃的据点
+        /// </summary>
+        [Route("active")]
+        [HttpGet]
+        [ResponseType(typeof (List<NormalPointDTO>))]
+        public async Task<IHttpActionResult> GetListByRecentActivity()
+        {
+            return Ok((await DbContext.NormalPoints.AsNoTracking()
+                .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
+                .ToListAsync()).Select(point => new NormalPointDTO(point)));
+        }
+    }
+}

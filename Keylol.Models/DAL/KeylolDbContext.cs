@@ -7,13 +7,14 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models.DAL
 {
+    [DbConfigurationType(typeof (KeylolDbConfiguration))]
     public class KeylolDbContext : IdentityDbContext<KeylolUser>
     {
         public static Action<string> LogAction;
-        
+
         public KeylolDbContext() : base("DefaultConnection", false)
         {
-                Database.Log = LogAction;
+            Database.Log = LogAction;
         }
 
         public DbSet<Point> Points { get; set; }
@@ -53,7 +54,7 @@ namespace Keylol.Models.DAL
 
             modelBuilder.Entity<ProfilePoint>().Map(t => t.MapInheritedProperties().ToTable("ProfilePoints"));
             modelBuilder.Entity<NormalPoint>().Map(t => t.MapInheritedProperties().ToTable("NormalPoints"));
-            
+
             modelBuilder.Entity<KeylolUser>()
                 .HasMany(user => user.SubscribedPoints)
                 .WithMany(point => point.Subscribers)

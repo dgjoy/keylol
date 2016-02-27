@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using CsQuery;
 using CsQuery.Output;
@@ -17,6 +13,7 @@ namespace Keylol.Controllers
     public class DatabaseMigrationController : KeylolApiController
     {
         [Route("v1")]
+        [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
             foreach (var normalPoint in DbContext.NormalPoints)
@@ -30,12 +27,14 @@ namespace Keylol.Controllers
                 }
 
                 // NormalPoint AvatarImage, BackgroundImage URI Fix
-                var avatarImageMatch = Regex.Match(normalPoint.AvatarImage, @"keylol:\/\/avatars\/(.*)", RegexOptions.IgnoreCase);
+                var avatarImageMatch = Regex.Match(normalPoint.AvatarImage, @"keylol:\/\/avatars\/(.*)",
+                    RegexOptions.IgnoreCase);
                 if (avatarImageMatch.Success)
                 {
                     normalPoint.AvatarImage = $"keylol://{avatarImageMatch.Groups[1].Value}";
                 }
-                var backgroundImageMatch = Regex.Match(normalPoint.BackgroundImage, @"^([0-9A-Z\.]+)$", RegexOptions.IgnoreCase);
+                var backgroundImageMatch = Regex.Match(normalPoint.BackgroundImage, @"^([0-9A-Z\.]+)$",
+                    RegexOptions.IgnoreCase);
                 if (backgroundImageMatch.Success)
                 {
                     normalPoint.BackgroundImage = $"keylol://{backgroundImageMatch.Groups[1].Value}";
@@ -45,7 +44,8 @@ namespace Keylol.Controllers
             // ProfilePoint BackgroundImage
             foreach (var profilePoint in DbContext.ProfilePoints)
             {
-                var backgroundImageMatch = Regex.Match(profilePoint.BackgroundImage, @"^([0-9A-Z\.]+)$", RegexOptions.IgnoreCase);
+                var backgroundImageMatch = Regex.Match(profilePoint.BackgroundImage, @"^([0-9A-Z\.]+)$",
+                    RegexOptions.IgnoreCase);
                 if (backgroundImageMatch.Success)
                 {
                     profilePoint.BackgroundImage = $"keylol://{backgroundImageMatch.Groups[1].Value}";
