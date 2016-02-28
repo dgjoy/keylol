@@ -251,6 +251,8 @@
     <Compile Include="Controllers\NormalPoint\GetOneById.cs" />
     <Compile Include="Controllers\NormalPoint\GetListByRecentActivityOfEachType.cs" />
     <Compile Include="Controllers\NormalPoint\GetListByRecentActivity.cs" />
+    <Compile Include="Controllers\UserGameRecord\UpdateListByCurrentUser.cs" />
+    <Compile Include="Controllers\UserGameRecord\UserController.cs" />
     <Compile Include="Controllers\UserPointSubscription\DeleteOneByCurrentUserWithPointId.cs" />
     <Compile Include="Controllers\UserPointSubscription\CreateOne.cs" />
     <Compile Include="Controllers\UserPointSubscription\GetListByCurrentUser.cs" />

@@ -68,6 +68,17 @@ namespace Keylol.Controllers.Article
                                 fromPoint = (Models.NormalPoint) null,
                                 reason = ArticleDTO.TimelineReasonType.Like,
                                 likedByUser = l.Operator
+                            }))
+                        .Concat(dbContext.AutoSubscriptionses.Where(s => s.UserId == userId)
+                            .SelectMany(
+                                s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
+                            .Where(e => e.article.SequenceNumber < beforeSN)
+                            .Select(e => new
+                            {
+                                e.article,
+                                e.fromPoint,
+                                reason = ArticleDTO.TimelineReasonType.Point,
+                                likedByUser = (KeylolUser) null
                             }));
 
                 if (articleTypeFilter != null)

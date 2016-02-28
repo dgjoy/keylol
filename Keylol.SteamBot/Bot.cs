@@ -38,7 +38,7 @@ namespace Keylol.SteamBot
         private uint _loginKeyUniqueId;
         private string _webApiUserNonce;
         private readonly Timer _cookiesCheckTimer = new Timer(10*60*1000); // 10min
-        private readonly Crawler _crawler;
+        public readonly Crawler Crawler;
 
         public string Id { get; }
 
@@ -63,7 +63,7 @@ namespace Keylol.SteamBot
 
         public Bot(SteamBotService botService, SteamBotDTO botCredentials)
         {
-            _crawler = new Crawler();
+            Crawler = new Crawler();
             _botService = botService;
             Id = botCredentials.Id;
             _logOnDetails.Username = botCredentials.SteamUserName;
@@ -461,7 +461,7 @@ namespace Keylol.SteamBot
                 else
                 {
                     var resultStream = await Utils.Retry(async () =>
-                        await _crawler.HttpClient.GetStreamAsync(
+                        await Crawler.HttpClient.GetStreamAsync(
                             $"http://www.tuling123.com/openapi/api?key={Crawler.TuringRobotApiKey}&info={HttpUtility.UrlEncode(callback.Message)}&userid={callback.Sender.ConvertToUInt64()}"));
                     if (resultStream == null) return;
                     using (var reader = new StreamReader(resultStream))
@@ -532,7 +532,7 @@ namespace Keylol.SteamBot
         private void CookiesCheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             using (var response =
-                Utils.Retry(async () => await _crawler.RequestAsync(Crawler.SteamCommunityUrlBase, "HEAD")).Result)
+                Utils.Retry(async () => await Crawler.RequestAsync(Crawler.SteamCommunityUrlBase, "HEAD")).Result)
             {
                 var cookieIsValid = response.Cookies["steamLogin"] == null ||
                                     !response.Cookies["steamLogin"].Value.Equals("deleted");
@@ -577,16 +577,16 @@ namespace Keylol.SteamBot
                             method: "POST",
                             secure: true);
 
-                    _crawler.Cookies.Add(new Cookie("sessionid",
+                    Crawler.Cookies.Add(new Cookie("sessionid",
                         Convert.ToBase64String(Encoding.UTF8.GetBytes(_loginKeyUniqueId.ToString())),
                         string.Empty,
                         Crawler.SteamCommunityDomain));
 
-                    _crawler.Cookies.Add(new Cookie("steamLogin", authResult["token"].AsString(),
+                    Crawler.Cookies.Add(new Cookie("steamLogin", authResult["token"].AsString(),
                         string.Empty,
                         Crawler.SteamCommunityDomain));
 
-                    _crawler.Cookies.Add(new Cookie("steamLoginSecure", authResult["tokensecure"].AsString(),
+                    Crawler.Cookies.Add(new Cookie("steamLoginSecure", authResult["tokensecure"].AsString(),
                         string.Empty,
                         Crawler.SteamCommunityDomain));
 

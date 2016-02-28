@@ -29,6 +29,8 @@
       <xs:element minOccurs="0" name="IdCode" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="LockoutEnabled" nillable="true" type="xs:boolean" />
       <xs:element minOccurs="0" name="ProfilePointBackgroundImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ReviewCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ShortReviewCount" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="StaffClaim" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="StatusClaim" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamBot" nillable="true" type="tns:SteamBotDTO" />

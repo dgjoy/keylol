@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleType.cs" />
+    <Compile Include="AutoSubscriptions.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
     <Compile Include="Entry.cs" />
@@ -198,6 +199,18 @@
     <Compile Include="Migrations\201602270943177_NormalPointReleaseDateIndex.Designer.cs">
       <DependentUpon>201602270943177_NormalPointReleaseDateIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602280657302_AutoSubscriptions.cs" />
+    <Compile Include="Migrations\201602280657302_AutoSubscriptions.Designer.cs">
+      <DependentUpon>201602280657302_AutoSubscriptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602280747368_UserGameRecord.cs" />
+    <Compile Include="Migrations\201602280747368_UserGameRecord.Designer.cs">
+      <DependentUpon>201602280747368_UserGameRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602280851363_UserGameRecordLastPlayTime.cs" />
+    <Compile Include="Migrations\201602280851363_UserGameRecordLastPlayTime.Designer.cs">
+      <DependentUpon>201602280851363_UserGameRecordLastPlayTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -205,6 +218,7 @@
     <Compile Include="SteamBindingToken.cs" />
     <Compile Include="SteamBot.cs" />
     <Compile Include="SteamLoginToken.cs" />
+    <Compile Include="UserGameRecord.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201510111634394_Initial.resx">
@@ -296,6 +310,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602270943177_NormalPointReleaseDateIndex.resx">
       <DependentUpon>201602270943177_NormalPointReleaseDateIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602280657302_AutoSubscriptions.resx">
+      <DependentUpon>201602280657302_AutoSubscriptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602280747368_UserGameRecord.resx">
+      <DependentUpon>201602280747368_UserGameRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602280851363_UserGameRecordLastPlayTime.resx">
+      <DependentUpon>201602280851363_UserGameRecordLastPlayTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -208,6 +208,18 @@ namespace Keylol.SteamBot
                 if (bot.State == Bot.BotState.LoggedOnOnline)
                     bot.SendMessage(steamId, message);
             }
+
+            public string FetchUrl(string botId, string url)
+            {
+                Bot bot;
+                if (!_botService._bots.TryGetValue(botId, out bot)) return null;
+                var response = bot.Crawler.RequestAsync(url, "GET").Result.GetResponseStream();
+                if (response == null) return null;
+                using (var reader = new StreamReader(response))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
         }
     }
 }

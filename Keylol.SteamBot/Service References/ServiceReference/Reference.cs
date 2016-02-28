@@ -282,6 +282,12 @@ namespace Keylol.SteamBot.ServiceReference {
         private string ProfilePointBackgroundImageField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<int> ReviewCountField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<int> ShortReviewCountField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string StaffClaimField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -447,6 +453,32 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.ProfilePointBackgroundImageField, value) != true)) {
                     this.ProfilePointBackgroundImageField = value;
                     this.RaisePropertyChanged("ProfilePointBackgroundImage");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> ReviewCount {
+            get {
+                return this.ReviewCountField;
+            }
+            set {
+                if ((this.ReviewCountField.Equals(value) != true)) {
+                    this.ReviewCountField = value;
+                    this.RaisePropertyChanged("ReviewCount");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> ShortReviewCount {
+            get {
+                return this.ShortReviewCountField;
+            }
+            set {
+                if ((this.ShortReviewCountField.Equals(value) != true)) {
+                    this.ShortReviewCountField = value;
+                    this.RaisePropertyChanged("ShortReviewCount");
                 }
             }
         }
@@ -670,6 +702,9 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SendMessage")]
         void SendMessage(string botId, string steamId, string message);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/FetchUrl", ReplyAction="http://tempuri.org/ISteamBotCoodinator/FetchUrlResponse")]
+        string FetchUrl(string botId, string url);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]

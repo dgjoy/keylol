@@ -54,6 +54,10 @@ namespace Keylol.Models
         [Index]
         public int SequenceNumber { get; set; }
 
+        public DateTime LastGameUpdateTime { get; set; }
+
+        public bool LastGameUpdateSucceed { get; set; } = false;
+
         #region Auto share options
 
         public bool AutoShareOnAddingNewFriend { get; set; } = false;

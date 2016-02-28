@@ -10,6 +10,13 @@ namespace Keylol.Utilities
 {
     public static class Extensions
     {
+        public static DateTime DateTimeFromUnixTimeStamp(double unixTimeStamp)
+        {
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
         public static long UnixTimestamp(this DateTime dateTime)
         {
             return (dateTime.ToUniversalTime().Ticks - 621355968000000000)/10000000;
