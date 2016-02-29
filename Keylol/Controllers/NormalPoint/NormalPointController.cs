@@ -38,19 +38,9 @@ namespace Keylol.Controllers.NormalPoint
         private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint, NormalPointVM vm,
             string editorStaffClaim, bool keepSteamAppId = false)
         {
-            if (vm.SteamAppId == null)
-            {
-                ModelState.AddModelError("vm.SteamAppId", "游戏据点的 App ID 不能为空");
-                return false;
-            }
             if (vm.DisplayAliases == null)
             {
                 ModelState.AddModelError("vm.DisplayAliases", "游戏据点必须填写别名");
-                return false;
-            }
-            if (vm.ReleaseDate == null)
-            {
-                ModelState.AddModelError("vm.ReleaseDate", "游戏据点的面世日期不能为空");
                 return false;
             }
             if (string.IsNullOrEmpty(vm.CoverImage))
@@ -101,7 +91,19 @@ namespace Keylol.Controllers.NormalPoint
             if (editorStaffClaim == StaffClaim.Operator)
             {
                 if (!keepSteamAppId)
+                {
+                    if (vm.SteamAppId == null)
+                    {
+                        ModelState.AddModelError("vm.SteamAppId", "游戏据点的 App ID 不能为空");
+                        return false;
+                    }
                     normalPoint.SteamAppId = vm.SteamAppId.Value;
+                }
+                if (vm.ReleaseDate == null)
+                {
+                    ModelState.AddModelError("vm.ReleaseDate", "游戏据点的面世日期不能为空");
+                    return false;
+                }
                 normalPoint.ReleaseDate = vm.ReleaseDate.Value;
             }
             normalPoint.DisplayAliases = vm.DisplayAliases;

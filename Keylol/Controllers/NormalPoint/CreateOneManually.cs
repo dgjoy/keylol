@@ -34,14 +34,45 @@ namespace Keylol.Controllers.NormalPoint
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!Regex.IsMatch(vm.IdCode, @"^[A-Z0-9]{5}$"))
+            if (vm.IdCode == null || !Regex.IsMatch(vm.IdCode, @"^[A-Z0-9]{5}$"))
             {
                 ModelState.AddModelError("vm.IdCode", "识别码只允许使用 5 位数字或大写字母");
                 return BadRequest(ModelState);
             }
+
             if (await DbContext.NormalPoints.AnyAsync(u => u.IdCode == vm.IdCode))
             {
                 ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
+                return BadRequest(ModelState);
+            }
+
+            if (string.IsNullOrEmpty(vm.EnglishName))
+            {
+                ModelState.AddModelError("vm.EnglishName", "英文名称不能为空");
+                return BadRequest(ModelState);
+            }
+
+            if (vm.PreferredName == null)
+            {
+                ModelState.AddModelError("vm.PreferredName", "名称语言偏好必填");
+                return BadRequest(ModelState);
+            }
+
+            if (vm.Type == null)
+            {
+                ModelState.AddModelError("vm.PreferredName", "据点类型必填");
+                return BadRequest(ModelState);
+            }
+
+            if (!vm.BackgroundImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.BackgroundImage", "不允许使用可不信图片来源");
+                return BadRequest(ModelState);
+            }
+
+            if (!vm.AvatarImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
                 return BadRequest(ModelState);
             }
 
@@ -51,11 +82,20 @@ namespace Keylol.Controllers.NormalPoint
             normalPoint.AvatarImage = vm.AvatarImage;
             normalPoint.ChineseName = vm.ChineseName;
             normalPoint.EnglishName = vm.EnglishName;
-            normalPoint.PreferredName = vm.PreferredName;
+            normalPoint.PreferredName = vm.PreferredName.Value;
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
-            normalPoint.Type = vm.Type;
+            normalPoint.Type = vm.Type.Value;
             normalPoint.Description = vm.Description;
+            if (vm.Type.Value == NormalPointType.Genre || vm.Type.Value == NormalPointType.Manufacturer)
+            {
+                if (vm.NameInSteamStore == null)
+                {
+                    ModelState.AddModelError("vm.NameInSteamStore", "商店匹配名必填");
+                    return BadRequest(ModelState);
+                }
+                normalPoint.NameInSteamStore = vm.NameInSteamStore;
+            }
             if (normalPoint.Type == NormalPointType.Game &&
                 !await PopulateGamePointAttributes(normalPoint, vm, StaffClaim.Operator))
             {

@@ -12,25 +12,12 @@ namespace Keylol.Models.ViewModels
         [Required(AllowEmptyStrings = true)]
         public string BackgroundImage { get; set; }
 
-        public NormalPointType Type { get; set; }
-
         [Required(AllowEmptyStrings = true)]
         public string AvatarImage { get; set; }
-
-        [Required]
-        public string IdCode { get; set; }
+        
 
         [Required(AllowEmptyStrings = true)]
         public string ChineseName { get; set; }
-
-        [Required]
-        public string EnglishName { get; set; }
-
-        [Required(AllowEmptyStrings = true)]
-        public string NameInSteamStore { get; set; }
-
-        [Required]
-        public PreferredNameType PreferredName { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         public string EnglishAliases { get; set; }
@@ -40,6 +27,20 @@ namespace Keylol.Models.ViewModels
 
         [Required(AllowEmptyStrings = true)]
         public string Description { get; set; }
+
+        #region Admin Editable
+
+        public string EnglishName { get; set; }
+
+        public string NameInSteamStore { get; set; }
+
+        public PreferredNameType? PreferredName { get; set; }
+
+        public string IdCode { get; set; }
+
+        public NormalPointType? Type { get; set; }
+
+        #endregion
 
         #region Game Point Only
 
