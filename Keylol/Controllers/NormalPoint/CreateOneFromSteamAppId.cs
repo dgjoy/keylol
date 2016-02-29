@@ -24,6 +24,7 @@ namespace Keylol.Controllers.NormalPoint
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDTO))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> CreateOneFromSteamAppId(int appId)
         {
             if (appId <= 0)
@@ -51,11 +52,13 @@ namespace Keylol.Controllers.NormalPoint
                     var navTexts = dom[".game_title_area .blockbg a"];
                     if (!navTexts.Any() || navTexts[0].InnerText != "All Games")
                     {
-                        throw new Exception("不是游戏 App");
+                        ModelState.AddModelError("appId", "不是游戏");
+                        return BadRequest(ModelState);
                     }
                     if (dom[".game_area_dlc_bubble"].Any())
                     {
-                        throw new Exception("不能是 DLC");
+                        ModelState.AddModelError("appId", "不能是 DLC");
+                        return BadRequest(ModelState);
                     }
                     var gamePoint = DbContext.NormalPoints.Create();
                     gamePoint.SteamAppId = appId;

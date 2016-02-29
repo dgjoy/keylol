@@ -150,7 +150,7 @@ namespace Keylol.Controllers.Article
                     return articleDTO;
                 }).ToList();
                 if (beforeSN == int.MaxValue)
-                    await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
+                    await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromHours(12));
                 return result;
             };
 

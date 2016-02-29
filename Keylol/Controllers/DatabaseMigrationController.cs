@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using CsQuery;
 using CsQuery.Output;
+using Keylol.Models;
 using Keylol.Utilities;
 using Newtonsoft.Json;
 
@@ -19,6 +22,17 @@ namespace Keylol.Controllers
         public async Task<IHttpActionResult> Get()
         {
             // 迁移方法需要保证幂等性
+
+            // 简评
+            if (!await DbContext.ArticleTypes.Where(t => t.Name == "简评").AnyAsync())
+            {
+                DbContext.ArticleTypes.Add(new ArticleType
+                {
+                    Name = "简评",
+                    AllowVote = true
+                });
+            }
+
             foreach (var normalPoint in DbContext.NormalPoints)
             {
                 // NormalPoint StoreLink -> SteamAppId

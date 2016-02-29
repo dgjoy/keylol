@@ -14,9 +14,9 @@ namespace Keylol.Models
         [MaxLength(20)]
         public string Name { get; set; }
 
-        [Required]
+        [Required(AllowEmptyStrings = true)]
         [MaxLength(32)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public bool AllowVote { get; set; } = false;
 
