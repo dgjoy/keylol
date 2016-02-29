@@ -49,7 +49,8 @@ namespace Keylol.Controllers.Article
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
             }
             var cacheKey = $"user:{user.Id}:profile.timeline";
-            if (articleTypeFilter == null && publishOnly && beforeSN == int.MaxValue)
+            var useCache = articleTypeFilter == null && !publishOnly && beforeSN == int.MaxValue;
+            if (useCache)
             {
                 var cache = await RedisProvider.Get(cacheKey);
                 if (cache.HasValue)
@@ -126,7 +127,8 @@ namespace Keylol.Controllers.Article
                 }
                 return articleDTO;
             }).ToList();
-            await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
+            if (useCache)
+                await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
             return Ok(result);
         }
     }
