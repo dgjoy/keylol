@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Models.ViewModels;
 using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
@@ -19,30 +18,6 @@ namespace Keylol.Controllers.Article
 {
     public partial class ArticleController
     {
-        public class CreateOneVM
-        {
-            [Required]
-            public string TypeName { get; set; }
-
-            [Required]
-            public string Title { get; set; }
-
-            public string Summary { get; set; }
-
-            [Required]
-            public string Content { get; set; }
-
-            public List<string> AttachedPointsId { get; set; }
-
-            public string VoteForPointId { get; set; }
-
-            public int? Vote { get; set; }
-
-            public List<string> Pros { get; set; }
-
-            public List<string> Cons { get; set; }
-        }
-
         /// <summary>
         ///     创建一篇文章
         /// </summary>
@@ -175,6 +150,30 @@ namespace Keylol.Controllers.Article
             DbContext.SaveChanges();
             await RedisProvider.Delete($"user:{article.PrincipalId}:profile.timeline");
             return Created($"article/{article.Id}", new ArticleDTO(article));
+        }
+
+        public class CreateOneVM
+        {
+            [Required]
+            public string TypeName { get; set; }
+
+            [Required]
+            public string Title { get; set; }
+
+            public string Summary { get; set; }
+
+            [Required]
+            public string Content { get; set; }
+
+            public List<string> AttachedPointsId { get; set; }
+
+            public string VoteForPointId { get; set; }
+
+            public int? Vote { get; set; }
+
+            public List<string> Pros { get; set; }
+
+            public List<string> Cons { get; set; }
         }
     }
 }

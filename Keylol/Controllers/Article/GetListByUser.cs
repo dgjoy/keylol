@@ -7,7 +7,6 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Controllers.User;
 using Keylol.Models;
-using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.Provider;
 using Keylol.Utilities;
