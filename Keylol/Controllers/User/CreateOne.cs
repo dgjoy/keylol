@@ -77,6 +77,11 @@ namespace Keylol.Controllers.User
                 ModelState.AddModelError("vm.UserName", "UserName is already used by others.");
                 return BadRequest(ModelState);
             }
+            if (!vm.AvatarImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
+                return BadRequest(ModelState);
+            }
             var user = new KeylolUser
             {
                 IdCode = vm.IdCode,

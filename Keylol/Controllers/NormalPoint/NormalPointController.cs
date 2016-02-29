@@ -58,6 +58,11 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.CoverImage", "游戏据点的封面图片不能为空");
                 return false;
             }
+            if (!vm.CoverImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.CoverImage", "不允许使用可不信图片来源");
+                return false;
+            }
             if (vm.DeveloperPointsId == null)
             {
                 ModelState.AddModelError("vm.DeveloperPointsId", "游戏据点必须填写开发商据点");
@@ -145,13 +150,6 @@ namespace Keylol.Controllers.NormalPoint
                     return idCode;
             }
             throw new Exception("无法找到可用的 IdCode");
-        }
-
-        private enum PopulateGamePointMode
-        {
-            Full,
-            ExceptCollectionProperties,
-            OnlyCollectionProperties
         }
     }
 }

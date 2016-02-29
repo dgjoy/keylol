@@ -52,6 +52,16 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
                 return BadRequest(ModelState);
             }
+            if (!vm.BackgroundImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.BackgroundImage", "不允许使用可不信图片来源");
+                return BadRequest(ModelState);
+            }
+            if (!vm.AvatarImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
+                return BadRequest(ModelState);
+            }
             var editorStaffClaim = await UserManager.GetStaffClaimAsync(User.Identity.GetUserId());
             if (editorStaffClaim == StaffClaim.Operator)
             {

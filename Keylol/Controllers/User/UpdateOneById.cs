@@ -33,6 +33,18 @@ namespace Keylol.Controllers.User
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            if (!vm.AvatarImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
+                return BadRequest(ModelState);
+            }
+
+            if (!vm.ProfilePointBackgroundImage.IsTrustedUrl())
+            {
+                ModelState.AddModelError("vm.ProfilePointBackgroundImage", "不允许使用可不信图片来源");
+                return BadRequest(ModelState);
+            }
+
             var user = await UserManager.FindByIdAsync(id);
 
             if (vm.NewPassword != null || vm.LockoutEnabled != null)

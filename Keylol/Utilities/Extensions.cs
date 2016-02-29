@@ -39,6 +39,11 @@ namespace Keylol.Utilities
             return s;
         }
 
+        public static bool IsTrustedUrl(this string url)
+        {
+            return url.StartsWith("keylol://");
+        }
+
         public static IEnumerable<IEnumerable<T>> AllCombinations<T>(this IEnumerable<T> items, int count)
         {
             var i = 0;
