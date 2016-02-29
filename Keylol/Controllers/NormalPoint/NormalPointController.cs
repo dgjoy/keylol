@@ -109,20 +109,27 @@ namespace Keylol.Controllers.NormalPoint
             normalPoint.DisplayAliases = vm.DisplayAliases;
             normalPoint.CoverImage = vm.CoverImage;
 
-            normalPoint.DeveloperPoints =
-                await DbContext.NormalPoints.Where(p => vm.DeveloperPointsId.Contains(p.Id)).ToListAsync();
-            normalPoint.PublisherPoints =
-                await DbContext.NormalPoints.Where(p => vm.PublisherPointsId.Contains(p.Id)).ToListAsync();
-            normalPoint.GenrePoints =
-                await DbContext.NormalPoints.Where(p => vm.GenrePointsId.Contains(p.Id)).ToListAsync();
-            normalPoint.TagPoints =
-                await DbContext.NormalPoints.Where(p => vm.TagPointsId.Contains(p.Id)).ToListAsync();
-            normalPoint.MajorPlatformPoints =
-                await DbContext.NormalPoints.Where(p => vm.MajorPlatformPointsId.Contains(p.Id)).ToListAsync();
-            normalPoint.MinorPlatformForPoints =
-                await DbContext.NormalPoints.Where(p => vm.MinorPlatformPointsId.Contains(p.Id)).ToListAsync();
-            normalPoint.SeriesPoints =
-                await DbContext.NormalPoints.Where(p => vm.SeriesPointsId.Contains(p.Id)).ToListAsync();
+            normalPoint.DeveloperPoints = await DbContext.NormalPoints
+                .Where(p => p.Type == NormalPointType.Manufacturer && vm.DeveloperPointsId.Contains(p.Id))
+                .ToListAsync();
+            normalPoint.PublisherPoints = await DbContext.NormalPoints
+                .Where(p => p.Type == NormalPointType.Manufacturer && vm.PublisherPointsId.Contains(p.Id))
+                .ToListAsync();
+            normalPoint.GenrePoints = await DbContext.NormalPoints
+                .Where(p => p.Type == NormalPointType.Genre && vm.GenrePointsId.Contains(p.Id))
+                .ToListAsync();
+            normalPoint.TagPoints = await DbContext.NormalPoints
+                .Where(p => p.Type == NormalPointType.Genre && vm.TagPointsId.Contains(p.Id))
+                .ToListAsync();
+            normalPoint.MajorPlatformPoints = await DbContext.NormalPoints
+                .Where(p => p.Type == NormalPointType.Platform && vm.MajorPlatformPointsId.Contains(p.Id))
+                .ToListAsync();
+            normalPoint.MinorPlatformForPoints = await DbContext.NormalPoints
+                .Where(p => p.Type == NormalPointType.Platform && vm.MinorPlatformPointsId.Contains(p.Id))
+                .ToListAsync();
+            normalPoint.SeriesPoints = await DbContext.NormalPoints
+                .Where(p => p.Type == NormalPointType.Genre && vm.SeriesPointsId.Contains(p.Id))
+                .ToListAsync();
 
             return true;
         }
