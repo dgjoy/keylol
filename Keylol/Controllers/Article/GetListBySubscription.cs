@@ -29,6 +29,7 @@ namespace Keylol.Controllers.Article
             int beforeSN = int.MaxValue, int take = 30)
         {
             var userId = User.Identity.GetUserId();
+            var useCache = articleTypeFilter == null && beforeSN == int.MaxValue;
             var cacheKey = $"user:{userId}:subscription.timeline";
 
             Func<KeylolDbContext, Task<IEnumerable<ArticleDTO>>> calculate = async dbContext =>
@@ -147,12 +148,12 @@ namespace Keylol.Controllers.Article
                     }
                     return articleDTO;
                 }).ToList();
-                if (beforeSN == int.MaxValue)
+                if (useCache)
                     await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromHours(12));
                 return result;
             };
 
-            if (articleTypeFilter != null || beforeSN != int.MaxValue)
+            if (!useCache)
                 return Ok(await calculate(DbContext));
 
             var cache = await RedisProvider.Get(cacheKey);

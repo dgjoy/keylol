@@ -10,16 +10,15 @@ namespace Keylol.Utilities
     {
         public static string ExtractFileName(string uri)
         {
-            var match =
-                Regex.Match(uri,
-                    @"^(?:(?:(?:http:|https:)?\/\/keylol\.b0\.upaiyun\.com\/)|(?:keylol:\/\/))?([a-z0-9\.]+?)(?:!.*)?$",
-                    RegexOptions.IgnoreCase);
+            var match = Regex.Match(uri,
+                @"^(?:(?:(?:http:|https:)?\/\/(?:keylol\.b0\.upaiyun)|(?:storage\.keylol)\.com\/)|(?:keylol:\/\/))?([a-z0-9\.]+?)(?:!.*)?$",
+                RegexOptions.IgnoreCase);
             return match.Success ? match.Groups[1].Value : null;
         }
 
         public static string CustomVersionUrl(string fileName, string version = null)
         {
-            var url = "//keylol.b0.upaiyun.com/" + fileName;
+            var url = "//storage.keylol.com/" + fileName;
             if (!string.IsNullOrEmpty(version))
                 url += "!" + version;
             return url;
