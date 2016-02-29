@@ -43,9 +43,15 @@ namespace Keylol.Hubs
 
         public async Task<SteamLoginTokenDTO> CreateToken()
         {
+            string code;
+            var random = new Random();
+            do
+            {
+                code = random.Next(0, 10000).ToString("D4");
+            } while (await _dbContext.SteamLoginTokens.AnyAsync(t => t.Code == code));
             var token = new SteamLoginToken()
             {
-                Code = await SteamLoginToken.GenerateCodeAsync(_dbContext),
+                Code = code,
                 BrowserConnectionId = Context.ConnectionId
             };
             _dbContext.SteamLoginTokens.Add(token);

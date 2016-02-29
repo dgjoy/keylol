@@ -107,6 +107,12 @@
   <wsdl:message name="ISteamBotCoodinator_SendMessage_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:SendMessage" />
   </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_FetchUrl_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:FetchUrl" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoodinator_FetchUrl_InputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:FetchUrlResponse" />
+  </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="ISteamBotCoodinator">
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="AllocateBots">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots" message="tns:ISteamBotCoodinator_AllocateBots_InputMessage" />
@@ -152,6 +158,10 @@
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendMessage">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/SendMessage" message="tns:ISteamBotCoodinator_SendMessage_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="FetchUrl">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoodinator/FetchUrl" message="tns:ISteamBotCoodinator_FetchUrl_OutputCallbackMessage" />
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoodinator/FetchUrlResponse" message="tns:ISteamBotCoodinator_FetchUrl_InputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetHttpBinding_ISteamBotCoodinator" type="tns:ISteamBotCoodinator">
@@ -249,6 +259,15 @@
     </wsdl:operation>
     <wsdl:operation name="SendMessage">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/SendMessage" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FetchUrl">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoodinator/FetchUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

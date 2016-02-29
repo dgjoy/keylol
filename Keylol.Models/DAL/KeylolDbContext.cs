@@ -7,13 +7,14 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models.DAL
 {
+    [DbConfigurationType(typeof (KeylolDbConfiguration))]
     public class KeylolDbContext : IdentityDbContext<KeylolUser>
     {
         public static Action<string> LogAction;
-        
+
         public KeylolDbContext() : base("DefaultConnection", false)
         {
-                Database.Log = LogAction;
+            Database.Log = LogAction;
         }
 
         public DbSet<Point> Points { get; set; }
@@ -36,6 +37,8 @@ namespace Keylol.Models.DAL
         public DbSet<SteamBot> SteamBots { get; set; }
         public DbSet<InvitationCode> InvitationCodes { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<AutoSubscriptions> AutoSubscriptionses { get; set; }
+        public DbSet<UserGameRecord> UserGameRecords { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -53,7 +56,7 @@ namespace Keylol.Models.DAL
 
             modelBuilder.Entity<ProfilePoint>().Map(t => t.MapInheritedProperties().ToTable("ProfilePoints"));
             modelBuilder.Entity<NormalPoint>().Map(t => t.MapInheritedProperties().ToTable("NormalPoints"));
-            
+
             modelBuilder.Entity<KeylolUser>()
                 .HasMany(user => user.SubscribedPoints)
                 .WithMany(point => point.Subscribers)
@@ -117,6 +120,12 @@ namespace Keylol.Models.DAL
                 .Map(t => t.MapLeftKey("GamePoint_Id")
                     .MapRightKey("MinorPlatformPoint_Id")
                     .ToTable("GameMinorPlatformPointAssociations"));
+            modelBuilder.Entity<NormalPoint>()
+                .HasMany(p => p.SeriesPoints)
+                .WithMany(p => p.SeriesForPoints)
+                .Map(t => t.MapLeftKey("GamePoint_Id")
+                    .MapRightKey("SeriesPoint_Id")
+                    .ToTable("GameSeriesPointAssociations"));
         }
 
         // Ignore validation error on unmodified properties

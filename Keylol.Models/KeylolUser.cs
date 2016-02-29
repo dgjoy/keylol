@@ -17,7 +17,6 @@ namespace Keylol.Models
         TraditionalChineseWithContentUnmodified
     }
 
-    // You can add profile data for the user by adding more properties to your KeylolUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class KeylolUser : IdentityUser
     {
         [Required]
@@ -51,49 +50,86 @@ namespace Keylol.Models
         public string SteamProfileName { get; set; } = string.Empty;
 
         public DateTime SteamBindingTime { get; set; }
-        
+
         [Index]
         public int SequenceNumber { get; set; }
 
-        // Auto share options
+        public DateTime LastGameUpdateTime { get; set; }
+
+        public bool LastGameUpdateSucceed { get; set; } = false;
+
+        #region Auto share options
+
         public bool AutoShareOnAddingNewFriend { get; set; } = false;
+
         public bool AutoShareOnUnlockingAchievement { get; set; } = true;
+
         public bool AutoShareOnAcquiringNewGame { get; set; } = true;
+
         public bool AutoShareOnJoiningGroup { get; set; } = false;
+
         public bool AutoShareOnCreatingGroup { get; set; } = false;
+
         public bool AutoShareOnUpdatingWishlist { get; set; } = false;
+
         public bool AutoShareOnPublishingReview { get; set; } = true;
+
         public bool AutoShareOnUploadingScreenshot { get; set; } = false;
+
         public bool AutoShareOnAddingVideo { get; set; } = false;
+
         public bool AutoShareOnAddingFavorite { get; set; } = false;
 
-        // Email notification options
+        #endregion
+
+        #region Email notification options
+
         public bool EmailNotifyOnArticleReplied { get; set; } = false;
+
         public bool EmailNotifyOnCommentReplied { get; set; } = false;
+
         public bool EmailNotifyOnEditorRecommended { get; set; } = false;
+
         public bool EmailNotifyOnMessageReceived { get; set; } = false;
+
         public bool EmailNotifyOnAdvertisement { get; set; } = false;
 
-        // Message options
+        #endregion
+
+        #region Message options
+
         public bool MessageNotifyOnArticleReplied { get; set; } = true;
+
         public bool MessageNotifyOnCommentReplied { get; set; } = true;
+
         public bool MessageNotifyOnEditorRecommended { get; set; } = true;
+
         public bool MessageNotifyOnArticleLiked { get; set; } = true;
+
         public bool MessageNotifyOnCommentLiked { get; set; } = true;
 
+        #endregion
+
         public virtual ProfilePoint ProfilePoint { get; set; }
+
         public string ProfilePointId => Id;
+
         public virtual ICollection<Point> SubscribedPoints { get; set; }
+
         public virtual ICollection<NormalPoint> ManagedPoints { get; set; }
+
         public virtual ICollection<Comment> Comments { get; set; }
+
         public virtual ICollection<Like> Likes { get; set; }
 
         public virtual ICollection<LoginLog> LoginLogs { get; set; }
+
         public virtual ICollection<EditLog> EditLogs { get; set; }
 
         public string SteamBotId { get; set; }
+
         public virtual SteamBot SteamBot { get; set; }
-        
+
         public virtual InvitationCode InvitationCode { get; set; }
 
         public virtual ICollection<Favorite> Favorites { get; set; }

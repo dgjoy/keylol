@@ -64,9 +64,24 @@ namespace Keylol.Hubs
             if (bot == null)
                 return null;
 
+            string code;
+            do
+            {
+                var sb = new StringBuilder();
+                for (var i = 0; i < 4; i++)
+                {
+                    sb.Append((char)random.Next('A', 'Z'));
+                }
+                for (var i = 0; i < 4; i++)
+                {
+                    sb.Append(random.Next(0, 10));
+                }
+                code = sb.ToString();
+            } while (await _dbContext.SteamBindingTokens.AnyAsync(t => t.Code == code));
+
             var token = new SteamBindingToken
             {
-                Code = await SteamBindingToken.GenerateCodeAsync(_dbContext),
+                Code = code,
                 Bot = bot,
                 BrowserConnectionId = Context.ConnectionId
             };

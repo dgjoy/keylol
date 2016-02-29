@@ -55,6 +55,9 @@ namespace Keylol.Services.Contracts
 
         [OperationContract(IsOneWay = true)]
         void SendMessage(string botId, string steamId, string message);
+
+        [OperationContract]
+        string FetchUrl(string botId, string url);
     }
 
     [DataContract]

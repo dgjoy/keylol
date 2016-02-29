@@ -12,22 +12,12 @@ namespace Keylol.Models.ViewModels
         [Required(AllowEmptyStrings = true)]
         public string BackgroundImage { get; set; }
 
-        public NormalPointType Type { get; set; }
-
         [Required(AllowEmptyStrings = true)]
         public string AvatarImage { get; set; }
+        
 
-        [Required]
-        public string IdCode { get; set; }
-
-        [Required]
+        [Required(AllowEmptyStrings = true)]
         public string ChineseName { get; set; }
-
-        [Required]
-        public string EnglishName { get; set; }
-
-        [Required]
-        public PreferredNameType PreferredName { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         public string EnglishAliases { get; set; }
@@ -35,15 +25,20 @@ namespace Keylol.Models.ViewModels
         [Required(AllowEmptyStrings = true)]
         public string ChineseAliases { get; set; }
 
-//        [Required(AllowEmptyStrings = true)]
-//        public string Description { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        public string Description { get; set; }
 
-        #region Obselete
+        #region Admin Editable
 
-        [Required]
-        public List<string> AssociatedPointsId { get; set; }
+        public string EnglishName { get; set; }
 
-        public string StoreLink { get; set; }
+        public string NameInSteamStore { get; set; }
+
+        public PreferredNameType? PreferredName { get; set; }
+
+        public string IdCode { get; set; }
+
+        public NormalPointType? Type { get; set; }
 
         #endregion
 
@@ -68,6 +63,8 @@ namespace Keylol.Models.ViewModels
         public List<string> MajorPlatformPointsId { get; set; }
 
         public List<string> MinorPlatformPointsId { get; set; }
+
+        public List<string> SeriesPointsId { get; set; }
 
         #endregion
     }

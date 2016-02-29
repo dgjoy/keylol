@@ -30,6 +30,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug Gay|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug Gay\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -59,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleType.cs" />
+    <Compile Include="AutoSubscriptions.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
     <Compile Include="Entry.cs" />
@@ -161,12 +171,54 @@
     <Compile Include="Migrations\201512100428457_MorePointProperties.Designer.cs">
       <DependentUpon>201512100428457_MorePointProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512120737335_FiveLevelVote.cs" />
+    <Compile Include="Migrations\201512120737335_FiveLevelVote.Designer.cs">
+      <DependentUpon>201512120737335_FiveLevelVote.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601121436133_PointNameInStore.cs" />
+    <Compile Include="Migrations\201601121436133_PointNameInStore.Designer.cs">
+      <DependentUpon>201601121436133_PointNameInStore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601121721257_PointFieldLength.cs" />
+    <Compile Include="Migrations\201601121721257_PointFieldLength.Designer.cs">
+      <DependentUpon>201601121721257_PointFieldLength.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601121727146_SeriesPoint.cs" />
+    <Compile Include="Migrations\201601121727146_SeriesPoint.Designer.cs">
+      <DependentUpon>201601121727146_SeriesPoint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601180803411_ArticleGoodnessBadness.cs" />
+    <Compile Include="Migrations\201601180803411_ArticleGoodnessBadness.Designer.cs">
+      <DependentUpon>201601180803411_ArticleGoodnessBadness.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601181213390_ArticleProsConsRename.cs" />
+    <Compile Include="Migrations\201601181213390_ArticleProsConsRename.Designer.cs">
+      <DependentUpon>201601181213390_ArticleProsConsRename.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602270943177_NormalPointReleaseDateIndex.cs" />
+    <Compile Include="Migrations\201602270943177_NormalPointReleaseDateIndex.Designer.cs">
+      <DependentUpon>201602270943177_NormalPointReleaseDateIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602280657302_AutoSubscriptions.cs" />
+    <Compile Include="Migrations\201602280657302_AutoSubscriptions.Designer.cs">
+      <DependentUpon>201602280657302_AutoSubscriptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602280747368_UserGameRecord.cs" />
+    <Compile Include="Migrations\201602280747368_UserGameRecord.Designer.cs">
+      <DependentUpon>201602280747368_UserGameRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602280851363_UserGameRecordLastPlayTime.cs" />
+    <Compile Include="Migrations\201602280851363_UserGameRecordLastPlayTime.Designer.cs">
+      <DependentUpon>201602280851363_UserGameRecordLastPlayTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamBindingToken.cs" />
     <Compile Include="SteamBot.cs" />
     <Compile Include="SteamLoginToken.cs" />
+    <Compile Include="UserGameRecord.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201510111634394_Initial.resx">
@@ -237,6 +289,36 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512100428457_MorePointProperties.resx">
       <DependentUpon>201512100428457_MorePointProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512120737335_FiveLevelVote.resx">
+      <DependentUpon>201512120737335_FiveLevelVote.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601121436133_PointNameInStore.resx">
+      <DependentUpon>201601121436133_PointNameInStore.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601121721257_PointFieldLength.resx">
+      <DependentUpon>201601121721257_PointFieldLength.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601121727146_SeriesPoint.resx">
+      <DependentUpon>201601121727146_SeriesPoint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601180803411_ArticleGoodnessBadness.resx">
+      <DependentUpon>201601180803411_ArticleGoodnessBadness.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601181213390_ArticleProsConsRename.resx">
+      <DependentUpon>201601181213390_ArticleProsConsRename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602270943177_NormalPointReleaseDateIndex.resx">
+      <DependentUpon>201602270943177_NormalPointReleaseDateIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602280657302_AutoSubscriptions.resx">
+      <DependentUpon>201602280657302_AutoSubscriptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602280747368_UserGameRecord.resx">
+      <DependentUpon>201602280747368_UserGameRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602280851363_UserGameRecordLastPlayTime.resx">
+      <DependentUpon>201602280851363_UserGameRecordLastPlayTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

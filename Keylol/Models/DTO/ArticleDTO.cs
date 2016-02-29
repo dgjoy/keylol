@@ -18,7 +18,8 @@ namespace Keylol.Models.DTO
         {
         }
 
-        public ArticleDTO(Article article, bool includeContent = false, int truncateContentTo = 0, bool includeThumbnailImage = false)
+        public ArticleDTO(Article article, bool includeContent = false, int truncateContentTo = 0,
+            bool includeThumbnailImage = false, bool includeProsCons = false, bool includeSummary = false)
         {
             Id = article.Id;
             PublishTime = article.PublishTime;
@@ -35,6 +36,17 @@ namespace Keylol.Models.DTO
             Vote = article.Vote;
             SequenceNumberForAuthor = article.SequenceNumberForAuthor;
             SequenceNumber = article.SequenceNumber;
+            if (includeProsCons)
+            {
+                Pros = JsonConvert.DeserializeObject<List<string>>(article.Pros);
+                Cons = JsonConvert.DeserializeObject<List<string>>(article.Cons);
+            }
+            if (includeSummary)
+            {
+                Summary = article.UnstyledContent;
+                if (Summary.Length > 200)
+                    Summary = Summary.Substring(0, 200);
+            }
         }
 
         public ArticleDTO FlattenAuthor()
@@ -109,7 +121,7 @@ namespace Keylol.Models.DTO
 
         public string ThumbnailImage { get; set; }
 
-        public VoteType? Vote { get; set; }
+        public int? Vote { get; set; }
 
         public int? SequenceNumberForAuthor { get; set; }
 
@@ -128,6 +140,12 @@ namespace Keylol.Models.DTO
         public TimelineReasonType? TimelineReason { get; set; }
 
         public List<UserDTO> LikeByUsers { get; set; }
+
+        public List<string> Pros { get; set; }
+
+        public List<string> Cons { get; set; }
+
+        public string Summary { get; set; }
 
         #region If Author is not flattened
 
@@ -166,7 +184,6 @@ namespace Keylol.Models.DTO
         public string VoteForPointEnglishName { get; set; }
 
         #endregion
-
 
         internal int? Count { get; set; }
     }

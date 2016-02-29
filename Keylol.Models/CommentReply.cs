@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models
 {
@@ -16,6 +12,7 @@ namespace Keylol.Models
         /// </summary>
         [Required]
         public string CommentId { get; set; }
+
         public virtual Comment Comment { get; set; }
 
         public bool IgnoredByCommentAuthor { get; set; } = false;
@@ -27,6 +24,7 @@ namespace Keylol.Models
         /// </summary>
         [Required]
         public string ReplyId { get; set; }
+
         public virtual Comment Reply { get; set; }
     }
 }

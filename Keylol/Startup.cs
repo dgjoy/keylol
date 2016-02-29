@@ -44,7 +44,7 @@ namespace Keylol
                 ThrottlePolicy.FromStore(new PolicyConfigurationProvider()),
                 new PolicyMemoryCacheRepository(),
                 new MemoryCacheRepository(),
-                null);
+                null, null);
             UseAuth(app);
             UseSignalR(app);
             UseWebAPI(app);

@@ -10,6 +10,13 @@ namespace Keylol.Utilities
 {
     public static class Extensions
     {
+        public static DateTime DateTimeFromUnixTimeStamp(double unixTimeStamp)
+        {
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
         public static long UnixTimestamp(this DateTime dateTime)
         {
             return (dateTime.ToUniversalTime().Ticks - 621355968000000000)/10000000;
@@ -30,6 +37,29 @@ namespace Keylol.Utilities
                 }
             }
             return s;
+        }
+
+        public static bool IsTrustedUrl(this string url)
+        {
+            return url.StartsWith("keylol://");
+        }
+
+        public static IEnumerable<IEnumerable<T>> AllCombinations<T>(this IEnumerable<T> items, int count)
+        {
+            var i = 0;
+            var list = items as IList<T> ?? items.ToList();
+            foreach (var item in list)
+            {
+                if (count == 1)
+                    yield return new[] {item};
+                else
+                {
+                    foreach (var result in list.Skip(i + 1).AllCombinations(count - 1))
+                        yield return new T[] {item}.Concat(result);
+                }
+
+                ++i;
+            }
         }
     }
 
