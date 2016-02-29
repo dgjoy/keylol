@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ namespace Keylol.Controllers.NormalPoint
     public partial class NormalPointController
     {
         /// <summary>
-        /// 编辑指定据点
+        ///     编辑指定据点
         /// </summary>
         /// <param name="id">据点 ID</param>
         /// <param name="vm">据点相关属性</param>

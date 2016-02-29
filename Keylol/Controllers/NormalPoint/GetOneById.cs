@@ -7,7 +7,6 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 

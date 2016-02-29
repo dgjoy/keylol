@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +11,6 @@ using Keylol.Models.DTO;
 using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
 
 namespace Keylol.Controllers.Article
 {
@@ -33,7 +31,7 @@ namespace Keylol.Controllers.Article
             var userId = User.Identity.GetUserId();
             var cacheKey = $"user:{userId}:subscription.timeline";
 
-            Func<KeylolDbContext, Task<IEnumerable<ArticleDTO>>> calculate = async (dbContext) =>
+            Func<KeylolDbContext, Task<IEnumerable<ArticleDTO>>> calculate = async dbContext =>
             {
                 if (take > 50) take = 50;
                 var userQuery = dbContext.Users.AsNoTracking().Where(u => u.Id == userId);

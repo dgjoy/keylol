@@ -25,7 +25,7 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         /// <summary>
-        /// 取得指定厂商或类型据点旗下的游戏据点
+        ///     取得指定厂商或类型据点旗下的游戏据点
         /// </summary>
         /// <param name="id">据点 ID</param>
         /// <param name="relationship">该厂商或类型据点与想要获取游戏据点的关系</param>

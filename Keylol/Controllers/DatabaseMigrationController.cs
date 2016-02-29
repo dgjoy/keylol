@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -8,7 +7,6 @@ using CsQuery;
 using CsQuery.Output;
 using Keylol.Models;
 using Keylol.Utilities;
-using Newtonsoft.Json;
 
 namespace Keylol.Controllers
 {
@@ -20,7 +18,7 @@ namespace Keylol.Controllers
         // 迁移方法需要保证幂等性
 
         /// <summary>
-        /// v1.1.0 Step 1: 新建简评文章类型，现有据点商店链接转换，资源统一定位，优缺点修正
+        ///     v1.1.0 Step 1: 新建简评文章类型，现有据点商店链接转换，资源统一定位，优缺点修正
         /// </summary>
         [Route("v1-1-0-step-1-schema")]
         [HttpGet]
@@ -149,7 +147,7 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
-        /// v1.1.0 Step 2: 删除现有类型、厂商据点
+        ///     v1.1.0 Step 2: 删除现有类型、厂商据点
         /// </summary>
         [Route("v1-1-0-step-2-clear-points")]
         [HttpGet]
@@ -181,7 +179,7 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
-        /// v1.1.0 Step 3: 获取需要重新抓取的游戏据点和需要手动编辑推送的文章
+        ///     v1.1.0 Step 3: 获取需要重新抓取的游戏据点和需要手动编辑推送的文章
         /// </summary>
         [Route("v1-1-0-step-3-update-list")]
         [HttpGet]
@@ -202,7 +200,7 @@ namespace Keylol.Controllers
         }
 
         /// <summary>
-        /// v1.1.0 Step 4: 重新推送现有的“评”类且有评价对象的文章到相关据点
+        ///     v1.1.0 Step 4: 重新推送现有的“评”类且有评价对象的文章到相关据点
         /// </summary>
         [Route("v1-1-0-step-4-reattach-articles")]
         [HttpGet]

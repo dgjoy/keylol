@@ -14,15 +14,8 @@ namespace Keylol.Controllers.NormalPoint
 {
     public partial class NormalPointController
     {
-        public class GetListOfRelatedEntryDTO
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public string IdCode { get; set; }
-        }
-
         /// <summary>
-        /// 取得指定游戏据点的相关据点（开发商、发行商、系列、流派、特性），这些据点在发表文章时会自动推送
+        ///     取得指定游戏据点的相关据点（开发商、发行商、系列、流派、特性），这些据点在发表文章时会自动推送
         /// </summary>
         /// <param name="id">游戏据点 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
@@ -56,6 +49,13 @@ namespace Keylol.Controllers.NormalPoint
                 }).ToList();
             await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(30));
             return Ok(result);
+        }
+
+        public class GetListOfRelatedEntryDTO
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string IdCode { get; set; }
         }
     }
 }

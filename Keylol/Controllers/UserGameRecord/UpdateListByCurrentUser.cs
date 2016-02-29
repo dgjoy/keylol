@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using CsQuery;
 using Keylol.Services;
 using Keylol.Services.Contracts;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
 using SteamKit2;
 using Swashbuckle.Swagger.Annotations;
+using Extensions = Keylol.Utilities.Extensions;
 
 namespace Keylol.Controllers.UserGameRecord
 {
@@ -79,7 +77,7 @@ namespace Keylol.Controllers.UserGameRecord
                                     record.TotalPlayedTime = (double) game["hours_forever"];
                                 if (game["last_played"] != null)
                                     record.LastPlayTime =
-                                        Utilities.Extensions.DateTimeFromUnixTimeStamp((int) game["last_played"]);
+                                        Extensions.DateTimeFromUnixTimeStamp((int) game["last_played"]);
                                 await DbContext.SaveChangesAsync();
                             }
                             return Ok();
