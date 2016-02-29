@@ -11,7 +11,7 @@ namespace Keylol.Utilities
         public static string ExtractFileName(string uri)
         {
             var match = Regex.Match(uri,
-                @"^(?:(?:(?:http:|https:)?\/\/(?:keylol\.b0\.upaiyun)|(?:storage\.keylol)\.com\/)|(?:keylol:\/\/))?([a-z0-9\.]+?)(?:!.*)?$",
+                @"^(?:(?:(?:http:|https:)?\/\/(?:(?:keylol\.b0\.upaiyun)|(?:storage\.keylol))\.com\/)|(?:keylol:\/\/))?([a-z0-9\.]+?)(?:!.*)?$",
                 RegexOptions.IgnoreCase);
             return match.Success ? match.Groups[1].Value : null;
         }

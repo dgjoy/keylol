@@ -43,9 +43,9 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.DisplayAliases", "游戏据点必须填写别名");
                 return false;
             }
-            if (string.IsNullOrEmpty(vm.CoverImage))
+            if (vm.CoverImage == null)
             {
-                ModelState.AddModelError("vm.CoverImage", "游戏据点的封面图片不能为空");
+                ModelState.AddModelError("vm.CoverImage", "游戏据点必须填写封面图片");
                 return false;
             }
             if (!vm.CoverImage.IsTrustedUrl())
