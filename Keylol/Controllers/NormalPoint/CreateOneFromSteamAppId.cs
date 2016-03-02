@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using CsQuery;
@@ -30,6 +31,7 @@ namespace Keylol.Controllers.NormalPoint
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "使用了 fillExisted 参数但是身份不是管理员")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "使用了 fillExisted 参数但是拥有指定 App ID 的据点不存在")]
         public async Task<IHttpActionResult> CreateOneFromSteamAppId(int appId, bool fillExisted = false)
         {
             if (appId <= 0)
@@ -43,6 +45,10 @@ namespace Keylol.Controllers.NormalPoint
                 if (await UserManager.GetStaffClaimAsync(User.Identity.GetUserId()) != StaffClaim.Operator)
                 {
                     return Unauthorized();
+                }
+                if (gamePoint == null)
+                {
+                    return NotFound();
                 }
             }
             else if (gamePoint != null)
@@ -71,6 +77,7 @@ namespace Keylol.Controllers.NormalPoint
                     var response =
                         await httpClient.GetAsync($"http://store.steampowered.com/app/{appId}/?l=english&cc=us");
                     response.EnsureSuccessStatusCode();
+                    Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
                     var dom = CQ.Create(await response.Content.ReadAsStringAsync());
                     var navTexts = dom[".game_title_area .blockbg a"];
                     if (!navTexts.Any() || navTexts[0].InnerText != "All Games")
@@ -90,9 +97,27 @@ namespace Keylol.Controllers.NormalPoint
                         gamePoint.Type = NormalPointType.Game;
                     }
                     if (string.IsNullOrEmpty(gamePoint.BackgroundImage))
-                        gamePoint.BackgroundImage = $"keylol://steam/app-backgrounds/{appId}";
+                    {
+                        var backgroundResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head,
+                            $"http://steamcdn-a.akamaihd.net/steam/apps/{appId}/page_bg_generated.jpg"));
+                        if (backgroundResponse.IsSuccessStatusCode)
+                        {
+                            gamePoint.BackgroundImage = $"keylol://steam/app-backgrounds/{appId}";
+                        }
+                        else
+                        {
+                            var screenshots = dom[".highlight_strip_screenshot img"];
+                            if (screenshots.Any())
+                            {
+                                var match = Regex.Match(screenshots[0].Attributes["src"], @"ss_([^\/]*)\.\d+x\d+\.jpg");
+                                if (match.Success)
+                                    gamePoint.BackgroundImage =
+                                        $"keylol://steam/app-backgrounds/{appId}-{match.Groups[1].Value}";
+                            }
+                        }
+                    }
                     if (string.IsNullOrEmpty(gamePoint.CoverImage))
-                        gamePoint.CoverImage = $"keylol://steam/app-headers/{appId}";
+                        gamePoint.CoverImage = $"keylol://steam/app-capsules/{appId}";
                     gamePoint.Description = dom[".game_description_snippet"].Text().Trim();
                     var genreNames = new List<string>();
                     var tags = dom[".popular_tags a.app_tag"].Select(child => child.InnerText.Trim()).Take(5).ToList();
@@ -121,7 +146,6 @@ namespace Keylol.Controllers.NormalPoint
                         switch (key)
                         {
                             case "Title:":
-                                gamePoint.NameInSteamStore = values[0];
                                 if (!fillExisted)
                                 {
                                     gamePoint.EnglishName = values[0];
@@ -157,17 +181,27 @@ namespace Keylol.Controllers.NormalPoint
                             .Select(n => new KeyValuePair<NormalPointType, string>(NormalPointType.Manufacturer, n))))
                     {
                         var relatedPoint = await DbContext.NormalPoints
-                            .Where(p => p.Type == pair.Key && p.NameInSteamStore == pair.Value)
+                            .Where(p => p.Type == pair.Key && p.SteamStoreNames.Select(n => n.Name).Contains(pair.Value))
                             .SingleOrDefaultAsync();
                         if (relatedPoint == null)
                         {
                             relatedPoint = DbContext.NormalPoints.Create();
                             relatedPoint.EnglishName = pair.Value;
-                            relatedPoint.NameInSteamStore = pair.Value;
+                            var name = await DbContext.SteamStoreNames
+                                .Where(n => n.Name == pair.Value).SingleOrDefaultAsync();
+                            if (name == null)
+                            {
+                                name = DbContext.SteamStoreNames.Create();
+                                name.Name = pair.Value;
+                                DbContext.SteamStoreNames.Add(name);
+                                await DbContext.SaveChangesAsync();
+                            }
+                            relatedPoint.SteamStoreNames = new[] {name};
                             relatedPoint.Type = pair.Key;
                             relatedPoint.PreferredName = PreferredNameType.English;
                             relatedPoint.IdCode = await GenerateIdCode(pair.Value);
                             DbContext.NormalPoints.Add(relatedPoint);
+                            await DbContext.SaveChangesAsync();
                         }
                         switch (pair.Key)
                         {
