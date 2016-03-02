@@ -73,6 +73,8 @@ namespace Keylol.Models
         [MaxLength(10000)]
         public string Description { get; set; } = string.Empty;
 
+        public virtual ICollection<SteamStoreName> SteamStoreNames { get; set; }
+
         #region Game Point Only
 
         //TODO: 部署上线后删除

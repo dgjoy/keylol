@@ -39,6 +39,7 @@ namespace Keylol.Models.DAL
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<AutoSubscriptions> AutoSubscriptionses { get; set; }
         public DbSet<UserGameRecord> UserGameRecords { get; set; }
+        public DbSet<SteamStoreName> SteamStoreNames { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -126,6 +127,10 @@ namespace Keylol.Models.DAL
                 .Map(t => t.MapLeftKey("GamePoint_Id")
                     .MapRightKey("SeriesPoint_Id")
                     .ToTable("GameSeriesPointAssociations"));
+            modelBuilder.Entity<NormalPoint>()
+                .HasMany(p => p.SteamStoreNames)
+                .WithMany(n => n.NormalPoints)
+                .Map(t => t.ToTable("PointStoreNameMappings"));
         }
 
         // Ignore validation error on unmodified properties

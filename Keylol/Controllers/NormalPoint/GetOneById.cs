@@ -129,7 +129,7 @@ namespace Keylol.Controllers.NormalPoint
             {
                 pointDTO.ChineseAliases = point.ChineseAliases;
                 pointDTO.EnglishAliases = point.EnglishAliases;
-                pointDTO.NameInSteamStore = point.NameInSteamStore;
+                pointDTO.NameInSteamStore = string.Join("; ", point.SteamStoreNames.Select(n => n.Name));
             }
 
             return Ok(pointDTO);

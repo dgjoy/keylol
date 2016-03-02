@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -94,7 +96,18 @@ namespace Keylol.Controllers.NormalPoint
                     ModelState.AddModelError("vm.NameInSteamStore", "商店匹配名必填");
                     return BadRequest(ModelState);
                 }
-                normalPoint.NameInSteamStore = vm.NameInSteamStore;
+                var nameStrings =
+                    vm.NameInSteamStore.Split(';').Select(n => n.Trim()).Where(n => !string.IsNullOrEmpty(n));
+                var names = new List<SteamStoreName>();
+                foreach (var nameString in nameStrings)
+                {
+                    var name =
+                        await DbContext.SteamStoreNames.Where(n => n.Name == nameString).SingleOrDefaultAsync() ??
+                        DbContext.SteamStoreNames.Create();
+                    name.Name = nameString;
+                    names.Add(name);
+                }
+                normalPoint.SteamStoreNames = names;
             }
             if (normalPoint.Type == NormalPointType.Game &&
                 !await PopulateGamePointAttributes(normalPoint, vm, StaffClaim.Operator))

@@ -211,9 +211,22 @@
     <Compile Include="Migrations\201602280851363_UserGameRecordLastPlayTime.Designer.cs">
       <DependentUpon>201602280851363_UserGameRecordLastPlayTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603020800554_RemoveUselessSubscriptions.cs" />
+    <Compile Include="Migrations\201603020800554_RemoveUselessSubscriptions.Designer.cs">
+      <DependentUpon>201603020800554_RemoveUselessSubscriptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603020802205_SequenceNoCache.cs" />
+    <Compile Include="Migrations\201603020802205_SequenceNoCache.Designer.cs">
+      <DependentUpon>201603020802205_SequenceNoCache.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603020958177_SteamStoreNames.cs" />
+    <Compile Include="Migrations\201603020958177_SteamStoreNames.Designer.cs">
+      <DependentUpon>201603020958177_SteamStoreNames.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
+    <Compile Include="SteamStoreName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamBindingToken.cs" />
     <Compile Include="SteamBot.cs" />
@@ -319,6 +332,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602280851363_UserGameRecordLastPlayTime.resx">
       <DependentUpon>201602280851363_UserGameRecordLastPlayTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603020800554_RemoveUselessSubscriptions.resx">
+      <DependentUpon>201603020800554_RemoveUselessSubscriptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603020802205_SequenceNoCache.resx">
+      <DependentUpon>201603020802205_SequenceNoCache.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603020958177_SteamStoreNames.resx">
+      <DependentUpon>201603020958177_SteamStoreNames.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
