@@ -43,7 +43,8 @@ namespace Keylol.Controllers.Article
                 return NotFound();
 
             var editorId = User.Identity.GetUserId();
-            if (article.PrincipalId != editorId && await UserManager.GetStaffClaimAsync(editorId) != StaffClaim.Operator)
+            var editorStaffClaim = await UserManager.GetStaffClaimAsync(editorId);
+            if (article.PrincipalId != editorId && editorStaffClaim != StaffClaim.Operator)
                 return Unauthorized();
 
             var type = await DbContext.ArticleTypes.SingleOrDefaultAsync(t => t.Name == vm.TypeName);
@@ -148,12 +149,12 @@ namespace Keylol.Controllers.Article
             {
                 if (string.IsNullOrEmpty(vm.Summary))
                 {
-                    SanitizeArticle(article, true);
+                    await SanitizeArticle(article, true, editorStaffClaim == StaffClaim.Operator);
                 }
                 else
                 {
                     article.UnstyledContent = vm.Summary;
-                    SanitizeArticle(article, false);
+                    await SanitizeArticle(article, false, editorStaffClaim == StaffClaim.Operator);
                 }
             }
 

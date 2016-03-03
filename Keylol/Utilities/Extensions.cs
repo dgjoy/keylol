@@ -41,7 +41,7 @@ namespace Keylol.Utilities
 
         public static bool IsTrustedUrl(this string url, bool allowNullOrEmpty = true)
         {
-            return url.StartsWith("keylol://") || (allowNullOrEmpty && string.IsNullOrEmpty(url));
+            return (allowNullOrEmpty && string.IsNullOrEmpty(url)) || url.StartsWith("keylol://");
         }
 
         public static IEnumerable<IEnumerable<T>> AllCombinations<T>(this IEnumerable<T> items, int count)
