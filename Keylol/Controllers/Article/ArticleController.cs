@@ -1,4 +1,10 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
 using CsQuery;
 using CsQuery.Output;
 using Ganss.XSS;
@@ -10,7 +16,7 @@ namespace Keylol.Controllers.Article
     [RoutePrefix("article")]
     public partial class ArticleController : KeylolApiController
     {
-        private static void SanitizeArticle(Models.Article article, bool extractUnstyledContent)
+        private static async Task SanitizeArticle(Models.Article article, bool extractUnstyledContent, bool proxyExternalImages)
         {
             Config.HtmlEncoder = new HtmlEncoderMinimum();
             var sanitizer =
@@ -39,10 +45,31 @@ namespace Keylol.Controllers.Article
                     if (string.IsNullOrEmpty(fileName))
                     {
                         url = img.Attributes["src"];
+                        if (proxyExternalImages)
+                        {
+                            var client = new HttpClient();
+                            var fileData = await client.GetByteArrayAsync(img.Attributes["src"]);
+                            if (fileData.Length > 0)
+                            {
+                                var uri = new Uri(img.Attributes["src"]);
+                                var extension = Path.GetExtension(uri.AbsolutePath);
+                                if (!string.IsNullOrEmpty(extension))
+                                {
+                                    var name = await Upyun.UploadFile(fileData, extension);
+                                    if (!string.IsNullOrEmpty(name))
+                                    {
+                                        url = $"keylol://{name}";
+                                        img.Attributes["article-image-src"] = url;
+                                        img.RemoveAttribute("src");
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        url = img.Attributes["article-image-src"] = $"keylol://{fileName}";
+                        url = $"keylol://{fileName}";
+                        img.Attributes["article-image-src"] = url;
                         img.RemoveAttribute("src");
                     }
                 }

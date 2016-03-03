@@ -129,12 +129,12 @@ namespace Keylol.Controllers.Article
             {
                 if (string.IsNullOrEmpty(vm.Summary))
                 {
-                    SanitizeArticle(article, true);
+                    await SanitizeArticle(article, true, false);
                 }
                 else
                 {
                     article.UnstyledContent = vm.Summary;
-                    SanitizeArticle(article, false);
+                    await SanitizeArticle(article, false, false);
                 }
             }
 

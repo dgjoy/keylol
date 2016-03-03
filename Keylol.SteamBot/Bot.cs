@@ -536,6 +536,7 @@ namespace Keylol.SteamBot
             {
                 var cookieIsValid = response.Cookies["steamLogin"] == null ||
                                     !response.Cookies["steamLogin"].Value.Equals("deleted");
+                response.Close();
                 if (cookieIsValid) return;
                 WriteLog("Invalid cookies detected.", EventLogEntryType.Warning);
                 _callbackManager.Subscribe(_steamUser.RequestWebAPIUserNonce(),
