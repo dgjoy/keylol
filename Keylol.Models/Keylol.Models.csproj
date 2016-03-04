@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleType.cs" />
-    <Compile Include="AutoSubscriptions.cs" />
+    <Compile Include="AutoSubscription.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
     <Compile Include="Entry.cs" />
@@ -223,6 +223,14 @@
     <Compile Include="Migrations\201603020958177_SteamStoreNames.Designer.cs">
       <DependentUpon>201603020958177_SteamStoreNames.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603041140558_AutoSubscriptionType.cs" />
+    <Compile Include="Migrations\201603041140558_AutoSubscriptionType.Designer.cs">
+      <DependentUpon>201603041140558_AutoSubscriptionType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603041218536_AutoSubscriptionDisplayOrder.cs" />
+    <Compile Include="Migrations\201603041218536_AutoSubscriptionDisplayOrder.Designer.cs">
+      <DependentUpon>201603041218536_AutoSubscriptionDisplayOrder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -341,6 +349,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603020958177_SteamStoreNames.resx">
       <DependentUpon>201603020958177_SteamStoreNames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603041140558_AutoSubscriptionType.resx">
+      <DependentUpon>201603041140558_AutoSubscriptionType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603041218536_AutoSubscriptionDisplayOrder.resx">
+      <DependentUpon>201603041218536_AutoSubscriptionDisplayOrder.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

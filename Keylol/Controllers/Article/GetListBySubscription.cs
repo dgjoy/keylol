@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -29,7 +30,8 @@ namespace Keylol.Controllers.Article
             int beforeSN = int.MaxValue, int take = 30)
         {
             var userId = User.Identity.GetUserId();
-            var useCache = articleTypeFilter == null && beforeSN == int.MaxValue;
+//            var useCache = articleTypeFilter == null && beforeSN == int.MaxValue;
+            const bool useCache = false; // 暂时关闭缓存机制
             var cacheKey = $"user:{userId}:subscription.timeline";
 
             Func<KeylolDbContext, Task<IEnumerable<ArticleDTO>>> calculate = async dbContext =>
@@ -68,7 +70,7 @@ namespace Keylol.Controllers.Article
                                 reason = ArticleDTO.TimelineReasonType.Like,
                                 likedByUser = l.Operator
                             }))
-                        .Concat(dbContext.AutoSubscriptionses.Where(s => s.UserId == userId)
+                        .Concat(dbContext.AutoSubscriptions.Where(s => s.UserId == userId)
                             .SelectMany(
                                 s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
                             .Where(e => e.article.SequenceNumber < beforeSN)
