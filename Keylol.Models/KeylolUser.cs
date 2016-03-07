@@ -58,6 +58,10 @@ namespace Keylol.Models
 
         public bool LastGameUpdateSucceed { get; set; } = false;
 
+        public bool AutoSubscribeEnabled { get; set; } = true;
+
+        public TimeSpan AutoSubscribeTimeSpan { get; set; } = TimeSpan.FromDays(7);
+
         #region Auto share options
 
         public bool AutoShareOnAddingNewFriend { get; set; } = false;

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models.ViewModels
 {
@@ -95,6 +96,11 @@ namespace Keylol.Models.ViewModels
                 user.MessageNotifyOnCommentLiked = MessageNotifyOnCommentLiked.Value;
             if (MessageNotifyOnCommentReplied != null)
                 user.MessageNotifyOnCommentReplied = MessageNotifyOnCommentReplied.Value;
+
+            if (AutoSubscribeEnabled != null)
+                user.AutoSubscribeEnabled = AutoSubscribeEnabled.Value;
+            if (AutoSubscribeDaySpan != null)
+                user.AutoSubscribeTimeSpan = TimeSpan.FromDays(AutoSubscribeDaySpan.Value);
         }
 
         public string GamerTag { get; set; }
@@ -131,5 +137,8 @@ namespace Keylol.Models.ViewModels
         public bool? MessageNotifyOnEditorRecommended { get; set; }
         public bool? MessageNotifyOnArticleLiked { get; set; }
         public bool? MessageNotifyOnCommentLiked { get; set; }
+
+        public bool? AutoSubscribeEnabled { get; set; }
+        public int? AutoSubscribeDaySpan { get; set; }
     }
 }

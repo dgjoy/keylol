@@ -231,6 +231,10 @@
     <Compile Include="Migrations\201603041218536_AutoSubscriptionDisplayOrder.Designer.cs">
       <DependentUpon>201603041218536_AutoSubscriptionDisplayOrder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603070259259_AutoSubscribeSettings.cs" />
+    <Compile Include="Migrations\201603070259259_AutoSubscribeSettings.Designer.cs">
+      <DependentUpon>201603070259259_AutoSubscribeSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -355,6 +359,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603041218536_AutoSubscriptionDisplayOrder.resx">
       <DependentUpon>201603041218536_AutoSubscriptionDisplayOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603070259259_AutoSubscribeSettings.resx">
+      <DependentUpon>201603070259259_AutoSubscribeSettings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

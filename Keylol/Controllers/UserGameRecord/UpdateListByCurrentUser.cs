@@ -24,16 +24,26 @@ namespace Keylol.Controllers.UserGameRecord
         /// <summary>
         /// 重新抓取当前登录用户的游戏记录，并重新同步订阅
         /// </summary>
+        /// <param name="manual">是否是用户手动触发的同步，默认 false</param>
         [Route("my")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "距离上次抓取不足最小抓取周期，或者网络问题导致抓取失败")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "用户资料设定为隐私，抓取失败")]
-        public async Task<IHttpActionResult> UpdateListByCurrentUser()
+        public async Task<IHttpActionResult> UpdateListByCurrentUser(bool manual = false)
         {
             var userId = User.Identity.GetUserId();
             var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();
-            if (DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromDays(7) && user.LastGameUpdateSucceed)
-                return NotFound();
+            if (manual)
+            {
+                if (DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromHours(12))
+                    return NotFound();
+            }
+            else
+            {
+                if (!user.AutoSubscribeEnabled ||
+                    (DateTime.Now - user.LastGameUpdateTime < user.AutoSubscribeTimeSpan && user.LastGameUpdateSucceed))
+                    return NotFound();
+            }
 
             if (user.SteamBot.Enabled)
             {

@@ -151,6 +151,9 @@ namespace Keylol.Models.DTO
             MessageNotifyOnCommentLiked = user.MessageNotifyOnCommentLiked;
             MessageNotifyOnCommentReplied = user.MessageNotifyOnCommentReplied;
             MessageNotifyOnEditorRecommended = user.MessageNotifyOnEditorRecommended;
+
+            AutoSubscribeEnabled = user.AutoSubscribeEnabled;
+            AutoSubscribeDaySpan = user.AutoSubscribeTimeSpan.TotalDays;
         }
 
         [DataMember]
@@ -212,5 +215,11 @@ namespace Keylol.Models.DTO
 
         [DataMember]
         public bool MessageNotifyOnCommentLiked { get; set; }
+
+        [DataMember]
+        public bool AutoSubscribeEnabled { get; set; }
+
+        [DataMember]
+        public double AutoSubscribeDaySpan { get; set; }
     }
 }
