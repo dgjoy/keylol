@@ -7,13 +7,13 @@ namespace Keylol.Models.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.KeylolUsers", "AutoSubscribeEnabled", c => c.Boolean(nullable: false));
-            AddColumn("dbo.KeylolUsers", "AutoSubscribeTimeSpan", c => c.Time(nullable: false, precision: 7));
+            AddColumn("dbo.KeylolUsers", "AutoSubscribeEnabled", c => c.Boolean(nullable: false, defaultValue: true));
+            AddColumn("dbo.KeylolUsers", "AutoSubscribeDaySpan", c => c.Int(nullable: false, defaultValue: 7));
         }
         
         public override void Down()
         {
-            DropColumn("dbo.KeylolUsers", "AutoSubscribeTimeSpan");
+            DropColumn("dbo.KeylolUsers", "AutoSubscribeDaySpan");
             DropColumn("dbo.KeylolUsers", "AutoSubscribeEnabled");
         }
     }

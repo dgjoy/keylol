@@ -34,6 +34,7 @@ namespace Keylol.Controllers.NormalPoint
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 9</param>
         [Route("{id}/games")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<NormalPointDTO>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是厂商或类型据点")]

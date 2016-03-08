@@ -35,13 +35,14 @@ namespace Keylol.Controllers.UserGameRecord
             var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();
             if (manual)
             {
-                if (DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromHours(12))
+                if (DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromMinutes(1))
                     return NotFound();
             }
             else
             {
                 if (!user.AutoSubscribeEnabled ||
-                    (DateTime.Now - user.LastGameUpdateTime < user.AutoSubscribeTimeSpan && user.LastGameUpdateSucceed))
+                    (DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromDays(user.AutoSubscribeDaySpan) &&
+                     user.LastGameUpdateSucceed))
                     return NotFound();
             }
 

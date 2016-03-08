@@ -153,7 +153,7 @@ namespace Keylol.Models.DTO
             MessageNotifyOnEditorRecommended = user.MessageNotifyOnEditorRecommended;
 
             AutoSubscribeEnabled = user.AutoSubscribeEnabled;
-            AutoSubscribeDaySpan = user.AutoSubscribeTimeSpan.TotalDays;
+            AutoSubscribeDaySpan = user.AutoSubscribeDaySpan;
         }
 
         [DataMember]

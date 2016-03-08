@@ -14,6 +14,7 @@ namespace Keylol.Controllers.Article
         ///     获取 5 篇全站最新文章
         /// </summary>
         [Route("latest")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> GetListOfLatest()

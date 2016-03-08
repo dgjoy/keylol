@@ -24,6 +24,7 @@ namespace Keylol.Controllers.UserGameRecord
         /// <param name="steamAppId">游戏 Steam App ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}/{steamAppId}")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (double))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户没有该游戏的在档记录")]

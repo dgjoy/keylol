@@ -39,6 +39,7 @@ namespace Keylol.Controllers.User
         /// <param name="reviewStats">是否包含用户评测文章数和简评数，默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (UserDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]

@@ -60,7 +60,7 @@ namespace Keylol.Models
 
         public bool AutoSubscribeEnabled { get; set; } = true;
 
-        public TimeSpan AutoSubscribeTimeSpan { get; set; } = TimeSpan.FromDays(7);
+        public int AutoSubscribeDaySpan { get; set; } = 7;
 
         #region Auto share options
 

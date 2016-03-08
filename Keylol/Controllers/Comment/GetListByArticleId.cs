@@ -30,6 +30,7 @@ namespace Keylol.Controllers.Comment
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 20</param>
         [Route]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<CommentDTO>))]
         public async Task<HttpResponseMessage> GetListByArticleId(string articleId,

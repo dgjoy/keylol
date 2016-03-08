@@ -26,6 +26,7 @@ namespace Keylol.Controllers.NormalPoint
         /// <param name="more">如果为真，则获取据点所有额外信息，如中文索引、英文索引、商店匹配名</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (NormalPointDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]

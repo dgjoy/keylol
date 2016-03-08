@@ -100,7 +100,7 @@ namespace Keylol.Models.ViewModels
             if (AutoSubscribeEnabled != null)
                 user.AutoSubscribeEnabled = AutoSubscribeEnabled.Value;
             if (AutoSubscribeDaySpan != null)
-                user.AutoSubscribeTimeSpan = TimeSpan.FromDays(AutoSubscribeDaySpan.Value);
+                user.AutoSubscribeDaySpan = AutoSubscribeDaySpan.Value;
         }
 
         public string GamerTag { get; set; }

@@ -13,7 +13,7 @@ namespace Keylol.Models.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201603070259259_AutoSubscribeSettings"; }
+            get { return "201603071317464_AutoSubscribeSettings"; }
         }
         
         string IMigrationMetadata.Source

@@ -14,6 +14,7 @@ namespace Keylol.Controllers.NormalPoint
         ///     获取五个最近活跃的据点
         /// </summary>
         [Route("active")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<NormalPointDTO>))]
         public async Task<IHttpActionResult> GetListByRecentActivity()
