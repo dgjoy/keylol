@@ -29,16 +29,17 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="id">据点 ID</param>
         /// <param name="relationship">该厂商或类型据点与想要获取游戏据点的关系</param>
-        /// <param name="includeStats">是否包含据点的读者数、文章数、订阅状态，默认 false</param>
+        /// <param name="stats">是否包含据点的读者数、文章数、订阅状态，默认 false</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 9</param>
         [Route("{id}/games")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<NormalPointDTO>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是厂商或类型据点")]
         public async Task<IHttpActionResult> GetListOfRelatedGames(string id, PointRelationship relationship,
-            bool includeStats = false, IdType idType = IdType.Id, int skip = 0, int take = 9)
+            bool stats = false, IdType idType = IdType.Id, int skip = 0, int take = 9)
         {
             if (take > 50)
                 take = 50;
@@ -84,7 +85,7 @@ namespace Keylol.Controllers.NormalPoint
                 {
                     ReleaseDate = p.ReleaseDate
                 };
-                if (includeStats)
+                if (stats)
                 {
                     dto.SubscriberCount = DbContext.NormalPoints.Where(np => np.Id == p.Id)
                         .Select(np => np.Subscribers.Count)

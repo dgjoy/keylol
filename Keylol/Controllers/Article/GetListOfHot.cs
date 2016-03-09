@@ -15,6 +15,7 @@ namespace Keylol.Controllers.Article
         ///     获取 5 篇全站热门文章
         /// </summary>
         [Route("hot")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> GetListOfHot()

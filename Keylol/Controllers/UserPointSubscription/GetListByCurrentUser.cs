@@ -47,10 +47,9 @@ namespace Keylol.Controllers.UserPointSubscription
                 .Skip(() => skip).Take(() => take)
                 .ToListAsync()).Select(e => new SubscribedPointDTO
                 {
-                    User =
-                        e.user == null
-                            ? null
-                            : new UserDTO(e.user) {ProfilePointBackgroundImage = e.userProfilePoint.BackgroundImage},
+                    User = e.user == null
+                        ? null
+                        : new UserDTO(e.user) {ProfilePointBackgroundImage = e.userProfilePoint.BackgroundImage},
                     NormalPoint = e.point == null ? null : new NormalPointDTO(e.point),
                     ArticleCount = e.articleCount,
                     SubscriberCount = e.subscriberCount

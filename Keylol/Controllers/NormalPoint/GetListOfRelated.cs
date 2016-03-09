@@ -20,6 +20,7 @@ namespace Keylol.Controllers.NormalPoint
         /// <param name="id">游戏据点 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}/related")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<GetListOfRelatedEntryDTO>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是游戏据点")]

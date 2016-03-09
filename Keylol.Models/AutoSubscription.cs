@@ -1,14 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models
 {
-    public class AutoSubscriptions
+    public enum AutoSubscriptionType
+    {
+        MostPlayed,
+        RecentPlayed,
+        Genre,
+        Manufacture
+    }
+
+    public class AutoSubscription
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -21,5 +25,10 @@ namespace Keylol.Models
         public string NormalPointId { get; set; }
 
         public virtual NormalPoint NormalPoint { get; set; }
+
+        public AutoSubscriptionType Type { get; set; }
+
+        [Index]
+        public int DisplayOrder { get; set; }
     }
 }

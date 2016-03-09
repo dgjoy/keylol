@@ -15,6 +15,7 @@ namespace Keylol.Controllers.NormalPoint
         ///     获取每种据点类型下最近活跃的据点
         /// </summary>
         [Route("active-of-each-type")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (Dictionary<NormalPointType, List<NormalPointDTO>>))]
         public async Task<IHttpActionResult> GetListByRecentActivityOfEachType()

@@ -17,6 +17,7 @@ namespace Keylol.Controllers.Article
         /// </summary>
         /// <param name="id">文章 ID</param>
         [Route("{id}")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (ArticleDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]

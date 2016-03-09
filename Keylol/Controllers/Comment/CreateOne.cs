@@ -87,6 +87,9 @@ namespace Keylol.Controllers.Comment
                     .Select(cr => cr.Comment.Commentator)
                     .Distinct())
             {
+                if (!replyToUser.SteamNotifyOnCommentReplied)
+                    continue;
+
                 if (replyToUser.Id == articleAuthor.Id)
                     notifiedArticleAuthor = true;
                 ISteamBotCoodinatorCallback callback;
@@ -97,7 +100,7 @@ namespace Keylol.Controllers.Comment
                         $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                 }
             }
-            if (!notifiedArticleAuthor && !comment.IgnoredByArticleAuthor)
+            if (!notifiedArticleAuthor && !comment.IgnoredByArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
             {
                 ISteamBotCoodinatorCallback callback;
                 if (SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))

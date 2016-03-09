@@ -19,6 +19,7 @@ namespace Keylol.Controllers.Article
         /// <param name="skip">起始位置</param>
         /// <param name="take">获取数量，最大 50，默认 5</param>
         [Route("keyword/{keyword}")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<HttpResponseMessage> GetListByKeyword(string keyword, bool full = false, int skip = 0,

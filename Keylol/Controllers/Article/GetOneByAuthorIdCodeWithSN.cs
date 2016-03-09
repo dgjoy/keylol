@@ -18,6 +18,7 @@ namespace Keylol.Controllers.Article
         /// <param name="authorIdCode">作者 IdCode</param>
         /// <param name="sequenceNumberForAuthor">文章序号</param>
         [Route("{authorIdCode}/{sequenceNumberForAuthor}")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (ArticleDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]

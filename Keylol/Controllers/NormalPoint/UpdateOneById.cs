@@ -119,7 +119,7 @@ namespace Keylol.Controllers.NormalPoint
             normalPoint.ChineseName = vm.ChineseName;
             normalPoint.ChineseAliases = vm.ChineseAliases;
             normalPoint.EnglishAliases = vm.EnglishAliases;
-            normalPoint.Description = vm.Description;
+            normalPoint.Description = vm.Description.Length > 256 ? vm.Description.Substring(0, 256) : vm.Description;
 
             if (normalPoint.Type == NormalPointType.Game &&
                 !await PopulateGamePointAttributes(normalPoint, vm, editorStaffClaim, true))

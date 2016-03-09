@@ -69,7 +69,8 @@ namespace Keylol.Controllers.Like
                         var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == article.PrincipalId);
                         ISteamBotCoodinatorCallback callback;
-                        if (SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                        if (articleAuthor.SteamNotifyOnArticleLiked &&
+                            SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
                         {
                             callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
@@ -110,7 +111,8 @@ namespace Keylol.Controllers.Like
                             .SingleAsync(u => u.Id == comment.CommentatorId);
                         var articleAuthor = await DbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
                         ISteamBotCoodinatorCallback callback;
-                        if (SteamBotCoodinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
+                        if (commentAuthor.SteamNotifyOnCommentLiked &&
+                            SteamBotCoodinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
                         {
                             callback.SendMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你在 《{comment.Article.Title}》 下的评论：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{comment.Article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");

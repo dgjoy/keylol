@@ -22,6 +22,7 @@ namespace Keylol.Controllers.Article
         /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("point/{normalPointId}")]
+        [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> GetListByNormalPointId(string normalPointId,
