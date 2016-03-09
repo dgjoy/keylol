@@ -7,7 +7,6 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models.DAL
 {
-    [DbConfigurationType(typeof (KeylolDbConfiguration))]
     public class KeylolDbContext : IdentityDbContext<KeylolUser>
     {
         public static Action<string> LogAction;
@@ -66,12 +65,6 @@ namespace Keylol.Models.DAL
                 .HasMany(point => point.Staffs)
                 .WithMany(user => user.ManagedPoints)
                 .Map(t => t.ToTable("PointStaffs"));
-            modelBuilder.Entity<NormalPoint>()
-                .HasMany(point => point.AssociatedToPoints)
-                .WithMany(point => point.AssociatedByPoints)
-                .Map(t => t.MapLeftKey("ToPoint_Id")
-                    .MapRightKey("ByPoint_Id")
-                    .ToTable("PointAssociations"));
             modelBuilder.Entity<Article>()
                 .HasMany(article => article.AttachedPoints)
                 .WithMany(point => point.Articles)
