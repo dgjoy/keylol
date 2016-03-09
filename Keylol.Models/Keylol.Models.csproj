@@ -235,6 +235,10 @@
     <Compile Include="Migrations\201603071317464_AutoSubscribeSettings.Designer.cs">
       <DependentUpon>201603071317464_AutoSubscribeSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603091213081_SteamNotifyOptions.cs" />
+    <Compile Include="Migrations\201603091213081_SteamNotifyOptions.Designer.cs">
+      <DependentUpon>201603091213081_SteamNotifyOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -362,6 +366,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603071317464_AutoSubscribeSettings.resx">
       <DependentUpon>201603071317464_AutoSubscribeSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603091213081_SteamNotifyOptions.resx">
+      <DependentUpon>201603091213081_SteamNotifyOptions.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

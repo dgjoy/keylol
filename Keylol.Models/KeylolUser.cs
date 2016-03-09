@@ -62,55 +62,15 @@ namespace Keylol.Models
 
         public int AutoSubscribeDaySpan { get; set; } = 7;
 
-        #region Auto share options
+        #region Steam bot notification options
 
-        public bool AutoShareOnAddingNewFriend { get; set; } = false;
+        public bool SteamNotifyOnArticleReplied { get; set; } = true;
 
-        public bool AutoShareOnUnlockingAchievement { get; set; } = true;
+        public bool SteamNotifyOnCommentReplied { get; set; } = true;
 
-        public bool AutoShareOnAcquiringNewGame { get; set; } = true;
+        public bool SteamNotifyOnArticleLiked { get; set; } = true;
 
-        public bool AutoShareOnJoiningGroup { get; set; } = false;
-
-        public bool AutoShareOnCreatingGroup { get; set; } = false;
-
-        public bool AutoShareOnUpdatingWishlist { get; set; } = false;
-
-        public bool AutoShareOnPublishingReview { get; set; } = true;
-
-        public bool AutoShareOnUploadingScreenshot { get; set; } = false;
-
-        public bool AutoShareOnAddingVideo { get; set; } = false;
-
-        public bool AutoShareOnAddingFavorite { get; set; } = false;
-
-        #endregion
-
-        #region Email notification options
-
-        public bool EmailNotifyOnArticleReplied { get; set; } = false;
-
-        public bool EmailNotifyOnCommentReplied { get; set; } = false;
-
-        public bool EmailNotifyOnEditorRecommended { get; set; } = false;
-
-        public bool EmailNotifyOnMessageReceived { get; set; } = false;
-
-        public bool EmailNotifyOnAdvertisement { get; set; } = false;
-
-        #endregion
-
-        #region Message options
-
-        public bool MessageNotifyOnArticleReplied { get; set; } = true;
-
-        public bool MessageNotifyOnCommentReplied { get; set; } = true;
-
-        public bool MessageNotifyOnEditorRecommended { get; set; } = true;
-
-        public bool MessageNotifyOnArticleLiked { get; set; } = true;
-
-        public bool MessageNotifyOnCommentLiked { get; set; } = true;
+        public bool SteamNotifyOnCommentLiked { get; set; } = true;
 
         #endregion
 

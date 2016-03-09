@@ -129,92 +129,26 @@ namespace Keylol.Models.DTO
     {
         public UserWithMoreOptionsDTO(KeylolUser user) : base(user)
         {
-            AutoShareOnAcquiringNewGame = user.AutoShareOnAcquiringNewGame;
-            AutoShareOnAddingFavorite = user.AutoShareOnAddingFavorite;
-            AutoShareOnAddingNewFriend = user.AutoShareOnAddingNewFriend;
-            AutoShareOnAddingVideo = user.AutoShareOnAddingVideo;
-            AutoShareOnCreatingGroup = user.AutoShareOnCreatingGroup;
-            AutoShareOnJoiningGroup = user.AutoShareOnJoiningGroup;
-            AutoShareOnPublishingReview = user.AutoShareOnPublishingReview;
-            AutoShareOnUnlockingAchievement = user.AutoShareOnUnlockingAchievement;
-            AutoShareOnUpdatingWishlist = user.AutoShareOnUpdatingWishlist;
-            AutoShareOnUploadingScreenshot = user.AutoShareOnUploadingScreenshot;
-
-            EmailNotifyOnAdvertisement = user.EmailNotifyOnAdvertisement;
-            EmailNotifyOnArticleReplied = user.EmailNotifyOnArticleReplied;
-            EmailNotifyOnCommentReplied = user.EmailNotifyOnCommentReplied;
-            EmailNotifyOnEditorRecommended = user.EmailNotifyOnEditorRecommended;
-            EmailNotifyOnMessageReceived = user.EmailNotifyOnMessageReceived;
-
-            MessageNotifyOnArticleLiked = user.MessageNotifyOnArticleLiked;
-            MessageNotifyOnArticleReplied = user.MessageNotifyOnArticleReplied;
-            MessageNotifyOnCommentLiked = user.MessageNotifyOnCommentLiked;
-            MessageNotifyOnCommentReplied = user.MessageNotifyOnCommentReplied;
-            MessageNotifyOnEditorRecommended = user.MessageNotifyOnEditorRecommended;
+            SteamNotifyOnArticleReplied = user.SteamNotifyOnArticleReplied;
+            SteamNotifyOnCommentReplied = user.SteamNotifyOnCommentReplied;
+            SteamNotifyOnArticleLiked = user.SteamNotifyOnArticleLiked;
+            SteamNotifyOnCommmentLiked = user.SteamNotifyOnCommentLiked;
 
             AutoSubscribeEnabled = user.AutoSubscribeEnabled;
             AutoSubscribeDaySpan = user.AutoSubscribeDaySpan;
         }
+        
+        [DataMember]
+        public bool SteamNotifyOnArticleReplied { get; set; }
 
         [DataMember]
-        public bool AutoShareOnAddingNewFriend { get; set; }
+        public bool SteamNotifyOnCommentReplied { get; set; }
 
         [DataMember]
-        public bool AutoShareOnUnlockingAchievement { get; set; }
+        public bool SteamNotifyOnArticleLiked { get; set; }
 
         [DataMember]
-        public bool AutoShareOnAcquiringNewGame { get; set; }
-
-        [DataMember]
-        public bool AutoShareOnJoiningGroup { get; set; }
-
-        [DataMember]
-        public bool AutoShareOnCreatingGroup { get; set; }
-
-        [DataMember]
-        public bool AutoShareOnUpdatingWishlist { get; set; }
-
-        [DataMember]
-        public bool AutoShareOnPublishingReview { get; set; }
-
-        [DataMember]
-        public bool AutoShareOnUploadingScreenshot { get; set; }
-
-        [DataMember]
-        public bool AutoShareOnAddingVideo { get; set; }
-
-        [DataMember]
-        public bool AutoShareOnAddingFavorite { get; set; }
-
-        [DataMember]
-        public bool EmailNotifyOnArticleReplied { get; set; }
-
-        [DataMember]
-        public bool EmailNotifyOnCommentReplied { get; set; }
-
-        [DataMember]
-        public bool EmailNotifyOnEditorRecommended { get; set; }
-
-        [DataMember]
-        public bool EmailNotifyOnMessageReceived { get; set; }
-
-        [DataMember]
-        public bool EmailNotifyOnAdvertisement { get; set; }
-
-        [DataMember]
-        public bool MessageNotifyOnArticleReplied { get; set; }
-
-        [DataMember]
-        public bool MessageNotifyOnCommentReplied { get; set; }
-
-        [DataMember]
-        public bool MessageNotifyOnEditorRecommended { get; set; }
-
-        [DataMember]
-        public bool MessageNotifyOnArticleLiked { get; set; }
-
-        [DataMember]
-        public bool MessageNotifyOnCommentLiked { get; set; }
+        public bool SteamNotifyOnCommmentLiked { get; set; }
 
         [DataMember]
         public bool AutoSubscribeEnabled { get; set; }
