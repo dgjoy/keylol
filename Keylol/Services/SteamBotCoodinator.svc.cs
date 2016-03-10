@@ -59,7 +59,7 @@ namespace Keylol.Services
             using (var dbContext = new KeylolDbContext())
             {
                 var bots = await dbContext.SteamBots.Where(bot => bot.SessionId == null && bot.Enabled)
-                    .Take(() => 5)
+                    .Take(() => 15)
                     .ToListAsync();
                 foreach (var bot in bots)
                 {

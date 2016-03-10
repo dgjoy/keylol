@@ -112,7 +112,9 @@ namespace Keylol.SteamBot
                     _bots[bot.Id] = new Bot(this, bot);
                 }
                 CMClient.Servers.Clear();
-                CMClient.Servers.TryAddRange((await Utils.Retry(async () => await SteamDirectory.LoadAsync(46), i =>
+                uint cellId = 46; // Beijing
+                if (args.Length > 1) uint.TryParse(args[0], out cellId);
+                CMClient.Servers.TryAddRange((await Utils.Retry(async () => await SteamDirectory.LoadAsync(cellId), i =>
                 {
                     if (i == 1)
                         WriteLog("Loading CM server list...");

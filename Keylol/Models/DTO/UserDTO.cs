@@ -132,7 +132,7 @@ namespace Keylol.Models.DTO
             SteamNotifyOnArticleReplied = user.SteamNotifyOnArticleReplied;
             SteamNotifyOnCommentReplied = user.SteamNotifyOnCommentReplied;
             SteamNotifyOnArticleLiked = user.SteamNotifyOnArticleLiked;
-            SteamNotifyOnCommmentLiked = user.SteamNotifyOnCommentLiked;
+            SteamNotifyOnCommentLiked = user.SteamNotifyOnCommentLiked;
 
             AutoSubscribeEnabled = user.AutoSubscribeEnabled;
             AutoSubscribeDaySpan = user.AutoSubscribeDaySpan;
@@ -148,7 +148,7 @@ namespace Keylol.Models.DTO
         public bool SteamNotifyOnArticleLiked { get; set; }
 
         [DataMember]
-        public bool SteamNotifyOnCommmentLiked { get; set; }
+        public bool SteamNotifyOnCommentLiked { get; set; }
 
         [DataMember]
         public bool AutoSubscribeEnabled { get; set; }
