@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using CsQuery.StringScanner.Implementation;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
@@ -69,7 +70,11 @@ namespace Keylol.Controllers.User
             }
 
             var visitorId = User.Identity.GetUserId();
-            var visitorStaffClaim = await UserManager.GetStaffClaimAsync(visitorId);
+            var visitorStaffClaim = StaffClaim.User;
+            if (!string.IsNullOrEmpty(visitorId))
+            {
+                visitorStaffClaim = await UserManager.GetStaffClaimAsync(visitorId);
+            }
 
             if (user == null)
                 return NotFound();

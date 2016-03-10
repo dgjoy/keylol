@@ -77,11 +77,6 @@ namespace Keylol.Models
 
         #region Game Point Only
 
-        //TODO: 部署上线后删除
-        [Required(AllowEmptyStrings = true)]
-        [MaxLength(512)]
-        public string StoreLink { get; set; } = string.Empty;
-
         [Index]
         public int SteamAppId { get; set; }
 
@@ -132,10 +127,6 @@ namespace Keylol.Models
         public DateTime LastActivityTime { get; set; } = DateTime.Now;
 
         public virtual ICollection<KeylolUser> Staffs { get; set; }
-
-        public virtual ICollection<NormalPoint> AssociatedToPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> AssociatedByPoints { get; set; }
 
         public virtual ICollection<Article> Articles { get; set; }
 
