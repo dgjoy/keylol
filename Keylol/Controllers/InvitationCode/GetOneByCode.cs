@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models.DTO;
+using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.InvitationCode
@@ -20,10 +21,7 @@ namespace Keylol.Controllers.InvitationCode
         [SwaggerResponse(HttpStatusCode.NotFound, "邀请码无效")]
         public async Task<IHttpActionResult> GetOneByCode(string code)
         {
-            var c = await DbContext.InvitationCodes.FindAsync(code);
-            if (c == null || c.UsedByUser != null)
-                return NotFound();
-            return Ok(new InvitationCodeDTO(c));
+            return Ok(new {Id = "PublicBeta"});
         }
     }
 }
