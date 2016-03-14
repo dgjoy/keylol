@@ -11,7 +11,8 @@ namespace Keylol.Models.DTO
         {
             Like,
             Publish,
-            Point
+            Point,
+            AutoSubscription
         }
 
         public ArticleDTO()

@@ -34,7 +34,9 @@ namespace Keylol.Controllers.Favorite
             favorite.PointId = pointId;
             DbContext.Favorites.Add(favorite);
             await DbContext.SaveChangesAsync();
-            await RedisProvider.Delete($"user:{userId}:favorites");
+            await RedisProvider.GetInstance()
+                .GetDatabase()
+                .KeyDeleteAsync($"user:{userId}:favorites");
             return Created($"favorite/{favorite.Id}", favorite.Id);
         }
     }

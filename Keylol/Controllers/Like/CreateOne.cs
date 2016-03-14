@@ -69,14 +69,16 @@ namespace Keylol.Controllers.Like
                         var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == article.PrincipalId);
                         ISteamBotCoodinatorCallback callback;
-                        if (articleAuthor.SteamNotifyOnArticleLiked &&
+                        if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.SessionId != null &&
                             SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
                         {
                             callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
                         }
                     }
-                    await RedisProvider.Delete($"user:{operatorId}:profile.timeline");
+                    await RedisProvider.GetInstance()
+                            .GetDatabase()
+                            .KeyDeleteAsync($"user:{operatorId}:profile.timeline");
                     break;
                 }
 
@@ -111,7 +113,7 @@ namespace Keylol.Controllers.Like
                             .SingleAsync(u => u.Id == comment.CommentatorId);
                         var articleAuthor = await DbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
                         ISteamBotCoodinatorCallback callback;
-                        if (commentAuthor.SteamNotifyOnCommentLiked &&
+                        if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.SessionId != null &&
                             SteamBotCoodinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
                         {
                             callback.SendMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,

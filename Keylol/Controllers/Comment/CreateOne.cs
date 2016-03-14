@@ -93,7 +93,8 @@ namespace Keylol.Controllers.Comment
                 if (replyToUser.Id == articleAuthor.Id)
                     notifiedArticleAuthor = true;
                 ISteamBotCoodinatorCallback callback;
-                if (SteamBotCoodinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId,
+                if (replyToUser.SteamBot.SessionId != null &&
+                    SteamBotCoodinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId,
                     out callback))
                 {
                     callback.SendMessage(replyToUser.SteamBotId, replyToUser.SteamId,
@@ -103,7 +104,8 @@ namespace Keylol.Controllers.Comment
             if (!notifiedArticleAuthor && !comment.IgnoredByArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
             {
                 ISteamBotCoodinatorCallback callback;
-                if (SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                if (articleAuthor.SteamBot.SessionId != null && 
+                    SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
                 {
                     callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                         $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");

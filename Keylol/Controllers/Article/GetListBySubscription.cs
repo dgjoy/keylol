@@ -12,6 +12,7 @@ using Keylol.Models.DTO;
 using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
+using StackExchange.Redis;
 
 namespace Keylol.Controllers.Article
 {
@@ -20,30 +21,131 @@ namespace Keylol.Controllers.Article
         /// <summary>
         ///     获取当前用户主订阅时间轴的文章
         /// </summary>
-        /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
-        /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
+        /// <param name="filter">文章过滤器，默认 0</param>
+        /// <param name="before">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("subscription")]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDTO>))]
-        public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
-            int beforeSN = int.MaxValue, int take = 30)
+        public async Task<IHttpActionResult> GetBySubscription(int filter = 0, int before = int.MaxValue, int take = 30)
         {
+            const int timelineCapacity = 100;
+            var redisDb = RedisProvider.GetInstance().GetDatabase();
             var userId = User.Identity.GetUserId();
-//            var useCache = articleTypeFilter == null && beforeSN == int.MaxValue;
-            const bool useCache = false; // 暂时关闭缓存机制
-            var cacheKey = $"user:{userId}:subscription.timeline";
+            var cacheKey = $"user:{userId}:subscription.timeline:{filter}";
+            if (take > 50) take = 50;
 
-            Func<KeylolDbContext, Task<IEnumerable<ArticleDTO>>> calculate = async dbContext =>
+            var afterValue = await redisDb.ListGetByIndexAsync(cacheKey, 0);
+            var after = afterValue.HasValue ? (int)afterValue : 0;
+
+            var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();
+            var results = new Dictionary<int, ArticleDTO>();
+
+            // 自动订阅的据点
+            foreach (var entry in await DbContext.AutoSubscriptions.Where(s => s.UserId == userId)
+                .SelectMany(s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
+                .Where(e => e.article.SequenceNumber < before && e.article.SequenceNumber > after)
+                .OrderByDescending(e => e.article.SequenceNumber)
+                .Take(() => timelineCapacity)
+                .ToListAsync())
             {
-                if (take > 50) take = 50;
-                var userQuery = dbContext.Users.AsNoTracking().Where(u => u.Id == userId);
+                if (results.ContainsKey(entry.article.SequenceNumber))
+                {
+                    results[entry.article.SequenceNumber].AttachedPoints.Add(new NormalPointDTO(entry.fromPoint, true));
+                }
+                else
+                {
+                    results[entry.article.SequenceNumber] = new ArticleDTO(entry.article, true, 256, true)
+                    {
+                        TimelineReason = ArticleDTO.TimelineReasonType.Point,
+                        AttachedPoints = new List<NormalPointDTO> {new NormalPointDTO(entry.fromPoint, true)}
+                    };
+                }
+            }
+
+            // 手动订阅的据点
+            foreach (var entry in await DbContext.Users.Where(u => u.Id == userId)
+                .SelectMany(u => u.SubscribedPoints.OfType<Models.NormalPoint>())
+                .SelectMany(p => p.Articles.Select(a => new {article = a, fromPoint = p}))
+                .Where(e => e.article.SequenceNumber < before && e.article.SequenceNumber > after)
+                .OrderByDescending(e => e.article.SequenceNumber)
+                .Take(() => timelineCapacity)
+                .ToListAsync())
+            {
+                if (results.ContainsKey(entry.article.SequenceNumber))
+                {
+                    var overrideArticle = results[entry.article.SequenceNumber];
+                    overrideArticle.TimelineReason = ArticleDTO.TimelineReasonType.Point;
+                    overrideArticle.AttachedPoints.Add(new NormalPointDTO(entry.fromPoint, true));
+                }
+                else
+                {
+                    results[entry.article.SequenceNumber] = new ArticleDTO(entry.article, true, 256, true)
+                    {
+                        TimelineReason = ArticleDTO.TimelineReasonType.Point,
+                        AttachedPoints = new List<NormalPointDTO> {new NormalPointDTO(entry.fromPoint, true)}
+                    };
+                }
+            }
+
+            // 订阅的用户认可的文章
+            foreach (var like in await DbContext.Users.Where(u => u.Id == userId)
+                .SelectMany(u => u.SubscribedPoints.OfType<ProfilePoint>())
+                .SelectMany(p => p.User.Likes.OfType<ArticleLike>())
+                .Where(l => l.Backout == false &&
+                            l.Article.SequenceNumber < before && l.Article.SequenceNumber > after)
+                .OrderByDescending(l => l.Article.SequenceNumber)
+                .Take(() => timelineCapacity)
+                .ToListAsync())
+            {
+                if (results.ContainsKey(like.Article.SequenceNumber))
+                {
+                    var overrideArticle = results[like.Article.SequenceNumber];
+                    overrideArticle.TimelineReason = ArticleDTO.TimelineReasonType.Like;
+                    if (overrideArticle.AttachedPoints != null)
+                        overrideArticle.AttachedPoints = null;
+                }
+                else
+                {
+                    results[like.Article.SequenceNumber] = new ArticleDTO(like.Article, true, 256, true)
+                    {
+                        TimelineReason = ArticleDTO.TimelineReasonType.Like
+                    };
+                }
+            }
+
+            // 订阅的用户发表的文章
+            foreach (var article in await DbContext.Users.Where(u => u.Id == userId)
+                .SelectMany(u => u.SubscribedPoints.OfType<ProfilePoint>())
+                .SelectMany(p => p.Entries.OfType<Models.Article>())
+                .Where(a => a.SequenceNumber < before && a.SequenceNumber > after)
+                .OrderByDescending(a => a.SequenceNumber)
+                .Take(() => timelineCapacity)
+                .ToListAsync())
+            {
+                if (results.ContainsKey(article.SequenceNumber))
+                {
+                    var overrideArticle = results[article.SequenceNumber];
+                    overrideArticle.TimelineReason = ArticleDTO.TimelineReasonType.Publish;
+                    if (overrideArticle.AttachedPoints != null)
+                        overrideArticle.AttachedPoints = null;
+                }
+                else
+                {
+                    results[article.SequenceNumber] = new ArticleDTO(article, true, 256, true)
+                    {
+                        TimelineReason = ArticleDTO.TimelineReasonType.Publish
+                    };
+                }
+            }
+            /*
+            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
                 var profilePointsQuery = userQuery.SelectMany(u => u.SubscribedPoints.OfType<ProfilePoint>());
 
                 var articleQuery =
                     userQuery.SelectMany(u => u.SubscribedPoints.OfType<Models.NormalPoint>())
                         .SelectMany(p => p.Articles.Select(a => new {article = a, fromPoint = p}))
-                        .Where(e => e.article.SequenceNumber < beforeSN)
+                        .Where(e => e.article.SequenceNumber < beforeSN && e.article.Type.Name != "简评")
                         .Select(e => new
                         {
                             e.article,
@@ -73,7 +175,7 @@ namespace Keylol.Controllers.Article
                         .Concat(dbContext.AutoSubscriptions.Where(s => s.UserId == userId)
                             .SelectMany(
                                 s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
-                            .Where(e => e.article.SequenceNumber < beforeSN)
+                            .Where(e => e.article.SequenceNumber < beforeSN && e.article.Type.Name != "简评")
                             .Select(e => new
                             {
                                 e.article,
@@ -152,24 +254,7 @@ namespace Keylol.Controllers.Article
                 }).ToList();
                 if (useCache)
                     await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromHours(12));
-                return result;
-            };
-
-            if (!useCache)
-                return Ok(await calculate(DbContext));
-
-            var cache = await RedisProvider.Get(cacheKey);
-            if (cache.IsNullOrEmpty)
-                return Ok(await calculate(DbContext));
-
-            RedisProvider.BackgroundJob(async () =>
-            {
-                using (var dbContext = KeylolDbContext.Create())
-                {
-                    await calculate(dbContext);
-                }
-            });
-            return Ok(RedisProvider.Deserialize(cache, true));
+                return result;*/
         }
     }
 }

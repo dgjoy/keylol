@@ -148,7 +148,9 @@ namespace Keylol.Controllers.Article
                     .DefaultIfEmpty(0)
                     .Max() + 1;
             DbContext.SaveChanges();
-            await RedisProvider.Delete($"user:{article.PrincipalId}:profile.timeline");
+            await RedisProvider.GetInstance()
+                .GetDatabase()
+                .KeyDeleteAsync($"user:{article.PrincipalId}:profile.timeline");
             return Created($"article/{article.Id}", new ArticleDTO(article));
         }
 

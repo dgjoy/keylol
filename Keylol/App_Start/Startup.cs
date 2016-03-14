@@ -12,6 +12,9 @@ using WebApiThrottle;
 
 namespace Keylol
 {
+    /// <summary>
+    ///     OWIN 入口
+    /// </summary>
     public partial class Startup
     {
         private readonly EnableCorsRegexAttribute _corsPolicyProvider =
@@ -20,6 +23,9 @@ namespace Keylol
                 SupportsCredentials = true
             };
 
+        /// <summary>
+        ///     OWIN 配置
+        /// </summary>
         public void Configuration(IAppBuilder app)
         {
 #if DEBUG
@@ -30,6 +36,8 @@ namespace Keylol
                 Debug.Write(s);
             };
 #endif
+
+            // 请求处理计时中间件
             app.Use(async (context, next) =>
             {
                 var stopwatch = Stopwatch.StartNew();
@@ -40,6 +48,8 @@ namespace Keylol
                 }, null);
                 await next.Invoke();
             });
+
+            // 访问频率限制中间件
             app.Use(typeof (ThrottlingMiddleware),
                 ThrottlePolicy.FromStore(new PolicyConfigurationProvider()),
                 new PolicyMemoryCacheRepository(),
@@ -47,7 +57,7 @@ namespace Keylol
                 null, null);
             UseAuth(app);
             UseSignalR(app);
-            UseWebAPI(app);
+            UseWebApi(app);
         }
     }
 }

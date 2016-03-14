@@ -12,7 +12,7 @@ namespace Keylol
 {
     public partial class Startup
     {
-        public void UseWebAPI(IAppBuilder app)
+        public void UseWebApi(IAppBuilder app)
         {
             var config = new HttpConfiguration();
             var server = new HttpServer(config);
@@ -21,9 +21,9 @@ namespace Keylol
             config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
 
             config.EnableCors(_corsPolicyProvider);
+            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 
 #if DEBUG
-            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
             config.EnableSwagger(c =>
             {
                 c.SingleApiVersion("v1", "Keylol REST API")

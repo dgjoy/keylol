@@ -31,6 +31,7 @@ namespace Keylol.Controllers.Article
         public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
             string articleTypeFilter = null, bool publishOnly = false, int beforeSN = int.MaxValue, int take = 30)
         {
+            var redisDb = RedisProvider.GetInstance().GetDatabase();
             KeylolUser user;
             switch (idType)
             {
@@ -53,7 +54,7 @@ namespace Keylol.Controllers.Article
             var useCache = articleTypeFilter == null && !publishOnly && beforeSN == int.MaxValue;
             if (useCache)
             {
-                var cache = await RedisProvider.Get(cacheKey);
+                var cache = await redisDb.StringGetAsync(cacheKey);
                 if (cache.HasValue)
                     return Ok(RedisProvider.Deserialize(cache, true));
             }
@@ -129,7 +130,7 @@ namespace Keylol.Controllers.Article
                 return articleDTO;
             }).ToList();
             if (useCache)
-                await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
+                await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
             return Ok(result);
         }
     }
