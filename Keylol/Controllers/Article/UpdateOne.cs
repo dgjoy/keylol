@@ -159,7 +159,9 @@ namespace Keylol.Controllers.Article
             }
 
             await DbContext.SaveChangesAsync();
-            await RedisProvider.Delete($"user:{article.PrincipalId}:profile.timeline");
+            await RedisProvider.GetInstance()
+                .GetDatabase()
+                .KeyDeleteAsync($"user:{article.PrincipalId}:profile.timeline");
             return Ok();
         }
 

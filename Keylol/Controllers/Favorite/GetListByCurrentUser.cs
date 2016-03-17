@@ -21,9 +21,10 @@ namespace Keylol.Controllers.Favorite
         [ResponseType(typeof (List<FavoriteDTO>))]
         public async Task<IHttpActionResult> GetListByCurrentUser()
         {
+            var redisDb = RedisProvider.GetInstance().GetDatabase();
             var userId = User.Identity.GetUserId();
             var cacheKey = $"user:{userId}:favorites";
-            var cache = await RedisProvider.Get(cacheKey);
+            var cache = await redisDb.StringGetAsync(cacheKey);
             if (cache.HasValue)
                 return Ok(RedisProvider.Deserialize(cache, true));
 
@@ -31,7 +32,7 @@ namespace Keylol.Controllers.Favorite
                 .OrderBy(f => f.AddTime)
                 .Take(() => FavoriteSize)
                 .ToListAsync()).Select(f => new FavoriteDTO(f)).ToList();
-            await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
+            await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
             return Ok(result);
         }
     }

@@ -127,7 +127,9 @@ namespace Keylol.Controllers.NormalPoint
                 return BadRequest(ModelState);
             }
             await DbContext.SaveChangesAsync();
-            await RedisProvider.Delete($"point:{normalPoint.Id}:related");
+            await RedisProvider.GetInstance()
+                .GetDatabase()
+                .KeyDeleteAsync($"point:{normalPoint.Id}:related");
             return Ok();
         }
     }

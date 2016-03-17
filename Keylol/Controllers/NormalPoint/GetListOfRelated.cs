@@ -26,13 +26,14 @@ namespace Keylol.Controllers.NormalPoint
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是游戏据点")]
         public async Task<IHttpActionResult> GetListOfRelated(string id, IdType idType = IdType.Id)
         {
+            var redisDb = RedisProvider.GetInstance().GetDatabase();
             var point = await DbContext.NormalPoints
                 .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
             if (point == null || point.Type != NormalPointType.Game)
                 return NotFound();
 
             var cacheKey = $"point:{point.Id}:related";
-            var cache = await RedisProvider.Get(cacheKey);
+            var cache = await redisDb.StringGetAsync(cacheKey);
             if (cache.HasValue)
                 return Ok(RedisProvider.Deserialize(cache, true));
 
@@ -48,7 +49,7 @@ namespace Keylol.Controllers.NormalPoint
                     IdCode = p.IdCode,
                     Name = GetPreferredName(p)
                 }).ToList();
-            await RedisProvider.Set(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(30));
+            await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(30));
             return Ok(result);
         }
 
