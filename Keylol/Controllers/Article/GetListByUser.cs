@@ -21,7 +21,7 @@ namespace Keylol.Controllers.Article
         /// <param name="userId">用户 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
-        /// <param name="publishOnly">是否仅获取发表的文章（不获取认可的文章）</param>
+        /// <param name="source">来源过滤器，1 表示发表的文章，2 表示认可的文章，默认 1</param>
         /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("user/{userId}")]
@@ -29,7 +29,7 @@ namespace Keylol.Controllers.Article
         [HttpGet]
         [ResponseType(typeof (List<ArticleDTO>))]
         public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
-            string articleTypeFilter = null, bool publishOnly = false, int beforeSN = int.MaxValue, int take = 30)
+            string articleTypeFilter = null, int source = 1, int beforeSN = int.MaxValue, int take = 30)
         {
             var redisDb = RedisProvider.GetInstance().GetDatabase();
             KeylolUser user;
@@ -51,7 +51,7 @@ namespace Keylol.Controllers.Article
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
             }
             var cacheKey = $"user:{user.Id}:profile.timeline";
-            var useCache = articleTypeFilter == null && !publishOnly && beforeSN == int.MaxValue;
+            var useCache = articleTypeFilter == null && source == 3 && beforeSN == int.MaxValue;
             if (useCache)
             {
                 var cache = await redisDb.StringGetAsync(cacheKey);
@@ -61,7 +61,7 @@ namespace Keylol.Controllers.Article
 
             if (take > 50) take = 50;
             var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == user.Id);
-            var articleQuery = userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Models.Article>())
+            var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Models.Article>())
                 .Where(a => a.SequenceNumber < beforeSN)
                 .Select(a => new
                 {
@@ -69,15 +69,29 @@ namespace Keylol.Controllers.Article
                     reason = ArticleDTO.TimelineReasonType.Publish,
                     author = (KeylolUser) null
                 });
-            if (!publishOnly)
-                articleQuery = articleQuery.Concat(userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
-                    .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN)
-                    .Select(l => new
-                    {
-                        article = l.Article,
-                        reason = ArticleDTO.TimelineReasonType.Like,
-                        author = l.Article.Principal.User
-                    }));
+            var likedQuery = userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
+                .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN)
+                .Select(l => new
+                {
+                    article = l.Article,
+                    reason = ArticleDTO.TimelineReasonType.Like,
+                    author = l.Article.Principal.User
+                });
+            var published = (source & 1) != 0;
+            var liked = (source & 1 << 1) != 0;
+            var articleQuery = publishedQuery;
+            if (published)
+            {
+                if (liked)
+                    articleQuery = articleQuery.Concat(likedQuery);
+            }
+            else
+            {
+                if (liked)
+                    articleQuery = likedQuery;
+                else
+                    return Ok();
+            }
             if (articleTypeFilter != null)
             {
                 var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
