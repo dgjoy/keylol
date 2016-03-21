@@ -129,12 +129,12 @@ namespace Keylol.Controllers.Article
             {
                 if (string.IsNullOrEmpty(vm.Summary))
                 {
-                    await SanitizeArticle(article, true, false);
+                    SanitizeArticle(article, true);
                 }
                 else
                 {
                     article.UnstyledContent = vm.Summary;
-                    await SanitizeArticle(article, false, false);
+                    SanitizeArticle(article, false);
                 }
             }
 
@@ -148,9 +148,10 @@ namespace Keylol.Controllers.Article
                     .DefaultIfEmpty(0)
                     .Max() + 1;
             DbContext.SaveChanges();
-            await RedisProvider.GetInstance()
-                .GetDatabase()
-                .KeyDeleteAsync($"user:{article.PrincipalId}:profile.timeline");
+            MessageQueueProvider.SendImageGarageRequest(new ImageGarageRequestDto
+            {
+                ArticleId = article.Id
+            }, MessageQueueProvider.GetInstance().CreateModel());
             return Created($"article/{article.Id}", new ArticleDTO(article));
         }
 

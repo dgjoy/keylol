@@ -28,9 +28,6 @@ namespace Keylol.Controllers.Favorite
 
             DbContext.Favorites.Remove(favorite);
             await DbContext.SaveChangesAsync();
-            await RedisProvider.GetInstance()
-                .GetDatabase()
-                .KeyDeleteAsync($"user:{favorite.UserId}:favorites");
             return Ok();
         }
     }

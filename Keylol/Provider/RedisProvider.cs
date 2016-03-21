@@ -28,7 +28,8 @@ namespace Keylol.Provider
             if (_connectionMultiplexer == null || !_connectionMultiplexer.IsConnected)
             {
                 _connectionMultiplexer =
-                    ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redisConnection"]);
+                    ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redisConnection"] ??
+                                                  "localhost,abortConnect=false");
             }
             return _connectionMultiplexer;
         }

@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DTO;
 using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
@@ -149,19 +150,20 @@ namespace Keylol.Controllers.Article
             {
                 if (string.IsNullOrEmpty(vm.Summary))
                 {
-                    await SanitizeArticle(article, true, editorStaffClaim == StaffClaim.Operator);
+                    SanitizeArticle(article, true);
                 }
                 else
                 {
                     article.UnstyledContent = vm.Summary;
-                    await SanitizeArticle(article, false, editorStaffClaim == StaffClaim.Operator);
+                    SanitizeArticle(article, false);
                 }
             }
 
             await DbContext.SaveChangesAsync();
-            await RedisProvider.GetInstance()
-                .GetDatabase()
-                .KeyDeleteAsync($"user:{article.PrincipalId}:profile.timeline");
+            MessageQueueProvider.SendImageGarageRequest(new ImageGarageRequestDto
+            {
+                ArticleId = article.Id
+            }, MessageQueueProvider.GetInstance().CreateModel());
             return Ok();
         }
 

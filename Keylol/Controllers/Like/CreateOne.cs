@@ -76,9 +76,6 @@ namespace Keylol.Controllers.Like
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
                         }
                     }
-                    await RedisProvider.GetInstance()
-                            .GetDatabase()
-                            .KeyDeleteAsync($"user:{operatorId}:profile.timeline");
                     break;
                 }
 

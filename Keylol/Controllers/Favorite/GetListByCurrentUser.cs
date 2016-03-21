@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models.DTO;
-using Keylol.Provider;
 using Microsoft.AspNet.Identity;
 
 namespace Keylol.Controllers.Favorite
@@ -21,19 +19,11 @@ namespace Keylol.Controllers.Favorite
         [ResponseType(typeof (List<FavoriteDTO>))]
         public async Task<IHttpActionResult> GetListByCurrentUser()
         {
-            var redisDb = RedisProvider.GetInstance().GetDatabase();
             var userId = User.Identity.GetUserId();
-            var cacheKey = $"user:{userId}:favorites";
-            var cache = await redisDb.StringGetAsync(cacheKey);
-            if (cache.HasValue)
-                return Ok(RedisProvider.Deserialize(cache, true));
-
-            var result = (await DbContext.Favorites.Where(f => f.UserId == userId)
+            return Ok((await DbContext.Favorites.Where(f => f.UserId == userId)
                 .OrderBy(f => f.AddTime)
                 .Take(() => FavoriteSize)
-                .ToListAsync()).Select(f => new FavoriteDTO(f)).ToList();
-            await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
-            return Ok(result);
+                .ToListAsync()).Select(f => new FavoriteDTO(f)).ToList());
         }
     }
 }

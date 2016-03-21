@@ -31,7 +31,6 @@ namespace Keylol.Controllers.Article
         public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
             string articleTypeFilter = null, int source = 1, int beforeSN = int.MaxValue, int take = 30)
         {
-            var redisDb = RedisProvider.GetInstance().GetDatabase();
             KeylolUser user;
             switch (idType)
             {
@@ -49,14 +48,6 @@ namespace Keylol.Controllers.Article
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
-            }
-            var cacheKey = $"user:{user.Id}:profile.timeline";
-            var useCache = articleTypeFilter == null && source == 3 && beforeSN == int.MaxValue;
-            if (useCache)
-            {
-                var cache = await redisDb.StringGetAsync(cacheKey);
-                if (cache.HasValue)
-                    return Ok(RedisProvider.Deserialize(cache, true));
             }
 
             if (take > 50) take = 50;
@@ -121,9 +112,9 @@ namespace Keylol.Controllers.Article
                     typeName = g.article.Type.Name
                 })
                 .ToListAsync();
-            var result = articleEntries.Select(entry =>
+            return Ok(articleEntries.Select(entry =>
             {
-                var articleDTO = new ArticleDTO(entry.article, true, 256, true)
+                var articleDto = new ArticleDTO(entry.article, true, 256, true)
                 {
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
@@ -133,19 +124,16 @@ namespace Keylol.Controllers.Article
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
                 {
-                    articleDTO.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
+                    articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }
-                if (articleDTO.TypeName != "简评")
-                    articleDTO.TruncateContent(128);
+                if (articleDto.TypeName != "简评")
+                    articleDto.TruncateContent(128);
                 if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
                 {
-                    articleDTO.Author = new UserDTO(entry.author);
+                    articleDto.Author = new UserDTO(entry.author);
                 }
-                return articleDTO;
-            }).ToList();
-            if (useCache)
-                await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
-            return Ok(result);
+                return articleDto;
+            }).ToList());
         }
     }
 }

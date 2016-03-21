@@ -71,6 +71,7 @@
     <Compile Include="AutoSubscription.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
+    <Compile Include="DTO\ImageGarageRequestDto.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="Favorite.cs" />
     <Compile Include="InvitationCode.cs" />
@@ -242,6 +243,10 @@
     <Compile Include="Migrations\201603091305456_RemoveDeprecatedProperties.Designer.cs">
       <DependentUpon>201603091305456_RemoveDeprecatedProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603191657264_ArticleRowVersion.cs" />
+    <Compile Include="Migrations\201603191657264_ArticleRowVersion.Designer.cs">
+      <DependentUpon>201603191657264_ArticleRowVersion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -376,10 +381,14 @@
     <EmbeddedResource Include="Migrations\201603091305456_RemoveDeprecatedProperties.resx">
       <DependentUpon>201603091305456_RemoveDeprecatedProperties.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603191657264_ArticleRowVersion.resx">
+      <DependentUpon>201603191657264_ArticleRowVersion.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

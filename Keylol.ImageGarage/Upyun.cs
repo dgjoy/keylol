@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 
-namespace Keylol.Utilities
+namespace Keylol.ImageGarage
 {
     public static class Upyun
     {
-        private const string APIBase = "http://v0.api.upyun.com";
+        private const string ApiBase = "http://v0.api.upyun.com";
         private const string Bucket = "keylol";
         private const string Operator = "stackia";
         private const string PasswordHash = "9fed63e0ecf16aad31a9c3ccd31b0737";
@@ -37,7 +33,7 @@ namespace Keylol.Utilities
         private static HttpWebRequest CreateRequest(string method, string path, long contentLength)
         {
             path = path.TrimStart('/');
-            var request = WebRequest.CreateHttp($"{APIBase}/{Bucket}/{path}");
+            var request = WebRequest.CreateHttp($"{ApiBase}/{Bucket}/{path}");
             request.Method = method;
             request.ContentLength = contentLength;
             request.Date = DateTime.Now;

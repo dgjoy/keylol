@@ -138,7 +138,9 @@ namespace Keylol
         }
     }
 
-    // Configure the application sign-in manager which is used in this application.
+    /// <summary>
+    /// Configure the application sign-in manager which is used in this application.
+    /// </summary>
     public class KeylolSignInManager : SignInManager<KeylolUser, string>
     {
         public KeylolSignInManager(KeylolUserManager userManager, IAuthenticationManager authenticationManager)

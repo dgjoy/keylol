@@ -25,6 +25,9 @@ namespace Keylol.Models
         public string PrincipalId { get; set; }
 
         public virtual ProfilePoint Principal { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 
     public class Article : Entry

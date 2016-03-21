@@ -2,6 +2,9 @@
 
 namespace Keylol.Controllers.User
 {
+    /// <summary>
+    /// 用户 Controller
+    /// </summary>
     [Authorize]
     [RoutePrefix("user")]
     public partial class UserController : KeylolApiController

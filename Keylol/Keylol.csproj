@@ -140,6 +140,10 @@
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RabbitMQ.Client, Version=3.6.1.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.3.6.1\lib\net45\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StackExchange.Redis.1.0.488\lib\net45\StackExchange.Redis.dll</HintPath>
       <Private>True</Private>
@@ -254,7 +258,7 @@
     <Compile Include="Controllers\NormalPoint\DeleteOneMerge.cs" />
     <Compile Include="Controllers\UserGameRecord\GetOnePlayTimeByUser.cs" />
     <Compile Include="Controllers\UserGameRecord\UpdateListByCurrentUser.cs" />
-    <Compile Include="Controllers\UserGameRecord\UserController.cs" />
+    <Compile Include="Controllers\UserGameRecord\UserGameRecordController.cs" />
     <Compile Include="Controllers\UserPointSubscription\GetListOfAutoByCurrentUser.cs" />
     <Compile Include="Controllers\UserPointSubscription\DeleteOneByCurrentUserWithPointId.cs" />
     <Compile Include="Controllers\UserPointSubscription\CreateOne.cs" />
@@ -268,6 +272,7 @@
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\LikeDTO.cs" />
     <Compile Include="Models\DTO\SubscribedPointDTO.cs" />
+    <Compile Include="Provider\MessageQueueProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />
@@ -311,7 +316,6 @@
       <DependentUpon>SteamBotCoodinator.svc</DependentUpon>
     </Compile>
     <Compile Include="Utilities\PredicateBuilder.cs" />
-    <Compile Include="Utilities\Upyun.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Services\SteamBotCoodinator.svc" />
@@ -325,18 +329,18 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\keylol CN.pubxml" />
+    <None Include="Properties\PublishProfiles\keylol LGBT.pubxml" />
     <None Include="Properties\PublishProfiles\keylol-dev - Web Deploy.pubxml" />
-    <None Include="Web.Debug Gay.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Keylol.ImageGarage\Keylol.ImageGarage.csproj">
+      <Project>{d5b0c243-bab2-4760-a3d2-d750499104bc}</Project>
+      <Name>Keylol.ImageGarage</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Keylol.Models\Keylol.Models.csproj">
       <Project>{b6c4cdb8-070e-422c-b243-1d488ac1548a}</Project>
       <Name>Keylol.Models</Name>

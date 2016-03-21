@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
-using Keylol.Provider;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.NormalPoint
@@ -26,18 +24,12 @@ namespace Keylol.Controllers.NormalPoint
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是游戏据点")]
         public async Task<IHttpActionResult> GetListOfRelated(string id, IdType idType = IdType.Id)
         {
-            var redisDb = RedisProvider.GetInstance().GetDatabase();
             var point = await DbContext.NormalPoints
                 .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
             if (point == null || point.Type != NormalPointType.Game)
                 return NotFound();
 
-            var cacheKey = $"point:{point.Id}:related";
-            var cache = await redisDb.StringGetAsync(cacheKey);
-            if (cache.HasValue)
-                return Ok(RedisProvider.Deserialize(cache, true));
-
-            var result = point.DeveloperPoints
+            return Ok(point.DeveloperPoints
                 .Concat(point.PublisherPoints)
                 .Concat(point.SeriesPoints)
                 .Concat(point.GenrePoints)
@@ -48,9 +40,7 @@ namespace Keylol.Controllers.NormalPoint
                     Id = p.Id,
                     IdCode = p.IdCode,
                     Name = GetPreferredName(p)
-                }).ToList();
-            await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(30));
-            return Ok(result);
+                }).ToList());
         }
 
         public class GetListOfRelatedEntryDTO

@@ -10,6 +10,9 @@ using Keylol.Utilities;
 
 namespace Keylol.Controllers.NormalPoint
 {
+    /// <summary>
+    /// 普通据点 Controller
+    /// </summary>
     [Authorize]
     [RoutePrefix("normal-point")]
     public partial class NormalPointController : KeylolApiController
