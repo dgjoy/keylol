@@ -72,7 +72,7 @@
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
     <Compile Include="DTO\ImageGarageRequestDto.cs" />
-    <Compile Include="Entry.cs" />
+    <Compile Include="Article.cs" />
     <Compile Include="Favorite.cs" />
     <Compile Include="InvitationCode.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
@@ -247,6 +247,18 @@
     <Compile Include="Migrations\201603191657264_ArticleRowVersion.Designer.cs">
       <DependentUpon>201603191657264_ArticleRowVersion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603220858063_EntryModelSimplify.cs" />
+    <Compile Include="Migrations\201603220858063_EntryModelSimplify.Designer.cs">
+      <DependentUpon>201603220858063_EntryModelSimplify.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603220921030_ArticleTypeSimplify.cs" />
+    <Compile Include="Migrations\201603220921030_ArticleTypeSimplify.Designer.cs">
+      <DependentUpon>201603220921030_ArticleTypeSimplify.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603221049328_RemoveOldArticleType.cs" />
+    <Compile Include="Migrations\201603221049328_RemoveOldArticleType.Designer.cs">
+      <DependentUpon>201603221049328_RemoveOldArticleType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -383,6 +395,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603191657264_ArticleRowVersion.resx">
       <DependentUpon>201603191657264_ArticleRowVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603220858063_EntryModelSimplify.resx">
+      <DependentUpon>201603220858063_EntryModelSimplify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603220921030_ArticleTypeSimplify.resx">
+      <DependentUpon>201603220921030_ArticleTypeSimplify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603221049328_RemoveOldArticleType.resx">
+      <DependentUpon>201603221049328_RemoveOldArticleType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

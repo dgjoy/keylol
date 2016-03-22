@@ -19,7 +19,7 @@ namespace Keylol.Controllers.InvitationCode
         [HttpGet]
         [ResponseType(typeof (InvitationCodeDTO))]
         [SwaggerResponse(HttpStatusCode.NotFound, "邀请码无效")]
-        public async Task<IHttpActionResult> GetOneByCode(string code)
+        public IHttpActionResult GetOneByCode(string code)
         {
             return Ok(new {Id = "PublicBeta"});
         }

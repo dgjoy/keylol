@@ -42,12 +42,12 @@ namespace Keylol.Controllers.Article
 	                (SELECT
                         COUNT(1)
                         FROM [dbo].[Likes]
-                        WHERE ([dbo].[Likes].[Discriminator] = N'ArticleLike') AND ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
+                        WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
 	                FROM (SELECT
 		                [t1].*,
 		                [t4].[IdCode] AS [AuthorIdCode]
-		                FROM [dbo].[Entries] AS [t1]
-		                INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Entries], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
+		                FROM [dbo].[Articles] AS [t1]
+		                INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Articles], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
                         LEFT OUTER JOIN [dbo].[KeylolUsers] AS [t4] ON [t4].[Id] = [t1].[PrincipalId]
                         ORDER BY [t2].[RANK] DESC, [t1].[SequenceNumber] DESC
                         OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
@@ -83,7 +83,7 @@ namespace Keylol.Controllers.Article
 	            (SELECT
                     COUNT(1)
                     FROM [dbo].[Likes]
-                    WHERE ([dbo].[Likes].[Discriminator] = N'ArticleLike') AND ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
+                    WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
 	            FROM (SELECT
                     COUNT(1) OVER() AS [Count],
 		            [t1].*,
@@ -97,8 +97,8 @@ namespace Keylol.Controllers.Article
                     [t7].[ChineseName] AS [VoteForPointChineseName],
                     [t7].[EnglishName] AS [VoteForPointEnglishName],
                     [t7].[BackgroundImage] AS [VoteForPointBackgroundImage]
-		            FROM [dbo].[Entries] AS [t1]
-		            INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Entries], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
+		            FROM [dbo].[Articles] AS [t1]
+		            INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Articles], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
                     LEFT OUTER JOIN [dbo].[ArticleTypes] AS [t4] ON [t1].[TypeId] = [t4].[Id]
                     LEFT OUTER JOIN [dbo].[KeylolUsers] AS [t5] ON [t5].[Id] = [t1].[PrincipalId]
                     LEFT OUTER JOIN [dbo].[ProfilePoints] AS [t6] ON [t6].[Id] = [t1].[PrincipalId]

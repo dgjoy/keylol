@@ -29,7 +29,7 @@ namespace Keylol.Controllers.User
                 {
                     user = u,
                     profilePoint = u.ProfilePoint,
-                    articleCount = u.ProfilePoint.Entries.OfType<Models.Article>().Count(),
+                    articleCount = u.ProfilePoint.Articles.Count(),
                     subscriberCount = u.ProfilePoint.Subscribers.Count
                 })
                 .OrderBy(e => e.user.RegisterTime)

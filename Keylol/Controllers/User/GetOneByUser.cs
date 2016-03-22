@@ -112,7 +112,7 @@ namespace Keylol.Controllers.User
                         new
                         {
                             subscriberCount = u.ProfilePoint.Subscribers.Count,
-                            articleCount = u.ProfilePoint.Entries.OfType<Models.Article>().Count()
+                            articleCount = u.ProfilePoint.Articles.Count()
                         })
                     .SingleOrDefaultAsync();
                 userDTO.SubscriberCount = statsResult.subscriberCount;
@@ -124,9 +124,9 @@ namespace Keylol.Controllers.User
                 var reviewStatsResult = await DbContext.Users.Where(u => u.Id == user.Id)
                     .Select(u => new
                     {
-                        reviewCount = u.ProfilePoint.Entries.OfType<Models.Article>().Count(a => a.Type.Name == "评"),
+                        reviewCount = u.ProfilePoint.Articles.Count(a => a.Type == ArticleTypeNew.评),
                         shortReviewCount =
-                            u.ProfilePoint.Entries.OfType<Models.Article>().Count(a => a.Type.Name == "简评")
+                            u.ProfilePoint.Articles.Count(a => a.Type == ArticleTypeNew.简评)
                     })
                     .SingleOrDefaultAsync();
                 userDTO.ReviewCount = reviewStatsResult.reviewCount;

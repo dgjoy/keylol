@@ -40,15 +40,9 @@ namespace Keylol.Controllers.Article
 
             var article = DbContext.Articles.Create();
 
-            var type = await DbContext.ArticleTypes.SingleOrDefaultAsync(t => t.Name == vm.TypeName);
-            if (type == null)
-            {
-                ModelState.AddModelError("vm.TypeName", "Invalid article type.");
-                return BadRequest(ModelState);
-            }
-            article.TypeId = type.Id;
+            article.Type = vm.TypeName.ToEnum<ArticleTypeNew>();
 
-            if (type.AllowVote)
+            if (article.Type.AllowVote())
             {
                 if (vm.VoteForPointId == null)
                 {
@@ -115,7 +109,7 @@ namespace Keylol.Controllers.Article
             article.Title = vm.Title;
             article.Content = vm.Content;
 
-            if (type.Name == "简评")
+            if (article.Type == ArticleTypeNew.简评)
             {
                 if (vm.Content.Length > 199)
                 {
@@ -148,10 +142,12 @@ namespace Keylol.Controllers.Article
                     .DefaultIfEmpty(0)
                     .Max() + 1;
             DbContext.SaveChanges();
-            MessageQueueProvider.SendImageGarageRequest(new ImageGarageRequestDto
-            {
-                ArticleId = article.Id
-            }, MessageQueueProvider.GetInstance().CreateModel());
+            MessageQueueProvider.CreateModel()
+                .SendRequest(MessageQueueProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+                {
+                    ArticleId = article.Id
+                })
+                .Close();
             return Created($"article/{article.Id}", new ArticleDTO(article));
         }
 

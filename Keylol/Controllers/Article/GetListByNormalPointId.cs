@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Controllers.NormalPoint;
+using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 
@@ -47,9 +48,9 @@ namespace Keylol.Controllers.Article
             }
             if (articleTypeFilter != null)
             {
-                var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleTypeNew>()).ToList();
                 articleQuery =
-                    articleQuery.Where(PredicateBuilder.Contains<Models.Article, string>(typesName, a => a.Type.Name));
+                    articleQuery.Where(PredicateBuilder.Contains<Models.Article, ArticleTypeNew>(types, a => a.Type));
             }
             var articleEntries = await articleQuery.OrderByDescending(a => a.SequenceNumber).Take(() => take).Select(
                 a => new
@@ -57,7 +58,7 @@ namespace Keylol.Controllers.Article
                     article = a,
                     likeCount = a.Likes.Count(l => l.Backout == false),
                     commentCount = a.Comments.Count,
-                    typeName = a.Type.Name,
+                    type = a.Type,
                     author = a.Principal.User,
                     voteForPoint = a.VoteForPoint
                 }).ToListAsync();
@@ -67,7 +68,7 @@ namespace Keylol.Controllers.Article
                 {
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
-                    TypeName = entry.typeName,
+                    TypeName = entry.type.ToString(),
                     Author = new UserDTO(entry.author),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
                 };

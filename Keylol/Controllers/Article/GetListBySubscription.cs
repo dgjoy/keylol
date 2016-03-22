@@ -43,7 +43,7 @@ namespace Keylol.Controllers.Article
                 userQuery.SelectMany(u => u.SubscribedPoints.OfType<Models.NormalPoint>())
                     .SelectMany(p => p.Articles.Select(a => new {article = a, fromPoint = p}))
                     .Where(e => e.article.SequenceNumber < beforeSN &&
-                                (shortReviewFilter2 || e.article.Type.Name != "简评"))
+                                (shortReviewFilter2 || e.article.Type != ArticleTypeNew.简评))
                     .Select(e => new
                     {
                         e.article,
@@ -51,8 +51,8 @@ namespace Keylol.Controllers.Article
                         reason = ArticleDTO.TimelineReasonType.Point,
                         likedByUser = (KeylolUser) null
                     })
-                    .Concat(profilePointsQuery.SelectMany(p => p.Entries.OfType<Models.Article>())
-                        .Where(a => a.SequenceNumber < beforeSN && (shortReviewFilter1 || a.Type.Name != "简评"))
+                    .Concat(profilePointsQuery.SelectMany(p => p.Articles)
+                        .Where(a => a.SequenceNumber < beforeSN && (shortReviewFilter1 || a.Type != ArticleTypeNew.简评))
                         .Select(a => new
                         {
                             article = a,
@@ -63,7 +63,7 @@ namespace Keylol.Controllers.Article
                     .Concat(profilePointsQuery.Select(p => p.User)
                         .SelectMany(u => u.Likes.OfType<ArticleLike>())
                         .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN &&
-                                    (shortReviewFilter1 || l.Article.Type.Name != "简评"))
+                                    (shortReviewFilter1 || l.Article.Type != ArticleTypeNew.简评))
                         .Select(l => new
                         {
                             article = l.Article,
@@ -76,7 +76,7 @@ namespace Keylol.Controllers.Article
                             s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
                         .Where(e =>
                             e.article.SequenceNumber < beforeSN &&
-                            (shortReviewFilter3 || e.article.Type.Name != "简评"))
+                            (shortReviewFilter3 || e.article.Type != ArticleTypeNew.简评))
                         .Select(e => new
                         {
                             e.article,
@@ -87,10 +87,10 @@ namespace Keylol.Controllers.Article
 
             if (articleTypeFilter != null)
             {
-                var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
+                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleTypeNew>()).ToList();
                 if (shortReviewFilter != 0)
-                    typesName.Add("简评");
-                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesName, a => a.article.Type.Name, new
+                    types.Add(ArticleTypeNew.简评);
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains(types, a => a.article.Type, new
                 {
                     article = (Models.Article) null,
                     fromPoint = (Models.NormalPoint) null,
@@ -120,7 +120,7 @@ namespace Keylol.Controllers.Article
                     author = g.article.Principal.User,
                     likeCount = g.article.Likes.Count(l => l.Backout == false),
                     commentCount = g.article.Comments.Count,
-                    typeName = g.article.Type.Name
+                    type = g.article.Type
                 })
                 .ToListAsync();
 
@@ -131,7 +131,7 @@ namespace Keylol.Controllers.Article
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
-                    TypeName = entry.typeName,
+                    TypeName = entry.type.ToString(),
                     Author = new UserDTO(entry.author),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
                 };

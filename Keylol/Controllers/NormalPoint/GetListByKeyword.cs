@@ -69,8 +69,8 @@ namespace Keylol.Controllers.NormalPoint
                 (SELECT
                     COUNT(1)
                     FROM  [dbo].[ArticlePointPushes]
-                    INNER JOIN [dbo].[Entries] ON [dbo].[Entries].[Id] = [dbo].[ArticlePointPushes].[Article_Id]
-                    WHERE ([dbo].[Entries].[Discriminator] = N'Article') AND ([t4].[Id] = [dbo].[ArticlePointPushes].[NormalPoint_Id])) AS [ArticleCount]
+                    INNER JOIN [dbo].[Articles] ON [dbo].[Articles].[Id] = [dbo].[ArticlePointPushes].[Article_Id]
+                    WHERE ([t4].[Id] = [dbo].[ArticlePointPushes].[NormalPoint_Id])) AS [ArticleCount]
                 FROM (SELECT
                     *,
                     COUNT(1) OVER() AS [Count]

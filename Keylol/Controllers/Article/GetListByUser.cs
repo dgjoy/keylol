@@ -52,7 +52,7 @@ namespace Keylol.Controllers.Article
 
             if (take > 50) take = 50;
             var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == user.Id);
-            var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Models.Article>())
+            var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Articles)
                 .Where(a => a.SequenceNumber < beforeSN)
                 .Select(a => new
                 {
@@ -85,8 +85,8 @@ namespace Keylol.Controllers.Article
             }
             if (articleTypeFilter != null)
             {
-                var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
-                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesName, a => a.article.Type.Name, new
+                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleTypeNew>()).ToList();
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains(types, a => a.article.Type, new
                 {
                     article = (Models.Article) null,
                     reason = ArticleDTO.TimelineReasonType.Like,
@@ -109,7 +109,7 @@ namespace Keylol.Controllers.Article
                     voteForPoint = g.article.VoteForPoint,
                     likeCount = g.article.Likes.Count(l => l.Backout == false),
                     commentCount = g.article.Comments.Count,
-                    typeName = g.article.Type.Name
+                    type = g.article.Type
                 })
                 .ToListAsync();
             return Ok(articleEntries.Select(entry =>
@@ -119,7 +119,7 @@ namespace Keylol.Controllers.Article
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
-                    TypeName = entry.typeName,
+                    TypeName = entry.type.ToString(),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))

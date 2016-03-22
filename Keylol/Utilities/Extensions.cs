@@ -61,6 +61,20 @@ namespace Keylol.Utilities
                 ++i;
             }
         }
+
+        /// <summary>
+        /// 将字符串转换为指定的 Enum 类型
+        /// </summary>
+        /// <param name="text">要转换的字符串</param>
+        /// <typeparam name="TEnum">转换目标 Enum 类型</typeparam>
+        /// <returns>如果转换成功，返回对应 Enum 值，如果失败，返回该 Enum 类型默认值</returns>
+        public static TEnum ToEnum<TEnum>(this string text) where TEnum : struct
+        {
+            TEnum result;
+            if (Enum.TryParse(text, out result) && Enum.IsDefined(typeof (TEnum), result))
+                return result;
+            return default(TEnum);
+        }
     }
 
     public static class StatusClaim

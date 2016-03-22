@@ -14,6 +14,15 @@ namespace Keylol.Provider
     {
         private static IConnection _connection;
 
+        #region 预定义队列名称
+
+        /// <summary>
+        /// ImageGarage 请求队列
+        /// </summary>
+        public static readonly string ImageGarageRequestQueue = "image-garage-requests";
+
+        #endregion
+
         /// <summary>
         /// 获得全局 IConnection 单例
         /// </summary>
@@ -30,17 +39,28 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 向队列发送 ImageGarageRequest
+        /// 从全局 IConnection 创建新 Model 并返回
         /// </summary>
-        /// <param name="requestDto">请求 DTO</param>
-        /// <param name="channel">频道</param>
-        public static void SendImageGarageRequest(ImageGarageRequestDto requestDto, IModel channel)
+        /// <returns>创建的 IModel 对象</returns>
+        public static IModel CreateModel()
         {
-            channel.QueueDeclare("image-garage-requests", true, false, false, null);
+            return GetInstance().CreateModel();
+        }
+
+        /// <summary>
+        /// 向指定队列发送 JSON 序列化后的对象，使用默认 exchange
+        /// </summary>
+        /// <param name="channel">频道</param>
+        /// <param name="queueName">队列名称</param>
+        /// <param name="requestDto">请求 DTO</param>
+        public static IModel SendRequest<TDto>(this IModel channel, string queueName, TDto requestDto)
+        {
+            channel.QueueDeclare(queueName, true, false, false, null);
             var properties = channel.CreateBasicProperties();
             properties.Persistent = true;
-            channel.BasicPublish("", "image-garage-requests", properties,
+            channel.BasicPublish("", queueName, properties,
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestDto)));
+            return channel;
         }
     }
 }

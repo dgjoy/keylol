@@ -19,10 +19,7 @@ namespace Keylol.Models.DAL
         public DbSet<Point> Points { get; set; }
         public DbSet<NormalPoint> NormalPoints { get; set; }
         public DbSet<ProfilePoint> ProfilePoints { get; set; }
-        public DbSet<Entry> Entries { get; set; }
         public DbSet<Article> Articles { get; set; }
-        public DbSet<ArticleType> ArticleTypes { get; set; }
-        public DbSet<Status> Statuses { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<CommentReply> CommentReplies { get; set; }
         public DbSet<Like> Likes { get; set; }

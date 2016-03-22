@@ -31,7 +31,7 @@ namespace Keylol.Controllers.Article
                         article = a,
                         likeCount = a.Likes.Count(l => l.Backout == false),
                         liked = a.Likes.Any(l => l.OperatorId == userId && l.Backout == false),
-                        typeName = a.Type.Name,
+                        type = a.Type,
                         attachedPoints = a.AttachedPoints,
                         authorIdCode = a.Principal.User.IdCode,
                         voteForPoint = a.VoteForPoint
@@ -43,7 +43,7 @@ namespace Keylol.Controllers.Article
             {
                 AuthorIdCode = articleEntry.authorIdCode,
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
-                TypeName = articleEntry.typeName,
+                TypeName = articleEntry.type.ToString(),
                 LikeCount = articleEntry.likeCount,
                 Liked = articleEntry.liked
             };

@@ -140,6 +140,6 @@ namespace Keylol.Models
 
         public string UserId => Id;
 
-        public ICollection<Entry> Entries { get; set; }
+        public ICollection<Article> Articles { get; set; }
     }
 }

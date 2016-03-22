@@ -5,13 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
-    public enum VoteType
-    {
-        Positive,
-        Negative
-    }
-
-    public abstract class Entry
+    public class Article
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -28,14 +22,9 @@ namespace Keylol.Models
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
-    }
-
-    public class Article : Entry
-    {
-        [Required]
-        public string TypeId { get; set; }
-
-        public virtual ArticleType Type { get; set; }
+        
+        [Index]
+        public ArticleTypeNew Type { get; set; }
 
         [Required]
         [MaxLength(120)]
@@ -81,9 +70,5 @@ namespace Keylol.Models
         public virtual ICollection<ArticleLike> Likes { get; set; }
 
         public virtual ICollection<EditLog> EditLogs { get; set; }
-    }
-
-    public class Status : Entry
-    {
     }
 }
