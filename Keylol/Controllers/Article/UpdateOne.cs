@@ -48,7 +48,7 @@ namespace Keylol.Controllers.Article
             if (article.PrincipalId != editorId && editorStaffClaim != StaffClaim.Operator)
                 return Unauthorized();
 
-            article.Type = vm.TypeName.ToEnum<ArticleTypeNew>();
+            article.Type = vm.TypeName.ToEnum<ArticleType>();
 
             if (article.Type.AllowVote())
             {
@@ -130,7 +130,7 @@ namespace Keylol.Controllers.Article
             article.Title = vm.Title;
             article.Content = vm.Content;
 
-            if (article.Type == ArticleTypeNew.简评)
+            if (article.Type == ArticleType.简评)
             {
                 if (vm.Content.Length > 199)
                 {

@@ -1,6 +1,6 @@
 ﻿namespace Keylol.Models
 {
-    public enum ArticleTypeNew
+    public enum ArticleType
     {
         简评,
         评,
@@ -12,9 +12,9 @@
 
     public static class ArticleTypeExtensions
     {
-        public static bool AllowVote(this ArticleTypeNew type)
+        public static bool AllowVote(this ArticleType type)
         {
-            return type == ArticleTypeNew.简评 || type == ArticleTypeNew.评;
+            return type == ArticleType.简评 || type == ArticleType.评;
         }
     }
 }

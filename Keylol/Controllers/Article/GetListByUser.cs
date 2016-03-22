@@ -85,7 +85,7 @@ namespace Keylol.Controllers.Article
             }
             if (articleTypeFilter != null)
             {
-                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleTypeNew>()).ToList();
+                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleType>()).ToList();
                 articleQuery = articleQuery.Where(PredicateBuilder.Contains(types, a => a.article.Type, new
                 {
                     article = (Models.Article) null,

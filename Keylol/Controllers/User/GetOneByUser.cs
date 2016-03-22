@@ -124,9 +124,9 @@ namespace Keylol.Controllers.User
                 var reviewStatsResult = await DbContext.Users.Where(u => u.Id == user.Id)
                     .Select(u => new
                     {
-                        reviewCount = u.ProfilePoint.Articles.Count(a => a.Type == ArticleTypeNew.评),
+                        reviewCount = u.ProfilePoint.Articles.Count(a => a.Type == ArticleType.评),
                         shortReviewCount =
-                            u.ProfilePoint.Articles.Count(a => a.Type == ArticleTypeNew.简评)
+                            u.ProfilePoint.Articles.Count(a => a.Type == ArticleType.简评)
                     })
                     .SingleOrDefaultAsync();
                 userDTO.ReviewCount = reviewStatsResult.reviewCount;

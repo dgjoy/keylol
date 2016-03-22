@@ -48,9 +48,9 @@ namespace Keylol.Controllers.Article
             }
             if (articleTypeFilter != null)
             {
-                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleTypeNew>()).ToList();
+                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleType>()).ToList();
                 articleQuery =
-                    articleQuery.Where(PredicateBuilder.Contains<Models.Article, ArticleTypeNew>(types, a => a.Type));
+                    articleQuery.Where(PredicateBuilder.Contains<Models.Article, ArticleType>(types, a => a.Type));
             }
             var articleEntries = await articleQuery.OrderByDescending(a => a.SequenceNumber).Take(() => take).Select(
                 a => new

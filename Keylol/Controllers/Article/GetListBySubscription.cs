@@ -43,7 +43,7 @@ namespace Keylol.Controllers.Article
                 userQuery.SelectMany(u => u.SubscribedPoints.OfType<Models.NormalPoint>())
                     .SelectMany(p => p.Articles.Select(a => new {article = a, fromPoint = p}))
                     .Where(e => e.article.SequenceNumber < beforeSN &&
-                                (shortReviewFilter2 || e.article.Type != ArticleTypeNew.简评))
+                                (shortReviewFilter2 || e.article.Type != ArticleType.简评))
                     .Select(e => new
                     {
                         e.article,
@@ -52,7 +52,7 @@ namespace Keylol.Controllers.Article
                         likedByUser = (KeylolUser) null
                     })
                     .Concat(profilePointsQuery.SelectMany(p => p.Articles)
-                        .Where(a => a.SequenceNumber < beforeSN && (shortReviewFilter1 || a.Type != ArticleTypeNew.简评))
+                        .Where(a => a.SequenceNumber < beforeSN && (shortReviewFilter1 || a.Type != ArticleType.简评))
                         .Select(a => new
                         {
                             article = a,
@@ -63,7 +63,7 @@ namespace Keylol.Controllers.Article
                     .Concat(profilePointsQuery.Select(p => p.User)
                         .SelectMany(u => u.Likes.OfType<ArticleLike>())
                         .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN &&
-                                    (shortReviewFilter1 || l.Article.Type != ArticleTypeNew.简评))
+                                    (shortReviewFilter1 || l.Article.Type != ArticleType.简评))
                         .Select(l => new
                         {
                             article = l.Article,
@@ -76,7 +76,7 @@ namespace Keylol.Controllers.Article
                             s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
                         .Where(e =>
                             e.article.SequenceNumber < beforeSN &&
-                            (shortReviewFilter3 || e.article.Type != ArticleTypeNew.简评))
+                            (shortReviewFilter3 || e.article.Type != ArticleType.简评))
                         .Select(e => new
                         {
                             e.article,
@@ -87,9 +87,9 @@ namespace Keylol.Controllers.Article
 
             if (articleTypeFilter != null)
             {
-                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleTypeNew>()).ToList();
+                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleType>()).ToList();
                 if (shortReviewFilter != 0)
-                    types.Add(ArticleTypeNew.简评);
+                    types.Add(ArticleType.简评);
                 articleQuery = articleQuery.Where(PredicateBuilder.Contains(types, a => a.article.Type, new
                 {
                     article = (Models.Article) null,

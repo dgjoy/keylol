@@ -24,7 +24,7 @@ namespace Keylol.Models
         public byte[] RowVersion { get; set; }
         
         [Index]
-        public ArticleTypeNew Type { get; set; }
+        public ArticleType Type { get; set; }
 
         [Required]
         [MaxLength(120)]
