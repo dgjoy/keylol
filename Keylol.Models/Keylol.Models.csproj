@@ -79,6 +79,7 @@
     <Compile Include="KeylolUser.cs" />
     <Compile Include="Like.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="Migrations\201510111634394_Initial.cs" />
     <Compile Include="Migrations\201510111634394_Initial.Designer.cs">
       <DependentUpon>201510111634394_Initial.cs</DependentUpon>
