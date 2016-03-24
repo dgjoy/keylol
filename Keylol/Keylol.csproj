@@ -224,11 +224,13 @@
     <Compile Include="Controllers\Article\GetOneByAuthorIdCodeWithSN.cs" />
     <Compile Include="Controllers\Article\UpdateOne.cs" />
     <Compile Include="Controllers\Article\UpdateOneIgnoreNewLikes.cs" />
+    <Compile Include="Controllers\Article\UpdateOneModeration.cs" />
     <Compile Include="Controllers\Comment\UpdateAllRecalculateIgnored.cs" />
     <Compile Include="Controllers\Comment\UpdateOneIgnoreNewLikes.cs" />
     <Compile Include="Controllers\Comment\CreateOne.cs" />
     <Compile Include="Controllers\Comment\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\Comment\GetListByArticleId.cs" />
+    <Compile Include="Controllers\Comment\UpdateOneModeration.cs" />
     <Compile Include="Controllers\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Favorite\FavoriteController.cs" />
     <Compile Include="Controllers\Favorite\DeleteOneById.cs" />
@@ -245,6 +247,8 @@
     <Compile Include="Controllers\Login\DeleteOneByCurrentUser.cs" />
     <Compile Include="Controllers\Login\CreateOneFromSteamLoginToken.cs" />
     <Compile Include="Controllers\Login\CreateOneFromPassword.cs" />
+    <Compile Include="Controllers\Message\GetListByCurrentUser.cs" />
+    <Compile Include="Controllers\Message\MessageController.cs" />
     <Compile Include="Controllers\NormalPoint\GetListOfRelatedGames.cs" />
     <Compile Include="Controllers\NormalPoint\GetListOfRelated.cs" />
     <Compile Include="Controllers\NormalPoint\UpdateOneById.cs" />

@@ -37,6 +37,10 @@ namespace Keylol.Models
 
         public bool IgnoreNewComments { get; set; } = false;
 
+        public bool Archived { get; set; } = false;
+
+        public bool Warned { get; set; } = false;
+
         public virtual ICollection<CommentLike> Likes { get; set; }
 
         public virtual ICollection<CommentReply> CommentRepliesAsComment { get; set; }

@@ -102,8 +102,7 @@ namespace Keylol.Controllers.User
             }
 
             DbContext.SteamBindingTokens.Remove(steamBindingToken);
-            user.SequenceNumber =
-                await DbContext.Database.SqlQuery<int>("SELECT NEXT VALUE FOR [dbo].[UserSequence]").SingleAsync();
+            await DbContext.GiveNextSequenceNumberAsync(user);
             await DbContext.SaveChangesAsync();
 
             // Auto login

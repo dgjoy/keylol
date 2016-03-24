@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Keylol.Models.DAL;
 
 namespace Keylol.Models
 {
-    public class Article
+    public class Article : IHaveSequenceNumber
     {
+        public string SequenceName { get; } = "ArticleSequence";
+
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Index]
@@ -62,6 +65,14 @@ namespace Keylol.Models
         [Required(AllowEmptyStrings = true)]
         [MaxLength(5000)]
         public string Cons { get; set; } = string.Empty;
+
+        public bool Archived { get; set; } = false;
+
+        public bool Rejected { get; set; } = false;
+
+        public bool Spotlight { get; set; } = false;
+
+        public bool Warned { get; set; } = false;
 
         public virtual ICollection<NormalPoint> AttachedPoints { get; set; }
 

@@ -134,13 +134,12 @@ namespace Keylol.Controllers.Article
 
             article.PrincipalId = User.Identity.GetUserId();
             DbContext.Articles.Add(article);
-            article.SequenceNumber =
-                await DbContext.Database.SqlQuery<int>("SELECT NEXT VALUE FOR [dbo].[EntrySequence]").SingleAsync();
             article.SequenceNumberForAuthor =
                 DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
                     .Select(a => a.SequenceNumberForAuthor)
                     .DefaultIfEmpty(0)
                     .Max() + 1;
+            await DbContext.GiveNextSequenceNumberAsync(article);
             DbContext.SaveChanges();
             MessageQueueProvider.CreateModel()
                 .SendRequest(MessageQueueProvider.ImageGarageRequestQueue, new ImageGarageRequestDto

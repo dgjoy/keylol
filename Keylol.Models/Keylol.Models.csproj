@@ -260,6 +260,18 @@
     <Compile Include="Migrations\201603221049328_RemoveOldArticleType.Designer.cs">
       <DependentUpon>201603221049328_RemoveOldArticleType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603240426476_Message.cs" />
+    <Compile Include="Migrations\201603240426476_Message.Designer.cs">
+      <DependentUpon>201603240426476_Message.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603240535282_Moderation.cs" />
+    <Compile Include="Migrations\201603240535282_Moderation.Designer.cs">
+      <DependentUpon>201603240535282_Moderation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603240748433_MessageSequenceNumber.cs" />
+    <Compile Include="Migrations\201603240748433_MessageSequenceNumber.Designer.cs">
+      <DependentUpon>201603240748433_MessageSequenceNumber.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -405,6 +417,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603221049328_RemoveOldArticleType.resx">
       <DependentUpon>201603221049328_RemoveOldArticleType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240426476_Message.resx">
+      <DependentUpon>201603240426476_Message.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240535282_Moderation.resx">
+      <DependentUpon>201603240535282_Moderation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240748433_MessageSequenceNumber.resx">
+      <DependentUpon>201603240748433_MessageSequenceNumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
