@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Keylol.Models;
 using Keylol.Models.DTO;
 
 namespace Keylol.Controllers.Article
@@ -22,8 +23,10 @@ namespace Keylol.Controllers.Article
         {
             var articleEntries =
                 await DbContext.Articles.AsNoTracking()
-                    .Where(a => a.PublishTime >= DbFunctions.AddDays(DateTime.Now, -14))
-                    .OrderByDescending(a => a.Likes.Count(l => l.Backout == false)).Take(() => 5)
+                    .Where(a =>
+                        a.PublishTime >= DbFunctions.AddDays(DateTime.Now, -14) && a.Archived == ArchivedState.None &&
+                        a.SpotlightTime != null)
+                    .OrderByDescending(a => a.SpotlightTime).Take(() => 5)
                     .Select(a => new
                     {
                         article = a,

@@ -31,7 +31,9 @@ namespace Keylol.Controllers.Article
             int take = 30)
         {
             if (take > 50) take = 50;
-            var articleQuery = DbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSN);
+            var articleQuery = DbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSN &&
+                                                                            a.Archived == ArchivedState.None &&
+                                                                            a.Rejected == false);
             switch (idType)
             {
                 case NormalPointController.IdType.Id:
@@ -76,7 +78,7 @@ namespace Keylol.Controllers.Article
                 {
                     articleDTO.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }
-                if (articleDTO.TypeName != "简评")
+                if (entry.type != ArticleType.简评)
                     articleDTO.TruncateContent(128);
                 return articleDTO;
             }));

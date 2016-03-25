@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Models;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -21,7 +22,8 @@ namespace Keylol.Controllers.Article
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> UpdoteOneModeration(string id, ArticleUpdateOneModerationRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdoteOneModeration(string id,
+            ArticleUpdateOneModerationRequestDto requestDto)
         {
             if (requestDto == null)
             {
@@ -64,12 +66,45 @@ namespace Keylol.Controllers.Article
             if (!Enum.IsDefined(typeof (ArticleUpdateOneModerationRequestDto.ArticleProperty), requestDto.Property))
                 throw new ArgumentOutOfRangeException(nameof(requestDto.Property));
             var propertyInfo = typeof (Models.Article).GetProperty(requestDto.Property.ToString());
-            if ((bool) propertyInfo.GetValue(article) == requestDto.Value)
+            if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived)
             {
-                ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
-                return BadRequest(ModelState);
+                if (article.Archived != ArchivedState.None == requestDto.Value)
+                {
+                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
+                    return BadRequest(ModelState);
+                }
+                if (operatorStaffClaim == StaffClaim.Operator)
+                {
+                    article.Archived = requestDto.Value ? ArchivedState.Operator : ArchivedState.None;
+                }
+                else
+                {
+                    if (article.Archived == ArchivedState.Operator)
+                        return Unauthorized();
+                    article.Archived = requestDto.Value ? ArchivedState.User : ArchivedState.None;
+                }
             }
-            propertyInfo.SetValue(article, requestDto.Value);
+            else if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight)
+            {
+                if (article.SpotlightTime != null == requestDto.Value)
+                {
+                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
+                    return BadRequest(ModelState);
+                }
+                if (requestDto.Value)
+                    article.SpotlightTime = DateTime.Now;
+                else
+                    article.SpotlightTime = null;
+            }
+            else
+            {
+                if ((bool) propertyInfo.GetValue(article) == requestDto.Value)
+                {
+                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
+                    return BadRequest(ModelState);
+                }
+                propertyInfo.SetValue(article, requestDto.Value);
+            }
             if (article.PrincipalId != operatorId && (requestDto.NotifyAuthor ?? false))
             {
                 if (requestDto.Value)

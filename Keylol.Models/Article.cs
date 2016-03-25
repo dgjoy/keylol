@@ -25,7 +25,7 @@ namespace Keylol.Models
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
-        
+
         [Index]
         public ArticleType Type { get; set; }
 
@@ -66,11 +66,14 @@ namespace Keylol.Models
         [MaxLength(5000)]
         public string Cons { get; set; } = string.Empty;
 
-        public bool Archived { get; set; } = false;
+        [Index]
+        public ArchivedState Archived { get; set; } = ArchivedState.None;
 
+        [Index]
         public bool Rejected { get; set; } = false;
 
-        public bool Spotlight { get; set; } = false;
+        [Index]
+        public DateTime? SpotlightTime { get; set; }
 
         public bool Warned { get; set; } = false;
 
@@ -81,5 +84,41 @@ namespace Keylol.Models
         public virtual ICollection<ArticleLike> Likes { get; set; }
 
         public virtual ICollection<EditLog> EditLogs { get; set; }
+    }
+
+    public enum ArticleType
+    {
+        简评,
+        评,
+        研,
+        谈,
+        讯,
+        档
+    }
+
+    public static class ArticleTypeExtensions
+    {
+        public static bool AllowVote(this ArticleType type)
+        {
+            return type == ArticleType.简评 || type == ArticleType.评;
+        }
+    }
+
+    public enum ArchivedState
+    {
+        /// <summary>
+        /// 没有封存
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// 用户自行封存
+        /// </summary>
+        User,
+
+        /// <summary>
+        /// 运维职员封存
+        /// </summary>
+        Operator
     }
 }

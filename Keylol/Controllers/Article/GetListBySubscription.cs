@@ -27,7 +27,8 @@ namespace Keylol.Controllers.Article
         [Route("subscription")]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDTO>))]
-        public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null, int shortReviewFilter = 1,
+        public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
+            int shortReviewFilter = 1,
             int beforeSN = int.MaxValue, int take = 30)
         {
             var userId = User.Identity.GetUserId();
@@ -52,7 +53,9 @@ namespace Keylol.Controllers.Article
                         likedByUser = (KeylolUser) null
                     })
                     .Concat(profilePointsQuery.SelectMany(p => p.Articles)
-                        .Where(a => a.SequenceNumber < beforeSN && (shortReviewFilter1 || a.Type != ArticleType.简评))
+                        .Where(a => a.SequenceNumber < beforeSN &&
+                                    a.Archived == ArchivedState.None && a.Rejected == false &&
+                                    (shortReviewFilter1 || a.Type != ArticleType.简评))
                         .Select(a => new
                         {
                             article = a,
@@ -63,6 +66,7 @@ namespace Keylol.Controllers.Article
                     .Concat(profilePointsQuery.Select(p => p.User)
                         .SelectMany(u => u.Likes.OfType<ArticleLike>())
                         .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN &&
+                                    l.Article.Archived == ArchivedState.None && l.Article.Rejected == false &&
                                     (shortReviewFilter1 || l.Article.Type != ArticleType.简评))
                         .Select(l => new
                         {
@@ -76,6 +80,7 @@ namespace Keylol.Controllers.Article
                             s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
                         .Where(e =>
                             e.article.SequenceNumber < beforeSN &&
+                            e.article.Archived == ArchivedState.None && e.article.Rejected == false &&
                             (shortReviewFilter3 || e.article.Type != ArticleType.简评))
                         .Select(e => new
                         {
@@ -139,7 +144,7 @@ namespace Keylol.Controllers.Article
                 {
                     articleDTO.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }
-                if (articleDTO.TypeName != "简评")
+                if (entry.type != ArticleType.简评)
                     articleDTO.TruncateContent(128);
                 switch (entry.reason)
                 {

@@ -8,7 +8,6 @@ using System.Web.Http.Description;
 using Keylol.Controllers.User;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Provider;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.Article
@@ -53,7 +52,7 @@ namespace Keylol.Controllers.Article
             if (take > 50) take = 50;
             var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == user.Id);
             var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Articles)
-                .Where(a => a.SequenceNumber < beforeSN)
+                .Where(a => a.SequenceNumber < beforeSN && a.Archived == ArchivedState.None)
                 .Select(a => new
                 {
                     article = a,
@@ -61,7 +60,7 @@ namespace Keylol.Controllers.Article
                     author = (KeylolUser) null
                 });
             var likedQuery = userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
-                .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN)
+                .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN && l.Article.Archived == ArchivedState.None)
                 .Select(l => new
                 {
                     article = l.Article,
@@ -126,7 +125,7 @@ namespace Keylol.Controllers.Article
                 {
                     articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }
-                if (articleDto.TypeName != "简评")
+                if (entry.type != ArticleType.简评)
                     articleDto.TruncateContent(128);
                 if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
                 {

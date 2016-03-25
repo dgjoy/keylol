@@ -67,7 +67,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleType.cs" />
     <Compile Include="AutoSubscription.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
@@ -272,6 +271,14 @@
     <Compile Include="Migrations\201603240748433_MessageSequenceNumber.Designer.cs">
       <DependentUpon>201603240748433_MessageSequenceNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603241353529_MoreArchivedStates.cs" />
+    <Compile Include="Migrations\201603241353529_MoreArchivedStates.Designer.cs">
+      <DependentUpon>201603241353529_MoreArchivedStates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603241457490_ArticleSpotlightTime.cs" />
+    <Compile Include="Migrations\201603241457490_ArticleSpotlightTime.Designer.cs">
+      <DependentUpon>201603241457490_ArticleSpotlightTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -426,6 +433,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603240748433_MessageSequenceNumber.resx">
       <DependentUpon>201603240748433_MessageSequenceNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603241353529_MoreArchivedStates.resx">
+      <DependentUpon>201603241353529_MoreArchivedStates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603241457490_ArticleSpotlightTime.resx">
+      <DependentUpon>201603241457490_ArticleSpotlightTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

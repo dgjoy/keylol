@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Keylol.Models;
 using Keylol.Models.DTO;
 
 namespace Keylol.Controllers.Article
@@ -49,6 +50,7 @@ namespace Keylol.Controllers.Article
 		                FROM [dbo].[Articles] AS [t1]
 		                INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Articles], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
                         LEFT OUTER JOIN [dbo].[KeylolUsers] AS [t4] ON [t4].[Id] = [t1].[PrincipalId]
+                        WHERE [t1].[Archived] = 0 AND [t1].[Rejected] = 'False'
                         ORDER BY [t2].[RANK] DESC, [t1].[SequenceNumber] DESC
                         OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
                     $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync());
@@ -66,7 +68,7 @@ namespace Keylol.Controllers.Article
                 END AS [ThumbnailImage],
 	            [t3].[SequenceNumberForAuthor],
 	            [t3].[SequenceNumber],
-	            [t3].[TypeName],
+	            [t3].[Type],
 	            [t3].[AuthorId],
 	            [t3].[AuthorIdCode],
 	            [t3].[AuthorUserName],
@@ -87,7 +89,6 @@ namespace Keylol.Controllers.Article
 	            FROM (SELECT
                     COUNT(1) OVER() AS [Count],
 		            [t1].*,
-		            [t4].[Name] AS [TypeName],
 		            [t5].[Id] AS [AuthorId],
 		            [t5].[IdCode] AS [AuthorIdCode],
 		            [t5].[UserName] AS [AuthorUserName],
@@ -99,10 +100,10 @@ namespace Keylol.Controllers.Article
                     [t7].[BackgroundImage] AS [VoteForPointBackgroundImage]
 		            FROM [dbo].[Articles] AS [t1]
 		            INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Articles], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
-                    LEFT OUTER JOIN [dbo].[ArticleTypes] AS [t4] ON [t1].[TypeId] = [t4].[Id]
                     LEFT OUTER JOIN [dbo].[KeylolUsers] AS [t5] ON [t5].[Id] = [t1].[PrincipalId]
                     LEFT OUTER JOIN [dbo].[ProfilePoints] AS [t6] ON [t6].[Id] = [t1].[PrincipalId]
                     LEFT OUTER JOIN [dbo].[NormalPoints] AS [t7] ON [t7].[Id] = [t1].[VoteForPointId]
+                    WHERE [t1].[Archived] = 0 AND [t1].[Rejected] = 'False'
                     ORDER BY [t2].[RANK] DESC, [t1].[SequenceNumber] DESC
                     OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
                 $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync())
@@ -111,10 +112,12 @@ namespace Keylol.Controllers.Article
                     if (a.VoteForPointId != null)
                         a.UnflattenVoteForPoint();
                     a.UnflattenAuthor().TruncateContent(256);
-                    if (a.TypeName != "简评")
+                    if (a.Type != ArticleType.简评)
                         a.TruncateContent(128);
                     else
                         a.ThumbnailImage = null;
+                    a.TypeName = a.Type.ToString();
+                    a.Type = null;
                     return a;
                 })
                 .ToList();

@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
@@ -8,6 +9,7 @@ using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
 using Keylol.Services;
 using Keylol.Services.Contracts;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -24,6 +26,7 @@ namespace Keylol.Controllers.Comment
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CommentDTO))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "指定文章被封存，当前用户无权创建新评论")]
         public async Task<IHttpActionResult> CreateOne(CommentVM vm)
         {
             if (vm == null)
@@ -42,6 +45,12 @@ namespace Keylol.Controllers.Comment
                 return BadRequest(ModelState);
             }
 
+            var userId = User.Identity.GetUserId();
+            var staffClaim = await UserManager.GetStaffClaimAsync(userId);
+            if (article.Archived != ArchivedState.None &&
+                userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
+                return Unauthorized();
+
             var replyToComments = await DbContext.Comments.Include(c => c.Commentator.SteamBot)
                 .Where(c => c.ArticleId == article.Id && vm.ReplyToCommentsSN.Contains(c.SequenceNumberForArticle))
                 .ToListAsync();
@@ -49,7 +58,7 @@ namespace Keylol.Controllers.Comment
             var comment = DbContext.Comments.Create();
             DbContext.Comments.Add(comment);
             comment.ArticleId = article.Id;
-            comment.CommentatorId = User.Identity.GetUserId();
+            comment.CommentatorId = userId;
             comment.Content = vm.Content;
             if (comment.CommentatorId == article.PrincipalId)
             {
