@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
-using Keylol.Models.DAL;
 using Keylol.Models.DTO;
-using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 
@@ -132,7 +128,7 @@ namespace Keylol.Controllers.Article
 
             return Ok(articleEntries.Select(entry =>
             {
-                var articleDTO = new ArticleDTO(entry.article, true, 256, true)
+                var articleDto = new ArticleDTO(entry.article, true, 256, true)
                 {
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
@@ -143,23 +139,23 @@ namespace Keylol.Controllers.Article
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
                 {
-                    articleDTO.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
+                    articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }
                 if (entry.type != ArticleType.简评)
-                    articleDTO.TruncateContent(128);
+                    articleDto.TruncateContent(128);
                 switch (entry.reason)
                 {
                     case ArticleDTO.TimelineReasonType.Point:
                         if (!entry.fromPoints.Select(p => p.Id).Contains(entry.voteForPoint?.Id))
-                            articleDTO.AttachedPoints =
+                            articleDto.AttachedPoints =
                                 entry.fromPoints.Select(p => new NormalPointDTO(p, true)).ToList();
                         break;
 
                     case ArticleDTO.TimelineReasonType.Like:
-                        articleDTO.LikeByUsers = entry.likedByUsers.Select(u => new UserDTO(u)).ToList();
+                        articleDto.LikeByUsers = entry.likedByUsers.Select(u => new UserDTO(u)).ToList();
                         break;
                 }
-                return articleDTO;
+                return articleDto;
             }).ToList());
         }
     }

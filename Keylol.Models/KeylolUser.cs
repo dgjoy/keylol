@@ -54,7 +54,7 @@ namespace Keylol.Models
 
         public DateTime SteamBindingTime { get; set; }
 
-        [Index]
+        [Index(IsUnique = true)]
         public int SequenceNumber { get; set; }
 
         public DateTime LastGameUpdateTime { get; set; } = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);

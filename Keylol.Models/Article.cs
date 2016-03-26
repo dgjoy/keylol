@@ -9,7 +9,7 @@ namespace Keylol.Models
     public class Article : IHasSequenceNumber
     {
         public string SequenceName { get; } = "ArticleSequence";
-
+        
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Index]

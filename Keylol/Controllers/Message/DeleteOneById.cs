@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Models;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -24,7 +25,7 @@ namespace Keylol.Controllers.Message
             var message = await DbContext.Messages.FindAsync(id);
             if (message == null)
                 return NotFound();
-            if (message.ReceiverId != userId && staffClaim != StaffClaim.Operator)
+            if (staffClaim != StaffClaim.Operator && (message.Type.IsMissiveMessage() || message.ReceiverId != userId))
                 return Unauthorized();
             DbContext.Messages.Remove(message);
             await DbContext.SaveChangesAsync();
