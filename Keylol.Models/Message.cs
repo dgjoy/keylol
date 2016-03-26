@@ -90,7 +90,6 @@ namespace Keylol.Models
             switch (type)
             {
                 case MessageType.ArticleLike:
-                case MessageType.ArticleComment:
                 case MessageType.ArticleArchive:
                 case MessageType.ArticleArchiveCancel:
                 case MessageType.Rejection:
@@ -110,6 +109,7 @@ namespace Keylol.Models
             switch (type)
             {
                 case MessageType.CommentLike:
+                case MessageType.ArticleComment:
                 case MessageType.CommentReply:
                 case MessageType.CommentArchive:
                 case MessageType.CommentArchiveCancel:

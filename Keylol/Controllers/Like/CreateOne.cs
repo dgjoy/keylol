@@ -46,7 +46,7 @@ namespace Keylol.Controllers.Like
                 case LikeVM.LikeType.ArticleLike:
                 {
                     var existLike = await DbContext.ArticleLikes.SingleOrDefaultAsync(
-                        l => l.ArticleId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
+                        l => l.ArticleId == vm.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
                     {
                         ModelState.AddModelError("vm.TargetId", "不能对同一篇文章重复认可。");
@@ -79,6 +79,7 @@ namespace Keylol.Controllers.Like
                         message.OperatorId = operatorId;
                         message.ReceiverId = articleAuthor.Id;
                         message.ArticleId = article.Id;
+                        await DbContext.GiveNextSequenceNumberAsync(message);
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
@@ -96,7 +97,7 @@ namespace Keylol.Controllers.Like
                 case LikeVM.LikeType.CommentLike:
                 {
                     var existLike = await DbContext.CommentLikes.SingleOrDefaultAsync(
-                        l => l.CommentId == vm.TargetId && l.OperatorId == operatorId && l.Backout == false);
+                        l => l.CommentId == vm.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
                     {
                         ModelState.AddModelError("vm.TargetId", "不能对同一篇评论重复认可。");
@@ -131,6 +132,7 @@ namespace Keylol.Controllers.Like
                         message.OperatorId = operatorId;
                         message.ReceiverId = commentAuthor.Id;
                         message.CommentId = comment.Id;
+                        await DbContext.GiveNextSequenceNumberAsync(message);
                         DbContext.Messages.Add(message);
 
                         // Steam 通知

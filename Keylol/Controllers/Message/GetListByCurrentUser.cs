@@ -77,7 +77,8 @@ namespace Keylol.Controllers.Message
                     dto.Operator = new UserDTO(m.Operator);
 
                 if (m.Type.HasReasonProperty())
-                    dto.Reasons = m.Reasons.Split(',').Select(int.Parse).ToList();
+                    dto.Reasons =
+                        m.Reasons.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
 
                 if (m.Type.HasArticleProperty())
                     dto.Article = new ArticleDTO(m.Article, true, 128);

@@ -287,6 +287,10 @@
     <Compile Include="Migrations\201603260910041_RemoveOldIgnoreProperties.Designer.cs">
       <DependentUpon>201603260910041_RemoveOldIgnoreProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603260952226_RemoveLikeBackout.cs" />
+    <Compile Include="Migrations\201603260952226_RemoveLikeBackout.Designer.cs">
+      <DependentUpon>201603260952226_RemoveLikeBackout.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -453,6 +457,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603260910041_RemoveOldIgnoreProperties.resx">
       <DependentUpon>201603260910041_RemoveOldIgnoreProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603260952226_RemoveLikeBackout.resx">
+      <DependentUpon>201603260952226_RemoveLikeBackout.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

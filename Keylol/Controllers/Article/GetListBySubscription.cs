@@ -65,7 +65,7 @@ namespace Keylol.Controllers.Article
                         }))
                     .Concat(profilePointsQuery.Select(p => p.User)
                         .SelectMany(u => u.Likes.OfType<ArticleLike>())
-                        .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN &&
+                        .Where(l => l.Article.SequenceNumber < beforeSN &&
                                     l.Article.Archived == ArchivedState.None && l.Article.Rejected == false &&
                                     (shortReviewFilter1 || l.Article.Type != ArticleType.简评))
                         .Select(l => new
@@ -123,7 +123,7 @@ namespace Keylol.Controllers.Article
                     g.fromPoints,
                     voteForPoint = g.article.VoteForPoint,
                     author = g.article.Principal.User,
-                    likeCount = g.article.Likes.Count(l => l.Backout == false),
+                    likeCount = g.article.Likes.Count(),
                     commentCount = g.article.Comments.Count,
                     type = g.article.Type
                 })

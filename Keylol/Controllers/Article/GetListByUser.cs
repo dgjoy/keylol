@@ -60,7 +60,7 @@ namespace Keylol.Controllers.Article
                     author = (KeylolUser) null
                 });
             var likedQuery = userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
-                .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN && l.Article.Archived == ArchivedState.None)
+                .Where(l => l.Article.SequenceNumber < beforeSN && l.Article.Archived == ArchivedState.None)
                 .Select(l => new
                 {
                     article = l.Article,
@@ -106,7 +106,7 @@ namespace Keylol.Controllers.Article
                     g.reason,
                     g.candicates.FirstOrDefault(e => e.reason == g.reason).author,
                     voteForPoint = g.article.VoteForPoint,
-                    likeCount = g.article.Likes.Count(l => l.Backout == false),
+                    likeCount = g.article.Likes.Count(),
                     commentCount = g.article.Comments.Count,
                     type = g.article.Type
                 })

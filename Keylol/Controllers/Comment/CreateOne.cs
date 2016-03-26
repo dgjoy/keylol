@@ -98,6 +98,7 @@ namespace Keylol.Controllers.Comment
                 message.OperatorId = comment.CommentatorId;
                 message.ReceiverId = replyToUser.Id;
                 message.CommentId = comment.Id;
+                await DbContext.GiveNextSequenceNumberAsync(message);
                 DbContext.Messages.Add(message);
 
                 if (!replyToUser.SteamNotifyOnCommentReplied)
@@ -122,6 +123,7 @@ namespace Keylol.Controllers.Comment
                     message.OperatorId = comment.CommentatorId;
                     message.ReceiverId = articleAuthor.Id;
                     message.CommentId = comment.Id;
+                    await DbContext.GiveNextSequenceNumberAsync(message);
                     DbContext.Messages.Add(message);
                 }
 

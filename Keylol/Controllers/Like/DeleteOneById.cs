@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Models;
 using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -26,20 +28,32 @@ namespace Keylol.Controllers.Like
             switch (type)
             {
                 case LikeVM.LikeType.ArticleLike:
-                    var existArticleLike = await DbContext.ArticleLikes.SingleOrDefaultAsync(
-                        l => l.ArticleId == targetId && l.OperatorId == operatorId && l.Backout == false);
-                    if (existArticleLike == null)
+                {
+                    var existLikes = await DbContext.ArticleLikes.Where(
+                        l => l.ArticleId == targetId && l.OperatorId == operatorId).ToListAsync();
+                    if (existLikes.Count == 0)
                         return NotFound();
-                    existArticleLike.Backout = true;
+                    DbContext.Likes.RemoveRange(existLikes);
+                    var messages = await DbContext.Messages.Where(
+                        m => m.Type == MessageType.ArticleLike && m.OperatorId == operatorId && m.ArticleId == targetId)
+                        .ToListAsync();
+                    DbContext.Messages.RemoveRange(messages);
                     break;
+                }
 
                 case LikeVM.LikeType.CommentLike:
-                    var existCommentLike = await DbContext.CommentLikes.SingleOrDefaultAsync(
-                        l => l.CommentId == targetId && l.OperatorId == operatorId && l.Backout == false);
-                    if (existCommentLike == null)
+                {
+                    var existLikes = await DbContext.CommentLikes.Where(
+                        l => l.CommentId == targetId && l.OperatorId == operatorId).ToListAsync();
+                    if (existLikes.Count == 0)
                         return NotFound();
-                    existCommentLike.Backout = true;
+                    DbContext.Likes.RemoveRange(existLikes);
+                    var messages = await DbContext.Messages.Where(
+                        m => m.Type == MessageType.CommentLike && m.OperatorId == operatorId && m.CommentId == targetId)
+                        .ToListAsync();
+                    DbContext.Messages.RemoveRange(messages);
                     break;
+                }
 
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -65,8 +65,8 @@ namespace Keylol.Controllers.Comment
 
                 case OrderByType.LikeCount:
                     commentsQuery = desc
-                        ? commentsQuery.OrderByDescending(c => c.Likes.Count(l => l.Backout == false))
-                        : commentsQuery.OrderBy(c => c.Likes.Count(l => l.Backout == false));
+                        ? commentsQuery.OrderByDescending(c => c.Likes.Count)
+                        : commentsQuery.OrderBy(c => c.Likes.Count);
                     break;
 
                 default:
@@ -76,8 +76,8 @@ namespace Keylol.Controllers.Comment
                 new
                 {
                     comment,
-                    likeCount = comment.Likes.Count(l => l.Backout == false),
-                    liked = comment.Likes.Any(l => l.OperatorId == userId && l.Backout == false),
+                    likeCount = comment.Likes.Count,
+                    liked = comment.Likes.Any(l => l.OperatorId == userId),
                     commentator = comment.Commentator
                 })
                 .ToListAsync();

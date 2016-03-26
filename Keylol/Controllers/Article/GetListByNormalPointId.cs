@@ -58,7 +58,7 @@ namespace Keylol.Controllers.Article
                 a => new
                 {
                     article = a,
-                    likeCount = a.Likes.Count(l => l.Backout == false),
+                    likeCount = a.Likes.Count,
                     commentCount = a.Comments.Count,
                     type = a.Type,
                     author = a.Principal.User,

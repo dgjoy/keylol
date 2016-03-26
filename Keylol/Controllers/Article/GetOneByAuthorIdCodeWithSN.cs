@@ -36,8 +36,8 @@ namespace Keylol.Controllers.Article
                         .Select(a => new
                         {
                             article = a,
-                            likeCount = a.Likes.Count(l => l.Backout == false),
-                            liked = a.Likes.Any(l => l.OperatorId == userId && l.Backout == false),
+                            likeCount = a.Likes.Count(),
+                            liked = a.Likes.Any(l => l.OperatorId == userId),
                             type = a.Type,
                             attachedPoints = a.AttachedPoints,
                             voteForPoint = a.VoteForPoint
