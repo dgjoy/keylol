@@ -15,10 +15,6 @@ namespace Keylol.Models
 
         public virtual Comment Comment { get; set; }
 
-        public bool IgnoredByCommentAuthor { get; set; } = false;
-
-        public bool ReadByCommentAuthor { get; set; } = false;
-
         /// <summary>
         /// 新回复的评论
         /// </summary>

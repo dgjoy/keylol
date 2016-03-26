@@ -44,7 +44,7 @@ namespace Keylol.Controllers.Message
 
                 case MessageFilter.Missive:
                     query = DbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          (int) m.Type >= 200 && (int) m.Type <= 299 &&
+                                                          (int)m.Type >= 100 && (int)m.Type <= 199 &&
                                                           m.SequenceNumber < beforeSn);
                     break;
 

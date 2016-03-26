@@ -66,10 +66,9 @@ namespace Keylol.Controllers.Like
                     if (article.Archived != ArchivedState.None)
                         return Unauthorized();
                     var articleLike = DbContext.ArticleLikes.Create();
-                    articleLike.IgnoredByTargetUser = article.IgnoreNewLikes;
                     articleLike.ArticleId = vm.TargetId;
                     like = articleLike;
-                    if (!articleLike.IgnoredByTargetUser)
+                    if (!article.IgnoreNewLikes)
                     {
                         var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == article.PrincipalId);
@@ -118,10 +117,9 @@ namespace Keylol.Controllers.Like
                     if (comment.Archived != ArchivedState.None || comment.Article.Archived != ArchivedState.None)
                         return Unauthorized();
                     var commentLike = DbContext.CommentLikes.Create();
-                    commentLike.IgnoredByTargetUser = comment.IgnoreNewLikes;
                     commentLike.CommentId = vm.TargetId;
                     like = commentLike;
-                    if (!commentLike.IgnoredByTargetUser)
+                    if (!comment.IgnoreNewLikes)
                     {
                         var commentAuthor = await DbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == comment.CommentatorId);

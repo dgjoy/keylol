@@ -55,7 +55,6 @@ namespace Keylol.Controllers.Article
                         break;
 
                     case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
-                        break;
                     case ArticleUpdateOneModerationRequestDto.ArticleProperty.Warned:
                         break;
                     default:

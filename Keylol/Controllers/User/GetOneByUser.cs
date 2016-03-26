@@ -79,29 +79,29 @@ namespace Keylol.Controllers.User
             if (user == null)
                 return NotFound();
 
-            var userDTO = moreOptions ? new UserWithMoreOptionsDTO(user) : new UserDTO(user);
+            var userDto = moreOptions ? new UserWithMoreOptionsDTO(user) : new UserDTO(user);
 
             if (profilePointBackgroundImage)
-                userDTO.ProfilePointBackgroundImage = user.ProfilePoint.BackgroundImage;
+                userDto.ProfilePointBackgroundImage = user.ProfilePoint.BackgroundImage;
 
             if (claims)
             {
-                userDTO.StatusClaim = await UserManager.GetStatusClaimAsync(user.Id);
-                userDTO.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
+                userDto.StatusClaim = await UserManager.GetStatusClaimAsync(user.Id);
+                userDto.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
             }
 
             if (security && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
-                userDTO.IncludeSecurity();
+                userDto.IncludeSecurity();
 
             if (steam && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
-                userDTO.IncludeSteam();
+                userDto.IncludeSteam();
 
             if (steamBot && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
-                userDTO.SteamBot = new SteamBotDTO(user.SteamBot);
+                userDto.SteamBot = new SteamBotDTO(user.SteamBot);
 
             if (subscribeCount)
             {
-                userDTO.SubscribedPointCount =
+                userDto.SubscribedPointCount =
                     await DbContext.Users.Where(u => u.Id == user.Id).SelectMany(u => u.SubscribedPoints).CountAsync();
             }
 
@@ -115,8 +115,8 @@ namespace Keylol.Controllers.User
                             articleCount = u.ProfilePoint.Articles.Count()
                         })
                     .SingleOrDefaultAsync();
-                userDTO.SubscriberCount = statsResult.subscriberCount;
-                userDTO.ArticleCount = statsResult.articleCount;
+                userDto.SubscriberCount = statsResult.subscriberCount;
+                userDto.ArticleCount = statsResult.articleCount;
             }
 
             if (reviewStats)
@@ -129,13 +129,13 @@ namespace Keylol.Controllers.User
                             u.ProfilePoint.Articles.Count(a => a.Type == ArticleType.简评)
                     })
                     .SingleOrDefaultAsync();
-                userDTO.ReviewCount = reviewStatsResult.reviewCount;
-                userDTO.ShortReviewCount = reviewStatsResult.shortReviewCount;
+                userDto.ReviewCount = reviewStatsResult.reviewCount;
+                userDto.ShortReviewCount = reviewStatsResult.shortReviewCount;
             }
 
             if (subscribed)
             {
-                userDTO.Subscribed = await DbContext.Users.Where(u => u.Id == visitorId)
+                userDto.Subscribed = await DbContext.Users.Where(u => u.Id == visitorId)
                     .SelectMany(u => u.SubscribedPoints)
                     .Select(p => p.Id)
                     .ContainsAsync(user.Id);
@@ -143,29 +143,21 @@ namespace Keylol.Controllers.User
 
             if (commentLike && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
             {
-                userDTO.HasNewComment =
-                    await DbContext.CommentReplies.Where(r =>
-                        r.Comment.CommentatorId == user.Id &&
-                        r.IgnoredByCommentAuthor == false &&
-                        r.ReadByCommentAuthor == false).AnyAsync() ||
-                    await DbContext.Comments.Where(c =>
-                        c.Article.PrincipalId == user.Id &&
-                        c.IgnoredByArticleAuthor == false &&
-                        c.ReadByArticleAuthor == false).AnyAsync();
-                userDTO.HasNewLike =
-                    await DbContext.ArticleLikes.Where(l =>
-                        l.Backout == false &&
-                        l.Article.PrincipalId == user.Id &&
-                        l.IgnoredByTargetUser == false &&
-                        l.ReadByTargetUser == false).AnyAsync() ||
-                    await DbContext.CommentLikes.Where(l =>
-                        l.Backout == false &&
-                        l.Comment.CommentatorId == user.Id &&
-                        l.IgnoredByTargetUser == false &&
-                        l.ReadByTargetUser == false).AnyAsync();
+                userDto.MessageCount = string.Join(",", new[]
+                {
+                    await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
+                                                        m.Type >= 0 && (int) m.Type <= 99)
+                        .CountAsync(),
+                    await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
+                                                        (int) m.Type >= 100 && (int) m.Type <= 199)
+                        .CountAsync(),
+                    await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
+                                                        (int) m.Type >= 100 && (int) m.Type <= 199)
+                        .CountAsync()
+                });
             }
 
-            return Ok(userDTO);
+            return Ok(userDto);
         }
     }
 }

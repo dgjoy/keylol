@@ -16,10 +16,6 @@ namespace Keylol.Models
         [Index]
         public DateTime PublishTime { get; set; } = DateTime.Now;
 
-        public bool ReadByArticleAuthor { get; set; } = false;
-
-        public bool IgnoredByArticleAuthor { get; set; } = false;
-
         [Required]
         public string CommentatorId { get; set; }
 

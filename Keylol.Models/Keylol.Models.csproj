@@ -283,6 +283,10 @@
     <Compile Include="Migrations\201603260638027_PlainMessage.Designer.cs">
       <DependentUpon>201603260638027_PlainMessage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603260910041_RemoveOldIgnoreProperties.cs" />
+    <Compile Include="Migrations\201603260910041_RemoveOldIgnoreProperties.Designer.cs">
+      <DependentUpon>201603260910041_RemoveOldIgnoreProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -446,6 +450,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603260638027_PlainMessage.resx">
       <DependentUpon>201603260638027_PlainMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603260910041_RemoveOldIgnoreProperties.resx">
+      <DependentUpon>201603260910041_RemoveOldIgnoreProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

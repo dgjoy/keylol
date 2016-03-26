@@ -113,10 +113,7 @@ namespace Keylol.Models.DTO
         public bool? Subscribed { get; set; }
 
         [DataMember]
-        public bool? HasNewComment { get; set; }
-
-        [DataMember]
-        public bool? HasNewLike { get; set; }
+        public string MessageCount { get; set; }
 
         [DataMember]
         public int? ReviewCount { get; set; }

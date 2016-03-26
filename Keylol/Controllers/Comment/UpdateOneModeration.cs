@@ -57,12 +57,33 @@ namespace Keylol.Controllers.Comment
             if (!Enum.IsDefined(typeof (CommentUpdateOneModerationRequestDto.CommentProperty), requestDto.Property))
                 throw new ArgumentOutOfRangeException(nameof(requestDto.Property));
             var propertyInfo = typeof (Models.Comment).GetProperty(requestDto.Property.ToString());
-            if ((bool) propertyInfo.GetValue(comment) == requestDto.Value)
+            if (requestDto.Property == CommentUpdateOneModerationRequestDto.CommentProperty.Archived)
             {
-                ModelState.AddModelError("requestDto.Value", "评论已经处于目标状态");
-                return BadRequest(ModelState);
+                if (comment.Archived != ArchivedState.None == requestDto.Value)
+                {
+                    ModelState.AddModelError("requestDto.Value", "评论已经处于目标状态");
+                    return BadRequest(ModelState);
+                }
+                if (operatorStaffClaim == StaffClaim.Operator)
+                {
+                    comment.Archived = requestDto.Value ? ArchivedState.Operator : ArchivedState.None;
+                }
+                else
+                {
+                    if (comment.Archived == ArchivedState.Operator)
+                        return Unauthorized();
+                    comment.Archived = requestDto.Value ? ArchivedState.User : ArchivedState.None;
+                }
             }
-            propertyInfo.SetValue(comment, requestDto.Value);
+            else
+            {
+                if ((bool) propertyInfo.GetValue(comment) == requestDto.Value)
+                {
+                    ModelState.AddModelError("requestDto.Value", "评论已经处于目标状态");
+                    return BadRequest(ModelState);
+                }
+                propertyInfo.SetValue(comment, requestDto.Value);
+            }
             if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
             {
                 var missive = DbContext.Messages.Create();
