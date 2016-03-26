@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
@@ -101,10 +100,19 @@ namespace Keylol.Controllers.Comment
 
                 if (replyToUser.Id == articleAuthor.Id)
                     notifiedArticleAuthor = true;
+
+                // 邮政中心
+                var message = DbContext.Messages.Create();
+                message.Type = MessageType.CommentReply;
+                message.OperatorId = comment.CommentatorId;
+                message.ReceiverId = replyToUser.Id;
+                message.CommentId = comment.Id;
+                DbContext.Messages.Add(message);
+
+                // Steam 通知
                 ISteamBotCoodinatorCallback callback;
                 if (replyToUser.SteamBot.SessionId != null &&
-                    SteamBotCoodinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId,
-                    out callback))
+                    SteamBotCoodinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId, out callback))
                 {
                     callback.SendMessage(replyToUser.SteamBotId, replyToUser.SteamId,
                         $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
@@ -112,14 +120,24 @@ namespace Keylol.Controllers.Comment
             }
             if (!notifiedArticleAuthor && !comment.IgnoredByArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
             {
+                // 邮政中心
+                var message = DbContext.Messages.Create();
+                message.Type = MessageType.ArticleComment;
+                message.OperatorId = comment.CommentatorId;
+                message.ReceiverId = articleAuthor.Id;
+                message.CommentId = comment.Id;
+                DbContext.Messages.Add(message);
+
+                // Steam 通知
                 ISteamBotCoodinatorCallback callback;
-                if (articleAuthor.SteamBot.SessionId != null && 
+                if (articleAuthor.SteamBot.SessionId != null &&
                     SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
                 {
                     callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                         $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                 }
             }
+            await DbContext.SaveChangesAsync();
 
             return Created($"comment/{comment.Id}", new CommentDTO(comment, false));
         }

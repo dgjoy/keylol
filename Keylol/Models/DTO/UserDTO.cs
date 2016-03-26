@@ -8,7 +8,7 @@ namespace Keylol.Models.DTO
     [DataContract]
     public class UserDTO
     {
-        private KeylolUser _user;
+        private readonly KeylolUser _user;
 
         public UserDTO()
         {

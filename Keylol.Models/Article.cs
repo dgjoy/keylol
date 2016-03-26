@@ -6,7 +6,7 @@ using Keylol.Models.DAL;
 
 namespace Keylol.Models
 {
-    public class Article : IHaveSequenceNumber
+    public class Article : IHasSequenceNumber
     {
         public string SequenceName { get; } = "ArticleSequence";
 

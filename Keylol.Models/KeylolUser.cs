@@ -18,7 +18,7 @@ namespace Keylol.Models
         TraditionalChineseWithContentUnmodified
     }
 
-    public class KeylolUser : IdentityUser, IHaveSequenceNumber
+    public class KeylolUser : IdentityUser, IHasSequenceNumber
     {
         public string SequenceName { get; } = "UserSequence";
 

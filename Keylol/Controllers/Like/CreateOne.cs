@@ -3,10 +3,12 @@ using System.Data.Entity;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Models;
 using Keylol.Models.ViewModels;
 using Keylol.Provider;
 using Keylol.Services;
 using Keylol.Services.Contracts;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -23,6 +25,7 @@ namespace Keylol.Controllers.Like
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (int))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "文章或评论被封存，当前登录用户无权创建认可")]
         public async Task<IHttpActionResult> CreateOne(LikeVM vm)
         {
             if (vm == null)
@@ -60,6 +63,8 @@ namespace Keylol.Controllers.Like
                         ModelState.AddModelError("vm.TargetId", "不能认可自己发表的文章。");
                         return BadRequest(ModelState);
                     }
+                    if (article.Archived != ArchivedState.None)
+                        return Unauthorized();
                     var articleLike = DbContext.ArticleLikes.Create();
                     articleLike.IgnoredByTargetUser = article.IgnoreNewLikes;
                     articleLike.ArticleId = vm.TargetId;
@@ -68,6 +73,16 @@ namespace Keylol.Controllers.Like
                     {
                         var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == article.PrincipalId);
+
+                        // 邮政中心
+                        var message = DbContext.Messages.Create();
+                        message.Type = MessageType.ArticleLike;
+                        message.OperatorId = operatorId;
+                        message.ReceiverId = articleAuthor.Id;
+                        message.ArticleId = article.Id;
+                        DbContext.Messages.Add(message);
+
+                        // Steam 通知
                         ISteamBotCoodinatorCallback callback;
                         if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.SessionId != null &&
                             SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
@@ -100,6 +115,8 @@ namespace Keylol.Controllers.Like
                         ModelState.AddModelError("vm.TargetId", "不能认可自己发表的评论。");
                         return BadRequest(ModelState);
                     }
+                    if (comment.Archived != ArchivedState.None || comment.Article.Archived != ArchivedState.None)
+                        return Unauthorized();
                     var commentLike = DbContext.CommentLikes.Create();
                     commentLike.IgnoredByTargetUser = comment.IgnoreNewLikes;
                     commentLike.CommentId = vm.TargetId;
@@ -109,6 +126,16 @@ namespace Keylol.Controllers.Like
                         var commentAuthor = await DbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == comment.CommentatorId);
                         var articleAuthor = await DbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
+
+                        // 邮政中心
+                        var message = DbContext.Messages.Create();
+                        message.Type = MessageType.CommentLike;
+                        message.OperatorId = operatorId;
+                        message.ReceiverId = commentAuthor.Id;
+                        message.CommentId = comment.Id;
+                        DbContext.Messages.Add(message);
+
+                        // Steam 通知
                         ISteamBotCoodinatorCallback callback;
                         if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.SessionId != null &&
                             SteamBotCoodinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))

@@ -279,6 +279,10 @@
     <Compile Include="Migrations\201603241457490_ArticleSpotlightTime.Designer.cs">
       <DependentUpon>201603241457490_ArticleSpotlightTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603260638027_PlainMessage.cs" />
+    <Compile Include="Migrations\201603260638027_PlainMessage.Designer.cs">
+      <DependentUpon>201603260638027_PlainMessage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -439,6 +443,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603241457490_ArticleSpotlightTime.resx">
       <DependentUpon>201603241457490_ArticleSpotlightTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603260638027_PlainMessage.resx">
+      <DependentUpon>201603260638027_PlainMessage.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

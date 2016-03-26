@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Models;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -21,7 +22,8 @@ namespace Keylol.Controllers.Comment
         [SwaggerResponse(HttpStatusCode.NotFound, "指定评论不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权操作这个评论")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> UpdoteOneModeration(string id, CommentUpdateOneModerationRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdoteOneModeration(string id,
+            CommentUpdateOneModerationRequestDto requestDto)
         {
             if (requestDto == null)
             {
@@ -61,37 +63,27 @@ namespace Keylol.Controllers.Comment
                 return BadRequest(ModelState);
             }
             propertyInfo.SetValue(comment, requestDto.Value);
-            if (comment.CommentatorId != operatorId && (requestDto.NotifyAuthor ?? false))
+            if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
             {
+                var missive = DbContext.Messages.Create();
+                missive.OperatorId = operatorId;
+                missive.ReceiverId = comment.CommentatorId;
+                missive.CommentId = comment.Id;
                 if (requestDto.Value)
                 {
                     switch (requestDto.Property)
                     {
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Archived:
-                        {
-                            var missive = DbContext.CommentArchiveMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = comment.CommentatorId;
-                            missive.CommentId = comment.Id;
+                            missive.Type = MessageType.CommentArchive;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.CommentArchiveMissiveMessages.Add(missive);
                             break;
-                        }
 
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Warned:
-                        {
-                            var missive = DbContext.CommentWarningMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = comment.CommentatorId;
-                            missive.CommentId = comment.Id;
+                            missive.Type = MessageType.CommentWarning;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.CommentWarningMissiveMessages.Add(missive);
                             break;
-                        }
                     }
                 }
                 else
@@ -99,27 +91,16 @@ namespace Keylol.Controllers.Comment
                     switch (requestDto.Property)
                     {
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Archived:
-                        {
-                            var missive = DbContext.CommentArchiveCancelMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = comment.CommentatorId;
-                            missive.CommentId = comment.Id;
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.CommentArchiveCancelMissiveMessages.Add(missive);
+                            missive.Type = MessageType.CommentArchiveCancel;
                             break;
-                        }
+
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Warned:
-                        {
-                            var missive = DbContext.CommentWarningCancelMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = comment.CommentatorId;
-                            missive.CommentId = comment.Id;
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.CommentWarningCancelMissiveMessages.Add(missive);
+                            missive.Type = MessageType.CommentWarningCancel;
                             break;
-                        }
                     }
                 }
+                await DbContext.GiveNextSequenceNumberAsync(missive);
+                DbContext.Messages.Add(missive);
             }
             await DbContext.SaveChangesAsync();
             return Ok();

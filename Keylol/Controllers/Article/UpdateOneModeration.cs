@@ -105,58 +105,37 @@ namespace Keylol.Controllers.Article
                 }
                 propertyInfo.SetValue(article, requestDto.Value);
             }
-            if (article.PrincipalId != operatorId && (requestDto.NotifyAuthor ?? false))
+            if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
             {
+                var missive = DbContext.Messages.Create();
+                missive.OperatorId = operatorId;
+                missive.ReceiverId = article.PrincipalId;
+                missive.ArticleId = article.Id;
                 if (requestDto.Value)
                 {
                     switch (requestDto.Property)
                     {
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived:
-                        {
-                            var missive = DbContext.ArticleArchiveMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
+                            missive.Type = MessageType.ArticleArchive;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.ArticleArchiveMissiveMessages.Add(missive);
                             break;
-                        }
+
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
-                        {
-                            var missive = DbContext.RejectionMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
+                            missive.Type = MessageType.Rejection;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.RejectionMissiveMessages.Add(missive);
                             break;
-                        }
+
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
-                        {
-                            var missive = DbContext.SpotlightMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.SpotlightMissiveMessages.Add(missive);
+                            missive.Type = MessageType.Spotlight;
                             break;
-                        }
+
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Warned:
-                        {
-                            var missive = DbContext.ArticleWarningMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
+                            missive.Type = MessageType.ArticleWarning;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.ArticleWarningMissiveMessages.Add(missive);
                             break;
-                        }
                     }
                 }
                 else
@@ -164,47 +143,24 @@ namespace Keylol.Controllers.Article
                     switch (requestDto.Property)
                     {
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived:
-                        {
-                            var missive = DbContext.ArticleArchiveCancelMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.ArticleArchiveCancelMissiveMessages.Add(missive);
+                            missive.Type = MessageType.ArticleArchiveCancel;
                             break;
-                        }
+
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
-                        {
-                            var missive = DbContext.RejectionCancelMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.RejectionCancelMissiveMessages.Add(missive);
+                            missive.Type = MessageType.RejectionCancel;
                             break;
-                        }
+
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
-                        {
-                            var missive = DbContext.SpotlightCancelMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.SpotlightCancelMissiveMessages.Add(missive);
+                            missive.Type = MessageType.SpotlightCancel;
                             break;
-                        }
+
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Warned:
-                        {
-                            var missive = DbContext.ArticleWarningCancelMissiveMessages.Create();
-                            missive.OperatorId = operatorId;
-                            missive.ReceiverId = article.PrincipalId;
-                            missive.ArticleId = article.Id;
-                            await DbContext.GiveNextSequenceNumberAsync(missive);
-                            DbContext.ArticleWarningCancelMissiveMessages.Add(missive);
+                            missive.Type = MessageType.ArticleWarningCancel;
                             break;
-                        }
                     }
                 }
+                await DbContext.GiveNextSequenceNumberAsync(missive);
+                DbContext.Messages.Add(missive);
             }
             await DbContext.SaveChangesAsync();
             return Ok();

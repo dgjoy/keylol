@@ -1,9 +1,7 @@
 using System;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using Keylol.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models.DAL
@@ -37,31 +35,7 @@ namespace Keylol.Models.DAL
         public DbSet<AutoSubscription> AutoSubscriptions { get; set; }
         public DbSet<UserGameRecord> UserGameRecords { get; set; }
         public DbSet<SteamStoreName> SteamStoreNames { get; set; }
-
-        #region Messages
-
         public DbSet<Message> Messages { get; set; }
-        public DbSet<LikeMessage> LikeMessages { get; set; }
-        public DbSet<ArticleLikeMessage> ArticleLikeMessages { get; set; }
-        public DbSet<CommentLikeMessage> CommentLikeMessages { get; set; }
-        public DbSet<CommentMessage> CommentMessages { get; set; }
-        public DbSet<ArticleCommentMessage> ArticleCommentMessages { get; set; }
-        public DbSet<CommentReplyMessage> CommentReplyMessages { get; set; }
-        public DbSet<MissiveMessage> MissiveMessages { get; set; }
-        public DbSet<ArticleArchiveMissiveMessage> ArticleArchiveMissiveMessages { get; set; }
-        public DbSet<ArticleArchiveCancelMissiveMessage> ArticleArchiveCancelMissiveMessages { get; set; }
-        public DbSet<CommentArchiveMissiveMessage> CommentArchiveMissiveMessages { get; set; }
-        public DbSet<CommentArchiveCancelMissiveMessage> CommentArchiveCancelMissiveMessages { get; set; }
-        public DbSet<RejectionMissiveMessage> RejectionMissiveMessages { get; set; }
-        public DbSet<RejectionCancelMissiveMessage> RejectionCancelMissiveMessages { get; set; }
-        public DbSet<SpotlightMissiveMessage> SpotlightMissiveMessages { get; set; }
-        public DbSet<SpotlightCancelMissiveMessage> SpotlightCancelMissiveMessages { get; set; }
-        public DbSet<ArticleWarningMissiveMessage> ArticleWarningMissiveMessages { get; set; }
-        public DbSet<ArticleWarningCancelMissiveMessage> ArticleWarningCancelMissiveMessages { get; set; }
-        public DbSet<CommentWarningMissiveMessage> CommentWarningMissiveMessages { get; set; }
-        public DbSet<CommentWarningCancelMissiveMessage> CommentWarningCancelMissiveMessages { get; set; }
-
-        #endregion
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -175,14 +149,14 @@ namespace Keylol.Models.DAL
             return new KeylolDbContext();
         }
 
-        public async Task GiveNextSequenceNumberAsync<TEntity>(TEntity entity) where TEntity : IHaveSequenceNumber
+        public async Task GiveNextSequenceNumberAsync<TEntity>(TEntity entity) where TEntity : IHasSequenceNumber
         {
             entity.SequenceNumber =
                 await Database.SqlQuery<int>($"SELECT NEXT VALUE FOR {entity.SequenceName}").SingleAsync();
         }
     }
 
-    public interface IHaveSequenceNumber
+    public interface IHasSequenceNumber
     {
         string SequenceName { get; }
         int SequenceNumber { get; set; }
