@@ -112,7 +112,7 @@ namespace Keylol.Controllers.User
                         new
                         {
                             subscriberCount = u.ProfilePoint.Subscribers.Count,
-                            articleCount = u.ProfilePoint.Articles.Count()
+                            articleCount = u.ProfilePoint.Articles.Count(a => a.Archived == ArchivedState.None)
                         })
                     .SingleOrDefaultAsync();
                 userDto.SubscriberCount = statsResult.subscriberCount;

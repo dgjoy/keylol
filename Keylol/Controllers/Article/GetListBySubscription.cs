@@ -44,6 +44,7 @@ namespace Keylol.Controllers.Article
                 userQuery.SelectMany(u => u.SubscribedPoints.OfType<Models.NormalPoint>())
                     .SelectMany(p => p.Articles.Select(a => new {article = a, fromPoint = p}))
                     .Where(e => e.article.SequenceNumber < beforeSN &&
+                                e.article.Archived == ArchivedState.None && e.article.Rejected == false &&
                                 (shortReviewFilter2 || e.article.Type != ArticleType.简评))
                     .Select(e => new
                     {

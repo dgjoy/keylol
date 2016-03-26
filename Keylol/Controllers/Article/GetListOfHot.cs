@@ -23,9 +23,7 @@ namespace Keylol.Controllers.Article
         {
             var articleEntries =
                 await DbContext.Articles.AsNoTracking()
-                    .Where(a =>
-                        a.PublishTime >= DbFunctions.AddDays(DateTime.Now, -14) && a.Archived == ArchivedState.None &&
-                        a.SpotlightTime != null)
+                    .Where(a => a.SpotlightTime >= DbFunctions.AddDays(DateTime.Now, -14))
                     .OrderByDescending(a => a.SpotlightTime).Take(() => 5)
                     .Select(a => new
                     {
