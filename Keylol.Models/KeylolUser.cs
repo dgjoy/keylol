@@ -20,8 +20,6 @@ namespace Keylol.Models
 
     public class KeylolUser : IdentityUser, IHasSequenceNumber
     {
-        public string SequenceName { get; } = "UserSequence";
-
         [Required]
         [Index(IsUnique = true)]
         [StringLength(5, MinimumLength = 5)]
@@ -54,9 +52,6 @@ namespace Keylol.Models
 
         public DateTime SteamBindingTime { get; set; }
 
-        [Index(IsUnique = true)]
-        public int SequenceNumber { get; set; }
-
         public DateTime LastGameUpdateTime { get; set; } = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         public bool LastGameUpdateSucceed { get; set; } = false;
@@ -64,18 +59,6 @@ namespace Keylol.Models
         public bool AutoSubscribeEnabled { get; set; } = true;
 
         public int AutoSubscribeDaySpan { get; set; } = 7;
-
-        #region Steam bot notification options
-
-        public bool SteamNotifyOnArticleReplied { get; set; } = true;
-
-        public bool SteamNotifyOnCommentReplied { get; set; } = true;
-
-        public bool SteamNotifyOnArticleLiked { get; set; } = true;
-
-        public bool SteamNotifyOnCommentLiked { get; set; } = true;
-
-        #endregion
 
         public virtual ProfilePoint ProfilePoint { get; set; }
 
@@ -100,6 +83,10 @@ namespace Keylol.Models
         public virtual InvitationCode InvitationCode { get; set; }
 
         public virtual ICollection<Favorite> Favorites { get; set; }
+        public string SequenceName { get; } = "UserSequence";
+
+        [Index(IsUnique = true)]
+        public int SequenceNumber { get; set; }
 
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
         //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
@@ -117,5 +104,17 @@ namespace Keylol.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        #region Steam bot notification options
+
+        public bool SteamNotifyOnArticleReplied { get; set; } = true;
+
+        public bool SteamNotifyOnCommentReplied { get; set; } = true;
+
+        public bool SteamNotifyOnArticleLiked { get; set; } = true;
+
+        public bool SteamNotifyOnCommentLiked { get; set; } = true;
+
+        #endregion
     }
 }

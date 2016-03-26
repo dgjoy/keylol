@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
 using Keylol.Models.DTO;
 using Keylol.Models.ViewModels;
@@ -20,7 +17,7 @@ namespace Keylol.Services.Contracts
         Task UpdateBots(IList<SteamBotVM> vms);
 
         [OperationContract(IsOneWay = true)]
-        Task SetUserStatus(string steamId, Contracts.StatusClaim status);
+        Task SetUserStatus(string steamId, StatusClaim status);
 
         [OperationContract(IsOneWay = true)]
         Task SetUserSteamProfileName(string steamId, string name);
@@ -47,7 +44,7 @@ namespace Keylol.Services.Contracts
         [OperationContract(IsOneWay = true)]
         Task BroadcastBotOnFriendAdded(string botId);
     }
-    
+
     public interface ISteamBotCoodinatorCallback
     {
         [OperationContract(IsOneWay = true)]
@@ -63,9 +60,7 @@ namespace Keylol.Services.Contracts
     [DataContract]
     public enum StatusClaim
     {
-        [EnumMember]
-        Normal,
-        [EnumMember]
-        Probationer
+        [EnumMember] Normal,
+        [EnumMember] Probationer
     }
 }

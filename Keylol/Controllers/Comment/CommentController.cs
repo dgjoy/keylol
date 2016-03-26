@@ -3,7 +3,7 @@
 namespace Keylol.Controllers.Comment
 {
     /// <summary>
-    /// 评论 Controller
+    ///     评论 Controller
     /// </summary>
     [Authorize]
     [RoutePrefix("comment")]

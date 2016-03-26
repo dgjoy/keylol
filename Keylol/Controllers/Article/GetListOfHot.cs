@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Models;
 using Keylol.Models.DTO;
 
 namespace Keylol.Controllers.Article

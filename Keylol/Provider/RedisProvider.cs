@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Converters;
@@ -13,14 +8,14 @@ using StackExchange.Redis;
 namespace Keylol.Provider
 {
     /// <summary>
-    /// 提供 Redis 服务
+    ///     提供 Redis 服务
     /// </summary>
     public static class RedisProvider
     {
         private static ConnectionMultiplexer _connectionMultiplexer;
 
         /// <summary>
-        /// 获取全局 Redis 单例
+        ///     获取全局 Redis 单例
         /// </summary>
         /// <returns>StackExchange.Redis Connection.Multiplexer</returns>
         public static ConnectionMultiplexer GetInstance()
@@ -35,7 +30,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 将对象序列化 BSON
+        ///     将对象序列化 BSON
         /// </summary>
         /// <typeparam name="T">对象类型</typeparam>
         /// <param name="object">要序列化的对象</param>
@@ -52,7 +47,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 将 BSON 反序列化为对象
+        ///     将 BSON 反序列化为对象
         /// </summary>
         /// <param name="data">要反序列化的 BSON</param>
         /// <param name="readRootValueAsArray">是否把 BSON 根看成数组</param>

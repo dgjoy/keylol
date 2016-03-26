@@ -14,7 +14,28 @@ namespace Keylol.Controllers.Message
     public partial class MessageController
     {
         /// <summary>
-        /// 获取当前登录用户的邮政消息
+        ///     邮政消息过滤类型
+        /// </summary>
+        public enum MessageFilter
+        {
+            /// <summary>
+            ///     认可
+            /// </summary>
+            Like,
+
+            /// <summary>
+            ///     评论
+            /// </summary>
+            Comment,
+
+            /// <summary>
+            ///     公函
+            /// </summary>
+            Missive
+        }
+
+        /// <summary>
+        ///     获取当前登录用户的邮政消息
         /// </summary>
         /// <param name="filter">消息类型过滤条件</param>
         /// <param name="beforeSn">获取编号小于这个数字的消息，用于分块加载，默认 2147483647</param>
@@ -44,7 +65,7 @@ namespace Keylol.Controllers.Message
 
                 case MessageFilter.Missive:
                     query = DbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          (int)m.Type >= 100 && (int)m.Type <= 199 &&
+                                                          (int) m.Type >= 100 && (int) m.Type <= 199 &&
                                                           m.SequenceNumber < beforeSn);
                     break;
 
@@ -99,73 +120,52 @@ namespace Keylol.Controllers.Message
         }
 
         /// <summary>
-        /// 邮政消息过滤类型
-        /// </summary>
-        public enum MessageFilter
-        {
-            /// <summary>
-            /// 认可
-            /// </summary>
-            Like,
-
-            /// <summary>
-            /// 评论
-            /// </summary>
-            Comment,
-
-            /// <summary>
-            /// 公函
-            /// </summary>
-            Missive
-        }
-
-        /// <summary>
-        /// 响应 DTO
+        ///     响应 DTO
         /// </summary>
         public class MessageGetListByCurrentUserResponseDto
         {
             /// <summary>
-            /// Id
+            ///     Id
             /// </summary>
             public string Id { get; set; }
 
             /// <summary>
-            /// 类型
+            ///     类型
             /// </summary>
             public MessageType Type { get; set; }
 
             /// <summary>
-            /// 序号
+            ///     序号
             /// </summary>
             public int SequenceNumber { get; set; }
 
             /// <summary>
-            /// 发送时间
+            ///     发送时间
             /// </summary>
             public DateTime CreateTime { get; set; }
 
             /// <summary>
-            /// 发送人
+            ///     发送人
             /// </summary>
             public UserDTO Operator { get; set; }
 
             /// <summary>
-            /// 相关文章
+            ///     相关文章
             /// </summary>
             public ArticleDTO Article { get; set; }
 
             /// <summary>
-            /// 相关评论
+            ///     相关评论
             /// </summary>
             public CommentDTO Comment { get; set; }
 
             /// <summary>
-            /// 原因
+            ///     原因
             /// </summary>
             public List<int> Reasons { get; set; }
 
             /// <summary>
-            /// 是否未读
+            ///     是否未读
             /// </summary>
             public bool Unread { get; set; }
         }

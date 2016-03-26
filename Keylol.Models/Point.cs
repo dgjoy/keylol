@@ -75,6 +75,31 @@ namespace Keylol.Models
 
         public virtual ICollection<SteamStoreName> SteamStoreNames { get; set; }
 
+        public virtual ICollection<NormalPoint> DeveloperForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> PublisherForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> GenreForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> TagForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> MajorPlatformForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> MinorPlatformForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> SeriesForPoints { get; set; }
+
+        public DateTime CreateTime { get; set; } = DateTime.Now;
+
+        [Index]
+        public DateTime LastActivityTime { get; set; } = DateTime.Now;
+
+        public virtual ICollection<KeylolUser> Staffs { get; set; }
+
+        public virtual ICollection<Article> Articles { get; set; }
+
+        public virtual ICollection<Article> VoteByArticles { get; set; }
+
         #region Game Point Only
 
         [Index]
@@ -106,31 +131,6 @@ namespace Keylol.Models
         public virtual ICollection<NormalPoint> SeriesPoints { get; set; }
 
         #endregion
-
-        public virtual ICollection<NormalPoint> DeveloperForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> PublisherForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> GenreForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> TagForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> MajorPlatformForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> MinorPlatformForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> SeriesForPoints { get; set; }
-
-        public DateTime CreateTime { get; set; } = DateTime.Now;
-
-        [Index]
-        public DateTime LastActivityTime { get; set; } = DateTime.Now;
-
-        public virtual ICollection<KeylolUser> Staffs { get; set; }
-
-        public virtual ICollection<Article> Articles { get; set; }
-
-        public virtual ICollection<Article> VoteByArticles { get; set; }
     }
 
     public class ProfilePoint : Point

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models.DTO
 {
@@ -58,6 +55,13 @@ namespace Keylol.Models.DTO
         public string Description { get; set; }
         public string NameInSteamStore { get; set; }
 
+        public int? SubscriberCount { get; set; }
+        public int? ArticleCount { get; set; }
+        public Dictionary<int, int> VoteStats { get; set; }
+        public bool? Subscribed { get; set; }
+
+        internal int? Count { get; set; }
+
         #region Game Point Only
 
         public int? SteamAppId { get; set; }
@@ -83,12 +87,5 @@ namespace Keylol.Models.DTO
         public int? GameCountAsSeries { get; set; }
 
         #endregion
-
-        public int? SubscriberCount { get; set; }
-        public int? ArticleCount { get; set; }
-        public Dictionary<int, int> VoteStats { get; set; }
-        public bool? Subscribed { get; set; }
-
-        internal int? Count { get; set; }
     }
 }

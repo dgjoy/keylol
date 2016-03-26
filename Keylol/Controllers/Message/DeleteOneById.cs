@@ -11,7 +11,7 @@ namespace Keylol.Controllers.Message
     public partial class MessageController
     {
         /// <summary>
-        /// 删除指定消息
+        ///     删除指定消息
         /// </summary>
         /// <param name="id">消息 ID</param>
         [Route("{id}")]

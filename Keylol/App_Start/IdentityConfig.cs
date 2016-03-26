@@ -51,7 +51,8 @@ namespace Keylol
             {
                 errors.Add("Only digits, letters and Chinese characters are allowed in UserName.");
             }
-            if (user.Email != null && !Regex.IsMatch(user.Email, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$", RegexOptions.IgnoreCase))
+            if (user.Email != null &&
+                !Regex.IsMatch(user.Email, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$", RegexOptions.IgnoreCase))
             {
                 errors.Add("Email is invalid.");
             }
@@ -139,7 +140,7 @@ namespace Keylol
     }
 
     /// <summary>
-    /// Configure the application sign-in manager which is used in this application.
+    ///     Configure the application sign-in manager which is used in this application.
     /// </summary>
     public class KeylolSignInManager : SignInManager<KeylolUser, string>
     {

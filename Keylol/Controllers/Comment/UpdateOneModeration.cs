@@ -13,7 +13,7 @@ namespace Keylol.Controllers.Comment
     public partial class CommentController
     {
         /// <summary>
-        /// 更新评论的封存或警告状态
+        ///     更新评论的封存或警告状态
         /// </summary>
         /// <param name="id">评论 ID</param>
         /// <param name="requestDto">请求 DTO</param>
@@ -129,43 +129,43 @@ namespace Keylol.Controllers.Comment
     }
 
     /// <summary>
-    /// 封存、警告请求 DTO
+    ///     封存、警告请求 DTO
     /// </summary>
     public class CommentUpdateOneModerationRequestDto
     {
         /// <summary>
-        /// 评论属性
+        ///     评论属性
         /// </summary>
         public enum CommentProperty
         {
             /// <summary>
-            /// 封存状态
+            ///     封存状态
             /// </summary>
             Archived,
 
             /// <summary>
-            /// 警告状态
+            ///     警告状态
             /// </summary>
             Warned
         }
 
         /// <summary>
-        /// 要操作的评论属性
+        ///     要操作的评论属性
         /// </summary>
         public CommentProperty Property { get; set; }
 
         /// <summary>
-        /// 文章属性的新值
+        ///     文章属性的新值
         /// </summary>
         public bool Value { get; set; }
 
         /// <summary>
-        /// 操作理由
+        ///     操作理由
         /// </summary>
         public List<int> Reasons { get; set; }
 
         /// <summary>
-        /// 是否通知作者
+        ///     是否通知作者
         /// </summary>
         public bool? NotifyAuthor { get; set; }
     }

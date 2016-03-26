@@ -2,11 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Validation;
-using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading;
 using System.Threading.Tasks;
 using DevTrends.WCFDataAnnotations;
 using Keylol.Hubs;
@@ -16,7 +13,7 @@ using Keylol.Models.ViewModels;
 using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
-using StatusClaim = Keylol.Utilities.StatusClaim;
+using StatusClaim = Keylol.Services.Contracts.StatusClaim;
 
 namespace Keylol.Services
 {
@@ -24,11 +21,8 @@ namespace Keylol.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class SteamBotCoodinator : ISteamBotCoodinator
     {
-        private bool _botAllocated;
         private readonly string _sessionId = OperationContext.Current.SessionId;
-
-        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients { get; } =
-            new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
+        private bool _botAllocated;
 
         public SteamBotCoodinator()
         {
@@ -47,6 +41,9 @@ namespace Keylol.Services
                 dbContext.SaveChanges();
             }
         }
+
+        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients { get; } =
+            new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
 
         public async Task<IEnumerable<SteamBotDTO>> AllocateBots()
         {
@@ -116,7 +113,7 @@ namespace Keylol.Services
             }
         }
 
-        public async Task SetUserStatus(string steamId, Contracts.StatusClaim status)
+        public async Task SetUserStatus(string steamId, StatusClaim status)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -126,12 +123,12 @@ namespace Keylol.Services
                     var userManager = KeylolUserManager.Create(dbContext);
                     switch (status)
                     {
-                        case Contracts.StatusClaim.Normal:
+                        case StatusClaim.Normal:
                             await userManager.RemoveStatusClaimAsync(user.Id);
                             break;
 
-                        case Contracts.StatusClaim.Probationer:
-                            await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                        case StatusClaim.Probationer:
+                            await userManager.SetStatusClaimAsync(user.Id, Utilities.StatusClaim.Probationer);
                             break;
                     }
                 }

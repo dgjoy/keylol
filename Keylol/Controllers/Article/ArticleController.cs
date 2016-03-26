@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Web.Http;
+﻿using System.Web.Http;
 using CsQuery;
 using CsQuery.Output;
 using Ganss.XSS;
@@ -8,7 +7,7 @@ using Keylol.ImageGarage;
 namespace Keylol.Controllers.Article
 {
     /// <summary>
-    /// 文章 Controller
+    ///     文章 Controller
     /// </summary>
     [Authorize]
     [RoutePrefix("article")]

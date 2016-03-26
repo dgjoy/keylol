@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models.ViewModels
 {
@@ -14,7 +9,7 @@ namespace Keylol.Models.ViewModels
         [DataMember]
         [Required]
         public string Id { get; set; }
-        
+
         [DataMember]
         public string SteamId { get; set; }
 

@@ -3,7 +3,7 @@
 namespace Keylol.Controllers.UserGameRecord
 {
     /// <summary>
-    /// 用户游戏记录 Controller
+    ///     用户游戏记录 Controller
     /// </summary>
     [Authorize]
     [RoutePrefix("user-game-record")]

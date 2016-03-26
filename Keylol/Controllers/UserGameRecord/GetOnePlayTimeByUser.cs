@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Web.Routing;
-using Keylol.Controllers.NormalPoint;
 using Keylol.Controllers.User;
-using Keylol.Models;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.UserGameRecord
@@ -18,7 +13,7 @@ namespace Keylol.Controllers.UserGameRecord
     public partial class UserGameRecordController
     {
         /// <summary>
-        /// 获取指定用户指定游戏的在档时间
+        ///     获取指定用户指定游戏的在档时间
         /// </summary>
         /// <param name="id">用户 ID</param>
         /// <param name="steamAppId">游戏 Steam App ID</param>

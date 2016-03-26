@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -55,7 +54,7 @@ namespace Keylol.Utilities
                 else
                 {
                     foreach (var result in list.Skip(i + 1).AllCombinations(count - 1))
-                        yield return new T[] {item}.Concat(result);
+                        yield return new[] {item}.Concat(result);
                 }
 
                 ++i;
@@ -63,7 +62,7 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 将字符串转换为指定的 Enum 类型
+        ///     将字符串转换为指定的 Enum 类型
         /// </summary>
         /// <param name="text">要转换的字符串</param>
         /// <typeparam name="TEnum">转换目标 Enum 类型</typeparam>

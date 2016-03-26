@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Keylol.Models.ViewModels
 {
@@ -35,6 +34,26 @@ namespace Keylol.Models.ViewModels
 
     public class UserPutVM
     {
+        public string GamerTag { get; set; }
+        public string Email { get; set; }
+        public string AvatarImage { get; set; }
+        public string ProfilePointBackgroundImage { get; set; }
+
+        public string Password { get; set; }
+        public string NewPassword { get; set; }
+        public bool? LockoutEnabled { get; set; }
+        public string GeetestChallenge { get; set; }
+        public string GeetestSeccode { get; set; }
+        public string GeetestValidate { get; set; }
+
+        public bool? SteamNotifyOnArticleReplied { get; set; }
+        public bool? SteamNotifyOnCommentReplied { get; set; }
+        public bool? SteamNotifyOnArticleLiked { get; set; }
+        public bool? SteamNotifyOnCommentLiked { get; set; }
+
+        public bool? AutoSubscribeEnabled { get; set; }
+        public int? AutoSubscribeDaySpan { get; set; }
+
         public void CopyToUser(KeylolUser user)
         {
             if (GamerTag != null)
@@ -65,25 +84,5 @@ namespace Keylol.Models.ViewModels
             if (AutoSubscribeDaySpan != null)
                 user.AutoSubscribeDaySpan = AutoSubscribeDaySpan.Value;
         }
-
-        public string GamerTag { get; set; }
-        public string Email { get; set; }
-        public string AvatarImage { get; set; }
-        public string ProfilePointBackgroundImage { get; set; }
-
-        public string Password { get; set; }
-        public string NewPassword { get; set; }
-        public bool? LockoutEnabled { get; set; }
-        public string GeetestChallenge { get; set; }
-        public string GeetestSeccode { get; set; }
-        public string GeetestValidate { get; set; }
-
-        public bool? SteamNotifyOnArticleReplied { get; set; }
-        public bool? SteamNotifyOnCommentReplied { get; set; }
-        public bool? SteamNotifyOnArticleLiked { get; set; }
-        public bool? SteamNotifyOnCommentLiked { get; set; }
-
-        public bool? AutoSubscribeEnabled { get; set; }
-        public int? AutoSubscribeDaySpan { get; set; }
     }
 }

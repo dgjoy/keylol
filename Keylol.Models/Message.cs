@@ -7,8 +7,6 @@ namespace Keylol.Models
 {
     public class Message : IHasSequenceNumber
     {
-        public string SequenceName { get; } = "MessageSequence";
-
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Index]
@@ -27,9 +25,6 @@ namespace Keylol.Models
         [Index]
         public bool Unread { get; set; } = true;
 
-        [Index(IsUnique = true)]
-        public int SequenceNumber { get; set; }
-
         public string ArticleId { get; set; }
         public Article Article { get; set; }
 
@@ -41,12 +36,17 @@ namespace Keylol.Models
 
         [Index]
         public MessageType Type { get; set; }
+
+        public string SequenceName { get; } = "MessageSequence";
+
+        [Index(IsUnique = true)]
+        public int SequenceNumber { get; set; }
     }
 
     /// <summary>
-    /// 认可 0-99
-    /// 评论 100-299
-    /// 公函 200-399
+    ///     认可 0-99
+    ///     评论 100-299
+    ///     公函 200-399
     /// </summary>
     public enum MessageType
     {

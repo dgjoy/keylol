@@ -13,7 +13,7 @@ namespace Keylol.Controllers.Article
     public partial class ArticleController
     {
         /// <summary>
-        /// 更新文章的封存、退稿、萃选或警告状态
+        ///     更新文章的封存、退稿、萃选或警告状态
         /// </summary>
         /// <param name="id">文章 ID</param>
         /// <param name="requestDto">请求 DTO</param>
@@ -167,53 +167,53 @@ namespace Keylol.Controllers.Article
     }
 
     /// <summary>
-    /// 封存、退稿、萃选、警告请求 DTO
+    ///     封存、退稿、萃选、警告请求 DTO
     /// </summary>
     public class ArticleUpdateOneModerationRequestDto
     {
         /// <summary>
-        /// 文章属性
+        ///     文章属性
         /// </summary>
         public enum ArticleProperty
         {
             /// <summary>
-            /// 封存状态
+            ///     封存状态
             /// </summary>
             Archived,
 
             /// <summary>
-            /// 退稿状态
+            ///     退稿状态
             /// </summary>
             Rejected,
 
             /// <summary>
-            /// 萃选状态
+            ///     萃选状态
             /// </summary>
             Spotlight,
 
             /// <summary>
-            /// 警告状态
+            ///     警告状态
             /// </summary>
             Warned
         }
 
         /// <summary>
-        /// 要操作的文章属性
+        ///     要操作的文章属性
         /// </summary>
         public ArticleProperty Property { get; set; }
 
         /// <summary>
-        /// 文章属性的新值
+        ///     文章属性的新值
         /// </summary>
         public bool Value { get; set; }
 
         /// <summary>
-        /// 操作理由
+        ///     操作理由
         /// </summary>
         public List<int> Reasons { get; set; }
 
         /// <summary>
-        /// 是否通知作者
+        ///     是否通知作者
         /// </summary>
         public bool? NotifyAuthor { get; set; }
     }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using SteamKit2;
 
 namespace Keylol.Models.DTO
@@ -39,23 +37,6 @@ namespace Keylol.Models.DTO
             // Ignore stats
 
             // Ignore subscribed
-        }
-
-        public UserDTO IncludeSecurity()
-        {
-            LockoutEnabled = _user.LockoutEnabled;
-            Email = _user.Email;
-            return this;
-        }
-
-        public UserDTO IncludeSteam()
-        {
-            SteamId = _user.SteamId;
-            var steamId = new SteamID();
-            steamId.SetFromSteam3String(SteamId);
-            SteamId64 = steamId.ConvertToUInt64().ToString();
-            SteamProfileName = _user.SteamProfileName;
-            return this;
         }
 
         [DataMember]
@@ -120,6 +101,23 @@ namespace Keylol.Models.DTO
 
         [DataMember]
         public int? ShortReviewCount { get; set; }
+
+        public UserDTO IncludeSecurity()
+        {
+            LockoutEnabled = _user.LockoutEnabled;
+            Email = _user.Email;
+            return this;
+        }
+
+        public UserDTO IncludeSteam()
+        {
+            SteamId = _user.SteamId;
+            var steamId = new SteamID();
+            steamId.SetFromSteam3String(SteamId);
+            SteamId64 = steamId.ConvertToUInt64().ToString();
+            SteamProfileName = _user.SteamProfileName;
+            return this;
+        }
     }
 
     public class UserWithMoreOptionsDTO : UserDTO
@@ -134,7 +132,7 @@ namespace Keylol.Models.DTO
             AutoSubscribeEnabled = user.AutoSubscribeEnabled;
             AutoSubscribeDaySpan = user.AutoSubscribeDaySpan;
         }
-        
+
         [DataMember]
         public bool SteamNotifyOnArticleReplied { get; set; }
 

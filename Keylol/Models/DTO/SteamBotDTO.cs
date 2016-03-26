@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 using SteamKit2;
 
 namespace Keylol.Models.DTO
@@ -30,13 +25,13 @@ namespace Keylol.Models.DTO
 
         [DataMember]
         public string Id { get; set; }
-        
+
         [DataMember]
         public string SteamUserName { get; set; }
-        
+
         [DataMember]
         public string SteamPassword { get; set; }
-        
+
         [DataMember]
         public string SteamId { get; set; }
 

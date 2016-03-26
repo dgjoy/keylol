@@ -3,7 +3,7 @@
 namespace Keylol.Controllers.User
 {
     /// <summary>
-    /// 用户 Controller
+    ///     用户 Controller
     /// </summary>
     [Authorize]
     [RoutePrefix("user")]

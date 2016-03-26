@@ -160,7 +160,7 @@ namespace Keylol.ServiceBase
         }
 
         /// <summary>
-        /// 继承后需要确保调用本方法，以触发 Stopped 事件
+        ///     继承后需要确保调用本方法，以触发 Stopped 事件
         /// </summary>
         protected override void OnStop()
         {

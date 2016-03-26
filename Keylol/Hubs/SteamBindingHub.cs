@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
@@ -70,7 +69,7 @@ namespace Keylol.Hubs
                 var sb = new StringBuilder();
                 for (var i = 0; i < 4; i++)
                 {
-                    sb.Append((char)random.Next('A', 'Z'));
+                    sb.Append((char) random.Next('A', 'Z'));
                 }
                 for (var i = 0; i < 4; i++)
                 {

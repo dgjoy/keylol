@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models.ViewModels
 {
@@ -14,7 +11,7 @@ namespace Keylol.Models.ViewModels
 
         [Required(AllowEmptyStrings = true)]
         public string AvatarImage { get; set; }
-        
+
 
         [Required(AllowEmptyStrings = true)]
         public string ChineseName { get; set; }

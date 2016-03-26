@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
@@ -32,7 +29,9 @@ namespace Keylol.Hubs
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            var tokens = await _dbContext.SteamLoginTokens.Where(t => t.BrowserConnectionId == Context.ConnectionId).ToListAsync();
+            var tokens =
+                await
+                    _dbContext.SteamLoginTokens.Where(t => t.BrowserConnectionId == Context.ConnectionId).ToListAsync();
             foreach (var token in tokens)
             {
                 _dbContext.SteamLoginTokens.Remove(token);
@@ -49,7 +48,7 @@ namespace Keylol.Hubs
             {
                 code = random.Next(0, 10000).ToString("D4");
             } while (await _dbContext.SteamLoginTokens.AnyAsync(t => t.Code == code));
-            var token = new SteamLoginToken()
+            var token = new SteamLoginToken
             {
                 Code = code,
                 BrowserConnectionId = Context.ConnectionId

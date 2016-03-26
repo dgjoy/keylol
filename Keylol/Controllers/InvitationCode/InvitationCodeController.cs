@@ -3,7 +3,7 @@
 namespace Keylol.Controllers.InvitationCode
 {
     /// <summary>
-    /// 邀请码 Controller
+    ///     邀请码 Controller
     /// </summary>
     [Authorize]
     [RoutePrefix("invitation-code")]

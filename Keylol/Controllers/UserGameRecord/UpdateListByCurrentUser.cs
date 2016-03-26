@@ -22,7 +22,7 @@ namespace Keylol.Controllers.UserGameRecord
     public partial class UserGameRecordController
     {
         /// <summary>
-        /// 重新抓取当前登录用户的游戏记录，并重新同步订阅
+        ///     重新抓取当前登录用户的游戏记录，并重新同步订阅
         /// </summary>
         /// <param name="manual">是否是用户手动触发的同步，默认 false</param>
         [Route("my")]

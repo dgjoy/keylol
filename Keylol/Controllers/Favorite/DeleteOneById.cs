@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Provider;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 

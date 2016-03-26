@@ -1,7 +1,5 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.Migrations;
+﻿using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
@@ -37,7 +35,7 @@ namespace Keylol.Controllers
 
             foreach (var credential in credentials)
             {
-                DbContext.SteamBots.AddOrUpdate(bot => bot.SteamUserName, new Models.SteamBot
+                DbContext.SteamBots.AddOrUpdate(bot => bot.SteamUserName, new SteamBot
                 {
                     SteamUserName = credential.UserName,
                     SteamPassword = credential.Password,

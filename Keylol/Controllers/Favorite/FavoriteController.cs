@@ -3,7 +3,7 @@
 namespace Keylol.Controllers.Favorite
 {
     /// <summary>
-    /// 收藏夹 Controller
+    ///     收藏夹 Controller
     /// </summary>
     [Authorize]
     [RoutePrefix("favorite")]

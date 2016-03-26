@@ -3,7 +3,7 @@
 namespace Keylol.Controllers.UserPointSubscription
 {
     /// <summary>
-    /// 据点订阅 Controller
+    ///     据点订阅 Controller
     /// </summary>
     [Authorize]
     [RoutePrefix("user-point-subscription")]

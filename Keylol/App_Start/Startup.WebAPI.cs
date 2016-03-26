@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Web.Http;
-using System.Web.Http.Batch;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Owin;

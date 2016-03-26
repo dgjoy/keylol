@@ -8,7 +8,7 @@ namespace Keylol.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// 被回复的评论
+        ///     被回复的评论
         /// </summary>
         [Required]
         public string CommentId { get; set; }
@@ -16,7 +16,7 @@ namespace Keylol.Models
         public virtual Comment Comment { get; set; }
 
         /// <summary>
-        /// 新回复的评论
+        ///     新回复的评论
         /// </summary>
         [Required]
         public string ReplyId { get; set; }

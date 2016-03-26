@@ -8,15 +8,10 @@ namespace Keylol.Models
 {
     public class Article : IHasSequenceNumber
     {
-        public string SequenceName { get; } = "ArticleSequence";
-        
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Index]
         public DateTime PublishTime { get; set; } = DateTime.Now;
-
-        [Index(IsUnique = true)]
-        public int SequenceNumber { get; set; }
 
         [Required]
         public string PrincipalId { get; set; }
@@ -84,6 +79,10 @@ namespace Keylol.Models
         public virtual ICollection<ArticleLike> Likes { get; set; }
 
         public virtual ICollection<EditLog> EditLogs { get; set; }
+        public string SequenceName { get; } = "ArticleSequence";
+
+        [Index(IsUnique = true)]
+        public int SequenceNumber { get; set; }
     }
 
     public enum ArticleType
@@ -107,17 +106,17 @@ namespace Keylol.Models
     public enum ArchivedState
     {
         /// <summary>
-        /// 没有封存
+        ///     没有封存
         /// </summary>
         None,
 
         /// <summary>
-        /// 用户自行封存
+        ///     用户自行封存
         /// </summary>
         User,
 
         /// <summary>
-        /// 运维职员封存
+        ///     运维职员封存
         /// </summary>
         Operator
     }
