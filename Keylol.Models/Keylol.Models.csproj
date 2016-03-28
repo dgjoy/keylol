@@ -295,6 +295,10 @@
     <Compile Include="Migrations\201603261339312_UserUniqueSequenceNumber.Designer.cs">
       <DependentUpon>201603261339312_UserUniqueSequenceNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603281018246_MessageReplyToComment.cs" />
+    <Compile Include="Migrations\201603281018246_MessageReplyToComment.Designer.cs">
+      <DependentUpon>201603281018246_MessageReplyToComment.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -467,6 +471,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603261339312_UserUniqueSequenceNumber.resx">
       <DependentUpon>201603261339312_UserUniqueSequenceNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603281018246_MessageReplyToComment.resx">
+      <DependentUpon>201603281018246_MessageReplyToComment.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

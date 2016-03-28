@@ -65,7 +65,7 @@ namespace Keylol.Controllers.Message
 
                 case MessageFilter.Missive:
                     query = DbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          (int) m.Type >= 100 && (int) m.Type <= 199 &&
+                                                          (int) m.Type >= 200 && (int) m.Type <= 299 &&
                                                           m.SequenceNumber < beforeSn);
                     break;
 
@@ -114,13 +114,14 @@ namespace Keylol.Controllers.Message
                 if (m.Type.HasCommentProperty())
                 {
                     dto.Comment = new CommentDTO(m.Comment, true, 128);
+                    dto.ReplyToCommentId = m.ReplyToCommentId;
                     dto.Article = new ArticleDTO(m.Comment.Article)
                     {
                         AuthorIdCode = m.Comment.Article.Principal.User.IdCode
                     };
                 }
                 return dto;
-            });
+            }).ToList();
             foreach (var message in result)
             {
                 message.Unread = false;
@@ -168,6 +169,11 @@ namespace Keylol.Controllers.Message
             ///     相关评论
             /// </summary>
             public CommentDTO Comment { get; set; }
+
+            /// <summary>
+            ///     被回复的评论 ID
+            /// </summary>
+            public string ReplyToCommentId { get; set; }
 
             /// <summary>
             ///     原因

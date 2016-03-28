@@ -151,7 +151,7 @@ namespace Keylol.Controllers.User
                                                         (int) m.Type >= 100 && (int) m.Type <= 199)
                         .CountAsync(),
                     await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
-                                                        (int) m.Type >= 100 && (int) m.Type <= 199)
+                                                        (int) m.Type >= 200 && (int) m.Type <= 299)
                         .CountAsync()
                 });
             }

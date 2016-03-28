@@ -80,12 +80,12 @@ namespace Keylol.Controllers.Comment
             var truncatedContent = truncateContentTo < comment.Content.Length
                 ? $"{comment.Content.Substring(0, truncateContentTo)} …"
                 : comment.Content;
-            foreach (var replyToUser in
+            foreach (var commentReply in
                 commentReplies.Where(
                     cr => !(cr.Comment.CommentatorId == comment.CommentatorId || cr.Comment.IgnoreNewComments))
-                    .Select(cr => cr.Comment.Commentator)
                     .Distinct())
             {
+                var replyToUser = commentReply.Comment.Commentator;
                 if (replyToUser.Id == articleAuthor.Id)
                 {
                     messageNotifiedArticleAuthor = true;
@@ -98,6 +98,7 @@ namespace Keylol.Controllers.Comment
                 message.OperatorId = comment.CommentatorId;
                 message.ReceiverId = replyToUser.Id;
                 message.CommentId = comment.Id;
+                message.ReplyToCommentId = commentReply.Comment.Id;
                 await DbContext.GiveNextSequenceNumberAsync(message);
                 DbContext.Messages.Add(message);
 
