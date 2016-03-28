@@ -223,9 +223,9 @@
     <Compile Include="Controllers\Article\GetOneById.cs" />
     <Compile Include="Controllers\Article\GetOneByAuthorIdCodeWithSN.cs" />
     <Compile Include="Controllers\Article\UpdateOne.cs" />
-    <Compile Include="Controllers\Article\UpdateOneIgnoreNewLikes.cs" />
+    <Compile Include="Controllers\Article\UpdateOneIgnore.cs" />
     <Compile Include="Controllers\Article\UpdateOneModeration.cs" />
-    <Compile Include="Controllers\Comment\UpdateOneIgnoreNewLikes.cs" />
+    <Compile Include="Controllers\Comment\UpdateOneIgnore.cs" />
     <Compile Include="Controllers\Comment\CreateOne.cs" />
     <Compile Include="Controllers\Comment\GetListByArticleId.cs" />
     <Compile Include="Controllers\Comment\UpdateOneModeration.cs" />

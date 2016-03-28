@@ -77,9 +77,13 @@ namespace Keylol.Controllers.Message
                     throw new ArgumentOutOfRangeException(nameof(filter), filter, null);
             }
             var result = await query.Include(m => m.Article)
+                .Include(m => m.Article.Principal)
+                .Include(m => m.Article.Principal.User)
                 .Include(m => m.Operator)
                 .Include(m => m.Comment)
                 .Include(m => m.Comment.Article)
+                .Include(m => m.Comment.Article.Principal)
+                .Include(m => m.Comment.Article.Principal.User)
                 .OrderByDescending(m => m.Unread)
                 .ThenByDescending(m => m.SequenceNumber)
                 .Take(() => take)
@@ -102,12 +106,18 @@ namespace Keylol.Controllers.Message
                         m.Reasons.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
 
                 if (m.Type.HasArticleProperty())
-                    dto.Article = new ArticleDTO(m.Article, true, 128);
+                    dto.Article = new ArticleDTO(m.Article, true, 128)
+                    {
+                        AuthorIdCode = m.Article.Principal.User.IdCode
+                    };
 
                 if (m.Type.HasCommentProperty())
                 {
                     dto.Comment = new CommentDTO(m.Comment, true, 128);
-                    dto.Article = new ArticleDTO(m.Comment.Article);
+                    dto.Article = new ArticleDTO(m.Comment.Article)
+                    {
+                        AuthorIdCode = m.Comment.Article.Principal.User.IdCode
+                    };
                 }
                 return dto;
             });
