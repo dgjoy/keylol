@@ -299,6 +299,10 @@
     <Compile Include="Migrations\201603281018246_MessageReplyToComment.Designer.cs">
       <DependentUpon>201603281018246_MessageReplyToComment.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603281347589_RemoveMessageReplyToCommentId.cs" />
+    <Compile Include="Migrations\201603281347589_RemoveMessageReplyToCommentId.Designer.cs">
+      <DependentUpon>201603281347589_RemoveMessageReplyToCommentId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -474,6 +478,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603281018246_MessageReplyToComment.resx">
       <DependentUpon>201603281018246_MessageReplyToComment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603281347589_RemoveMessageReplyToCommentId.resx">
+      <DependentUpon>201603281347589_RemoveMessageReplyToCommentId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

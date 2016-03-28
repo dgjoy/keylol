@@ -31,9 +31,6 @@ namespace Keylol.Models
         public string CommentId { get; set; }
         public Comment Comment { get; set; }
 
-        public string ReplyToCommentId { get; set; }
-        public Comment ReplyToComment { get; set; }
-
         [Required(AllowEmptyStrings = true)]
         public string Reasons { get; set; } = string.Empty;
 

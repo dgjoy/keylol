@@ -114,7 +114,6 @@ namespace Keylol.Controllers.Message
                 if (m.Type.HasCommentProperty())
                 {
                     dto.Comment = new CommentDTO(m.Comment, true, 128);
-                    dto.ReplyToCommentId = m.ReplyToCommentId;
                     dto.Article = new ArticleDTO(m.Comment.Article)
                     {
                         AuthorIdCode = m.Comment.Article.Principal.User.IdCode
