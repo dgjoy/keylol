@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Keylol.Models.ViewModels;
 using Keylol.Utilities;
 
@@ -17,10 +18,28 @@ namespace Keylol.Controllers.NormalPoint
     [RoutePrefix("normal-point")]
     public partial class NormalPointController : KeylolApiController
     {
+        /// <summary>
+        /// Id 类型
+        /// </summary>
         public enum IdType
         {
+            /// <summary>
+            /// Id
+            /// </summary>
             Id,
+
+            /// <summary>
+            /// 识别码
+            /// </summary>
             IdCode
+        }
+
+        /// <summary>
+        /// 创建 NormalPointController
+        /// </summary>
+        /// <param name="dbContext">KeylolDbContext</param>
+        public NormalPointController(KeylolDbContext dbContext) : base(dbContext)
+        {
         }
 
         private static string GetPreferredName(Models.NormalPoint point)

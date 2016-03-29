@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Keylol.Models.DAL;
 
 namespace Keylol.Controllers.User
 {
@@ -9,6 +10,14 @@ namespace Keylol.Controllers.User
     [RoutePrefix("user")]
     public partial class UserController : KeylolApiController
     {
+        /// <summary>
+        /// 创建 UserController
+        /// </summary>
+        /// <param name="dbContext">KeylolDbContext</param>
+        public UserController(KeylolDbContext dbContext) : base(dbContext)
+        {
+        }
+
         //        public IHttpActionResult Login(string returnUrl)
         //        {
         //            ViewBag.ReturnUrl = returnUrl;

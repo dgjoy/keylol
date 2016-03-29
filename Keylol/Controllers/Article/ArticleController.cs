@@ -2,7 +2,9 @@
 using CsQuery;
 using CsQuery.Output;
 using Ganss.XSS;
-using Keylol.ImageGarage;
+using Keylol.Models.DAL;
+using Keylol.ServiceBase;
+using RabbitMQ.Client;
 
 namespace Keylol.Controllers.Article
 {
@@ -13,6 +15,18 @@ namespace Keylol.Controllers.Article
     [RoutePrefix("article")]
     public partial class ArticleController : KeylolApiController
     {
+        private readonly IModel _mqChannel;
+
+        /// <summary>
+        /// 创建 ArticleController
+        /// </summary>
+        /// <param name="mqChannel">IModel</param>
+        /// <param name="dbContext">KeylolDbContext</param>
+        public ArticleController(IModel mqChannel, KeylolDbContext dbContext) : base(dbContext)
+        {
+            _mqChannel = mqChannel;
+        }
+
         private static void SanitizeArticle(Models.Article article, bool extractUnstyledContent)
         {
             Config.HtmlEncoder = new HtmlEncoderMinimum();
@@ -38,7 +52,7 @@ namespace Keylol.Controllers.Article
                 }
                 else
                 {
-                    var fileName = Upyun.ExtractFileName(img.Attributes["src"]);
+                    var fileName = UpyunProvider.ExtractFileName(img.Attributes["src"]);
                     if (string.IsNullOrEmpty(fileName))
                     {
                         url = img.Attributes["src"];

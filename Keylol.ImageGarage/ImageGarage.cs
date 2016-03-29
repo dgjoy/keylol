@@ -16,21 +16,21 @@ namespace Keylol.ImageGarage
 {
     internal sealed class ImageGarage : KeylolService
     {
-        private readonly ILog _log;
+        private readonly ILog _logger;
         private readonly IModel _mqChannel;
 
-        public ImageGarage(ILog log, IConnection mqConnection)
+        public ImageGarage(ILogProvider logProvider, MqClientProvider mqClientProvider)
         {
             ServiceName = "Keylol.ImageGarage";
 
-            _log = log;
-            _mqChannel = mqConnection.CreateModel();
+            _logger = logProvider.Logger;
+            _mqChannel = mqClientProvider.CreateModel();
             Config.HtmlEncoder = new HtmlEncoderMinimum();
         }
 
         protected override void OnStart(string[] args)
         {
-            _mqChannel.QueueDeclare("image-garage-requests", true, false, false, null);
+            _mqChannel.QueueDeclare(MqClientProvider.ImageGarageRequestQueue, true, false, false, null);
             _mqChannel.BasicQos(0, 1, false);
             var consumer = new EventingBasicConsumer(_mqChannel);
             consumer.Received += async (sender, eventArgs) =>
@@ -47,7 +47,7 @@ namespace Keylol.ImageGarage
                         {
                             _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
                             using (NDC.Push("Consuming"))
-                                _log.Warn($"Article {requestDto.ArticleId} doesn't exist.");
+                                _logger.Warn($"Article {requestDto.ArticleId} doesn't exist.");
                             return;
                         }
                         var dom = CQ.Create(article.Content);
@@ -85,7 +85,7 @@ namespace Keylol.ImageGarage
                                             var uri = new Uri(url);
                                             var extension = Path.GetExtension(uri.AbsolutePath);
                                             if (string.IsNullOrEmpty(extension)) break;
-                                            var name = await Upyun.UploadFile(fileData, extension);
+                                            var name = await UpyunProvider.UploadFile(fileData, extension);
                                             if (string.IsNullOrEmpty(name)) break;
                                             downloadCount++;
                                             url = $"keylol://{name}";
@@ -110,14 +110,14 @@ namespace Keylol.ImageGarage
                             await dbContext.SaveChangesAsync();
                             _mqChannel.BasicAck(eventArgs.DeliveryTag, false);
                             using (NDC.Push("Consuming"))
-                                _log.Info(
+                                _logger.Info(
                                     $"Article {requestDto.ArticleId} ({article.Title}) finished, {downloadCount} images downloaded.");
                         }
                         catch (DbUpdateConcurrencyException)
                         {
                             _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
                             using (NDC.Push("Consuming"))
-                                _log.Info($"Article {requestDto.ArticleId} update failed (concurrency conflict).");
+                                _logger.Info($"Article {requestDto.ArticleId} update failed (concurrency conflict).");
                         }
                     }
                 }
@@ -125,10 +125,10 @@ namespace Keylol.ImageGarage
                 {
                     _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
                     using (NDC.Push("Consuming"))
-                        _log.Fatal("Unhandled callback exception.", e);
+                        _logger.Fatal("Unhandled callback exception.", e);
                 }
             };
-            _mqChannel.BasicConsume("image-garage-requests", false, consumer);
+            _mqChannel.BasicConsume(MqClientProvider.ImageGarageRequestQueue, false, consumer);
         }
 
         protected override void OnStop()

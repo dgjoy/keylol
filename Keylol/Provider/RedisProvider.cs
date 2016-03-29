@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
@@ -10,24 +11,21 @@ namespace Keylol.Provider
     /// <summary>
     ///     提供 Redis 服务
     /// </summary>
-    public static class RedisProvider
+    public class RedisProvider : IDisposable
     {
-        private static ConnectionMultiplexer _connectionMultiplexer;
+        /// <summary>
+        ///     Redis ConnectionMultiplexer 对象
+        /// </summary>
+        public ConnectionMultiplexer ConnectionMultiplexer { get; } =
+            ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redisConnection"] ??
+                                          "localhost,abortConnect=false");
 
         /// <summary>
-        ///     获取全局 Redis 单例
+        /// 获取指定 Redis Database
         /// </summary>
-        /// <returns>StackExchange.Redis Connection.Multiplexer</returns>
-        public static ConnectionMultiplexer GetInstance()
-        {
-            if (_connectionMultiplexer == null || !_connectionMultiplexer.IsConnected)
-            {
-                _connectionMultiplexer =
-                    ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redisConnection"] ??
-                                                  "localhost,abortConnect=false");
-            }
-            return _connectionMultiplexer;
-        }
+        /// <param name="db">Database 编号</param>
+        /// <returns>IDatabase 对象</returns>
+        public IDatabase GetDatabase(int db = -1) => ConnectionMultiplexer.GetDatabase(db);
 
         /// <summary>
         ///     将对象序列化 BSON
@@ -59,6 +57,28 @@ namespace Keylol.Provider
             {
                 var serializer = new JsonSerializer();
                 return serializer.Deserialize(reader);
+            }
+        }
+
+        /// <summary>
+        /// 资源清理
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 资源清理
+        /// </summary>
+        /// <param name="disposing">是否清理托管对象</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ConnectionMultiplexer.Dispose();
             }
         }
     }

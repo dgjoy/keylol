@@ -13,8 +13,14 @@ using SimpleInjector;
 
 namespace Keylol.ServiceBase
 {
+    /// <summary>
+    /// 所有微服务都要继承于这个类
+    /// </summary>
     public class KeylolService : System.ServiceProcess.ServiceBase
     {
+        /// <summary>
+        /// 服务中止事件
+        /// </summary>
         public event EventHandler Stopped;
 
         private static void SetupLogger(string eventSource)
@@ -95,6 +101,12 @@ namespace Keylol.ServiceBase
             return true;
         }
 
+        /// <summary>
+        /// 为容器注册公用依赖（log4net 和 RabbitMQ Iconnection），然后启动新服务
+        /// </summary>
+        /// <param name="args">服务启动参数</param>
+        /// <param name="container">IoC 容器</param>
+        /// <typeparam name="TService">要启动的服务类型</typeparam>
         public static void Run<TService>(string[] args, Container container) where TService : KeylolService
         {
             if (UseSelfInstaller(args))
@@ -103,38 +115,19 @@ namespace Keylol.ServiceBase
             // 公用服务注册点
 
             // log4net
-            container.RegisterConditional(typeof (ILog),
-                c => typeof (LogImpl<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (KeylolService)),
+            container.RegisterConditional(typeof (ILogProvider),
+                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (KeylolService)),
                 Lifestyle.Singleton,
                 c => true);
 
             // RabbitMQ IConnection
-            container.RegisterSingleton(
-                () =>
-                {
-                    var log = container.GetInstance<ILog>();
-                    var connection = new ConnectionFactory
-                    {
-                        Uri = ConfigurationManager.AppSettings["rabbitMqConnection"] ?? "amqp://localhost/",
-                        AutomaticRecoveryEnabled = true,
-                        NetworkRecoveryInterval = TimeSpan.FromSeconds(5),
-                        TopologyRecoveryEnabled = true
-                    }.CreateConnection();
-                    connection.ConnectionShutdown += (sender, eventArgs) =>
-                    {
-                        using (NDC.Push("RabbitMQ"))
-                            log.Warn(
-                                $"Connection shutdown.{(eventArgs.Cause == null ? string.Empty : $" Reason: {eventArgs.Cause}")}");
-                    };
-                    ((IRecoverable) connection).Recovery += (sender, eventArgs) =>
-                    {
-                        using (NDC.Push("RabbitMQ"))
-                            log.Info("Connection recovered.");
-                    };
-                    return connection;
-                });
+            container.RegisterSingleton<MqClientProvider>();
 
-            container.RegisterSingleton<KeylolService, TService>(); // 自身也注册进入容器
+            // 自身也注册进入容器
+            container.RegisterSingleton<KeylolService, TService>();
+
+            container.Verify();
+
             var service = container.GetInstance<KeylolService>();
             SetupLogger(service.EventLog.Source);
             service.Stopped += (sender, eventArgs) => container.Dispose();

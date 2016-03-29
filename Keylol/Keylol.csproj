@@ -144,6 +144,18 @@
       <HintPath>..\packages\RabbitMQ.Client.3.6.1\lib\net45\RabbitMQ.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SimpleInjector, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.1.2\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Extensions.ExecutionContextScoping, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Extensions.ExecutionContextScoping.3.1.2\lib\net45\SimpleInjector.Extensions.ExecutionContextScoping.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.WebApi, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.WebApi.3.1.2\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StackExchange.Redis.1.0.488\lib\net45\StackExchange.Redis.dll</HintPath>
       <Private>True</Private>
@@ -229,7 +241,7 @@
     <Compile Include="Controllers\Comment\CreateOne.cs" />
     <Compile Include="Controllers\Comment\GetListByArticleId.cs" />
     <Compile Include="Controllers\Comment\UpdateOneModeration.cs" />
-    <Compile Include="Controllers\DatabaseMigrationController.cs" />
+    <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Favorite\FavoriteController.cs" />
     <Compile Include="Controllers\Favorite\DeleteOneById.cs" />
     <Compile Include="Controllers\Favorite\CreateOne.cs" />
@@ -257,6 +269,7 @@
     <Compile Include="Controllers\NormalPoint\GetListByRecentActivityOfEachType.cs" />
     <Compile Include="Controllers\NormalPoint\GetListByRecentActivity.cs" />
     <Compile Include="Controllers\NormalPoint\DeleteOneMerge.cs" />
+    <Compile Include="Controllers\UploadSignature\CreateOne.cs" />
     <Compile Include="Controllers\UserGameRecord\GetOnePlayTimeByUser.cs" />
     <Compile Include="Controllers\UserGameRecord\UpdateListByCurrentUser.cs" />
     <Compile Include="Controllers\UserGameRecord\UserGameRecordController.cs" />
@@ -272,22 +285,18 @@
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\SubscribedPointDTO.cs" />
-    <Compile Include="Provider\MessageQueueProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="App_Start\KeylolApiController.cs" />
+    <Compile Include="Controllers\KeylolApiController.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="App_Start\Startup.SignalR.cs" />
-    <Compile Include="App_Start\Startup.WebAPI.cs" />
     <Compile Include="Controllers\Like\LikeController.cs" />
     <Compile Include="Controllers\NormalPoint\NormalPointController.cs" />
     <Compile Include="Controllers\Comment\CommentController.cs" />
     <Compile Include="Controllers\Article\ArticleController.cs" />
     <Compile Include="Controllers\Login\LoginController.cs" />
-    <Compile Include="Controllers\UploadSignatureController.cs" />
+    <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Controllers\UserPointSubscription\UserPointSubscriptionController.cs" />
     <Compile Include="Hubs\DebugInfoHub.cs" />
@@ -337,13 +346,13 @@
     <None Include="Properties\PublishProfiles\keylol-dev - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Keylol.ImageGarage\Keylol.ImageGarage.csproj">
-      <Project>{d5b0c243-bab2-4760-a3d2-d750499104bc}</Project>
-      <Name>Keylol.ImageGarage</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Keylol.Models\Keylol.Models.csproj">
       <Project>{b6c4cdb8-070e-422c-b243-1d488ac1548a}</Project>
       <Name>Keylol.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Keylol.ServiceBase\Keylol.ServiceBase.csproj">
+      <Project>{0a50005c-7faa-48d3-8f36-d48df882dcdf}</Project>
+      <Name>Keylol.ServiceBase</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

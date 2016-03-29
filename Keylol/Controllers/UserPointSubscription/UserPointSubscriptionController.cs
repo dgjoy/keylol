@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Keylol.Models.DAL;
 
 namespace Keylol.Controllers.UserPointSubscription
 {
@@ -9,5 +10,12 @@ namespace Keylol.Controllers.UserPointSubscription
     [RoutePrefix("user-point-subscription")]
     public partial class UserPointSubscriptionController : KeylolApiController
     {
+        /// <summary>
+        /// 创建 UserPointSubscriptionController
+        /// </summary>
+        /// <param name="dbContext">KeylolDbContext</param>
+        public UserPointSubscriptionController(KeylolDbContext dbContext) : base(dbContext)
+        {
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Provider;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
@@ -141,12 +141,10 @@ namespace Keylol.Controllers.Article
                     .Max() + 1;
             await DbContext.GiveNextSequenceNumberAsync(article);
             DbContext.SaveChanges();
-            MessageQueueProvider.CreateModel()
-                .SendRequest(MessageQueueProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
-                {
-                    ArticleId = article.Id
-                })
-                .Close();
+            _mqChannel.SendRequest(MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            {
+                ArticleId = article.Id
+            });
             return Created($"article/{article.Id}", new ArticleDTO(article));
         }
 

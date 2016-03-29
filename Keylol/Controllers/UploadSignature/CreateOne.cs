@@ -8,14 +8,10 @@ using Keylol.Utilities;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
 
-namespace Keylol.Controllers
+namespace Keylol.Controllers.UploadSignature
 {
-    [Authorize]
-    [RoutePrefix("upload-signature")]
-    public class UploadSignatureController : KeylolApiController
+    public partial class UploadSignatureController
     {
-        private const string FormKey = "LaetquRR2LDCO0SezzqNNeTxjnQ=";
-
         /// <summary>
         ///     对上传请求进行签名
         /// </summary>

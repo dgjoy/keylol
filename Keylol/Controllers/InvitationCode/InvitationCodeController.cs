@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Keylol.Models.DAL;
 
 namespace Keylol.Controllers.InvitationCode
 {
@@ -9,5 +10,12 @@ namespace Keylol.Controllers.InvitationCode
     [RoutePrefix("invitation-code")]
     public partial class InvitationCodeController : KeylolApiController
     {
+        /// <summary>
+        /// 创建 InvitationCodeController
+        /// </summary>
+        /// <param name="dbContext">KeylolDbContext</param>
+        public InvitationCodeController(KeylolDbContext dbContext) : base(dbContext)
+        {
+        }
     }
 }

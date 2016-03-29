@@ -144,11 +144,6 @@ namespace Keylol.Models.DAL
 //            return result;
 //        }
 
-        public static KeylolDbContext Create()
-        {
-            return new KeylolDbContext();
-        }
-
         public async Task GiveNextSequenceNumberAsync<TEntity>(TEntity entity) where TEntity : IHasSequenceNumber
         {
             entity.SequenceNumber =
