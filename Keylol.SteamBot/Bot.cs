@@ -342,7 +342,7 @@ namespace Keylol.SteamBot
                             _steamFriends.AddFriend(friend.SteamID);
                             WriteLog($"Accepted friend request from {friendSteamId}. (New user)");
                             _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
-                                "欢迎使用当前 Steam 账号加入其乐，请输入您在网页上获取的 8 位绑定验证码。");
+                                "欢迎使用当前 Steam 账号加入其乐，请输入你在网页上获取的 8 位绑定验证码。");
                             await _botService.Coodinator.BroadcastBotOnFriendAddedAsync(Id);
                             var timer = new Timer(300000) {AutoReset = false};
                             timer.Elapsed += (sender, args) =>
@@ -352,7 +352,7 @@ namespace Keylol.SteamBot
                                     _botService.Coodinator.GetUserBySteamId(friendSteamId) == null)
                                 {
                                     _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
-                                        "抱歉，您的会话因超时被强制结束，机器人已将您从好友列表中暂时移除。若要加入其乐，请重新按照网页指示注册账号。");
+                                        "抱歉，你的会话因超时被强制结束，机器人已将你从好友列表中暂时移除。若要加入其乐，请重新按照网页指示注册账号。");
                                     _steamFriends.RemoveFriend(friend.SteamID);
                                     WriteLog($"Friend {friendSteamId} removed. (Operation timeout)");
                                 }
@@ -367,12 +367,12 @@ namespace Keylol.SteamBot
                                 WriteLog($"Accepted friend request from {friendSteamId}. (Rebinding)");
                                 await _botService.Coodinator.SetUserStatusAsync(friendSteamId, StatusClaim.Normal);
                                 _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
-                                    "您已成功与其乐机器人再次绑定，请务必不要将其乐机器人从好友列表中移除。");
+                                    "你已成功与其乐机器人再次绑定，请务必不要将其乐机器人从好友列表中移除。");
                             }
                             else
                             {
                                 _steamFriends.SendChatMessage(friend.SteamID, EChatEntryType.ChatMsg,
-                                    "此 Steam 帐号已经与另外一位其乐机器人绑定，您即将被当前机器人从好友列表中移除。请通过口令组合登录并在设置中按提示重新添加机器人。");
+                                    "你已绑定另一其乐机器人，当前机器人已拒绝你的好友请求。如有需要，你可以在其乐设置表单中找到你绑定的机器人帐号。");
                                 _steamFriends.RemoveFriend(friend.SteamID);
                                 WriteLog($"Rejected friend request from {friendSteamId}. (Already binded)");
                             }
@@ -426,7 +426,7 @@ namespace Keylol.SteamBot
                             ))
                 {
                     _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
-                        "绑定成功，欢迎加入其乐！今后您可以向机器人发送对话快速登录社区，请勿将机器人从好友列表移除。");
+                        "绑定成功，欢迎加入其乐！今后你可以向机器人发送对话快速登录社区，请勿将机器人从好友列表移除。");
                     var timer = new Timer(3000) {AutoReset = false};
                     timer.Elapsed += (sender, args) =>
                     {
@@ -438,7 +438,7 @@ namespace Keylol.SteamBot
                 else
                 {
                     _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
-                        "您的输入无法被识别，请确认绑定验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
+                        "你的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
                 }
             }
             else
@@ -450,12 +450,12 @@ namespace Keylol.SteamBot
                         await
                             _botService.Coodinator.BindSteamUserWithLoginTokenAsync(friendSteamId, match.Groups[1].Value))
                     {
-                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "欢迎回来，您已成功登录其乐社区。");
+                        _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "欢迎回来，你已成功登录其乐社区。");
                     }
                     else
                     {
                         _steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,
-                            "您的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
+                            "你的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
                     }
                 }
                 else

@@ -113,7 +113,7 @@ namespace Keylol.SteamBot
                 }
                 CMClient.Servers.Clear();
                 uint cellId = 46; // Beijing
-                if (args.Length > 1) uint.TryParse(args[0], out cellId);
+                if (args != null && args.Length > 1) uint.TryParse(args[0], out cellId);
                 CMClient.Servers.TryAddRange((await Utils.Retry(async () => await SteamDirectory.LoadAsync(cellId), i =>
                 {
                     if (i == 1)
