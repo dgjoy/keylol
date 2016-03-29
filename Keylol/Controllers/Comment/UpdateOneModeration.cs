@@ -90,7 +90,7 @@ namespace Keylol.Controllers.Comment
             {
                 var missive = DbContext.Messages.Create();
                 missive.OperatorId = operatorId;
-                missive.ReceiverId = comment.CommentatorId;
+                missive.Receiver = comment.Commentator;
                 missive.CommentId = comment.Id;
                 string steamNotityText = null;
                 var commentSummary = comment.Content.Length > 30 ? comment.Content.Substring(0, 30) : $"{comment.Content} …";

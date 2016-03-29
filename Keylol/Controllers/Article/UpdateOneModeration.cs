@@ -110,7 +110,7 @@ namespace Keylol.Controllers.Article
             {
                 var missive = DbContext.Messages.Create();
                 missive.OperatorId = operatorId;
-                missive.ReceiverId = article.PrincipalId;
+                missive.Receiver = article.Principal.User;
                 missive.ArticleId = article.Id;
                 string steamNotityText = null;
                 if (requestDto.Value)
