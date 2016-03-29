@@ -12,12 +12,5 @@ namespace Keylol.Controllers.DatabaseMigration
     [RoutePrefix("database-migration")]
     public class DatabaseMigrationController : KeylolApiController
     {
-        /// <summary>
-        /// 创建 DatabaseMigrationController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public DatabaseMigrationController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
     }
 }

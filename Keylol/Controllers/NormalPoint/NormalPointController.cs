@@ -34,14 +34,6 @@ namespace Keylol.Controllers.NormalPoint
             IdCode
         }
 
-        /// <summary>
-        /// 创建 NormalPointController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public NormalPointController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
-
         private static string GetPreferredName(Models.NormalPoint point)
         {
             switch (point.PreferredName)

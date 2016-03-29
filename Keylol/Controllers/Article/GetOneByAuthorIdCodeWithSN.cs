@@ -45,10 +45,12 @@ namespace Keylol.Controllers.Article
                         .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
-            var staffClaim = await UserManager.GetStaffClaimAsync(userId);
+
+            var staffClaim = string.IsNullOrEmpty(userId) ? null : await UserManager.GetStaffClaimAsync(userId);
             if (articleEntry.article.Archived != ArchivedState.None &&
                 userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();
+
             var articleDto = new ArticleDTO(articleEntry.article, true, includeProsCons: true, includeSummary: true)
             {
                 AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),

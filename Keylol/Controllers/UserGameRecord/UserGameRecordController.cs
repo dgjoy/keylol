@@ -10,12 +10,5 @@ namespace Keylol.Controllers.UserGameRecord
     [RoutePrefix("user-game-record")]
     public partial class UserGameRecordController : KeylolApiController
     {
-        /// <summary>
-        /// 创建 UserGameRecordController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public UserGameRecordController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
     }
 }

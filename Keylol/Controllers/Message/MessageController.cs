@@ -10,12 +10,5 @@ namespace Keylol.Controllers.Message
     [RoutePrefix("message")]
     public partial class MessageController : KeylolApiController
     {
-        /// <summary>
-        /// 创建 MessageController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public MessageController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
     }
 }

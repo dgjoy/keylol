@@ -10,14 +10,6 @@ namespace Keylol.Controllers.Login
     [RoutePrefix("login")]
     public partial class LoginController : KeylolApiController
     {
-        /// <summary>
-        /// 创建 LoginController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public LoginController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
-
         //        public IHttpActionResult Login(string returnUrl)
         //        {
         //            ViewBag.ReturnUrl = returnUrl;

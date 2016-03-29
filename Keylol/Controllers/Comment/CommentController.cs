@@ -10,12 +10,5 @@ namespace Keylol.Controllers.Comment
     [RoutePrefix("comment")]
     public partial class CommentController : KeylolApiController
     {
-        /// <summary>
-        /// 创建 CommentController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public CommentController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
     }
 }

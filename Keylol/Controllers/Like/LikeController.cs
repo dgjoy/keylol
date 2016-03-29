@@ -10,12 +10,5 @@ namespace Keylol.Controllers.Like
     [RoutePrefix("like")]
     public partial class LikeController : KeylolApiController
     {
-        /// <summary>
-        /// 创建 LikeController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public LikeController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
     }
 }

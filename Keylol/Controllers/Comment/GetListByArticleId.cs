@@ -48,7 +48,8 @@ namespace Keylol.Controllers.Comment
             var article = await DbContext.Articles.FindAsync(articleId);
             if (article == null)
                 return Request.CreateResponse(HttpStatusCode.NotFound);
-            var staffClaim = await UserManager.GetStaffClaimAsync(userId);
+
+            var staffClaim = string.IsNullOrEmpty(userId) ? null : await UserManager.GetStaffClaimAsync(userId);
             if (article.Archived != ArchivedState.None &&
                 userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);

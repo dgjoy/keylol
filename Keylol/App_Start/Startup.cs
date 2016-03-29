@@ -60,7 +60,7 @@ namespace Keylol
             Container.RegisterSingleton<MqClientProvider>();
 
             // RabbitMQ IModel
-            Container.Register(() => Container.GetInstance<MqClientProvider>().CreateModel(), Lifestyle.Scoped);
+            Container.RegisterWebApiRequest(() => Container.GetInstance<MqClientProvider>().CreateModel());
 
             // StackExchange.Redis
             Container.RegisterSingleton<RedisProvider>();

@@ -42,10 +42,12 @@ namespace Keylol.Controllers.Article
                 .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
-            var staffClaim = await UserManager.GetStaffClaimAsync(userId);
+
+            var staffClaim = string.IsNullOrEmpty(userId) ? null : await UserManager.GetStaffClaimAsync(userId);
             if (articleEntry.article.Archived != ArchivedState.None &&
                 userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();
+
             var articleDto = new ArticleDTO(articleEntry.article, true)
             {
                 AuthorIdCode = articleEntry.authorIdCode,

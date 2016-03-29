@@ -13,15 +13,6 @@ namespace Keylol.Controllers
     public abstract class KeylolApiController : ApiController
     {
         /// <summary>
-        /// 创建 KeylolApiController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        protected KeylolApiController(KeylolDbContext dbContext)
-        {
-            DbContext = dbContext;
-        }
-
-        /// <summary>
         /// 当前请求的 OWIN Context
         /// </summary>
         public IOwinContext OwinContext => Request.GetOwinContext();
@@ -44,6 +35,6 @@ namespace Keylol.Controllers
         /// <summary>
         /// Keylol DbContext
         /// </summary>
-        public KeylolDbContext DbContext { get; }
+        public KeylolDbContext DbContext => OwinContext.Get<KeylolDbContext>();
     }
 }

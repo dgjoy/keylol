@@ -21,8 +21,7 @@ namespace Keylol.Controllers.Article
         /// 创建 ArticleController
         /// </summary>
         /// <param name="mqChannel">IModel</param>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public ArticleController(IModel mqChannel, KeylolDbContext dbContext) : base(dbContext)
+        public ArticleController(IModel mqChannel)
         {
             _mqChannel = mqChannel;
         }

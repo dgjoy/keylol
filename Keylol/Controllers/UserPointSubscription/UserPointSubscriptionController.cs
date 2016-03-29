@@ -10,12 +10,5 @@ namespace Keylol.Controllers.UserPointSubscription
     [RoutePrefix("user-point-subscription")]
     public partial class UserPointSubscriptionController : KeylolApiController
     {
-        /// <summary>
-        /// 创建 UserPointSubscriptionController
-        /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
-        public UserPointSubscriptionController(KeylolDbContext dbContext) : base(dbContext)
-        {
-        }
     }
 }
