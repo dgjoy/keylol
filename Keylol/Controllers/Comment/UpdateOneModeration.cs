@@ -4,6 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Services;
+using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -90,6 +92,8 @@ namespace Keylol.Controllers.Comment
                 missive.OperatorId = operatorId;
                 missive.ReceiverId = comment.CommentatorId;
                 missive.CommentId = comment.Id;
+                string steamNotityText = null;
+                var commentSummary = comment.Content.Length > 30 ? comment.Content.Substring(0, 30) : $"{comment.Content} …";
                 if (requestDto.Value)
                 {
                     switch (requestDto.Property)
@@ -98,12 +102,15 @@ namespace Keylol.Controllers.Comment
                             missive.Type = MessageType.CommentArchive;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
+                            steamNotityText = $"文章《{comment.Article.Title}》中的评论「{commentSummary}」已被封存，封存后此则评论的内容和作者信息会被隐藏。";
                             break;
 
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Warned:
                             missive.Type = MessageType.CommentWarning;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
+                            steamNotityText =
+                                $"文章《{comment.Article.Title}》中的评论「{commentSummary}」已被警告，若在 30 天之内收到两次警告，你的账户将被自动停权 14 天。";
                             break;
                     }
                 }
@@ -113,15 +120,26 @@ namespace Keylol.Controllers.Comment
                     {
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Archived:
                             missive.Type = MessageType.CommentArchiveCancel;
+                            steamNotityText = $"文章《{comment.Article.Title}》下评论「{commentSummary}」的封存已被撤销，此则评论的内容和作者信息已重新公开。";
                             break;
 
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Warned:
                             missive.Type = MessageType.CommentWarningCancel;
+                            steamNotityText =
+                                $"文章《{comment.Article.Title}》下评论「{commentSummary}」收到的警告已被撤销，之前的警告将不再纳入停权计数器的考量中，除非你的账户已经因收到警告而被自动停权。";
                             break;
                     }
                 }
                 await DbContext.GiveNextSequenceNumberAsync(missive);
                 DbContext.Messages.Add(missive);
+
+                // Steam 通知
+                ISteamBotCoodinatorCallback callback;
+                if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.SessionId != null &&
+                    SteamBotCoodinator.Clients.TryGetValue(missive.Receiver.SteamBot.SessionId, out callback))
+                {
+                    callback.SendMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId, steamNotityText);
+                }
             }
             await DbContext.SaveChangesAsync();
             return Ok();

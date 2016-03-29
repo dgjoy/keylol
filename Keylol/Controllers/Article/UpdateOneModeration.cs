@@ -4,6 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Services;
+using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -110,6 +112,7 @@ namespace Keylol.Controllers.Article
                 missive.OperatorId = operatorId;
                 missive.ReceiverId = article.PrincipalId;
                 missive.ArticleId = article.Id;
+                string steamNotityText = null;
                 if (requestDto.Value)
                 {
                     switch (requestDto.Property)
@@ -118,22 +121,27 @@ namespace Keylol.Controllers.Article
                             missive.Type = MessageType.ArticleArchive;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
+                            steamNotityText = $"文章《{article.Title}》已被封存，封存后该文章的内容和所有评论会被隐藏，同时这篇文章不会再显示于任何信息轨道上。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
                             missive.Type = MessageType.Rejection;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
+                            steamNotityText = $"文章《{article.Title}》已被退稿，不会再出现于其他用户或据点的讯息轨道上，这篇文章后续的投稿也将被自动回绝。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
                             missive.Type = MessageType.Spotlight;
+                            steamNotityText =
+                                $"感谢你对其乐社区质量的认可与贡献！你的文章《{article.Title}》已被推荐为萃选文章，此文章将会从此刻开始展示在全站的「萃选文章」栏目中 14 天。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Warned:
                             missive.Type = MessageType.ArticleWarning;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
+                            steamNotityText = $"文章《{article.Title}》已被警告，若在 30 天之内收到两次警告，你的账户将被自动停权 14 天。";
                             break;
                     }
                 }
@@ -143,10 +151,12 @@ namespace Keylol.Controllers.Article
                     {
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived:
                             missive.Type = MessageType.ArticleArchiveCancel;
+                            steamNotityText = $"文章《{article.Title}》的封存已被撤销，该文章的内容和所有评论已重新公开，讯息轨道将不再隐藏这篇文章。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
                             missive.Type = MessageType.RejectionCancel;
+                            steamNotityText = $"文章《{article.Title}》的退稿限制已被撤销，其他用户首页的讯息轨道将不再隐藏这篇文章，后续的投稿也不再会被其他据点回绝。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
@@ -155,11 +165,20 @@ namespace Keylol.Controllers.Article
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Warned:
                             missive.Type = MessageType.ArticleWarningCancel;
+                            steamNotityText = $"文章《{article.Title}》的警告已被撤销，之前的警告将不再纳入停权计数器的考量中，除非你的账户已经因收到警告而被自动停权。";
                             break;
                     }
                 }
                 await DbContext.GiveNextSequenceNumberAsync(missive);
                 DbContext.Messages.Add(missive);
+
+                // Steam 通知
+                ISteamBotCoodinatorCallback callback;
+                if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.SessionId != null &&
+                    SteamBotCoodinator.Clients.TryGetValue(missive.Receiver.SteamBot.SessionId, out callback))
+                {
+                    callback.SendMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId, steamNotityText);
+                }
             }
             await DbContext.SaveChangesAsync();
             return Ok();
