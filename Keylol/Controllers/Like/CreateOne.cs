@@ -77,7 +77,6 @@ namespace Keylol.Controllers.Like
                         message.OperatorId = operatorId;
                         message.ReceiverId = articleAuthor.Id;
                         message.ArticleId = article.Id;
-                        await DbContext.GiveNextSequenceNumberAsync(message);
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
@@ -130,7 +129,6 @@ namespace Keylol.Controllers.Like
                         message.OperatorId = operatorId;
                         message.ReceiverId = commentAuthor.Id;
                         message.CommentId = comment.Id;
-                        await DbContext.GiveNextSequenceNumberAsync(message);
                         DbContext.Messages.Add(message);
 
                         // Steam 通知

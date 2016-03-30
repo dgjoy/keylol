@@ -139,7 +139,6 @@ namespace Keylol.Controllers.Article
                     .Select(a => a.SequenceNumberForAuthor)
                     .DefaultIfEmpty(0)
                     .Max() + 1;
-            await DbContext.GiveNextSequenceNumberAsync(article);
             DbContext.SaveChanges();
             _mqChannel.SendRequest(MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {

@@ -18,7 +18,7 @@ namespace Keylol.Models
         TraditionalChineseWithContentUnmodified
     }
 
-    public class KeylolUser : IdentityUser, IHasSequenceNumber
+    public class KeylolUser : IdentityUser
     {
         [Required]
         [Index(IsUnique = true)]
@@ -83,9 +83,9 @@ namespace Keylol.Models
         public virtual InvitationCode InvitationCode { get; set; }
 
         public virtual ICollection<Favorite> Favorites { get; set; }
-        public string SequenceName { get; } = "UserSequence";
 
-        [Index(IsUnique = true)]
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int SequenceNumber { get; set; }
 
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =

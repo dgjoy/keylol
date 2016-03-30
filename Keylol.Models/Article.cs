@@ -6,7 +6,7 @@ using Keylol.Models.DAL;
 
 namespace Keylol.Models
 {
-    public class Article : IHasSequenceNumber
+    public class Article
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -79,9 +79,9 @@ namespace Keylol.Models
         public virtual ICollection<ArticleLike> Likes { get; set; }
 
         public virtual ICollection<EditLog> EditLogs { get; set; }
-        public string SequenceName { get; } = "ArticleSequence";
 
-        [Index(IsUnique = true)]
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int SequenceNumber { get; set; }
     }
 

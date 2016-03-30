@@ -26,6 +26,10 @@ namespace Keylol.Models
 
         public virtual Article Article { get; set; }
 
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int SequenceNumber { get; set; }
+
         [Index]
         public int SequenceNumberForArticle { get; set; }
 

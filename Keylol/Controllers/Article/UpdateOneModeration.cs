@@ -169,7 +169,6 @@ namespace Keylol.Controllers.Article
                             break;
                     }
                 }
-                await DbContext.GiveNextSequenceNumberAsync(missive);
                 DbContext.Messages.Add(missive);
 
                 // Steam 通知

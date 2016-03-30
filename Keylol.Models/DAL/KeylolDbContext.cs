@@ -143,17 +143,5 @@ namespace Keylol.Models.DAL
 //
 //            return result;
 //        }
-
-        public async Task GiveNextSequenceNumberAsync<TEntity>(TEntity entity) where TEntity : IHasSequenceNumber
-        {
-            entity.SequenceNumber =
-                await Database.SqlQuery<int>($"SELECT NEXT VALUE FOR {entity.SequenceName}").SingleAsync();
-        }
-    }
-
-    public interface IHasSequenceNumber
-    {
-        string SequenceName { get; }
-        int SequenceNumber { get; set; }
     }
 }

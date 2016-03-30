@@ -5,7 +5,7 @@ using Keylol.Models.DAL;
 
 namespace Keylol.Models
 {
-    public class Message : IHasSequenceNumber
+    public class Message
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -37,9 +37,8 @@ namespace Keylol.Models
         [Index]
         public MessageType Type { get; set; }
 
-        public string SequenceName { get; } = "MessageSequence";
-
-        [Index(IsUnique = true)]
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int SequenceNumber { get; set; }
     }
 
