@@ -12,14 +12,14 @@
   <xs:element name="AllocateBotsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="AllocateBotsResult" nillable="true" type="q1:ArrayOfSteamBotDTO" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="AllocateBotsResult" nillable="true" type="q1:ArrayOfSteamBotDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="UpdateBots">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels" minOccurs="0" name="vms" nillable="true" type="q2:ArrayOfSteamBotVM" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels" minOccurs="0" name="vms" nillable="true" type="q2:ArrayOfSteamBotUpdateRequestDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -69,7 +69,7 @@
   <xs:element name="GetUserBySteamIdResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUserBySteamIdResult" nillable="true" type="q4:UserDTO" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUserBySteamIdResult" nillable="true" type="q4:UserDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -83,7 +83,7 @@
   <xs:element name="GetUsersBySteamIdsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUsersBySteamIdsResult" nillable="true" type="q6:ArrayOfUserDTO" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUsersBySteamIdsResult" nillable="true" type="q6:ArrayOfUserDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

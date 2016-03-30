@@ -159,7 +159,7 @@ namespace Keylol.SteamBot
             await Coodinator.UpdateBotsAsync(_bots.Values.Select(bot =>
             {
                 var online = bot.State == Bot.BotState.LoggedOnOnline;
-                var vm = new SteamBotVM
+                var vm = new SteamBotUpdateRequestDto
                 {
                     Id = bot.Id,
                     Online = online

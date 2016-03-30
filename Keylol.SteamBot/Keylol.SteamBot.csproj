@@ -145,10 +145,10 @@
     </None>
     <None Include="Keylol.SteamBot_TemporaryKey.pfx" />
     <None Include="packages.config" />
-    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.SteamBotDTO.datasource">
+    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.SteamBotDto1.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.UserDTO.datasource">
+    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.UserDto1.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator.xsd">

@@ -61,7 +61,7 @@ namespace Keylol.SteamBot
             }
         }
 
-        public Bot(SteamBotService botService, SteamBotDTO botCredentials)
+        public Bot(SteamBotService botService, SteamBotDto botCredentials)
         {
             Crawler = new Crawler();
             _botService = botService;
@@ -156,7 +156,7 @@ namespace Keylol.SteamBot
         private async Task ReportBotHealthAsync()
         {
             var online = State == BotState.LoggedOnOnline;
-            var vm = new SteamBotVM
+            var vm = new SteamBotUpdateRequestDto
             {
                 Id = Id,
                 Online = online
@@ -331,7 +331,7 @@ namespace Keylol.SteamBot
                 if (!friend.SteamID.IsIndividualAccount)
                     continue;
 
-                UserDTO user;
+                UserDto user;
                 var friendSteamId = friend.SteamID.Render(true);
                 switch (friend.Relationship)
                 {
