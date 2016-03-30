@@ -22,7 +22,7 @@ namespace Keylol.Controllers.Article
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("subscription")]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
             int shortReviewFilter = 1,
             int beforeSN = int.MaxValue, int take = 30)
@@ -46,7 +46,7 @@ namespace Keylol.Controllers.Article
                     {
                         e.article,
                         e.fromPoint,
-                        reason = ArticleDTO.TimelineReasonType.Point,
+                        reason = ArticleDto.TimelineReasonType.Point,
                         likedByUser = (KeylolUser) null
                     })
                     .Concat(profilePointsQuery.SelectMany(p => p.Articles)
@@ -57,7 +57,7 @@ namespace Keylol.Controllers.Article
                         {
                             article = a,
                             fromPoint = (Models.NormalPoint) null,
-                            reason = ArticleDTO.TimelineReasonType.Publish,
+                            reason = ArticleDto.TimelineReasonType.Publish,
                             likedByUser = (KeylolUser) null
                         }))
                     .Concat(profilePointsQuery.Select(p => p.User)
@@ -69,7 +69,7 @@ namespace Keylol.Controllers.Article
                         {
                             article = l.Article,
                             fromPoint = (Models.NormalPoint) null,
-                            reason = ArticleDTO.TimelineReasonType.Like,
+                            reason = ArticleDto.TimelineReasonType.Like,
                             likedByUser = l.Operator
                         }))
                     .Concat(DbContext.AutoSubscriptions.Where(s => s.UserId == userId)
@@ -83,7 +83,7 @@ namespace Keylol.Controllers.Article
                         {
                             e.article,
                             e.fromPoint,
-                            reason = ArticleDTO.TimelineReasonType.Point,
+                            reason = ArticleDto.TimelineReasonType.Point,
                             likedByUser = (KeylolUser) null
                         }));
 
@@ -96,7 +96,7 @@ namespace Keylol.Controllers.Article
                 {
                     article = (Models.Article) null,
                     fromPoint = (Models.NormalPoint) null,
-                    reason = ArticleDTO.TimelineReasonType.Like,
+                    reason = ArticleDto.TimelineReasonType.Like,
                     likedByUser = (KeylolUser) null
                 }));
             }
@@ -106,7 +106,7 @@ namespace Keylol.Controllers.Article
                 .Select(g => new
                 {
                     article = g.Key,
-                    likedByUsers = g.Where(e => e.reason == ArticleDTO.TimelineReasonType.Like)
+                    likedByUsers = g.Where(e => e.reason == ArticleDto.TimelineReasonType.Like)
                         .Take(3)
                         .Select(e => e.likedByUser),
                     fromPoints = g.Where(e => e.fromPoint != null).Select(e => e.fromPoint),
@@ -128,14 +128,14 @@ namespace Keylol.Controllers.Article
 
             return Ok(articleEntries.Select(entry =>
             {
-                var articleDto = new ArticleDTO(entry.article, true, 256, true)
+                var articleDto = new ArticleDto(entry.article, true, 256, true)
                 {
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.type.ToString(),
-                    Author = new UserDTO(entry.author),
-                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
+                    Author = new UserDto(entry.author),
+                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
                 {
@@ -145,14 +145,14 @@ namespace Keylol.Controllers.Article
                     articleDto.TruncateContent(128);
                 switch (entry.reason)
                 {
-                    case ArticleDTO.TimelineReasonType.Point:
+                    case ArticleDto.TimelineReasonType.Point:
                         if (!entry.fromPoints.Select(p => p.Id).Contains(entry.voteForPoint?.Id))
                             articleDto.AttachedPoints =
-                                entry.fromPoints.Select(p => new NormalPointDTO(p, true)).ToList();
+                                entry.fromPoints.Select(p => new NormalPointDto(p, true)).ToList();
                         break;
 
-                    case ArticleDTO.TimelineReasonType.Like:
-                        articleDto.LikeByUsers = entry.likedByUsers.Select(u => new UserDTO(u)).ToList();
+                    case ArticleDto.TimelineReasonType.Like:
+                        articleDto.LikeByUsers = entry.likedByUsers.Select(u => new UserDto(u)).ToList();
                         break;
                 }
                 return articleDto;

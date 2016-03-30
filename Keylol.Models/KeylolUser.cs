@@ -60,6 +60,7 @@ namespace Keylol.Models
 
         public int AutoSubscribeDaySpan { get; set; } = 7;
 
+        [Index]
         public int Coupon { get; set; } = 0;
 
         public virtual ProfilePoint ProfilePoint { get; set; }

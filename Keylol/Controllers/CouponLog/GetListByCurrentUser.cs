@@ -13,6 +13,7 @@ using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Keylol.Controllers.CouponLog
 {
@@ -47,62 +48,75 @@ namespace Keylol.Controllers.CouponLog
                     Time = couponLog.CreateTime,
                     Description = JsonConvert.DeserializeObject(couponLog.Description)
                 };
+
+                #region 解析各种类型的描述
+
                 try
                 {
+                    Func<object, JObject> jObject =
+                        o => JObject.FromObject(o, new JsonSerializer {NullValueHandling = NullValueHandling.Ignore});
                     if (dto.Description.ArticleId != null)
                     {
-                        Models.Article article = await DbContext.Articles.FindAsync(dto.Description.ArticleId);
-                        dto.Description.Article = new ArticleDTO
+                        var article = await DbContext.Articles.FindAsync((string) dto.Description.ArticleId);
+                        ((JObject) dto.Description).Remove("ArticleId");
+                        dto.Description.Article = jObject(new ArticleDto
                         {
                             Id = article.Id,
                             Title = article.Title,
                             SequenceNumberForAuthor = article.SequenceNumberForAuthor,
                             AuthorIdCode = article.Principal.User.IdCode
-                        };
+                        });
                     }
                     if (dto.Description.CommentId != null)
                     {
-                        Models.Comment comment = await DbContext.Comments.FindAsync(dto.Description.CommentId);
-                        dto.Description.Comment = new CommentDTO
+                        var comment = await DbContext.Comments.FindAsync((string) dto.Description.CommentId);
+                        ((JObject) dto.Description).Remove("CommentId");
+                        dto.Description.Comment = jObject(new CommentDto
                         {
                             Id = comment.Id,
                             SequenceNumberForArticle = comment.SequenceNumberForArticle
-                        };
+                        });
                     }
                     if (dto.Description.OperatorId != null)
                     {
-                        KeylolUser user = await DbContext.Users.Find(dto.Description.OperatorId);
-                        dto.Description.Operotor = new UserDTO
+                        var user = DbContext.Users.Find((string) dto.Description.OperatorId);
+                        ((JObject) dto.Description).Remove("OperatorId");
+                        dto.Description.Operotor = jObject(new UserDto
                         {
                             Id = user.Id,
                             UserName = user.UserName,
                             IdCode = user.IdCode
-                        };
+                        });
                     }
                     if (dto.Description.UserId != null)
                     {
-                        KeylolUser user = await DbContext.Users.Find(dto.Description.UserId);
-                        dto.Description.User = new UserDTO
+                        var user = DbContext.Users.Find((string) dto.Description.UserId);
+                        ((JObject) dto.Description).Remove("UserId");
+                        dto.Description.User = jObject(new UserDto
                         {
                             Id = user.Id,
                             UserName = user.UserName,
                             IdCode = user.IdCode
-                        };
+                        });
                     }
                     if (dto.Description.InviterId != null)
                     {
-                        KeylolUser user = await DbContext.Users.Find(dto.Description.InviterId);
-                        dto.Description.Inviter = new UserDTO
+                        var user = DbContext.Users.Find((string) dto.Description.InviterId);
+                        ((JObject) dto.Description).Remove("InviterId");
+                        dto.Description.Inviter = jObject(new UserDto
                         {
                             Id = user.Id,
                             UserName = user.UserName,
                             IdCode = user.IdCode
-                        };
+                        });
                     }
                 }
                 catch (RuntimeBinderException)
                 {
                 }
+
+                #endregion
+
                 result.Add(dto);
             }
             var response = Request.CreateResponse(HttpStatusCode.OK, result);

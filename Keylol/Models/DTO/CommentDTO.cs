@@ -2,13 +2,16 @@
 
 namespace Keylol.Models.DTO
 {
-    public class CommentDTO
+    /// <summary>
+    /// Comment DTO
+    /// </summary>
+    public class CommentDto
     {
-        public CommentDTO()
+        public CommentDto()
         {
         }
 
-        public CommentDTO(Comment comment, bool includeContent = true, int truncateContentTo = 0)
+        public CommentDto(Comment comment, bool includeContent = true, int truncateContentTo = 0)
         {
             Id = comment.Id;
             if (includeContent)
@@ -39,7 +42,7 @@ namespace Keylol.Models.DTO
         /// <summary>
         ///     评论人
         /// </summary>
-        public UserDTO Commentator { get; set; }
+        public UserDto Commentator { get; set; }
 
         /// <summary>
         ///     在文章中的楼层号
@@ -55,24 +58,6 @@ namespace Keylol.Models.DTO
         ///     当前登录用户是否认可过
         /// </summary>
         public bool? Liked { get; set; }
-
-        /// <summary>
-        ///     所属文章
-        /// </summary>
-        public ArticleDTO Article { get; set; }
-
-        /// <summary>
-        ///     对这个用户进行的回复
-        /// </summary>
-        public UserDTO ReplyToUser { get; set; }
-
-        /// <summary>
-        ///     对这个评论进行的回复
-        /// </summary>
-        public CommentDTO ReplyToComment { get; set; }
-
-        public bool? ReplyToMultipleUser { get; set; }
-        public bool? ReadByTargetUser { get; set; }
 
         /// <summary>
         ///     封存状态

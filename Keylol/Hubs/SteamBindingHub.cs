@@ -9,6 +9,7 @@ using Keylol.Models.DTO;
 using Keylol.Services;
 using Keylol.Services.Contracts;
 using Microsoft.AspNet.SignalR;
+using SteamKit2;
 
 namespace Keylol.Hubs
 {
@@ -51,7 +52,7 @@ namespace Keylol.Hubs
             await base.OnDisconnected(stopCalled);
         }
 
-        public async Task<SteamBindingTokenDTO> CreateToken()
+        public async Task<SteamBindingTokenDto> CreateToken()
         {
             var bots =
                 await
@@ -86,7 +87,15 @@ namespace Keylol.Hubs
             };
             _dbContext.SteamBindingTokens.Add(token);
             await _dbContext.SaveChangesAsync();
-            return new SteamBindingTokenDTO(token);
+
+            var steamId = new SteamID();
+            steamId.SetFromSteam3String(token.Bot.SteamId);
+            return new SteamBindingTokenDto
+            {
+                Id = token.Id,
+                Code = token.Code,
+                BotSteamId64 = steamId.ConvertToUInt64().ToString()
+            };
         }
     }
 }

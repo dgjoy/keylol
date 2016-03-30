@@ -1,11 +1,12 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Models.ViewModels;
 using Keylol.Services;
 using Keylol.Services.Contracts;
 using Keylol.Utilities;
@@ -19,16 +20,16 @@ namespace Keylol.Controllers.Comment
         /// <summary>
         ///     创建一条评论
         /// </summary>
-        /// <param name="vm">评论相关属性</param>
+        /// <param name="requestDto">评论相关属性</param>
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CommentDTO))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CommentDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "指定文章被封存，当前用户无权创建新评论")]
-        public async Task<IHttpActionResult> CreateOne(CommentVM vm)
+        public async Task<IHttpActionResult> CreateOne(CommentCreateOneRequestDto requestDto)
         {
-            if (vm == null)
+            if (requestDto == null)
             {
                 ModelState.AddModelError("vm", "Invalid view model.");
                 return BadRequest(ModelState);
@@ -37,7 +38,7 @@ namespace Keylol.Controllers.Comment
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var article = await DbContext.Articles.FindAsync(vm.ArticleId);
+            var article = await DbContext.Articles.FindAsync(requestDto.ArticleId);
             if (article == null)
             {
                 ModelState.AddModelError("vm.ArticleId", "Article doesn't exsit.");
@@ -51,14 +52,17 @@ namespace Keylol.Controllers.Comment
                 return Unauthorized();
 
             var replyToComments = await DbContext.Comments.Include(c => c.Commentator.SteamBot)
-                .Where(c => c.ArticleId == article.Id && vm.ReplyToCommentsSN.Contains(c.SequenceNumberForArticle))
+                .Where(
+                    c =>
+                        c.ArticleId == article.Id &&
+                        requestDto.ReplyToCommentsSN.Contains(c.SequenceNumberForArticle))
                 .ToListAsync();
 
             var comment = DbContext.Comments.Create();
             DbContext.Comments.Add(comment);
             comment.ArticleId = article.Id;
             comment.CommentatorId = userId;
-            comment.Content = vm.Content;
+            comment.Content = requestDto.Content;
             comment.SequenceNumberForArticle = DbContext.Comments.Where(c => c.ArticleId == article.Id)
                 .Select(c => c.SequenceNumberForArticle)
                 .DefaultIfEmpty(0)
@@ -139,7 +143,31 @@ namespace Keylol.Controllers.Comment
             }
             await DbContext.SaveChangesAsync();
 
-            return Created($"comment/{comment.Id}", new CommentDTO(comment, false));
+            return Created($"comment/{comment.Id}", new CommentDto(comment, false));
+        }
+
+        /// <summary>
+        /// 请求 DTO
+        /// </summary>
+        public class CommentCreateOneRequestDto
+        {
+            /// <summary>
+            /// 评论内容
+            /// </summary>
+            [Required]
+            public string Content { get; set; }
+
+            /// <summary>
+            /// 评论的文章 Id
+            /// </summary>
+            [Required]
+            public string ArticleId { get; set; }
+
+            /// <summary>
+            /// 回复的楼层号列表
+            /// </summary>
+            [Required]
+            public List<int> ReplyToCommentsSN { get; set; }
         }
     }
 }

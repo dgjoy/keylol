@@ -21,16 +21,16 @@ namespace Keylol.Controllers.Article
         /// <summary>
         ///     创建一篇文章
         /// </summary>
-        /// <param name="vm">文章相关属性</param>
+        /// <param name="requestDto">文章相关属性</param>
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (ArticleDTO))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (ArticleDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "用户文券不足")]
-        public async Task<IHttpActionResult> CreateOne(CreateOneVM vm)
+        public async Task<IHttpActionResult> CreateOne(ArticleCreateOrUpdateOneRequestDto requestDto)
         {
-            if (vm == null)
+            if (requestDto == null)
             {
                 ModelState.AddModelError("vm", "Invalid view model.");
                 return BadRequest(ModelState);
@@ -41,7 +41,7 @@ namespace Keylol.Controllers.Article
 
             var article = DbContext.Articles.Create();
 
-            article.Type = vm.TypeName.ToEnum<ArticleType>();
+            article.Type = requestDto.TypeName.ToEnum<ArticleType>();
             var userId = User.Identity.GetUserId();
             var couponEvent = article.Type == ArticleType.简评 ? CouponEvent.发表简评 : CouponEvent.发表文章;
             if (!_coupon.CanTriggerEvent(userId, couponEvent))
@@ -49,7 +49,7 @@ namespace Keylol.Controllers.Article
 
             if (article.Type.AllowVote())
             {
-                if (vm.VoteForPointId == null)
+                if (requestDto.VoteForPointId == null)
                 {
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
                     return BadRequest(ModelState);
@@ -60,7 +60,7 @@ namespace Keylol.Controllers.Article
                     .Include(p => p.SeriesPoints)
                     .Include(p => p.GenrePoints)
                     .Include(p => p.TagPoints)
-                    .SingleOrDefaultAsync(p => p.Id == vm.VoteForPointId);
+                    .SingleOrDefaultAsync(p => p.Id == requestDto.VoteForPointId);
                 if (voteForPoint == null)
                 {
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
@@ -72,15 +72,15 @@ namespace Keylol.Controllers.Article
                     return BadRequest(ModelState);
                 }
                 article.VoteForPointId = voteForPoint.Id;
-                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 1 ? 1 : vm.Vote);
+                article.Vote = requestDto.Vote > 5 ? 5 : (requestDto.Vote < 1 ? 1 : requestDto.Vote);
 
-                if (vm.Pros == null)
-                    vm.Pros = new List<string>();
-                article.Pros = JsonConvert.SerializeObject(vm.Pros);
+                if (requestDto.Pros == null)
+                    requestDto.Pros = new List<string>();
+                article.Pros = JsonConvert.SerializeObject(requestDto.Pros);
 
-                if (vm.Cons == null)
-                    vm.Cons = new List<string>();
-                article.Cons = JsonConvert.SerializeObject(vm.Cons);
+                if (requestDto.Cons == null)
+                    requestDto.Cons = new List<string>();
+                article.Cons = JsonConvert.SerializeObject(requestDto.Cons);
 
                 article.AttachedPoints = voteForPoint.DeveloperPoints
                     .Concat(voteForPoint.PublisherPoints)
@@ -91,18 +91,18 @@ namespace Keylol.Controllers.Article
             }
             else
             {
-                if (vm.AttachedPointsId == null)
+                if (requestDto.AttachedPointsId == null)
                 {
                     ModelState.AddModelError("vm.AttachedPointsId", "非评价类文章必须手动推送据点");
                     return BadRequest(ModelState);
                 }
-                if (vm.AttachedPointsId.Count > 50)
+                if (requestDto.AttachedPointsId.Count > 50)
                 {
                     ModelState.AddModelError("vm.AttachedPointsId", "推送据点数量太多");
                     return BadRequest(ModelState);
                 }
                 article.AttachedPoints = await DbContext.NormalPoints
-                    .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(vm.AttachedPointsId,
+                    .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(requestDto.AttachedPointsId,
                         point => point.Id)).ToListAsync();
             }
 
@@ -111,12 +111,12 @@ namespace Keylol.Controllers.Article
                 attachedPoint.LastActivityTime = DateTime.Now;
             }
 
-            article.Title = vm.Title;
-            article.Content = vm.Content;
+            article.Title = requestDto.Title;
+            article.Content = requestDto.Content;
 
             if (article.Type == ArticleType.简评)
             {
-                if (vm.Content.Length > 199)
+                if (requestDto.Content.Length > 199)
                 {
                     ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
                     return BadRequest(ModelState);
@@ -126,13 +126,13 @@ namespace Keylol.Controllers.Article
             }
             else
             {
-                if (string.IsNullOrEmpty(vm.Summary))
+                if (string.IsNullOrEmpty(requestDto.Summary))
                 {
                     SanitizeArticle(article, true);
                 }
                 else
                 {
-                    article.UnstyledContent = vm.Summary;
+                    article.UnstyledContent = requestDto.Summary;
                     SanitizeArticle(article, false);
                 }
             }
@@ -150,30 +150,60 @@ namespace Keylol.Controllers.Article
                 ArticleId = article.Id
             });
             await _coupon.Update(userId, couponEvent, new {ArticleId = article.Id});
-            return Created($"article/{article.Id}", new ArticleDTO(article));
+            return Created($"article/{article.Id}", new ArticleDto(article));
         }
 
-        public class CreateOneVM
+        /// <summary>
+        /// 请求 DTO（CreateOne 与 UpdateOne 共用）
+        /// </summary>
+        public class ArticleCreateOrUpdateOneRequestDto
         {
+            /// <summary>
+            /// 文章类型名称
+            /// </summary>
             [Required]
             public string TypeName { get; set; }
 
+            /// <summary>
+            /// 文章标题
+            /// </summary>
             [Required]
             public string Title { get; set; }
 
+            /// <summary>
+            /// 文章概要
+            /// </summary>
             public string Summary { get; set; }
 
+            /// <summary>
+            /// 文章内容
+            /// </summary>
             [Required]
             public string Content { get; set; }
 
+            /// <summary>
+            /// 文章推送到的据点 Id 列表
+            /// </summary>
             public List<string> AttachedPointsId { get; set; }
 
+            /// <summary>
+            /// 文章评价的据点 Id
+            /// </summary>
             public string VoteForPointId { get; set; }
 
+            /// <summary>
+            /// 文章打出的评分
+            /// </summary>
             public int? Vote { get; set; }
 
+            /// <summary>
+            /// 亮点列表
+            /// </summary>
             public List<string> Pros { get; set; }
 
+            /// <summary>
+            /// 缺点列表
+            /// </summary>
             public List<string> Cons { get; set; }
         }
     }

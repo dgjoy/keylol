@@ -17,9 +17,19 @@ namespace Keylol.Controllers.Comment
 {
     public partial class CommentController
     {
+        /// <summary>
+        /// 排序方式
+        /// </summary>
         public enum OrderByType
         {
+            /// <summary>
+            /// 楼层号降序
+            /// </summary>
             SequenceNumberForAuthor,
+
+            /// <summary>
+            /// 认可数降序
+            /// </summary>
             LikeCount
         }
 
@@ -35,7 +45,7 @@ namespace Keylol.Controllers.Comment
         [Route]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<CommentDTO>))]
+        [ResponseType(typeof (List<CommentDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "文章被封存，当前登录用户无权查看评论")]
         public async Task<HttpResponseMessage> GetListByArticleId(string articleId,
@@ -87,13 +97,13 @@ namespace Keylol.Controllers.Comment
                 {
                     if (entry.comment.Archived != ArchivedState.None &&
                         userId != entry.comment.CommentatorId && staffClaim != StaffClaim.Operator)
-                        return new CommentDTO
+                        return new CommentDto
                         {
                             SequenceNumberForArticle = entry.comment.SequenceNumberForArticle
                         };
-                    return new CommentDTO(entry.comment)
+                    return new CommentDto(entry.comment)
                     {
-                        Commentator = new UserDTO(entry.commentator),
+                        Commentator = new UserDto(entry.commentator),
                         LikeCount = entry.likeCount,
                         Liked = entry.liked,
                         Archived = entry.comment.Archived,

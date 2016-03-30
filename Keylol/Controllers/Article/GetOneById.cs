@@ -21,7 +21,7 @@ namespace Keylol.Controllers.Article
         [Route("{id}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (ArticleDTO))]
+        [ResponseType(typeof (ArticleDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "文章被封存，当前登录用户无权查看")]
         public async Task<IHttpActionResult> GetOneById(string id)
@@ -48,16 +48,16 @@ namespace Keylol.Controllers.Article
                 userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();
 
-            var articleDto = new ArticleDTO(articleEntry.article, true)
+            var articleDto = new ArticleDto(articleEntry.article, true)
             {
                 AuthorIdCode = articleEntry.authorIdCode,
-                AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDTO(point, true)).ToList(),
+                AttachedPoints = articleEntry.attachedPoints.Select(point => new NormalPointDto(point, true)).ToList(),
                 TypeName = articleEntry.type.ToString(),
                 LikeCount = articleEntry.likeCount,
                 Liked = articleEntry.liked
             };
             if (articleEntry.voteForPoint != null)
-                articleDto.VoteForPoint = new NormalPointDTO(articleEntry.voteForPoint, true);
+                articleDto.VoteForPoint = new NormalPointDto(articleEntry.voteForPoint, true);
             return Ok(articleDto);
         }
     }

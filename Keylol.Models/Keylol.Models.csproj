@@ -332,6 +332,10 @@
     <Compile Include="Migrations\201603301217398_CouponLogUser.Designer.cs">
       <DependentUpon>201603301217398_CouponLogUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603301846134_UserCouponIndex.cs" />
+    <Compile Include="Migrations\201603301846134_UserCouponIndex.Designer.cs">
+      <DependentUpon>201603301846134_UserCouponIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -531,6 +535,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603301217398_CouponLogUser.resx">
       <DependentUpon>201603301217398_CouponLogUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603301846134_UserCouponIndex.resx">
+      <DependentUpon>201603301846134_UserCouponIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

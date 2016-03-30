@@ -99,22 +99,22 @@ namespace Keylol.Controllers.Message
                     Unread = m.Unread
                 };
                 if (!m.Type.IsMissiveMessage())
-                    dto.Operator = new UserDTO(m.Operator);
+                    dto.Operator = new UserDto(m.Operator);
 
                 if (m.Type.HasReasonProperty())
                     dto.Reasons =
                         m.Reasons.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
 
                 if (m.Type.HasArticleProperty())
-                    dto.Article = new ArticleDTO(m.Article, true, 128)
+                    dto.Article = new ArticleDto(m.Article, true, 128)
                     {
                         AuthorIdCode = m.Article.Principal.User.IdCode
                     };
 
                 if (m.Type.HasCommentProperty())
                 {
-                    dto.Comment = new CommentDTO(m.Comment, true, 128);
-                    dto.Article = new ArticleDTO(m.Comment.Article)
+                    dto.Comment = new CommentDto(m.Comment, true, 128);
+                    dto.Article = new ArticleDto(m.Comment.Article)
                     {
                         AuthorIdCode = m.Comment.Article.Principal.User.IdCode
                     };
@@ -157,17 +157,17 @@ namespace Keylol.Controllers.Message
             /// <summary>
             ///     发送人
             /// </summary>
-            public UserDTO Operator { get; set; }
+            public UserDto Operator { get; set; }
 
             /// <summary>
             ///     相关文章
             /// </summary>
-            public ArticleDTO Article { get; set; }
+            public ArticleDto Article { get; set; }
 
             /// <summary>
             ///     相关评论
             /// </summary>
-            public CommentDTO Comment { get; set; }
+            public CommentDto Comment { get; set; }
 
             /// <summary>
             ///     被回复的评论 ID

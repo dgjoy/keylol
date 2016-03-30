@@ -20,10 +20,10 @@ namespace Keylol.Controllers.Article
         private readonly CouponProvider _coupon;
 
         /// <summary>
-        /// 创建 ArticleController
+        /// 创建 <see cref="ArticleController"/>
         /// </summary>
-        /// <param name="mqChannel">IModel</param>
-        /// <param name="coupon">CouponProvider</param>
+        /// <param name="mqChannel"><see cref="IModel"/></param>
+        /// <param name="coupon"><see cref="CouponProvider"/></param>
         public ArticleController(IModel mqChannel, CouponProvider coupon)
         {
             _mqChannel = mqChannel;

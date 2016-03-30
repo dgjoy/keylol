@@ -45,7 +45,7 @@ namespace Keylol.Services
         public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients { get; } =
             new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
 
-        public async Task<IEnumerable<SteamBotDTO>> AllocateBots()
+        public async Task<IEnumerable<SteamBotDto>> AllocateBots()
         {
             if (_botAllocated)
             {
@@ -64,11 +64,11 @@ namespace Keylol.Services
                     bot.SessionId = _sessionId;
                 }
                 await dbContext.SaveChangesAsync();
-                return bots.Select(bot => new SteamBotDTO(bot, true));
+                return bots.Select(bot => new SteamBotDto(bot, true));
             }
         }
 
-        public async Task UpdateBots(IList<SteamBotVM> vms)
+        public async Task UpdateBots(IList<SteamBotUpdateRequestDto> vms)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -90,17 +90,17 @@ namespace Keylol.Services
             }
         }
 
-        public async Task<UserDTO> GetUserBySteamId(string steamId)
+        public async Task<UserDto> GetUserBySteamId(string steamId)
         {
             using (var dbContext = new KeylolDbContext())
             {
                 var user =
                     await dbContext.Users.Include(u => u.SteamBot).SingleOrDefaultAsync(u => u.SteamId == steamId);
-                return user == null ? null : new UserDTO(user, true, true) {SteamBot = new SteamBotDTO(user.SteamBot)};
+                return user == null ? null : new UserDto(user, true, true) {SteamBot = new SteamBotDto(user.SteamBot)};
             }
         }
 
-        public async Task<IList<UserDTO>> GetUsersBySteamIds(IList<string> steamIds)
+        public async Task<IList<UserDto>> GetUsersBySteamIds(IList<string> steamIds)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -108,7 +108,7 @@ namespace Keylol.Services
                     await
                         dbContext.Users.Include(u => u.SteamBot).Where(u => steamIds.Contains(u.SteamId)).ToListAsync();
                 return
-                    users.Select(user => new UserDTO(user, true, true) {SteamBot = new SteamBotDTO(user.SteamBot)})
+                    users.Select(user => new UserDto(user, true, true) {SteamBot = new SteamBotDto(user.SteamBot)})
                         .ToList();
             }
         }

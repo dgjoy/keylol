@@ -12,14 +12,33 @@ namespace Keylol.Controllers.Like
     public partial class LikeController : KeylolApiController
     {
         private readonly CouponProvider _coupon;
+        private readonly StatisticsProvider _statistics;
 
         /// <summary>
-        /// 创建 LikeController
+        /// 认可类型
         /// </summary>
-        /// <param name="coupon">CouponProvider</param>
-        public LikeController(CouponProvider coupon)
+        public enum LikeType
+        {
+            /// <summary>
+            /// 文章认可
+            /// </summary>
+            ArticleLike,
+
+            /// <summary>
+            /// 评论认可
+            /// </summary>
+            CommentLike
+        }
+
+        /// <summary>
+        /// 创建 <see cref="LikeController"/>
+        /// </summary>
+        /// <param name="coupon"><see cref="CouponProvider"/></param>
+        /// <param name="statistics"><see cref="StatisticsProvider"/></param>
+        public LikeController(CouponProvider coupon, StatisticsProvider statistics)
         {
             _coupon = coupon;
+            _statistics = statistics;
         }
     }
 }

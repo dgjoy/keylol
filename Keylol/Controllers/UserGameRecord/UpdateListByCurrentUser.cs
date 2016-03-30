@@ -165,10 +165,10 @@ namespace Keylol.Controllers.UserGameRecord
                             await DbContext.SaveChangesAsync();
                             return Ok(new
                             {
-                                MostPlayed = mostPlayed.Select(p => new NormalPointDTO(p)),
-                                RecentPlayed = recentPlayed.Select(p => new NormalPointDTO(p)),
-                                Genres = genres.Select(p => new NormalPointDTO(p)),
-                                Manufacturers = manufactures.Select(p => new NormalPointDTO(p))
+                                MostPlayed = mostPlayed.Select(p => new NormalPointDto(p)),
+                                RecentPlayed = recentPlayed.Select(p => new NormalPointDto(p)),
+                                Genres = genres.Select(p => new NormalPointDto(p)),
+                                Manufacturers = manufactures.Select(p => new NormalPointDto(p))
                             });
                         }
                         if (Regex.IsMatch(allGamesHtml, @"This profile is private\."))

@@ -26,7 +26,7 @@ namespace Keylol.Controllers.Article
         [Route("user/{userId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
             string articleTypeFilter = null, int source = 1, int beforeSN = int.MaxValue, int take = 30)
         {
@@ -56,7 +56,7 @@ namespace Keylol.Controllers.Article
                 .Select(a => new
                 {
                     article = a,
-                    reason = ArticleDTO.TimelineReasonType.Publish,
+                    reason = ArticleDto.TimelineReasonType.Publish,
                     author = (KeylolUser) null
                 });
             var likedQuery = userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
@@ -64,7 +64,7 @@ namespace Keylol.Controllers.Article
                 .Select(l => new
                 {
                     article = l.Article,
-                    reason = ArticleDTO.TimelineReasonType.Like,
+                    reason = ArticleDto.TimelineReasonType.Like,
                     author = l.Article.Principal.User
                 });
             var published = (source & 1) != 0;
@@ -88,7 +88,7 @@ namespace Keylol.Controllers.Article
                 articleQuery = articleQuery.Where(PredicateBuilder.Contains(types, a => a.article.Type, new
                 {
                     article = (Models.Article) null,
-                    reason = ArticleDTO.TimelineReasonType.Like,
+                    reason = ArticleDto.TimelineReasonType.Like,
                     author = (KeylolUser) null
                 }));
             }
@@ -113,13 +113,13 @@ namespace Keylol.Controllers.Article
                 .ToListAsync();
             return Ok(articleEntries.Select(entry =>
             {
-                var articleDto = new ArticleDTO(entry.article, true, 256, true)
+                var articleDto = new ArticleDto(entry.article, true, 256, true)
                 {
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.type.ToString(),
-                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
+                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
                 {
@@ -127,9 +127,9 @@ namespace Keylol.Controllers.Article
                 }
                 if (entry.type != ArticleType.简评)
                     articleDto.TruncateContent(128);
-                if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
+                if (entry.reason != ArticleDto.TimelineReasonType.Publish)
                 {
-                    articleDto.Author = new UserDTO(entry.author);
+                    articleDto.Author = new UserDto(entry.author);
                 }
                 return articleDto;
             }).ToList());

@@ -23,14 +23,14 @@ namespace Keylol.Controllers.Article
         [Route("keyword/{keyword}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDto>))]
         public async Task<HttpResponseMessage> GetListByKeyword(string keyword, bool full = false, int skip = 0,
             int take = 5)
         {
             if (take > 50) take = 50;
 
             if (!full)
-                return Request.CreateResponse(HttpStatusCode.OK, await DbContext.Database.SqlQuery<ArticleDTO>(@"SELECT
+                return Request.CreateResponse(HttpStatusCode.OK, await DbContext.Database.SqlQuery<ArticleDto>(@"SELECT
 	                [t3].[Id],
 	                [t3].[PublishTime],
 	                [t3].[Title],
@@ -56,7 +56,7 @@ namespace Keylol.Controllers.Article
                         OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
                     $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync());
 
-            var articles = (await DbContext.Database.SqlQuery<ArticleDTO>(@"SELECT
+            var articles = (await DbContext.Database.SqlQuery<ArticleDto>(@"SELECT
                 [t3].[Count],
 	            [t3].[Id],
 	            [t3].[PublishTime],

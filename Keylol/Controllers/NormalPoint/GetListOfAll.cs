@@ -21,7 +21,7 @@ namespace Keylol.Controllers.NormalPoint
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route("list")]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDTO>))]
+        [ResponseType(typeof (List<NormalPointDto>))]
         public async Task<HttpResponseMessage> GetListOfAll(int skip = 0, int take = 20)
         {
             if (take > 50) take = 50;
@@ -33,7 +33,7 @@ namespace Keylol.Controllers.NormalPoint
                         point = p,
                         articleCount = p.Articles.Count,
                         subscriberCount = p.Subscribers.Count
-                    }).ToListAsync()).Select(entry => new NormalPointDTO(entry.point, false, true)
+                    }).ToListAsync()).Select(entry => new NormalPointDto(entry.point, false, true)
                     {
                         ArticleCount = entry.articleCount,
                         SubscriberCount = entry.subscriberCount

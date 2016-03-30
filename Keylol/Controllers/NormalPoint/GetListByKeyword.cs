@@ -24,7 +24,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("keyword/{keyword}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDTO>))]
+        [ResponseType(typeof (List<NormalPointDto>))]
         public async Task<HttpResponseMessage> GetListByKeyword(string keyword, bool full = false,
             NormalPointType type = NormalPointType.Unspecified, int skip = 0, int take = 5)
         {
@@ -46,12 +46,12 @@ namespace Keylol.Controllers.NormalPoint
                     ORDER BY [t3].[RANK] DESC
                     OFFSET ({1}) ROWS FETCH NEXT ({2}) ROWS ONLY",
                     $"\"{keyword}\" OR \"{keyword}*\"", skip, take, (int) type).AsNoTracking().ToListAsync()).Select(
-                        point => new NormalPointDTO(point)));
+                        point => new NormalPointDto(point)));
             }
 
             if (type != NormalPointType.Unspecified)
                 typeFilterSql = @"WHERE [t1].[Type] = {4}";
-            var points = await DbContext.Database.SqlQuery<NormalPointDTO>(@"SELECT
+            var points = await DbContext.Database.SqlQuery<NormalPointDto>(@"SELECT
                 [t4].[Count],
                 [t4].[Id],
                 [t4].[PreferredName],

@@ -25,7 +25,7 @@ namespace Keylol.Controllers.Article
         [Route("point/{normalPointId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByNormalPointId(string normalPointId,
             NormalPointController.IdType idType, string articleTypeFilter = null, int beforeSN = int.MaxValue,
             int take = 30)
@@ -66,13 +66,13 @@ namespace Keylol.Controllers.Article
                 }).ToListAsync();
             return Ok(articleEntries.Select(entry =>
             {
-                var articleDTO = new ArticleDTO(entry.article, true, 256, true)
+                var articleDTO = new ArticleDto(entry.article, true, 256, true)
                 {
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
                     TypeName = entry.type.ToString(),
-                    Author = new UserDTO(entry.author),
-                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
+                    Author = new UserDto(entry.author),
+                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
                 {

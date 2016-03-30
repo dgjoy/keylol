@@ -20,7 +20,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}/related")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<GetListOfRelatedEntryDTO>))]
+        [ResponseType(typeof (List<NormalPointGetListOfRelatedResponseDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是游戏据点")]
         public async Task<IHttpActionResult> GetListOfRelated(string id, IdType idType = IdType.Id)
         {
@@ -35,7 +35,7 @@ namespace Keylol.Controllers.NormalPoint
                 .Concat(point.GenrePoints)
                 .Concat(point.TagPoints)
                 .Distinct()
-                .Select(p => new GetListOfRelatedEntryDTO
+                .Select(p => new NormalPointGetListOfRelatedResponseDto
                 {
                     Id = p.Id,
                     IdCode = p.IdCode,
@@ -43,10 +43,24 @@ namespace Keylol.Controllers.NormalPoint
                 }).ToList());
         }
 
-        public class GetListOfRelatedEntryDTO
+        /// <summary>
+        /// 响应 DTO
+        /// </summary>
+        public class NormalPointGetListOfRelatedResponseDto
         {
+            /// <summary>
+            /// Id
+            /// </summary>
             public string Id { get; set; }
+
+            /// <summary>
+            /// 名称
+            /// </summary>
             public string Name { get; set; }
+
+            /// <summary>
+            /// 识别码
+            /// </summary>
             public string IdCode { get; set; }
         }
     }

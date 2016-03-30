@@ -71,6 +71,9 @@ namespace Keylol
             // Coupon
             Container.RegisterWebApiRequest<CouponProvider>();
 
+            // Statistics
+            Container.RegisterWebApiRequest<StatisticsProvider>();
+
             // 启用 OWIN 中间件
 
             // 请求计时

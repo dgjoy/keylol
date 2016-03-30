@@ -40,7 +40,7 @@ namespace Keylol.Hubs
             await base.OnDisconnected(stopCalled);
         }
 
-        public async Task<SteamLoginTokenDTO> CreateToken()
+        public async Task<SteamLoginTokenDto> CreateToken()
         {
             string code;
             var random = new Random();
@@ -55,7 +55,11 @@ namespace Keylol.Hubs
             };
             _dbContext.SteamLoginTokens.Add(token);
             await _dbContext.SaveChangesAsync();
-            return new SteamLoginTokenDTO(token);
+            return new SteamLoginTokenDto
+            {
+                Id = token.Id,
+                Code = token.Code
+            };
         }
     }
 }

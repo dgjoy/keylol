@@ -14,18 +14,18 @@ namespace Keylol.Provider
     public class RedisProvider : IDisposable
     {
         /// <summary>
-        ///     Redis ConnectionMultiplexer 对象
+        ///     Redis <see cref="ConnectionMultiplexer"/> 对象
         /// </summary>
-        public ConnectionMultiplexer ConnectionMultiplexer { get; } =
+        public ConnectionMultiplexer Connection { get; } =
             ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redisConnection"] ??
-                                          "localhost,abortConnect=false");
+                                          "localhost,abortConnect=false,allowAdmin=true");
 
         /// <summary>
         /// 获取指定 Redis Database
         /// </summary>
         /// <param name="db">Database 编号</param>
         /// <returns>IDatabase 对象</returns>
-        public IDatabase GetDatabase(int db = -1) => ConnectionMultiplexer.GetDatabase(db);
+        public IDatabase GetDatabase(int db = -1) => Connection.GetDatabase(db);
 
         /// <summary>
         ///     将对象序列化 BSON
@@ -78,7 +78,7 @@ namespace Keylol.Provider
         {
             if (disposing)
             {
-                ConnectionMultiplexer.Dispose();
+                Connection.Dispose();
             }
         }
     }

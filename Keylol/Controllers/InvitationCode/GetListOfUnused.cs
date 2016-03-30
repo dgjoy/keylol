@@ -20,7 +20,7 @@ namespace Keylol.Controllers.InvitationCode
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [Route]
         [HttpGet]
-        [ResponseType(typeof (List<InvitationCodeDTO>))]
+        [ResponseType(typeof (List<InvitationCodeDto>))]
         public async Task<IHttpActionResult> GetListOfUnused(string source = null, int skip = 0, int take = 50)
         {
             if (take > 2000) take = 2000;
@@ -29,7 +29,12 @@ namespace Keylol.Controllers.InvitationCode
                 query = query.Where(c => c.Source == source);
             return
                 Ok((await query.OrderBy(c => c.GenerateTime).Skip(() => skip).Take(() => take).ToListAsync())
-                    .Select(c => new InvitationCodeDTO(c, true)));
+                    .Select(c => new InvitationCodeDto
+                    {
+                        Id = c.Id,
+                        GenerateTime = c.GenerateTime,
+                        Source = c.Source
+                    }));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Keylol.Controllers.Article
         [Route("latest")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListOfLatest()
         {
             var articleEntries =
@@ -29,7 +29,7 @@ namespace Keylol.Controllers.Article
                         article = a,
                         authorIdCode = a.Principal.User.IdCode
                     }).ToListAsync();
-            return Ok(articleEntries.Select(e => new ArticleDTO(e.article, true, 100) {AuthorIdCode = e.authorIdCode}));
+            return Ok(articleEntries.Select(e => new ArticleDto(e.article, true, 100) {AuthorIdCode = e.authorIdCode}));
         }
     }
 }

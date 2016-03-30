@@ -11,10 +11,10 @@ namespace Keylol.Services.Contracts
     public interface ISteamBotCoodinator
     {
         [OperationContract]
-        Task<IEnumerable<SteamBotDTO>> AllocateBots();
+        Task<IEnumerable<SteamBotDto>> AllocateBots();
 
         [OperationContract(IsOneWay = true)]
-        Task UpdateBots(IList<SteamBotVM> vms);
+        Task UpdateBots(IList<SteamBotUpdateRequestDto> vms);
 
         [OperationContract(IsOneWay = true)]
         Task SetUserStatus(string steamId, StatusClaim status);
@@ -29,10 +29,10 @@ namespace Keylol.Services.Contracts
         Task<string> GetCMServer();
 
         [OperationContract]
-        Task<UserDTO> GetUserBySteamId(string steamId);
+        Task<UserDto> GetUserBySteamId(string steamId);
 
         [OperationContract]
-        Task<IList<UserDTO>> GetUsersBySteamIds(IList<string> steamIds);
+        Task<IList<UserDto>> GetUsersBySteamIds(IList<string> steamIds);
 
         [OperationContract]
         Task<bool> BindSteamUserWithBindingToken(string code, string botId, string userSteamId,

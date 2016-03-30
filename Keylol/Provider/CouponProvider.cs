@@ -18,9 +18,9 @@ namespace Keylol.Provider
         private readonly KeylolDbContext _dbContext;
 
         /// <summary>
-        /// 创建服务
+        /// 创建新 <see cref="CouponProvider"/>
         /// </summary>
-        /// <param name="dbContext">KeylolDbContext</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         public CouponProvider(KeylolDbContext dbContext)
         {
             _dbContext = dbContext;

@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Threading.Tasks;
+using System.Web.Http;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.DatabaseMigration
