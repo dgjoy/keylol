@@ -15,21 +15,21 @@ namespace Keylol.Models
         [Required]
         public string ReceiverId { get; set; }
 
-        public KeylolUser Receiver { get; set; }
+        public virtual KeylolUser Receiver { get; set; }
 
         [Required]
         public string OperatorId { get; set; }
 
-        public KeylolUser Operator { get; set; }
+        public virtual KeylolUser Operator { get; set; }
 
         [Index]
         public bool Unread { get; set; } = true;
 
         public string ArticleId { get; set; }
-        public Article Article { get; set; }
+        public virtual Article Article { get; set; }
 
         public string CommentId { get; set; }
-        public Comment Comment { get; set; }
+        public virtual Comment Comment { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         public string Reasons { get; set; } = string.Empty;

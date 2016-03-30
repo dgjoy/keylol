@@ -60,6 +60,8 @@ namespace Keylol.Models
 
         public int AutoSubscribeDaySpan { get; set; } = 7;
 
+        public int Coupon { get; set; } = 0;
+
         public virtual ProfilePoint ProfilePoint { get; set; }
 
         public string ProfilePointId => Id;
@@ -84,9 +86,19 @@ namespace Keylol.Models
 
         public virtual ICollection<Favorite> Favorites { get; set; }
 
+        public string InviterId { get; set; }
+        public virtual KeylolUser Inviter { get; set; }
+
+        public virtual ICollection<KeylolUser> InvitedUsers { get; set; }
+
+        public DateTime LastVisitTime { get; set; } = DateTime.Now;
+
         [Index(IsUnique = true, IsClustered = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int SequenceNumber { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
         //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;

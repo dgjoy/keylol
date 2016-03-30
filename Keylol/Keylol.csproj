@@ -241,6 +241,8 @@
     <Compile Include="Controllers\Comment\CreateOne.cs" />
     <Compile Include="Controllers\Comment\GetListByArticleId.cs" />
     <Compile Include="Controllers\Comment\UpdateOneModeration.cs" />
+    <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
+    <Compile Include="Controllers\CouponLog\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Favorite\FavoriteController.cs" />
     <Compile Include="Controllers\Favorite\DeleteOneById.cs" />
@@ -278,6 +280,7 @@
     <Compile Include="Controllers\UserPointSubscription\CreateOne.cs" />
     <Compile Include="Controllers\UserPointSubscription\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\UserPointSubscription\GetOneByCurrentUserWithPointId.cs" />
+    <Compile Include="Controllers\User\GetListByCouponRank.cs" />
     <Compile Include="Controllers\User\UpdateOneById.cs" />
     <Compile Include="Controllers\User\CreateOne.cs" />
     <Compile Include="Controllers\User\GetOneByUser.cs" />
@@ -285,6 +288,7 @@
     <Compile Include="Models\DTO\FavoriteDTO.cs" />
     <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
     <Compile Include="Models\DTO\SubscribedPointDTO.cs" />
+    <Compile Include="Provider\CouponProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />

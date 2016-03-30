@@ -22,8 +22,27 @@ namespace Keylol.Models.Migrations
             // Comments
             // Messages
             // 调整之后 Sequence 计数器可能发生变化，需要注意纠正
+            // 参照以下 SQL
+            /*
+                ALTER SEQUENCE [dbo].[UserSequence] RESTART NO CACHE;
+                WITH cte AS (SELECT TOP(100000) * FROM [dbo].[KeylolUsers] ORDER BY [SequenceNumber])
+                UPDATE cte SET [SequenceNumber] = NEXT VALUE FOR [dbo].[UserSequence];
+
+                ALTER SEQUENCE [dbo].[MessageSequence] RESTART NO CACHE;
+                WITH cte AS (SELECT TOP(100000) * FROM [dbo].[Messages] ORDER BY [SequenceNumber])
+                UPDATE cte SET [SequenceNumber] = NEXT VALUE FOR [dbo].[MessageSequence];
+
+                ALTER SEQUENCE [dbo].[ArticleSequence] RESTART NO CACHE;
+                WITH cte AS (SELECT TOP(100000) * FROM [dbo].[Articles] ORDER BY [SequenceNumber])
+                UPDATE cte SET [SequenceNumber] = NEXT VALUE FOR [dbo].[ArticleSequence];
+
+                ALTER SEQUENCE [dbo].[CommentSequence] RESTART NO CACHE;
+                WITH cte AS (SELECT TOP(100000) * FROM [dbo].[Comments] ORDER BY [PublishTime])
+                UPDATE cte SET [SequenceNumber] = NEXT VALUE FOR [dbo].[CommentSequence];
+            */
+
         }
-        
+
         public override void Down()
         {
             DropIndex("dbo.Comments", new[] { "SequenceNumber" });

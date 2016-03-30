@@ -1,14 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 
 namespace Keylol.Utilities
 {
+    /// <summary>
+    /// 一些常用扩展方法
+    /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// 从 Unix 时间戳创建 DateTime 对象
+        /// </summary>
+        /// <param name="unixTimeStamp">Unix 时间戳</param>
+        /// <returns>创建的 DateTime 对象</returns>
         public static DateTime DateTimeFromUnixTimeStamp(double unixTimeStamp)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -16,11 +26,21 @@ namespace Keylol.Utilities
             return dtDateTime;
         }
 
+        /// <summary>
+        /// 转换为 Unix 时间戳形式
+        /// </summary>
+        /// <param name="dateTime">要转换的 DateTime 对象</param>
+        /// <returns>Unix 时间戳</returns>
         public static long UnixTimestamp(this DateTime dateTime)
         {
             return (dateTime.ToUniversalTime().Ticks - 621355968000000000)/10000000;
         }
 
+        /// <summary>
+        /// 计算一个字符串的“Unicode 码点字节长度”（码点 0 - 0xff 认为是一个字节，0x100 - 0xffff 认为是两个字节，大于 0xffff 认为是三个字节）
+        /// </summary>
+        /// <param name="str">要计算的字符串</param>
+        /// <returns>Unicode Code Point 字节长度</returns>
         public static int ByteLength(this string str)
         {
             var s = 0;
@@ -38,11 +58,24 @@ namespace Keylol.Utilities
             return s;
         }
 
+        /// <summary>
+        /// 检测 URL 是否是可信来源（以 keylol:// 为前缀）
+        /// </summary>
+        /// <param name="url">要检测的 URL</param>
+        /// <param name="allowNullOrEmpty">是否允许 URL 为空</param>
+        /// <returns>可信（allowNullOrEmpty 时 URL 为空也认为可信）返回 true，不可信返回 false</returns>
         public static bool IsTrustedUrl(this string url, bool allowNullOrEmpty = true)
         {
             return (allowNullOrEmpty && string.IsNullOrEmpty(url)) || url.StartsWith("keylol://");
         }
 
+        /// <summary>
+        /// 从一个集合中取出指定数量元素的所以组合情况
+        /// </summary>
+        /// <param name="items">集合</param>
+        /// <param name="count">取出元素数量</param>
+        /// <typeparam name="T">集合类型</typeparam>
+        /// <returns>全部组合</returns>
         public static IEnumerable<IEnumerable<T>> AllCombinations<T>(this IEnumerable<T> items, int count)
         {
             var i = 0;
@@ -73,6 +106,18 @@ namespace Keylol.Utilities
             if (Enum.TryParse(text, out result) && Enum.IsDefined(typeof (TEnum), result))
                 return result;
             return default(TEnum);
+        }
+
+        /// <summary>
+        /// 设置 X-Total-Record-Count Header
+        /// </summary>
+        /// <param name="headers">HttpResponseHeaders 对象</param>
+        /// <param name="totalCount">要设置的数值</param>
+        public static void SetTotalCount(this HttpResponseHeaders headers, int totalCount)
+        {
+            if (headers.Contains("X-Total-Record-Count"))
+                headers.Remove("X-Total-Record-Count");
+            headers.Add("X-Total-Record-Count", totalCount.ToString());
         }
     }
 

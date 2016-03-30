@@ -34,10 +34,6 @@ namespace Keylol.Controllers.Like
                     if (existLikes.Count == 0)
                         return NotFound();
                     DbContext.Likes.RemoveRange(existLikes);
-                    var messages = await DbContext.Messages.Where(
-                        m => m.Type == MessageType.ArticleLike && m.OperatorId == operatorId && m.ArticleId == targetId)
-                        .ToListAsync();
-                    DbContext.Messages.RemoveRange(messages);
                     break;
                 }
 
@@ -48,10 +44,6 @@ namespace Keylol.Controllers.Like
                     if (existLikes.Count == 0)
                         return NotFound();
                     DbContext.Likes.RemoveRange(existLikes);
-                    var messages = await DbContext.Messages.Where(
-                        m => m.Type == MessageType.CommentLike && m.OperatorId == operatorId && m.CommentId == targetId)
-                        .ToListAsync();
-                    DbContext.Messages.RemoveRange(messages);
                     break;
                 }
 

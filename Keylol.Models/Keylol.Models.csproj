@@ -70,6 +70,7 @@
     <Compile Include="AutoSubscription.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
+    <Compile Include="CouponLog.cs" />
     <Compile Include="DTO\ImageGarageRequestDto.cs" />
     <Compile Include="Article.cs" />
     <Compile Include="Favorite.cs" />
@@ -307,6 +308,30 @@
     <Compile Include="Migrations\201603300345598_ClusteredSequenceNumber.Designer.cs">
       <DependentUpon>201603300345598_ClusteredSequenceNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603300819006_Coupon.cs" />
+    <Compile Include="Migrations\201603300819006_Coupon.Designer.cs">
+      <DependentUpon>201603300819006_Coupon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300856216_UserRowVersion.cs" />
+    <Compile Include="Migrations\201603300856216_UserRowVersion.Designer.cs">
+      <DependentUpon>201603300856216_UserRowVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300947472_UserInvitor.cs" />
+    <Compile Include="Migrations\201603300947472_UserInvitor.Designer.cs">
+      <DependentUpon>201603300947472_UserInvitor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300959086_UserLastVisitTime.cs" />
+    <Compile Include="Migrations\201603300959086_UserLastVisitTime.Designer.cs">
+      <DependentUpon>201603300959086_UserLastVisitTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603301023008_CouponLogCreateTimeIndex.cs" />
+    <Compile Include="Migrations\201603301023008_CouponLogCreateTimeIndex.Designer.cs">
+      <DependentUpon>201603301023008_CouponLogCreateTimeIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603301217398_CouponLogUser.cs" />
+    <Compile Include="Migrations\201603301217398_CouponLogUser.Designer.cs">
+      <DependentUpon>201603301217398_CouponLogUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -488,6 +513,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603300345598_ClusteredSequenceNumber.resx">
       <DependentUpon>201603300345598_ClusteredSequenceNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300819006_Coupon.resx">
+      <DependentUpon>201603300819006_Coupon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300856216_UserRowVersion.resx">
+      <DependentUpon>201603300856216_UserRowVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300947472_UserInvitor.resx">
+      <DependentUpon>201603300947472_UserInvitor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300959086_UserLastVisitTime.resx">
+      <DependentUpon>201603300959086_UserLastVisitTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603301023008_CouponLogCreateTimeIndex.resx">
+      <DependentUpon>201603301023008_CouponLogCreateTimeIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603301217398_CouponLogUser.resx">
+      <DependentUpon>201603301217398_CouponLogUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

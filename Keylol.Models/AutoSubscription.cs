@@ -19,7 +19,7 @@ namespace Keylol.Models
         [Required]
         public string UserId { get; set; }
 
-        public KeylolUser User { get; set; }
+        public virtual KeylolUser User { get; set; }
 
         [Required]
         public string NormalPointId { get; set; }

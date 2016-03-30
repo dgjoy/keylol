@@ -27,6 +27,7 @@ namespace Keylol.Controllers.Article
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (ArticleDTO))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "用户文券不足")]
         public async Task<IHttpActionResult> CreateOne(CreateOneVM vm)
         {
             if (vm == null)
@@ -41,6 +42,10 @@ namespace Keylol.Controllers.Article
             var article = DbContext.Articles.Create();
 
             article.Type = vm.TypeName.ToEnum<ArticleType>();
+            var userId = User.Identity.GetUserId();
+            var couponEvent = article.Type == ArticleType.简评 ? CouponEvent.发表简评 : CouponEvent.发表文章;
+            if (!_coupon.CanTriggerEvent(userId, couponEvent))
+                return Unauthorized();
 
             if (article.Type.AllowVote())
             {
@@ -132,7 +137,7 @@ namespace Keylol.Controllers.Article
                 }
             }
 
-            article.PrincipalId = User.Identity.GetUserId();
+            article.PrincipalId = userId;
             DbContext.Articles.Add(article);
             article.SequenceNumberForAuthor =
                 DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
@@ -144,6 +149,7 @@ namespace Keylol.Controllers.Article
             {
                 ArticleId = article.Id
             });
+            await _coupon.Update(userId, couponEvent, new {ArticleId = article.Id});
             return Created($"article/{article.Id}", new ArticleDTO(article));
         }
 

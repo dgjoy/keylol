@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -69,14 +70,27 @@ namespace Keylol.Controllers.User
             }
 
             var visitorId = User.Identity.GetUserId();
-            var visitorStaffClaim = StaffClaim.User;
-            if (!string.IsNullOrEmpty(visitorId))
-            {
-                visitorStaffClaim = await UserManager.GetStaffClaimAsync(visitorId);
-            }
+            var visitorStaffClaim = string.IsNullOrEmpty(visitorId)
+                ? null
+                : await UserManager.GetStaffClaimAsync(visitorId);
 
             if (user == null)
                 return NotFound();
+
+            // 当前登录用户每日访问奖励
+            if (user.Id == visitorId)
+            {
+                if (DateTime.Now.Date > user.LastVisitTime.Date)
+                    await _coupon.Update(user.Id, CouponEvent.每日访问);
+                try
+                {
+                    user.LastVisitTime = DateTime.Now;
+                    await DbContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                }
+            }
 
             var userDto = moreOptions ? new UserWithMoreOptionsDTO(user) : new UserDTO(user);
 

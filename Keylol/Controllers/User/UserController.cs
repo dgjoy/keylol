@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Keylol.Models.DAL;
+using Keylol.Provider;
 
 namespace Keylol.Controllers.User
 {
@@ -10,6 +11,17 @@ namespace Keylol.Controllers.User
     [RoutePrefix("user")]
     public partial class UserController : KeylolApiController
     {
+        private CouponProvider _coupon;
+
+        /// <summary>
+        /// 创建 UserController
+        /// </summary>
+        /// <param name="coupon">CouponProvider</param>
+        public UserController(CouponProvider coupon)
+        {
+            _coupon = coupon;
+        }
+
         //        public IHttpActionResult Login(string returnUrl)
         //        {
         //            ViewBag.ReturnUrl = returnUrl;

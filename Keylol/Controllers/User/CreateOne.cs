@@ -104,6 +104,22 @@ namespace Keylol.Controllers.User
             DbContext.SteamBindingTokens.Remove(steamBindingToken);
             await DbContext.SaveChangesAsync();
 
+            await _coupon.Update(user.Id, CouponEvent.新注册);
+
+            // 邀请人
+            if (vm.Inviter != null)
+            {
+                var inviterIdCode = vm.Inviter;
+                var inviter = await DbContext.Users.Where(u => u.IdCode == inviterIdCode).SingleOrDefaultAsync();
+                if (inviter != null)
+                {
+                    user.InviterId = inviter.Id;
+                    await DbContext.SaveChangesAsync();
+                    await _coupon.Update(inviter.Id, CouponEvent.邀请注册, new {UserId = user.Id});
+                    await _coupon.Update(user.Id, CouponEvent.应邀注册, new {InvitorId = user.Id});
+                }
+            }
+
             // Auto login
             await SignInManager.SignInAsync(user, true, true);
             var loginLog = new LoginLog

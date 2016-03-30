@@ -93,7 +93,9 @@ namespace Keylol.Controllers.Comment
                 missive.Receiver = comment.Commentator;
                 missive.CommentId = comment.Id;
                 string steamNotityText = null;
-                var commentSummary = comment.Content.Length > 30 ? comment.Content.Substring(0, 30) : $"{comment.Content} …";
+                var commentSummary = comment.Content.Length > 30
+                    ? $"{comment.Content.Substring(0, 30)} …"
+                    : comment.Content;
                 if (requestDto.Value)
                 {
                     switch (requestDto.Property)
@@ -102,7 +104,8 @@ namespace Keylol.Controllers.Comment
                             missive.Type = MessageType.CommentArchive;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            steamNotityText = $"文章《{comment.Article.Title}》中的评论「{commentSummary}」已被封存，封存后此则评论的内容和作者信息会被隐藏。";
+                            steamNotityText =
+                                $"文章《{comment.Article.Title}》中的评论「{commentSummary}」已被封存，封存后此则评论的内容和作者信息会被隐藏。";
                             break;
 
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Warned:
@@ -120,7 +123,8 @@ namespace Keylol.Controllers.Comment
                     {
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Archived:
                             missive.Type = MessageType.CommentArchiveCancel;
-                            steamNotityText = $"文章《{comment.Article.Title}》下评论「{commentSummary}」的封存已被撤销，此则评论的内容和作者信息已重新公开。";
+                            steamNotityText =
+                                $"文章《{comment.Article.Title}》下评论「{commentSummary}」的封存已被撤销，此则评论的内容和作者信息已重新公开。";
                             break;
 
                         case CommentUpdateOneModerationRequestDto.CommentProperty.Warned:

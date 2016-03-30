@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Utilities;
 
 namespace Keylol.Controllers.Article
 {
@@ -123,7 +124,7 @@ namespace Keylol.Controllers.Article
                 .ToList();
 
             var response = Request.CreateResponse(HttpStatusCode.OK, articles);
-            response.Headers.Add("X-Total-Record-Count", articles.Count > 0 ? articles[0].Count.ToString() : "0");
+            response.Headers.SetTotalCount(articles.Count > 0 ? (articles[0].Count ?? 1) : 0);
             return response;
         }
     }

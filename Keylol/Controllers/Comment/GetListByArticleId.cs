@@ -101,7 +101,7 @@ namespace Keylol.Controllers.Comment
                     };
                 }).ToList());
             var commentCount = await DbContext.Comments.Where(c => c.ArticleId == articleId).CountAsync();
-            response.Headers.Add("X-Total-Record-Count", commentCount.ToString());
+            response.Headers.SetTotalCount(commentCount);
             return response;
         }
     }

@@ -68,6 +68,9 @@ namespace Keylol
             // Keylol DbContext
             Container.Register<KeylolDbContext>(Lifestyle.Scoped);
 
+            // Coupon
+            Container.RegisterWebApiRequest<CouponProvider>();
+
             // 启用 OWIN 中间件
 
             // 请求计时

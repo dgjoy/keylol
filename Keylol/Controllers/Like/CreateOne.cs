@@ -23,7 +23,7 @@ namespace Keylol.Controllers.Like
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (int))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "文章或评论被封存，当前登录用户无权创建认可")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "当前登录用户无权创建认可（文章或评论被封存，或者用户文券不足）")]
         public async Task<IHttpActionResult> CreateOne(LikeVM vm)
         {
             if (vm == null)
@@ -37,6 +37,8 @@ namespace Keylol.Controllers.Like
 
             var operatorId = User.Identity.GetUserId();
             var @operator = await DbContext.Users.SingleAsync(u => u.Id == operatorId);
+            if (!_coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
+                return Unauthorized();
 
             Models.Like like;
             switch (vm.Type)
@@ -88,6 +90,12 @@ namespace Keylol.Controllers.Like
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
                         }
                     }
+                    await _coupon.Update(operatorId, CouponEvent.发出认可, new {ArticleId = article.Id});
+                    await _coupon.Update(article.PrincipalId, CouponEvent.获得认可, new
+                    {
+                        ArticleId = article.Id,
+                        OperatorId = operatorId
+                    });
                     break;
                 }
 
@@ -140,6 +148,12 @@ namespace Keylol.Controllers.Like
                                 $"@{@operator.UserName} 认可了你在 《{comment.Article.Title}》 下的评论：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{comment.Article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                         }
                     }
+                    await _coupon.Update(operatorId, CouponEvent.发出认可, new {CommentId = comment.Id});
+                    await _coupon.Update(comment.CommentatorId, CouponEvent.获得认可, new
+                    {
+                        CommentId = comment.Id,
+                        OperatorId = operatorId
+                    });
                     break;
                 }
 

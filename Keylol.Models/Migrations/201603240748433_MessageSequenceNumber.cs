@@ -14,7 +14,7 @@ namespace Keylol.Models.Migrations
             this.DeleteDefaultContraint("dbo.Articles", "SequenceNumber");
             Sql("EXECUTE sp_rename N'EntrySequence', N'ArticleSequence'");
             Sql(
-                "ALTER TABLE [dbo].[Articles] ADD DEFAULT NEXT VALUE FOR [dbo].[MessageSequence] FOR [SequenceNumber]");
+                "ALTER TABLE [dbo].[Articles] ADD DEFAULT NEXT VALUE FOR [dbo].[ArticleSequence] FOR [SequenceNumber]");
         }
 
         public override void Down()
