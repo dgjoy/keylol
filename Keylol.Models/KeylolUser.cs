@@ -94,6 +94,8 @@ namespace Keylol.Models
 
         public DateTime LastVisitTime { get; set; } = DateTime.Now;
 
+        public int FreeLike { get; set; } = 5;
+
         [Index(IsUnique = true, IsClustered = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int SequenceNumber { get; set; }

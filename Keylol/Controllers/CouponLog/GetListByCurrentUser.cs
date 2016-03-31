@@ -20,7 +20,7 @@ namespace Keylol.Controllers.CouponLog
     public partial class CouponLogController
     {
         /// <summary>
-        /// 获取当前登录用户的文券变动记录
+        ///     获取当前登录用户的文券变动记录
         /// </summary>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，默认 30，最大 50</param>
@@ -74,6 +74,10 @@ namespace Keylol.Controllers.CouponLog
                         dto.Description.Comment = jObject(new CommentDto
                         {
                             Id = comment.Id,
+                            Content =
+                                comment.Content.Length > 15 ? $"{comment.Content.Substring(0, 15)} …" : comment.Content,
+                            ArticleAuthorIdCode = comment.Article.Principal.User.IdCode,
+                            ArticleSequenceNumberForAuthor = comment.Article.SequenceNumberForAuthor,
                             SequenceNumberForArticle = comment.SequenceNumberForArticle
                         });
                     }
@@ -126,37 +130,37 @@ namespace Keylol.Controllers.CouponLog
         }
 
         /// <summary>
-        /// 响应 DTO
+        ///     响应 DTO
         /// </summary>
         public class CouponLogGetListByCurrentUserResponseDto
         {
             /// <summary>
-            /// Id
+            ///     Id
             /// </summary>
             public string Id { get; set; }
 
             /// <summary>
-            /// 变动事件
+            ///     变动事件
             /// </summary>
             public CouponEvent Event { get; set; }
 
             /// <summary>
-            /// 变动数值
+            ///     变动数值
             /// </summary>
             public int Change { get; set; }
 
             /// <summary>
-            /// 变动后余额
+            ///     变动后余额
             /// </summary>
             public int Balance { get; set; }
 
             /// <summary>
-            /// 发生时间
+            ///     发生时间
             /// </summary>
             public DateTime Time { get; set; }
 
             /// <summary>
-            /// 详细描述
+            ///     详细描述
             /// </summary>
             public dynamic Description { get; set; }
         }

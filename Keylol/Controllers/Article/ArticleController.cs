@@ -2,7 +2,6 @@
 using CsQuery;
 using CsQuery.Output;
 using Ganss.XSS;
-using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
 using RabbitMQ.Client;
@@ -16,14 +15,18 @@ namespace Keylol.Controllers.Article
     [RoutePrefix("article")]
     public partial class ArticleController : KeylolApiController
     {
-        private readonly IModel _mqChannel;
         private readonly CouponProvider _coupon;
+        private readonly IModel _mqChannel;
 
         /// <summary>
-        /// 创建 <see cref="ArticleController"/>
+        ///     创建 <see cref="ArticleController" />
         /// </summary>
-        /// <param name="mqChannel"><see cref="IModel"/></param>
-        /// <param name="coupon"><see cref="CouponProvider"/></param>
+        /// <param name="mqChannel">
+        ///     <see cref="IModel" />
+        /// </param>
+        /// <param name="coupon">
+        ///     <see cref="CouponProvider" />
+        /// </param>
         public ArticleController(IModel mqChannel, CouponProvider coupon)
         {
             _mqChannel = mqChannel;

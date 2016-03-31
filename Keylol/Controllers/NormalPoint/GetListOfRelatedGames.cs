@@ -16,32 +16,32 @@ namespace Keylol.Controllers.NormalPoint
     public partial class NormalPointController
     {
         /// <summary>
-        /// 据点关系
+        ///     据点关系
         /// </summary>
         public enum PointRelationship
         {
             /// <summary>
-            /// 开发商
+            ///     开发商
             /// </summary>
             Developer,
 
             /// <summary>
-            /// 发行商
+            ///     发行商
             /// </summary>
             Publisher,
 
             /// <summary>
-            /// 系列
+            ///     系列
             /// </summary>
             Series,
 
             /// <summary>
-            /// 流派
+            ///     流派
             /// </summary>
             Genre,
 
             /// <summary>
-            /// 特性
+            ///     特性
             /// </summary>
             Tag
         }

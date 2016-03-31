@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Keylol.Models.DTO;
-using Keylol.Models.ViewModels;
 
 namespace Keylol.Services.Contracts
 {

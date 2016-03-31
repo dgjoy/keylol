@@ -12,13 +12,13 @@ namespace Keylol.Controllers.Article
     public partial class ArticleController
     {
         /// <summary>
-        ///     获取 5 篇全站热门文章
+        ///     获取 5 篇最新全站萃选文章
         /// </summary>
-        [Route("hot")]
+        [Route("spotlight")]
         [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDto>))]
-        public async Task<IHttpActionResult> GetListOfHot()
+        public async Task<IHttpActionResult> GetListOfSpotlight()
         {
             var articleEntries =
                 await DbContext.Articles.AsNoTracking()
@@ -27,9 +27,16 @@ namespace Keylol.Controllers.Article
                     .Select(a => new
                     {
                         article = a,
-                        authorIdCode = a.Principal.User.IdCode
+                        authorIdCode = a.Principal.User.IdCode,
+                        commentCount = a.Comments.Count,
+                        likeCount = a.Likes.Count
                     }).ToListAsync();
-            return Ok(articleEntries.Select(e => new ArticleDto(e.article, true, 100) {AuthorIdCode = e.authorIdCode}));
+            return Ok(articleEntries.Select(e => new ArticleDto(e.article, true, 100)
+            {
+                AuthorIdCode = e.authorIdCode,
+                CommentCount = e.commentCount,
+                LikeCount = e.likeCount
+            }));
         }
     }
 }

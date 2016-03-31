@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web.Cors;
 using System.Web.Http;
 using Keylol;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
-using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -31,48 +34,18 @@ namespace Keylol
     /// </summary>
     public class Startup
     {
-        private readonly EnableCorsRegexAttribute _corsPolicyProvider =
-            new EnableCorsRegexAttribute(@"^(http|https)://([a-z-]+\.)?keylol\.com(:[0-9]{1,5})?/?$")
-            {
-                SupportsCredentials = true
-            };
-
         /// <summary>
         /// 全局 IoC 容器
         /// </summary>
         public static Container Container { get; set; } = new Container();
 
         /// <summary>
-        ///     OWIN 配置
+        ///     OWIN 启动配置
         /// </summary>
         public void Configuration(IAppBuilder app)
         {
-            // 配置容器
-            Container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
-
-            // log4net
-            Container.RegisterConditional(typeof (ILogProvider),
-                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (Startup)),
-                Lifestyle.Singleton,
-                c => true);
-
-            // RabbitMQ IConnection
-            Container.RegisterSingleton<MqClientProvider>();
-
-            // RabbitMQ IModel
-            Container.RegisterWebApiRequest(() => Container.GetInstance<MqClientProvider>().CreateModel());
-
-            // StackExchange.Redis
-            Container.RegisterSingleton<RedisProvider>();
-
-            // Keylol DbContext
-            Container.Register<KeylolDbContext>(Lifestyle.Scoped);
-
-            // Coupon
-            Container.RegisterWebApiRequest<CouponProvider>();
-
-            // Statistics
-            Container.RegisterWebApiRequest<StatisticsProvider>();
+            // 注册常用服务
+            RegisterServices();
 
             // 启用 OWIN 中间件
 
@@ -102,11 +75,14 @@ namespace Keylol
                 new MemoryCacheRepository(),
                 null, null);
 
-            // 认证相关中间件
+            // CORS
+            UseCors(app);
+
+            // 认证、授权相关中间件
             UseAuth(app);
 
             // SignalR
-            UseSignalR(app);
+            app.MapSignalR();
 
             // ASP.NET Web API
             UseWebApi(app);
@@ -114,15 +90,68 @@ namespace Keylol
             Container.Verify();
         }
 
-        private void UseSignalR(IAppBuilder app)
+        private void RegisterServices()
         {
-            app.Map("/signalr", a =>
+            // 配置容器
+            Container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
+
+            // log4net
+            Container.RegisterConditional(typeof (ILogProvider),
+                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (Startup)),
+                Lifestyle.Singleton,
+                c => true);
+
+            // RabbitMQ IConnection
+            Container.RegisterSingleton<MqClientProvider>();
+
+            // RabbitMQ IModel
+            Container.RegisterWebApiRequest(() => Container.GetInstance<MqClientProvider>().CreateModel());
+
+            // StackExchange.Redis
+            Container.RegisterSingleton<RedisProvider>();
+
+            // Keylol DbContext
+            Container.Register<KeylolDbContext>(Lifestyle.Scoped);
+
+            // Coupon
+            Container.RegisterWebApiRequest<CouponProvider>();
+
+            // Statistics
+            Container.RegisterWebApiRequest<StatisticsProvider>();
+        }
+
+        private void UseCors(IAppBuilder app)
+        {
+            app.Use(async (context, next) =>
             {
-                a.UseCors(new CorsOptions
+                // 将所有 'X-' Headers 加入到 Access-Control-Expose-Headers 中
+                context.Response.OnSendingHeaders(o =>
                 {
-                    PolicyProvider = _corsPolicyProvider
-                });
-                a.RunSignalR();
+                    context.Response.Headers.Add("Access-Control-Expose-Headers",
+                        context.Response.Headers.Select(h => h.Key)
+                            .Where(k => k.StartsWith("X-", StringComparison.OrdinalIgnoreCase)).ToArray());
+                }, null);
+                await next.Invoke();
+            });
+            app.UseCors(new CorsOptions
+            {
+                PolicyProvider = new CorsPolicyProvider
+                {
+                    PolicyResolver = request =>
+                    {
+                        if (!Regex.IsMatch(request.Headers["Origin"],
+                            @"^(http|https)://([a-z-]+\.)?keylol\.com(:[0-9]{1,5})?/?$", RegexOptions.IgnoreCase))
+                            return Task.FromResult<CorsPolicy>(null);
+                        return Task.FromResult(new CorsPolicy
+                        {
+                            AllowAnyHeader = true,
+                            AllowAnyOrigin = true,
+                            AllowAnyMethod = true,
+                            SupportsCredentials = true,
+                            PreflightMaxAge = 365*24*3600
+                        });
+                    }
+                }
             });
         }
 
@@ -134,7 +163,6 @@ namespace Keylol
             config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
 
-            config.EnableCors(_corsPolicyProvider);
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 
 #if DEBUG

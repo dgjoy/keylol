@@ -140,7 +140,7 @@ namespace Keylol.SteamBot.ServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotUpdateRequestDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotUpdateRequestDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
     [System.SerializableAttribute()]
     public partial class SteamBotUpdateRequestDto : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         

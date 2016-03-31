@@ -7,7 +7,7 @@ namespace Keylol.Controllers.RedisCache
     public partial class RedisCacheController
     {
         /// <summary>
-        /// 删除匹配指定模式的缓存项
+        ///     删除匹配指定模式的缓存项
         /// </summary>
         /// <param name="pattern">匹配模式，如果为空表示清空全部缓存，默认 null</param>
         [Route]

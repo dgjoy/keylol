@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.Services;
 using Keylol.Services.Contracts;
@@ -50,7 +51,7 @@ namespace Keylol.Controllers.UserGameRecord
             {
                 user.LastGameUpdateTime = DateTime.Now;
                 user.LastGameUpdateSucceed = true;
-                await DbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                 try
                 {
                     var steamId = new SteamID();
@@ -179,7 +180,7 @@ namespace Keylol.Controllers.UserGameRecord
                 catch (Exception)
                 {
                     user.LastGameUpdateSucceed = false;
-                    await DbContext.SaveChangesAsync();
+                    await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                 }
             }
             return NotFound();

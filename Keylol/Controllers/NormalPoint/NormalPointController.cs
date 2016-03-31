@@ -17,17 +17,17 @@ namespace Keylol.Controllers.NormalPoint
     public partial class NormalPointController : KeylolApiController
     {
         /// <summary>
-        /// Id 类型
+        ///     Id 类型
         /// </summary>
         public enum IdType
         {
             /// <summary>
-            /// Id
+            ///     Id
             /// </summary>
             Id,
 
             /// <summary>
-            /// 识别码
+            ///     识别码
             /// </summary>
             IdCode
         }

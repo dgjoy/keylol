@@ -36,7 +36,10 @@ namespace Keylol.Controllers.Login
                 return BadRequest(ModelState);
 
             var geetest = new Geetest();
-            if (!await geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode, requestDto.GeetestValidate))
+            if (
+                !await
+                    geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
+                        requestDto.GeetestValidate))
             {
                 ModelState.AddModelError("authCode", "true");
                 return BadRequest(ModelState);
@@ -44,7 +47,8 @@ namespace Keylol.Controllers.Login
             var user = Regex.IsMatch(requestDto.EmailOrIdCode, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$",
                 RegexOptions.IgnoreCase)
                 ? await UserManager.FindByEmailAsync(requestDto.EmailOrIdCode)
-                : await DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == requestDto.EmailOrIdCode);
+                : await
+                    DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == requestDto.EmailOrIdCode);
             if (user == null)
             {
                 ModelState.AddModelError("vm.EmailOrIdCode", "User doesn't exist.");
@@ -79,36 +83,36 @@ namespace Keylol.Controllers.Login
         }
 
         /// <summary>
-        /// 请求 DTO
+        ///     请求 DTO
         /// </summary>
         public class LoginCreateOneFromPasswordRequestDto
         {
             /// <summary>
-            /// Email 或者识别码
+            ///     Email 或者识别码
             /// </summary>
             [Required]
             public string EmailOrIdCode { get; set; }
 
             /// <summary>
-            /// 密码
+            ///     密码
             /// </summary>
             [Required]
             public string Password { get; set; }
 
             /// <summary>
-            /// 极验 Chanllenge
+            ///     极验 Chanllenge
             /// </summary>
             [Required]
             public string GeetestChallenge { get; set; }
 
             /// <summary>
-            /// 极验 Seccode
+            ///     极验 Seccode
             /// </summary>
             [Required]
             public string GeetestSeccode { get; set; }
 
             /// <summary>
-            /// 极验 Validate
+            ///     极验 Validate
             /// </summary>
             [Required]
             public string GeetestValidate { get; set; }

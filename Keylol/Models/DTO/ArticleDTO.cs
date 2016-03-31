@@ -15,30 +15,42 @@ namespace Keylol.Models.DTO
         public enum TimelineReasonType
         {
             /// <summary>
-            /// 被订阅用户认可
+            ///     被订阅用户认可
             /// </summary>
             Like,
 
             /// <summary>
-            /// 订阅用户发表
+            ///     订阅用户发布
             /// </summary>
             Publish,
 
             /// <summary>
-            /// 发布到手动订阅的普通据点中
+            ///     发布到手动订阅的普通据点中
             /// </summary>
             Point,
 
             /// <summary>
-            /// 发布到同步订阅的据点中
+            ///     发布到同步订阅的据点中
             /// </summary>
             AutoSubscription
         }
 
+        /// <summary>
+        ///     创建空 DTO，需要手动填充
+        /// </summary>
         public ArticleDto()
         {
         }
 
+        /// <summary>
+        ///     创建 DTO 并自动填充部分数据
+        /// </summary>
+        /// <param name="article"><see cref="Article" /> 对象</param>
+        /// <param name="includeContent">是否包含文章内容</param>
+        /// <param name="truncateContentTo">文章内容截取长度，0 表示不截取</param>
+        /// <param name="includeThumbnailImage">是否包含缩略图</param>
+        /// <param name="includeProsCons">是否包含优缺点</param>
+        /// <param name="includeSummary">是否包含概要</param>
         public ArticleDto(Article article, bool includeContent = false, int truncateContentTo = 0,
             bool includeThumbnailImage = false, bool includeProsCons = false, bool includeSummary = false)
         {
@@ -76,7 +88,7 @@ namespace Keylol.Models.DTO
         public string Id { get; set; }
 
         /// <summary>
-        ///     发表时间
+        ///     发布时间
         /// </summary>
         public DateTime? PublishTime { get; set; }
 
@@ -188,7 +200,7 @@ namespace Keylol.Models.DTO
         #region If Author is not flattened
 
         /// <summary>
-        /// 作者
+        ///     作者
         /// </summary>
         public UserDto Author { get; set; }
 
@@ -197,7 +209,7 @@ namespace Keylol.Models.DTO
         #region If VoteForPoint is not flattened
 
         /// <summary>
-        /// 评价的据点
+        ///     评价的据点
         /// </summary>
         public NormalPointDto VoteForPoint { get; set; }
 
@@ -286,22 +298,22 @@ namespace Keylol.Models.DTO
         #region If Author is flattened
 
         /// <summary>
-        /// 作者 Id
+        ///     作者 Id
         /// </summary>
         public string AuthorId { get; set; }
 
         /// <summary>
-        /// 作者识别码
+        ///     作者识别码
         /// </summary>
         public string AuthorIdCode { get; set; }
 
         /// <summary>
-        /// 作者用户名
+        ///     作者用户名
         /// </summary>
         public string AuthorUserName { get; set; }
 
         /// <summary>
-        /// 作者头像
+        ///     作者头像
         /// </summary>
         public string AuthorAvatarImage { get; set; }
 
@@ -310,27 +322,27 @@ namespace Keylol.Models.DTO
         #region If VoteForPoint is flattened
 
         /// <summary>
-        /// 评价据点 Id
+        ///     评价据点 Id
         /// </summary>
         public string VoteForPointId { get; set; }
 
         /// <summary>
-        /// 评价据点主显名称偏好
+        ///     评价据点主显名称偏好
         /// </summary>
         public PreferredNameType? VoteForPointPreferredName { get; set; }
 
         /// <summary>
-        /// 评价据点识别码
+        ///     评价据点识别码
         /// </summary>
         public string VoteForPointIdCode { get; set; }
 
         /// <summary>
-        /// 评价据点中文名
+        ///     评价据点中文名
         /// </summary>
         public string VoteForPointChineseName { get; set; }
 
         /// <summary>
-        /// 评价据点英文名
+        ///     评价据点英文名
         /// </summary>
         public string VoteForPointEnglishName { get; set; }
 

@@ -98,7 +98,9 @@ namespace Keylol.Controllers.NormalPoint
                         return BadRequest(ModelState);
                     }
                     var nameStrings =
-                        requestDto.NameInSteamStore.Split(';').Select(n => n.Trim()).Where(n => !string.IsNullOrEmpty(n));
+                        requestDto.NameInSteamStore.Split(';')
+                            .Select(n => n.Trim())
+                            .Where(n => !string.IsNullOrEmpty(n));
                     var names = new List<SteamStoreName>();
                     foreach (var nameString in nameStrings)
                     {
@@ -117,7 +119,9 @@ namespace Keylol.Controllers.NormalPoint
             normalPoint.ChineseName = requestDto.ChineseName;
             normalPoint.ChineseAliases = requestDto.ChineseAliases;
             normalPoint.EnglishAliases = requestDto.EnglishAliases;
-            normalPoint.Description = requestDto.Description.Length > 256 ? requestDto.Description.Substring(0, 256) : requestDto.Description;
+            normalPoint.Description = requestDto.Description.Length > 256
+                ? requestDto.Description.Substring(0, 256)
+                : requestDto.Description;
 
             if (normalPoint.Type == NormalPointType.Game &&
                 !await PopulateGamePointAttributes(normalPoint, requestDto, editorStaffClaim, true))

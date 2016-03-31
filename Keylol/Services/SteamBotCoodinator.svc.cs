@@ -9,7 +9,6 @@ using DevTrends.WCFDataAnnotations;
 using Keylol.Hubs;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
-using Keylol.Models.ViewModels;
 using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;

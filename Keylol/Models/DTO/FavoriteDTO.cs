@@ -3,26 +3,30 @@
 namespace Keylol.Models.DTO
 {
     /// <summary>
-    /// Favorite DTO
+    ///     Favorite DTO
     /// </summary>
     public class FavoriteDto
     {
         /// <summary>
-        /// 据点类型
+        ///     据点类型
         /// </summary>
         public enum PointType
         {
             /// <summary>
-            /// 普通据点
+            ///     普通据点
             /// </summary>
             NormalPoint,
 
             /// <summary>
-            /// 个人据点
+            ///     个人据点
             /// </summary>
             ProfilePoint
         }
 
+        /// <summary>
+        ///     创建 DTO 并自动填充部分数据
+        /// </summary>
+        /// <param name="favorite"><see cref="Favorite" /> 对象</param>
         public FavoriteDto(Favorite favorite)
         {
             Id = favorite.Id;
@@ -55,22 +59,22 @@ namespace Keylol.Models.DTO
         }
 
         /// <summary>
-        /// Id
+        ///     Id
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// 据点类型
+        ///     据点类型
         /// </summary>
         public PointType Type { get; set; }
 
         /// <summary>
-        /// 据点识别码
+        ///     据点识别码
         /// </summary>
         public string IdCode { get; set; }
 
         /// <summary>
-        /// 据点名称
+        ///     据点名称
         /// </summary>
         public string Name { get; set; }
     }

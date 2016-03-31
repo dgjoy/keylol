@@ -48,17 +48,17 @@ namespace Keylol.Controllers.Article
     }
 
     /// <summary>
-    /// 忽略类型
+    ///     忽略类型
     /// </summary>
     public enum IgnoreType
     {
         /// <summary>
-        /// 忽略新认可
+        ///     忽略新认可
         /// </summary>
         Like,
 
         /// <summary>
-        /// 忽略新评论
+        ///     忽略新评论
         /// </summary>
         Comment
     }

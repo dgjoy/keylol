@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Models.DAL;
 using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 

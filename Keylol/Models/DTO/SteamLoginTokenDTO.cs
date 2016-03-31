@@ -1,17 +1,17 @@
 ﻿namespace Keylol.Models.DTO
 {
     /// <summary>
-    /// SteamLoginToken DTO
+    ///     SteamLoginToken DTO
     /// </summary>
     public class SteamLoginTokenDto
     {
         /// <summary>
-        /// Id
+        ///     Id
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// 登录代码
+        ///     登录代码
         /// </summary>
         public string Code { get; set; }
     }

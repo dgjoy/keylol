@@ -25,7 +25,7 @@ namespace Keylol.Controllers.Article
         [ResponseType(typeof (ArticleDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "文章被封存，当前登录用户无权查看")]
-        public async Task<IHttpActionResult> GetOneByAuthorIdCodeWithSN(string authorIdCode, int sequenceNumberForAuthor)
+        public async Task<IHttpActionResult> GetOneByAuthorIdCodeWithSn(string authorIdCode, int sequenceNumberForAuthor)
         {
             var userId = User.Identity.GetUserId();
             var articleEntry =

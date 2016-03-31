@@ -18,17 +18,17 @@ namespace Keylol.Controllers.Comment
     public partial class CommentController
     {
         /// <summary>
-        /// 排序方式
+        ///     排序方式
         /// </summary>
         public enum OrderByType
         {
             /// <summary>
-            /// 楼层号降序
+            ///     楼层号降序
             /// </summary>
             SequenceNumberForAuthor,
 
             /// <summary>
-            /// 认可数降序
+            ///     认可数降序
             /// </summary>
             LikeCount
         }

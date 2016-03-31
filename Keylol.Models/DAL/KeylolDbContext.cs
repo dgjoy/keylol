@@ -1,6 +1,8 @@
 using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -122,6 +124,40 @@ namespace Keylol.Models.DAL
                 .HasMany(p => p.SteamStoreNames)
                 .WithMany(n => n.NormalPoints)
                 .Map(t => t.ToTable("PointStoreNameMappings"));
+        }
+
+        public enum ConcurrencyStrategy
+        {
+            ClientWin,
+            DatabaseWin
+        }
+
+        public async Task<int> SaveChangesAsync(ConcurrencyStrategy concurrencyStrategy)
+        {
+            do
+            {
+                try
+                {
+                    return await SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    switch (concurrencyStrategy)
+                    {
+                        case ConcurrencyStrategy.ClientWin:
+                            var entry = e.Entries.Single();
+                            entry.OriginalValues.SetValues(await entry.GetDatabaseValuesAsync());
+                            break;
+
+                        case ConcurrencyStrategy.DatabaseWin:
+                            await e.Entries.Single().ReloadAsync();
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(concurrencyStrategy), concurrencyStrategy, null);
+                    }
+                }
+            } while (true);
         }
 
         // Ignore validation error on unmodified properties

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
@@ -17,22 +18,22 @@ namespace Keylol.Controllers.User
     public partial class UserController
     {
         /// <summary>
-        /// Id 类型
+        ///     Id 类型
         /// </summary>
         public enum IdType
         {
             /// <summary>
-            /// Id
+            ///     Id
             /// </summary>
             Id,
 
             /// <summary>
-            /// 识别码
+            ///     识别码
             /// </summary>
             IdCode,
 
             /// <summary>
-            /// 用户名
+            ///     用户名
             /// </summary>
             UserName
         }
@@ -84,29 +85,27 @@ namespace Keylol.Controllers.User
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
             }
 
-            var visitorId = User.Identity.GetUserId();
-            var visitorStaffClaim = string.IsNullOrEmpty(visitorId)
-                ? null
-                : await UserManager.GetStaffClaimAsync(visitorId);
-
             if (user == null)
                 return NotFound();
 
-            // 当前登录用户每日访问奖励
+            var visitorId = User.Identity.GetUserId();
+
             if (user.Id == visitorId)
             {
-                try
+                // 每日访问奖励
+                if (DateTime.Now.Date > user.LastVisitTime.Date)
                 {
-                    var oldLastVisitTime = user.LastVisitTime;
-                    user.LastVisitTime = DateTime.Now;
-                    await DbContext.SaveChangesAsync();
-                    if (DateTime.Now.Date > oldLastVisitTime.Date)
-                        await _coupon.Update(user.Id, CouponEvent.每日访问);
+                    await _coupon.Update(user.Id, CouponEvent.每日访问);
+                    await DbContext.Entry(user).ReloadAsync();
+                    user.FreeLike = 5; // 免费认可重置
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                }
+                user.LastVisitTime = DateTime.Now;
+                await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
             }
+
+            var visitorStaffClaim = string.IsNullOrEmpty(visitorId)
+                ? null
+                : await UserManager.GetStaffClaimAsync(visitorId);
 
             var userDto = new UserDto(user);
 

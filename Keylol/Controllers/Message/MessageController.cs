@@ -1,5 +1,4 @@
 ﻿using System.Web.Http;
-using Keylol.Models.DAL;
 
 namespace Keylol.Controllers.Message
 {

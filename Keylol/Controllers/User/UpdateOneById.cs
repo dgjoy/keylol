@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Models;
-using Keylol.Models.ViewModels;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -57,8 +55,11 @@ namespace Keylol.Controllers.User
                 }
 
                 var geetest = new Geetest();
-                if (requestDto.GeetestChallenge == null || requestDto.GeetestSeccode == null || requestDto.GeetestValidate == null ||
-                    !await geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode, requestDto.GeetestValidate))
+                if (requestDto.GeetestChallenge == null || requestDto.GeetestSeccode == null ||
+                    requestDto.GeetestValidate == null ||
+                    !await
+                        geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
+                            requestDto.GeetestValidate))
                 {
                     ModelState.AddModelError("authCode", "true");
                     return BadRequest(ModelState);
@@ -66,7 +67,8 @@ namespace Keylol.Controllers.User
 
                 if (requestDto.NewPassword != null)
                 {
-                    var resultPassword = await UserManager.ChangePasswordAsync(id, requestDto.Password, requestDto.NewPassword);
+                    var resultPassword =
+                        await UserManager.ChangePasswordAsync(id, requestDto.Password, requestDto.NewPassword);
                     if (!resultPassword.Succeeded)
                     {
                         foreach (var error in resultPassword.Errors)
@@ -128,75 +130,87 @@ namespace Keylol.Controllers.User
         }
 
         /// <summary>
-        /// 请求 DTO
+        ///     请求 DTO
         /// </summary>
         public class UserUpdateOneByIdRequestDto
         {
             /// <summary>
-            /// 玩家标签
+            ///     玩家标签
             /// </summary>
             public string GamerTag { get; set; }
+
             /// <summary>
-            /// Email
+            ///     Email
             /// </summary>
             public string Email { get; set; }
+
             /// <summary>
-            /// 头像
+            ///     头像
             /// </summary>
             public string AvatarImage { get; set; }
+
             /// <summary>
-            /// 个人据点背景横幅
+            ///     个人据点背景横幅
             /// </summary>
             public string ProfilePointBackgroundImage { get; set; }
 
             /// <summary>
-            /// 旧密码
+            ///     旧密码
             /// </summary>
             public string Password { get; set; }
+
             /// <summary>
-            /// 新密码
+            ///     新密码
             /// </summary>
             public string NewPassword { get; set; }
+
             /// <summary>
-            /// 登录保护开关
+            ///     登录保护开关
             /// </summary>
             public bool? LockoutEnabled { get; set; }
+
             /// <summary>
-            /// 极验 Chanllenge
+            ///     极验 Chanllenge
             /// </summary>
             public string GeetestChallenge { get; set; }
+
             /// <summary>
-            /// 极验 Seccode
+            ///     极验 Seccode
             /// </summary>
             public string GeetestSeccode { get; set; }
+
             /// <summary>
-            /// 极验 Validate
+            ///     极验 Validate
             /// </summary>
             public string GeetestValidate { get; set; }
 
             /// <summary>
-            /// Steam 通知开关：文章收到评论
+            ///     Steam 通知开关：文章收到评论
             /// </summary>
             public bool? SteamNotifyOnArticleReplied { get; set; }
+
             /// <summary>
-            /// Steam 通知开关：评论收到回复
+            ///     Steam 通知开关：评论收到回复
             /// </summary>
             public bool? SteamNotifyOnCommentReplied { get; set; }
+
             /// <summary>
-            /// Steam 通知开关：文章被认可
+            ///     Steam 通知开关：文章被认可
             /// </summary>
             public bool? SteamNotifyOnArticleLiked { get; set; }
+
             /// <summary>
-            /// Steam 通知开关：评论被认可
+            ///     Steam 通知开关：评论被认可
             /// </summary>
             public bool? SteamNotifyOnCommentLiked { get; set; }
 
             /// <summary>
-            /// 同步订阅开关
+            ///     同步订阅开关
             /// </summary>
             public bool? AutoSubscribeEnabled { get; set; }
+
             /// <summary>
-            /// 同步订阅周期
+            ///     同步订阅周期
             /// </summary>
             public int? AutoSubscribeDaySpan { get; set; }
         }

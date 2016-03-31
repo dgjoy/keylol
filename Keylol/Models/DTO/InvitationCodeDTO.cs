@@ -3,22 +3,22 @@
 namespace Keylol.Models.DTO
 {
     /// <summary>
-    /// InvitationCode DTO
+    ///     InvitationCode DTO
     /// </summary>
     public class InvitationCodeDto
     {
         /// <summary>
-        /// Id
+        ///     Id
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// 生成时间
+        ///     生成时间
         /// </summary>
         public DateTime? GenerateTime { get; set; }
 
         /// <summary>
-        /// 来源标记
+        ///     来源标记
         /// </summary>
         public string Source { get; set; }
     }

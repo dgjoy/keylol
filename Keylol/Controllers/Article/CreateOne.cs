@@ -43,7 +43,7 @@ namespace Keylol.Controllers.Article
 
             article.Type = requestDto.TypeName.ToEnum<ArticleType>();
             var userId = User.Identity.GetUserId();
-            var couponEvent = article.Type == ArticleType.简评 ? CouponEvent.发表简评 : CouponEvent.发表文章;
+            var couponEvent = article.Type == ArticleType.简评 ? CouponEvent.发布简评 : CouponEvent.发布文章;
             if (!_coupon.CanTriggerEvent(userId, couponEvent))
                 return Unauthorized();
 
@@ -154,55 +154,55 @@ namespace Keylol.Controllers.Article
         }
 
         /// <summary>
-        /// 请求 DTO（CreateOne 与 UpdateOne 共用）
+        ///     请求 DTO（CreateOne 与 UpdateOne 共用）
         /// </summary>
         public class ArticleCreateOrUpdateOneRequestDto
         {
             /// <summary>
-            /// 文章类型名称
+            ///     文章类型名称
             /// </summary>
             [Required]
             public string TypeName { get; set; }
 
             /// <summary>
-            /// 文章标题
+            ///     文章标题
             /// </summary>
             [Required]
             public string Title { get; set; }
 
             /// <summary>
-            /// 文章概要
+            ///     文章概要
             /// </summary>
             public string Summary { get; set; }
 
             /// <summary>
-            /// 文章内容
+            ///     文章内容
             /// </summary>
             [Required]
             public string Content { get; set; }
 
             /// <summary>
-            /// 文章推送到的据点 Id 列表
+            ///     文章推送到的据点 Id 列表
             /// </summary>
             public List<string> AttachedPointsId { get; set; }
 
             /// <summary>
-            /// 文章评价的据点 Id
+            ///     文章评价的据点 Id
             /// </summary>
             public string VoteForPointId { get; set; }
 
             /// <summary>
-            /// 文章打出的评分
+            ///     文章打出的评分
             /// </summary>
             public int? Vote { get; set; }
 
             /// <summary>
-            /// 亮点列表
+            ///     亮点列表
             /// </summary>
             public List<string> Pros { get; set; }
 
             /// <summary>
-            /// 缺点列表
+            ///     缺点列表
             /// </summary>
             public List<string> Cons { get; set; }
         }

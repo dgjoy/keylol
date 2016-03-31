@@ -55,7 +55,7 @@ namespace Keylol.Controllers.Comment
                 .Where(
                     c =>
                         c.ArticleId == article.Id &&
-                        requestDto.ReplyToCommentsSN.Contains(c.SequenceNumberForArticle))
+                        requestDto.ReplyToCommentsSn.Contains(c.SequenceNumberForArticle))
                 .ToListAsync();
 
             var comment = DbContext.Comments.Create();
@@ -147,27 +147,27 @@ namespace Keylol.Controllers.Comment
         }
 
         /// <summary>
-        /// 请求 DTO
+        ///     请求 DTO
         /// </summary>
         public class CommentCreateOneRequestDto
         {
             /// <summary>
-            /// 评论内容
+            ///     评论内容
             /// </summary>
             [Required]
             public string Content { get; set; }
 
             /// <summary>
-            /// 评论的文章 Id
+            ///     评论的文章 Id
             /// </summary>
             [Required]
             public string ArticleId { get; set; }
 
             /// <summary>
-            /// 回复的楼层号列表
+            ///     回复的楼层号列表
             /// </summary>
             [Required]
-            public List<int> ReplyToCommentsSN { get; set; }
+            public List<int> ReplyToCommentsSn { get; set; }
         }
     }
 }

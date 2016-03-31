@@ -3,14 +3,23 @@
 namespace Keylol.Models.DTO
 {
     /// <summary>
-    /// Comment DTO
+    ///     Comment DTO
     /// </summary>
     public class CommentDto
     {
+        /// <summary>
+        ///     创建空 DTO，需要手动填充
+        /// </summary>
         public CommentDto()
         {
         }
 
+        /// <summary>
+        ///     创建 DTO 并自动填充部分数据
+        /// </summary>
+        /// <param name="comment"><see cref="Comment" /> 对象</param>
+        /// <param name="includeContent">是否包含评论内容</param>
+        /// <param name="truncateContentTo">评论内容截取长度，0 表示不截取</param>
         public CommentDto(Comment comment, bool includeContent = true, int truncateContentTo = 0)
         {
             Id = comment.Id;
@@ -35,7 +44,7 @@ namespace Keylol.Models.DTO
         public string Content { get; set; }
 
         /// <summary>
-        ///     发表时间
+        ///     发布时间
         /// </summary>
         public DateTime PublishTime { get; set; }
 
@@ -47,7 +56,17 @@ namespace Keylol.Models.DTO
         /// <summary>
         ///     在文章中的楼层号
         /// </summary>
-        public int SequenceNumberForArticle { get; set; }
+        public int? SequenceNumberForArticle { get; set; }
+
+        /// <summary>
+        ///     所属文章作者识别码
+        /// </summary>
+        public string ArticleAuthorIdCode { get; set; }
+
+        /// <summary>
+        ///     所属文章是作者的第几篇文章
+        /// </summary>
+        public int? ArticleSequenceNumberForAuthor { get; set; }
 
         /// <summary>
         ///     认可数

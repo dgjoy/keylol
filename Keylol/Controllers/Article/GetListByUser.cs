@@ -20,15 +20,15 @@ namespace Keylol.Controllers.Article
         /// <param name="userId">用户 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
-        /// <param name="source">来源过滤器，1 表示发表的文章，2 表示认可的文章，默认 1</param>
-        /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
+        /// <param name="source">来源过滤器，1 表示发布的文章，2 表示认可的文章，默认 1</param>
+        /// <param name="beforeSn">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("user/{userId}")]
         [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
-            string articleTypeFilter = null, int source = 1, int beforeSN = int.MaxValue, int take = 30)
+            string articleTypeFilter = null, int source = 1, int beforeSn = int.MaxValue, int take = 30)
         {
             KeylolUser user;
             switch (idType)
@@ -52,7 +52,7 @@ namespace Keylol.Controllers.Article
             if (take > 50) take = 50;
             var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == user.Id);
             var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Articles)
-                .Where(a => a.SequenceNumber < beforeSN && a.Archived == ArchivedState.None)
+                .Where(a => a.SequenceNumber < beforeSn && a.Archived == ArchivedState.None)
                 .Select(a => new
                 {
                     article = a,
@@ -60,7 +60,7 @@ namespace Keylol.Controllers.Article
                     author = (KeylolUser) null
                 });
             var likedQuery = userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
-                .Where(l => l.Article.SequenceNumber < beforeSN && l.Article.Archived == ArchivedState.None)
+                .Where(l => l.Article.SequenceNumber < beforeSn && l.Article.Archived == ArchivedState.None)
                 .Select(l => new
                 {
                     article = l.Article,
@@ -106,7 +106,7 @@ namespace Keylol.Controllers.Article
                     g.reason,
                     g.candicates.FirstOrDefault(e => e.reason == g.reason).author,
                     voteForPoint = g.article.VoteForPoint,
-                    likeCount = g.article.Likes.Count(),
+                    likeCount = g.article.Likes.Count,
                     commentCount = g.article.Comments.Count,
                     type = g.article.Type
                 })

@@ -44,7 +44,7 @@ namespace Keylol.Controllers.Article
 	                (SELECT
                         COUNT(1)
                         FROM [dbo].[Likes]
-                        WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
+                        WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId])) AS [LikeCount]
 	                FROM (SELECT
 		                [t1].*,
 		                [t4].[IdCode] AS [AuthorIdCode]
@@ -86,7 +86,7 @@ namespace Keylol.Controllers.Article
 	            (SELECT
                     COUNT(1)
                     FROM [dbo].[Likes]
-                    WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
+                    WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId])) AS [LikeCount]
 	            FROM (SELECT
                     COUNT(1) OVER() AS [Count],
 		            [t1].*,

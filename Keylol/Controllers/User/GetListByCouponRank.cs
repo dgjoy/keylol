@@ -13,7 +13,7 @@ namespace Keylol.Controllers.User
     public partial class UserController
     {
         /// <summary>
-        /// 获取文券排行榜的用户列表，并在 HTTP Header 中设置 X-My-Rank 值表示自己的排名（0 表示第 100 名以后）
+        ///     获取文券排行榜的用户列表，并在 HTTP Header 中设置 X-My-Rank 值表示自己的排名（0 表示第 100 名以后）
         /// </summary>
         /// <param name="skip"> 起始位置，默认 0</param>
         /// <param name="take">获取数量，默认 20</param>

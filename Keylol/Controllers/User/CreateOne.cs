@@ -37,7 +37,10 @@ namespace Keylol.Controllers.User
                 return BadRequest(ModelState);
 
             var geetest = new Geetest();
-            if (!await geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode, requestDto.GeetestValidate))
+            if (
+                !await
+                    geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
+                        requestDto.GeetestValidate))
             {
                 ModelState.AddModelError("authCode", "true");
                 return BadRequest(ModelState);
@@ -113,10 +116,11 @@ namespace Keylol.Controllers.User
                 var inviter = await DbContext.Users.Where(u => u.IdCode == inviterIdCode).SingleOrDefaultAsync();
                 if (inviter != null)
                 {
+                    await DbContext.Entry(user).ReloadAsync();
                     user.InviterId = inviter.Id;
                     await DbContext.SaveChangesAsync();
                     await _coupon.Update(inviter.Id, CouponEvent.邀请注册, new {UserId = user.Id});
-                    await _coupon.Update(user.Id, CouponEvent.应邀注册, new {InvitorId = user.Id});
+                    await _coupon.Update(user.Id, CouponEvent.应邀注册, new {InviterId = user.Id});
                 }
             }
 
@@ -165,66 +169,66 @@ namespace Keylol.Controllers.User
         }
 
         /// <summary>
-        /// 请求 DTO
+        ///     请求 DTO
         /// </summary>
         public class UserCreateOneRequestDto
         {
             /// <summary>
-            /// 识别码
+            ///     识别码
             /// </summary>
             [Required]
             public string IdCode { get; set; }
 
             /// <summary>
-            /// 用户名
+            ///     用户名
             /// </summary>
             [Required]
             public string UserName { get; set; }
 
             /// <summary>
-            /// 密码
+            ///     密码
             /// </summary>
             [Required]
             public string Password { get; set; }
 
             /// <summary>
-            /// 头像
+            ///     头像
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string AvatarImage { get; set; }
 
             /// <summary>
-            /// SteamBindingToken Id
+            ///     SteamBindingToken Id
             /// </summary>
             [Required]
             public string SteamBindingTokenId { get; set; }
 
             /// <summary>
-            /// Steam 玩家昵称
+            ///     Steam 玩家昵称
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string SteamProfileName { get; set; }
 
             /// <summary>
-            /// 极验 Chanllenge
+            ///     极验 Chanllenge
             /// </summary>
             [Required]
             public string GeetestChallenge { get; set; }
 
             /// <summary>
-            /// 极验 Seccode
+            ///     极验 Seccode
             /// </summary>
             [Required]
             public string GeetestSeccode { get; set; }
 
             /// <summary>
-            /// 极验 Validate
+            ///     极验 Validate
             /// </summary>
             [Required]
             public string GeetestValidate { get; set; }
 
             /// <summary>
-            /// 邀请人识别码
+            ///     邀请人识别码
             /// </summary>
             public string Inviter { get; set; }
         }

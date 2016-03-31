@@ -13,7 +13,7 @@ namespace Keylol.Controllers.NormalPoint
     public partial class NormalPointController
     {
         /// <summary>
-        ///     取得指定游戏据点的相关据点（开发商、发行商、系列、流派、特性），这些据点在发表文章时会自动推送
+        ///     取得指定游戏据点的相关据点（开发商、发行商、系列、流派、特性），这些据点在发布文章时会自动推送
         /// </summary>
         /// <param name="id">游戏据点 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
@@ -44,22 +44,22 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         /// <summary>
-        /// 响应 DTO
+        ///     响应 DTO
         /// </summary>
         public class NormalPointGetListOfRelatedResponseDto
         {
             /// <summary>
-            /// Id
+            ///     Id
             /// </summary>
             public string Id { get; set; }
 
             /// <summary>
-            /// 名称
+            ///     名称
             /// </summary>
             public string Name { get; set; }
 
             /// <summary>
-            /// 识别码
+            ///     识别码
             /// </summary>
             public string IdCode { get; set; }
         }

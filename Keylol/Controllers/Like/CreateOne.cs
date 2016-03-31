@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Keylol.Services;
 using Keylol.Services.Contracts;
 using Microsoft.AspNet.Identity;
@@ -37,7 +40,7 @@ namespace Keylol.Controllers.Like
 
             var operatorId = User.Identity.GetUserId();
             var @operator = await DbContext.Users.SingleAsync(u => u.Id == operatorId);
-            if (!_coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
+            if (@operator.FreeLike <= 0 && !_coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
                 return Unauthorized();
 
             Models.Like like;
@@ -60,7 +63,7 @@ namespace Keylol.Controllers.Like
                     }
                     if (article.PrincipalId == operatorId)
                     {
-                        ModelState.AddModelError("vm.TargetId", "不能认可自己发表的文章。");
+                        ModelState.AddModelError("vm.TargetId", "不能认可自己发布的文章。");
                         return BadRequest(ModelState);
                     }
                     if (article.Archived != ArchivedState.None)
@@ -91,12 +94,15 @@ namespace Keylol.Controllers.Like
                         }
                     }
                     await _statistics.IncreaseUserLikeCount(article.PrincipalId);
-                    await _coupon.Update(operatorId, CouponEvent.发出认可, new {ArticleId = article.Id});
                     await _coupon.Update(article.PrincipalId, CouponEvent.获得认可, new
                     {
                         ArticleId = article.Id,
                         OperatorId = operatorId
                     });
+                    if (@operator.FreeLike > 0)
+                        @operator.FreeLike--;
+                    else
+                        await _coupon.Update(operatorId, CouponEvent.发出认可, new {ArticleId = article.Id});
                     break;
                 }
 
@@ -120,7 +126,7 @@ namespace Keylol.Controllers.Like
                     }
                     if (comment.CommentatorId == operatorId)
                     {
-                        ModelState.AddModelError("vm.TargetId", "不能认可自己发表的评论。");
+                        ModelState.AddModelError("vm.TargetId", "不能认可自己发布的评论。");
                         return BadRequest(ModelState);
                     }
                     if (comment.Archived != ArchivedState.None || comment.Article.Archived != ArchivedState.None)
@@ -152,12 +158,15 @@ namespace Keylol.Controllers.Like
                         }
                     }
                     await _statistics.IncreaseUserLikeCount(comment.CommentatorId);
-                    await _coupon.Update(operatorId, CouponEvent.发出认可, new {CommentId = comment.Id});
                     await _coupon.Update(comment.CommentatorId, CouponEvent.获得认可, new
                     {
                         CommentId = comment.Id,
                         OperatorId = operatorId
                     });
+                    if (@operator.FreeLike > 0)
+                        @operator.FreeLike--;
+                    else
+                        await _coupon.Update(operatorId, CouponEvent.发出认可, new {CommentId = comment.Id});
                     break;
                 }
 
@@ -166,23 +175,23 @@ namespace Keylol.Controllers.Like
             }
             like.OperatorId = operatorId;
             DbContext.Likes.Add(like);
-            await DbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
             return Created($"like/{like.Id}", "Liked!");
         }
 
         /// <summary>
-        /// 请求 DTO
+        ///     请求 DTO
         /// </summary>
         public class LikeCreateOneDto
         {
             /// <summary>
-            /// 认可目标 Id
+            ///     认可目标 Id
             /// </summary>
             [Required]
             public string TargetId { get; set; }
 
             /// <summary>
-            /// 认可目标类型
+            ///     认可目标类型
             /// </summary>
             public LikeType Type { get; set; }
         }

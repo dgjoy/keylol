@@ -127,43 +127,43 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         /// <summary>
-        /// 请求 DTO（CreateOneManually 与 UpdateOneById 公用）
+        ///     请求 DTO（CreateOneManually 与 UpdateOneById 公用）
         /// </summary>
         public class NormalPointCreateOrUpdateOneRequestDto
         {
             /// <summary>
-            /// 背景横幅
+            ///     背景横幅
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string BackgroundImage { get; set; }
 
             /// <summary>
-            /// 头像
+            ///     头像
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string AvatarImage { get; set; }
 
 
             /// <summary>
-            /// 中文名
+            ///     中文名
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string ChineseName { get; set; }
 
             /// <summary>
-            /// 英文索引
+            ///     英文索引
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string EnglishAliases { get; set; }
 
             /// <summary>
-            /// 中文索引
+            ///     中文索引
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string ChineseAliases { get; set; }
 
             /// <summary>
-            /// 描述
+            ///     描述
             /// </summary>
             [Required(AllowEmptyStrings = true)]
             public string Description { get; set; }
@@ -171,27 +171,27 @@ namespace Keylol.Controllers.NormalPoint
             #region Admin Editable
 
             /// <summary>
-            /// 英文名
+            ///     英文名
             /// </summary>
             public string EnglishName { get; set; }
 
             /// <summary>
-            /// 商店匹配名
+            ///     商店匹配名
             /// </summary>
             public string NameInSteamStore { get; set; }
 
             /// <summary>
-            /// 主显名称偏好
+            ///     主显名称偏好
             /// </summary>
             public PreferredNameType? PreferredName { get; set; }
 
             /// <summary>
-            /// 识别码
+            ///     识别码
             /// </summary>
             public string IdCode { get; set; }
 
             /// <summary>
-            /// 类型
+            ///     类型
             /// </summary>
             public NormalPointType? Type { get; set; }
 
@@ -200,57 +200,57 @@ namespace Keylol.Controllers.NormalPoint
             #region Game Point Only
 
             /// <summary>
-            /// Steam App ID
+            ///     Steam App ID
             /// </summary>
             public int? SteamAppId { get; set; }
 
             /// <summary>
-            /// 别名
+            ///     别名
             /// </summary>
             public string DisplayAliases { get; set; }
 
             /// <summary>
-            /// 发行日期
+            ///     发行日期
             /// </summary>
             public DateTime? ReleaseDate { get; set; }
 
             /// <summary>
-            /// 封面图片
+            ///     封面图片
             /// </summary>
             public string CoverImage { get; set; }
 
             /// <summary>
-            /// 开发商据点
+            ///     开发商据点
             /// </summary>
             public List<string> DeveloperPointsId { get; set; }
 
             /// <summary>
-            /// 发行商据点
+            ///     发行商据点
             /// </summary>
             public List<string> PublisherPointsId { get; set; }
 
             /// <summary>
-            /// 流派据点
+            ///     流派据点
             /// </summary>
             public List<string> GenrePointsId { get; set; }
 
             /// <summary>
-            /// 特性据点
+            ///     特性据点
             /// </summary>
             public List<string> TagPointsId { get; set; }
 
             /// <summary>
-            /// 主要平台据点
+            ///     主要平台据点
             /// </summary>
             public List<string> MajorPlatformPointsId { get; set; }
 
             /// <summary>
-            /// 次要平台据点
+            ///     次要平台据点
             /// </summary>
             public List<string> MinorPlatformPointsId { get; set; }
 
             /// <summary>
-            /// 系列据点
+            ///     系列据点
             /// </summary>
             public List<string> SeriesPointsId { get; set; }
 

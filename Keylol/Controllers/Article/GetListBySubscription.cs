@@ -18,14 +18,13 @@ namespace Keylol.Controllers.Article
         /// </summary>
         /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
         /// <param name="shortReviewFilter">简评来源过滤器，1 表示关注用户和认可，2 表示手动订阅据点，4 表示同步订阅列表，默认 1</param>
-        /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
+        /// <param name="beforeSn">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("subscription")]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
-            int shortReviewFilter = 1,
-            int beforeSN = int.MaxValue, int take = 30)
+            int shortReviewFilter = 1, int beforeSn = int.MaxValue, int take = 30)
         {
             var userId = User.Identity.GetUserId();
 
@@ -39,7 +38,7 @@ namespace Keylol.Controllers.Article
             var articleQuery =
                 userQuery.SelectMany(u => u.SubscribedPoints.OfType<Models.NormalPoint>())
                     .SelectMany(p => p.Articles.Select(a => new {article = a, fromPoint = p}))
-                    .Where(e => e.article.SequenceNumber < beforeSN &&
+                    .Where(e => e.article.SequenceNumber < beforeSn &&
                                 e.article.Archived == ArchivedState.None && e.article.Rejected == false &&
                                 (shortReviewFilter2 || e.article.Type != ArticleType.简评))
                     .Select(e => new
@@ -50,7 +49,7 @@ namespace Keylol.Controllers.Article
                         likedByUser = (KeylolUser) null
                     })
                     .Concat(profilePointsQuery.SelectMany(p => p.Articles)
-                        .Where(a => a.SequenceNumber < beforeSN &&
+                        .Where(a => a.SequenceNumber < beforeSn &&
                                     a.Archived == ArchivedState.None && a.Rejected == false &&
                                     (shortReviewFilter1 || a.Type != ArticleType.简评))
                         .Select(a => new
@@ -62,7 +61,7 @@ namespace Keylol.Controllers.Article
                         }))
                     .Concat(profilePointsQuery.Select(p => p.User)
                         .SelectMany(u => u.Likes.OfType<ArticleLike>())
-                        .Where(l => l.Article.SequenceNumber < beforeSN &&
+                        .Where(l => l.Article.SequenceNumber < beforeSn &&
                                     l.Article.Archived == ArchivedState.None && l.Article.Rejected == false &&
                                     (shortReviewFilter1 || l.Article.Type != ArticleType.简评))
                         .Select(l => new
@@ -76,7 +75,7 @@ namespace Keylol.Controllers.Article
                         .SelectMany(
                             s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
                         .Where(e =>
-                            e.article.SequenceNumber < beforeSN &&
+                            e.article.SequenceNumber < beforeSn &&
                             e.article.Archived == ArchivedState.None && e.article.Rejected == false &&
                             (shortReviewFilter3 || e.article.Type != ArticleType.简评))
                         .Select(e => new
@@ -120,7 +119,7 @@ namespace Keylol.Controllers.Article
                     g.fromPoints,
                     voteForPoint = g.article.VoteForPoint,
                     author = g.article.Principal.User,
-                    likeCount = g.article.Likes.Count(),
+                    likeCount = g.article.Likes.Count,
                     commentCount = g.article.Comments.Count,
                     type = g.article.Type
                 })

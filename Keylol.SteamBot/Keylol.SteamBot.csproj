@@ -155,9 +155,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator1.wsdl" />
-    <None Include="Service References\ServiceReference\SteamBotCoodinator1.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator4.xsd">
       <SubType>Designer</SubType>
     </None>

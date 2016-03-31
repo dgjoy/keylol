@@ -336,6 +336,10 @@
     <Compile Include="Migrations\201603301846134_UserCouponIndex.Designer.cs">
       <DependentUpon>201603301846134_UserCouponIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603311507186_UserFreeLike.cs" />
+    <Compile Include="Migrations\201603311507186_UserFreeLike.Designer.cs">
+      <DependentUpon>201603311507186_UserFreeLike.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -538,6 +542,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603301846134_UserCouponIndex.resx">
       <DependentUpon>201603301846134_UserCouponIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603311507186_UserFreeLike.resx">
+      <DependentUpon>201603311507186_UserFreeLike.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

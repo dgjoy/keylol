@@ -1,5 +1,4 @@
 ﻿using System.Web.Http;
-using Keylol.Models.DAL;
 using Keylol.Provider;
 
 namespace Keylol.Controllers.User
@@ -15,10 +14,14 @@ namespace Keylol.Controllers.User
         private readonly StatisticsProvider _statistics;
 
         /// <summary>
-        /// 创建 <see cref="UserController"/>
+        ///     创建 <see cref="UserController" />
         /// </summary>
-        /// <param name="coupon"><see cref="CouponProvider"/></param>
-        /// <param name="statistics"><see cref="StatisticsProvider"/></param>
+        /// <param name="coupon">
+        ///     <see cref="CouponProvider" />
+        /// </param>
+        /// <param name="statistics">
+        ///     <see cref="StatisticsProvider" />
+        /// </param>
         public UserController(CouponProvider coupon, StatisticsProvider statistics)
         {
             _coupon = coupon;

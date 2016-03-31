@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Newtonsoft.Json;
@@ -62,22 +60,30 @@ namespace Keylol.Provider
 
         private async Task Update(string userId, CouponEvent @event, int change, object description)
         {
-            try
+            var user = _dbContext.Users.Find(userId);
+            var log = _dbContext.CouponLogs.Create();
+            log.UserId = user.Id;
+            log.Change = change;
+            log.Event = @event;
+            log.Description = JsonConvert.SerializeObject(description);
+            _dbContext.CouponLogs.Add(log);
+            bool saveFailed;
+            do
             {
-                var user = _dbContext.Users.Find(userId);
-                var log = _dbContext.CouponLogs.Create();
-                log.User = user;
-                log.Change = change;
-                user.Coupon += log.Change;
-                log.Balance = user.Coupon;
-                log.Event = @event;
-                log.Description = JsonConvert.SerializeObject(description);
-                _dbContext.CouponLogs.Add(log);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-            }
+                try
+                {
+                    saveFailed = false;
+                    user.Coupon += log.Change;
+                    log.Balance = user.Coupon;
+                    log.CreateTime = DateTime.Now;
+                    await _dbContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    saveFailed = true;
+                    await e.Entries.Single().ReloadAsync();
+                }
+            } while (saveFailed);
         }
     }
 
@@ -101,10 +107,10 @@ namespace Keylol.Provider
                 case CouponEvent.应邀注册:
                     return 5;
 
-                case CouponEvent.发表文章:
+                case CouponEvent.发布文章:
                     return -3;
 
-                case CouponEvent.发表简评:
+                case CouponEvent.发布简评:
                     return -1;
 
                 case CouponEvent.发出认可:

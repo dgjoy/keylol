@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Swashbuckle.Swagger.Annotations;
@@ -9,7 +8,7 @@ namespace Keylol.Controllers.RedisCache
     public partial class RedisCacheController
     {
         /// <summary>
-        /// 获取指定 Key 的缓存值
+        ///     获取指定 Key 的缓存值
         /// </summary>
         /// <param name="key">要获取的 Key</param>
         [Route]
