@@ -30,9 +30,10 @@ namespace Keylol.Provider
         /// <param name="userId">用户 ID</param>
         /// <param name="event">文券事件</param>
         /// <param name="description">文券记录描述，会被序列化成 JSON 存储到数据库</param>
-        public async Task Update(string userId, CouponEvent @event, object description = null)
+        /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
+        public async Task Update(string userId, CouponEvent @event, object description = null, DateTime? logTime = null)
         {
-            await Update(userId, @event, @event.CouponChangeAmount(), description);
+            await Update(userId, @event, @event.CouponChangeAmount(), description, logTime);
         }
 
         /// <summary>
@@ -41,9 +42,10 @@ namespace Keylol.Provider
         /// <param name="userId">用户 ID</param>
         /// <param name="change">文券数量变化，正数为增加，负数为减少</param>
         /// <param name="description">文券记录描述</param>
-        public async Task Update(string userId, int change, object description = null)
+        /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
+        public async Task Update(string userId, int change, object description = null, DateTime? logTime = null)
         {
-            await Update(userId, CouponEvent.其他, change, description);
+            await Update(userId, CouponEvent.其他, change, description, logTime);
         }
 
         /// <summary>
@@ -58,7 +60,8 @@ namespace Keylol.Provider
             return user.Coupon + @event.CouponChangeAmount() >= 0;
         }
 
-        private async Task Update(string userId, CouponEvent @event, int change, object description)
+        private async Task Update(string userId, CouponEvent @event, int change, object description,
+            DateTime? logTime = null)
         {
             var user = _dbContext.Users.Find(userId);
             var log = _dbContext.CouponLogs.Create();
@@ -75,7 +78,7 @@ namespace Keylol.Provider
                     saveFailed = false;
                     user.Coupon += log.Change;
                     log.Balance = user.Coupon;
-                    log.CreateTime = DateTime.Now;
+                    log.CreateTime = logTime ?? DateTime.Now;
                     await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException e)
