@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Models.DTO;
 using Newtonsoft.Json;
 
 namespace Keylol.Provider
@@ -14,14 +16,17 @@ namespace Keylol.Provider
     public class CouponProvider
     {
         private readonly KeylolDbContext _dbContext;
+        private readonly RedisProvider _redis;
 
         /// <summary>
         /// 创建新 <see cref="CouponProvider"/>
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        public CouponProvider(KeylolDbContext dbContext)
+        /// <param name="redis"><see cref="RedisProvider"/></param>
+        public CouponProvider(KeylolDbContext dbContext, RedisProvider redis)
         {
             _dbContext = dbContext;
+            _redis = redis;
         }
 
         /// <summary>
@@ -33,7 +38,7 @@ namespace Keylol.Provider
         /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
         public async Task Update(string userId, CouponEvent @event, object description = null, DateTime? logTime = null)
         {
-            await Update(userId, @event, @event.CouponChangeAmount(), description, logTime);
+            await Update(userId, @event, @event.ToCouponChange(), description, logTime);
         }
 
         /// <summary>
@@ -57,18 +62,38 @@ namespace Keylol.Provider
         public bool CanTriggerEvent(string userId, CouponEvent @event)
         {
             var user = _dbContext.Users.Find(userId);
-            return user.Coupon + @event.CouponChangeAmount() >= 0;
+            return user.Coupon + @event.ToCouponChange() >= 0;
         }
+
+        /// <summary>
+        /// 取出用户未读的文券变动记录（取出之后将从未读记录中清空）
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <returns>未读的 CouponLog 列表</returns>
+        public async Task<List<CouponLogDto>> PopUnreadCouponLogs(string userId)
+        {
+            var redisDb = _redis.GetDatabase();
+            var cacheKey = UnreadLogsCacheKey(userId);
+            var logs = (await redisDb.ListRangeAsync(cacheKey))
+                .Select(v => RedisProvider.Deserialize<CouponLogDto>(v))
+                .ToList();
+            await redisDb.KeyDeleteAsync(cacheKey);
+            return logs;
+        }
+
+        private static string UnreadLogsCacheKey(string userId) => $"user-unread-coupon-logs:{userId}";
 
         private async Task Update(string userId, CouponEvent @event, int change, object description,
             DateTime? logTime = null)
         {
             var user = _dbContext.Users.Find(userId);
-            var log = _dbContext.CouponLogs.Create();
-            log.UserId = user.Id;
-            log.Change = change;
-            log.Event = @event;
-            log.Description = JsonConvert.SerializeObject(description);
+            var log = new CouponLog
+            {
+                Change = change,
+                Event = @event,
+                UserId = userId,
+                Description = JsonConvert.SerializeObject(description)
+            };
             _dbContext.CouponLogs.Add(log);
             bool saveFailed;
             do
@@ -87,6 +112,13 @@ namespace Keylol.Provider
                     await e.Entries.Single().ReloadAsync();
                 }
             } while (saveFailed);
+            await _redis.GetDatabase().ListRightPushAsync(UnreadLogsCacheKey(userId),
+                RedisProvider.Serialize(new CouponLogDto
+                {
+                    Change = log.Change,
+                    Event = log.Event,
+                    Balance = log.Balance
+                }));
         }
     }
 
@@ -100,7 +132,7 @@ namespace Keylol.Provider
         /// </summary>
         /// <param name="event">文券事件</param>
         /// <returns>变动量，可以为正数或者负数</returns>
-        public static int CouponChangeAmount(this CouponEvent @event)
+        public static int ToCouponChange(this CouponEvent @event)
         {
             switch (@event)
             {

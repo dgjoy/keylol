@@ -44,11 +44,12 @@ namespace Keylol.Controllers.Like
                 return Unauthorized();
 
             Models.Like like;
+            var free = false;
             switch (createOneDto.Type)
             {
                 case LikeType.ArticleLike:
                 {
-                    var existLike = await DbContext.ArticleLikes.SingleOrDefaultAsync(
+                    var existLike = await DbContext.ArticleLikes.FirstOrDefaultAsync(
                         l => l.ArticleId == createOneDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
                     {
@@ -100,15 +101,20 @@ namespace Keylol.Controllers.Like
                         OperatorId = operatorId
                     });
                     if (@operator.FreeLike > 0)
+                    {
                         @operator.FreeLike--;
+                        free = true;
+                    }
                     else
+                    {
                         await _coupon.Update(operatorId, CouponEvent.发出认可, new {ArticleId = article.Id});
+                    }
                     break;
                 }
 
                 case LikeType.CommentLike:
                 {
-                    var existLike = await DbContext.CommentLikes.SingleOrDefaultAsync(
+                    var existLike = await DbContext.CommentLikes.FirstOrDefaultAsync(
                         l => l.CommentId == createOneDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
                     {
@@ -164,9 +170,14 @@ namespace Keylol.Controllers.Like
                         OperatorId = operatorId
                     });
                     if (@operator.FreeLike > 0)
+                    {
                         @operator.FreeLike--;
+                        free = true;
+                    }
                     else
+                    {
                         await _coupon.Update(operatorId, CouponEvent.发出认可, new {CommentId = comment.Id});
+                    }
                     break;
                 }
 
@@ -176,7 +187,7 @@ namespace Keylol.Controllers.Like
             like.OperatorId = operatorId;
             DbContext.Likes.Add(like);
             await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
-            return Created($"like/{like.Id}", "Liked!");
+            return Created($"like/{like.Id}", free ? "Free" : string.Empty);
         }
 
         /// <summary>

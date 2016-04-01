@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Keylol.Provider;
 
 namespace Keylol.Controllers.CouponLog
 {
@@ -9,5 +10,15 @@ namespace Keylol.Controllers.CouponLog
     [RoutePrefix("coupon-log")]
     public partial class CouponLogController : KeylolApiController
     {
+        private readonly CouponProvider _coupon;
+
+        /// <summary>
+        /// 创建 <see cref="CouponLogController"/>
+        /// </summary>
+        /// <param name="coupon"><see cref="CouponProvider"/></param>
+        public CouponLogController(CouponProvider coupon)
+        {
+            _coupon = coupon;
+        }
     }
 }

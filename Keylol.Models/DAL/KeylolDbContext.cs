@@ -10,11 +10,14 @@ namespace Keylol.Models.DAL
 {
     public class KeylolDbContext : IdentityDbContext<KeylolUser>
     {
-        public static Action<string> LogAction;
+        /// <summary>
+        /// 当需要写入日志时
+        /// </summary>
+        public event EventHandler<string> WriteLog;
 
         public KeylolDbContext() : base("DefaultConnection", false)
         {
-            Database.Log = LogAction;
+            Database.Log = s => WriteLog?.Invoke(this, s);
         }
 
         public DbSet<Point> Points { get; set; }

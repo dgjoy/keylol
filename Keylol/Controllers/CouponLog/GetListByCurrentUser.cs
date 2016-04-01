@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
@@ -26,7 +25,7 @@ namespace Keylol.Controllers.CouponLog
         /// <param name="take">获取数量，默认 30，最大 50</param>
         [Route]
         [HttpGet]
-        [ResponseType(typeof (List<CouponLogGetListByCurrentUserResponseDto>))]
+        [ResponseType(typeof (List<CouponLogDto>))]
         public async Task<HttpResponseMessage> GetListByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
@@ -36,16 +35,16 @@ namespace Keylol.Controllers.CouponLog
                 .Skip(() => skip)
                 .Take(() => take)
                 .ToListAsync();
-            var result = new List<CouponLogGetListByCurrentUserResponseDto>(couponLogs.Count);
+            var result = new List<CouponLogDto>(couponLogs.Count);
             foreach (var couponLog in couponLogs)
             {
-                var dto = new CouponLogGetListByCurrentUserResponseDto
+                var dto = new CouponLogDto
                 {
                     Id = couponLog.Id,
                     Event = couponLog.Event,
                     Change = couponLog.Change,
                     Balance = couponLog.Balance,
-                    Time = couponLog.CreateTime,
+                    CreateTime = couponLog.CreateTime,
                     Description = JsonConvert.DeserializeObject(couponLog.Description)
                 };
 
@@ -127,42 +126,6 @@ namespace Keylol.Controllers.CouponLog
             var totalCount = await DbContext.CouponLogs.CountAsync(cl => cl.UserId == userId);
             response.Headers.SetTotalCount(totalCount);
             return response;
-        }
-
-        /// <summary>
-        ///     响应 DTO
-        /// </summary>
-        public class CouponLogGetListByCurrentUserResponseDto
-        {
-            /// <summary>
-            ///     Id
-            /// </summary>
-            public string Id { get; set; }
-
-            /// <summary>
-            ///     变动事件
-            /// </summary>
-            public CouponEvent Event { get; set; }
-
-            /// <summary>
-            ///     变动数值
-            /// </summary>
-            public int Change { get; set; }
-
-            /// <summary>
-            ///     变动后余额
-            /// </summary>
-            public int Balance { get; set; }
-
-            /// <summary>
-            ///     发生时间
-            /// </summary>
-            public DateTime Time { get; set; }
-
-            /// <summary>
-            ///     详细描述
-            /// </summary>
-            public dynamic Description { get; set; }
         }
     }
 }

@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using System.Web.Cors;
 using System.Web.Http;
 using Keylol;
+using Keylol.Hubs;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Security.Cookies;
@@ -111,7 +113,15 @@ namespace Keylol
             Container.RegisterSingleton<RedisProvider>();
 
             // Keylol DbContext
-            Container.Register<KeylolDbContext>(Lifestyle.Scoped);
+            Container.Register(() =>
+            {
+                var context = new KeylolDbContext();
+#if DEBUG
+                context.WriteLog +=
+                    (sender, s) => { GlobalHost.ConnectionManager.GetHubContext<DebugInfoHub>().Clients.All.Write(s); };
+#endif
+                return context;
+            }, Lifestyle.Scoped);
 
             // Coupon
             Container.RegisterWebApiRequest<CouponProvider>();

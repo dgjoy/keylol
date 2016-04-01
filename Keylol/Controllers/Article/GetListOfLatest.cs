@@ -61,7 +61,8 @@ namespace Keylol.Controllers.Article
                     commentCount = a.Comments.Count,
                     type = a.Type,
                     author = a.Principal.User,
-                    voteForPoint = a.VoteForPoint
+                    voteForPoint = a.VoteForPoint,
+                    attachedPoints = a.AttachedPoints
                 }).ToListAsync();
                 return Ok(articleEntries.Select(entry =>
                 {
@@ -78,7 +79,14 @@ namespace Keylol.Controllers.Article
                         articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                     }
                     if (entry.type != ArticleType.简评)
+                    {
                         articleDto.TruncateContent(128);
+                        if (entry.type != ArticleType.评)
+                        {
+                            articleDto.AttachedPoints =
+                                entry.attachedPoints.Select(p => new NormalPointDto(p, true)).ToList();
+                        }
+                    }
                     return articleDto;
                 }));
             }

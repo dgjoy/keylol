@@ -50,13 +50,13 @@ namespace Keylol.Provider
         /// <param name="data">要反序列化的 BSON</param>
         /// <param name="readRootValueAsArray">是否把 BSON 根看成数组</param>
         /// <returns>反序列化后的对象</returns>
-        public static object Deserialize(byte[] data, bool readRootValueAsArray = false)
+        public static T Deserialize<T>(byte[] data, bool readRootValueAsArray = false)
         {
             var ms = new MemoryStream(data);
             using (var reader = new BsonReader(ms) {ReadRootValueAsArray = readRootValueAsArray})
             {
                 var serializer = new JsonSerializer();
-                return serializer.Deserialize(reader);
+                return serializer.Deserialize<T>(reader);
             }
         }
 
