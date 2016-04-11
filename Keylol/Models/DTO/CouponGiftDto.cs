@@ -27,6 +27,7 @@ namespace Keylol.Models.DTO
             Id = gift.Id;
             Name = gift.Name;
             Descriptions = JsonConvert.DeserializeObject<List<string>>(gift.Descriptions);
+            ThumbnailImage = gift.ThumbnailImage;
             PreviewImage = gift.PreviewImage;
             AcceptedFields = JsonConvert.DeserializeObject<List<CouponGiftAcceptedFieldDto>>(gift.AcceptedFields);
             Price = gift.Price;
@@ -46,6 +47,11 @@ namespace Keylol.Models.DTO
         /// 描述
         /// </summary>
         public List<string> Descriptions { get; set; }
+
+        /// <summary>
+        /// 缩略图
+        /// </summary>
+        public string ThumbnailImage { get; set; }
 
         /// <summary>
         /// 预览图片

@@ -30,7 +30,7 @@ namespace Keylol.Controllers.CouponGift
                     Id = e.gift.Id,
                     Price = e.gift.Price,
                     Name = e.gift.Name,
-                    PreviewImage = e.gift.PreviewImage,
+                    ThumbnailImage = e.gift.ThumbnailImage,
                     RedeemCount = e.redeemCount
                 }));
         }
