@@ -30,7 +30,6 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
-    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -222,9 +221,15 @@
     <Compile Include="Controllers\Comment\CreateOne.cs" />
     <Compile Include="Controllers\Comment\GetListByArticleId.cs" />
     <Compile Include="Controllers\Comment\UpdateOneModeration.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CouponGiftOrderController.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\GetListOfAll.cs" />
+    <Compile Include="Controllers\CouponGift\GetOneById.cs" />
     <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
     <Compile Include="Controllers\CouponLog\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\CouponLog\GetListOfUnreadByCurrentUser.cs" />
+    <Compile Include="Controllers\CouponGift\CouponGiftController.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Favorite\FavoriteController.cs" />
     <Compile Include="Controllers\Favorite\DeleteOneById.cs" />
@@ -274,10 +279,6 @@
     <Compile Include="Provider\CouponProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Provider\StatisticsProvider.cs" />
-    <Compile Include="Services\Contracts\IImageGarageCoordinator.cs" />
-    <Compile Include="Services\ImageGarageCoordinator.svc.cs">
-      <DependentUpon>ImageGarageCoordinator.svc</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />
     <Compile Include="Utilities\Extensions.cs" />
@@ -296,17 +297,16 @@
     <Compile Include="Hubs\SteamBindingHub.cs" />
     <Compile Include="Provider\KeylolOAuthProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Contracts\ISteamBotCoordinator.cs" />
-    <Compile Include="Services\Validators\ClientValidator.cs" />
+    <Compile Include="Services\Contracts\ISteamBotCoodinator.cs" />
+    <Compile Include="Services\Providers\SteamBotIdentityValidator.cs" />
     <Compile Include="App_Start\Startup.cs" />
-    <Compile Include="Services\SteamBotCoordinator.svc.cs">
-      <DependentUpon>SteamBotCoordinator.svc</DependentUpon>
+    <Compile Include="Services\SteamBotCoodinator.svc.cs">
+      <DependentUpon>SteamBotCoodinator.svc</DependentUpon>
     </Compile>
     <Compile Include="Utilities\PredicateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Services\ImageGarageCoordinator.svc" />
-    <Content Include="Services\SteamBotCoordinator.svc" />
+    <Content Include="Services\SteamBotCoodinator.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

@@ -93,14 +93,19 @@ namespace Keylol.Controllers.User
             if (user.Id == visitorId)
             {
                 // 每日访问奖励
-                if (DateTime.Now.Date > user.LastVisitTime.Date)
+                if (DateTime.Now.Date > user.LastDailyRewardTime.Date)
                 {
-                    await _coupon.Update(user.Id, CouponEvent.每日访问);
-                    await DbContext.Entry(user).ReloadAsync();
+                    user.LastDailyRewardTime = DateTime.Now;
                     user.FreeLike = 5; // 免费认可重置
+                    try
+                    {
+                        await DbContext.SaveChangesAsync();
+                        await _coupon.Update(user.Id, CouponEvent.每日访问);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                    }
                 }
-                user.LastVisitTime = DateTime.Now;
-                await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
             }
 
             var visitorStaffClaim = string.IsNullOrEmpty(visitorId)

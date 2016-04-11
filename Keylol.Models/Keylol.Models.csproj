@@ -83,9 +83,12 @@
     <Compile Include="AutoSubscription.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
+    <Compile Include="CouponGift.cs" />
+    <Compile Include="CouponGiftOrder.cs" />
     <Compile Include="CouponLog.cs" />
     <Compile Include="DTO\ArticleDto.cs" />
     <Compile Include="DTO\CommentDto.cs" />
+    <Compile Include="DTO\CouponGiftDto.cs" />
     <Compile Include="DTO\CouponLogDto.cs" />
     <Compile Include="DTO\FavoriteDto.cs" />
     <Compile Include="DTO\ImageGarageRequestDto.cs" />
@@ -366,6 +369,14 @@
     <Compile Include="Migrations\201603311507186_UserFreeLike.Designer.cs">
       <DependentUpon>201603311507186_UserFreeLike.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604111105291_CouponGifts.cs" />
+    <Compile Include="Migrations\201604111105291_CouponGifts.Designer.cs">
+      <DependentUpon>201604111105291_CouponGifts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604111141225_LastDailyRewardTime.cs" />
+    <Compile Include="Migrations\201604111141225_LastDailyRewardTime.Designer.cs">
+      <DependentUpon>201604111141225_LastDailyRewardTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -571,6 +582,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603311507186_UserFreeLike.resx">
       <DependentUpon>201603311507186_UserFreeLike.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604111105291_CouponGifts.resx">
+      <DependentUpon>201604111105291_CouponGifts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604111141225_LastDailyRewardTime.resx">
+      <DependentUpon>201604111141225_LastDailyRewardTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

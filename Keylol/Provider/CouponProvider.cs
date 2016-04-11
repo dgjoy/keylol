@@ -18,6 +18,8 @@ namespace Keylol.Provider
         private readonly KeylolDbContext _dbContext;
         private readonly RedisProvider _redis;
 
+        private static string UnreadLogsCacheKey(string userId) => $"user-unread-coupon-logs:{userId}";
+
         /// <summary>
         /// 创建新 <see cref="CouponProvider"/>
         /// </summary>
@@ -42,48 +44,14 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 增减用户的文券数量，文券事件记为 <see cref="CouponEvent.其他"/>
-        /// </summary>
-        /// <param name="userId">用户 ID</param>
-        /// <param name="change">文券数量变化，正数为增加，负数为减少</param>
-        /// <param name="description">文券记录描述</param>
-        /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
-        public async Task Update(string userId, int change, object description = null, DateTime? logTime = null)
-        {
-            await Update(userId, CouponEvent.其他, change, description, logTime);
-        }
-
-        /// <summary>
-        /// 判断指定用户是否有足够文券触发指定事件
+        /// 增减用户的文券数量
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <param name="event">文券事件</param>
-        /// <returns>可以触发指定事件返回 true，不能则返回 false</returns>
-        public bool CanTriggerEvent(string userId, CouponEvent @event)
-        {
-            var user = _dbContext.Users.Find(userId);
-            return user.Coupon + @event.ToCouponChange() >= 0;
-        }
-
-        /// <summary>
-        /// 取出用户未读的文券变动记录（取出之后将从未读记录中清空）
-        /// </summary>
-        /// <param name="userId">用户 ID</param>
-        /// <returns>未读的 CouponLog 列表</returns>
-        public async Task<List<CouponLogDto>> PopUnreadCouponLogs(string userId)
-        {
-            var redisDb = _redis.GetDatabase();
-            var cacheKey = UnreadLogsCacheKey(userId);
-            var logs = (await redisDb.ListRangeAsync(cacheKey))
-                .Select(v => RedisProvider.Deserialize<CouponLogDto>(v))
-                .ToList();
-            await redisDb.KeyDeleteAsync(cacheKey);
-            return logs;
-        }
-
-        private static string UnreadLogsCacheKey(string userId) => $"user-unread-coupon-logs:{userId}";
-
-        private async Task Update(string userId, CouponEvent @event, int change, object description,
+        /// <param name="change">文券数量变化，正数为增加，负数为减少</param>
+        /// <param name="description">文券记录描述</param>
+        /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
+        public async Task Update(string userId, CouponEvent @event, int change, object description = null,
             DateTime? logTime = null)
         {
             var user = _dbContext.Users.Find(userId);
@@ -119,6 +87,34 @@ namespace Keylol.Provider
                     Event = log.Event,
                     Balance = log.Balance
                 }));
+        }
+
+        /// <summary>
+        /// 判断指定用户是否有足够文券触发指定事件
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <param name="event">文券事件</param>
+        /// <returns>可以触发指定事件返回 true，不能则返回 false</returns>
+        public bool CanTriggerEvent(string userId, CouponEvent @event)
+        {
+            var user = _dbContext.Users.Find(userId);
+            return user.Coupon + @event.ToCouponChange() >= 0;
+        }
+
+        /// <summary>
+        /// 取出用户未读的文券变动记录（取出之后将从未读记录中清空）
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <returns>未读的 CouponLog 列表</returns>
+        public async Task<List<CouponLogDto>> PopUnreadCouponLogs(string userId)
+        {
+            var redisDb = _redis.GetDatabase();
+            var cacheKey = UnreadLogsCacheKey(userId);
+            var logs = (await redisDb.ListRangeAsync(cacheKey))
+                .Select(v => RedisProvider.Deserialize<CouponLogDto>(v))
+                .ToList();
+            await redisDb.KeyDeleteAsync(cacheKey);
+            return logs;
         }
     }
 

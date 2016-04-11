@@ -47,6 +47,7 @@ namespace Keylol.Models
         获得认可,
         每日访问,
         邀请注册,
-        其他
+        其他,
+        兑换商品
     }
 }

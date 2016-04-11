@@ -92,7 +92,7 @@ namespace Keylol.Models
 
         public virtual ICollection<KeylolUser> InvitedUsers { get; set; }
 
-        public DateTime LastVisitTime { get; set; } = DateTime.Now;
+        public DateTime LastDailyRewardTime { get; set; } = DateTime.Now;
 
         public int FreeLike { get; set; } = 5;
 
