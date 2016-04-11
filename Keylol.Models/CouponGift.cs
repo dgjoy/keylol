@@ -22,6 +22,9 @@ namespace Keylol.Models
         public string Descriptions { get; set; } = "[]";
 
         [Required]
+        public string ThumbnailImage { get; set; }
+
+        [Required]
         public string PreviewImage { get; set; }
 
         /// <summary>
