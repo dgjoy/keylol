@@ -42,6 +42,8 @@ namespace Keylol.Models.DAL
         public DbSet<SteamStoreName> SteamStoreNames { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<CouponLog> CouponLogs { get; set; }
+        public DbSet<CouponGift> CouponGifts { get; set; }
+        public DbSet<CouponGiftOrder> CouponGiftOrders { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
