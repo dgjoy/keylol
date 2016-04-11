@@ -28,7 +28,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (NormalPointDTO))]
+        [ResponseType(typeof (NormalPointDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
         public async Task<IHttpActionResult> GetOneById(string id, bool stats = false, bool votes = false,
             bool subscribed = false, bool related = false, bool coverDescription = false,
@@ -40,7 +40,7 @@ namespace Keylol.Controllers.NormalPoint
             if (point == null)
                 return NotFound();
 
-            var pointDTO = new NormalPointDTO(point);
+            var pointDto = new NormalPointDto(point);
 
             if (stats)
             {
@@ -48,14 +48,14 @@ namespace Keylol.Controllers.NormalPoint
                     .Where(p => p.Id == point.Id)
                     .Select(p => new {articleCount = p.Articles.Count, subscriberCount = p.Subscribers.Count})
                     .SingleAsync();
-                pointDTO.ArticleCount = statsResult.articleCount;
-                pointDTO.SubscriberCount = statsResult.subscriberCount;
+                pointDto.ArticleCount = statsResult.articleCount;
+                pointDto.SubscriberCount = statsResult.subscriberCount;
             }
 
             if (subscribed)
             {
                 var userId = User.Identity.GetUserId();
-                pointDTO.Subscribed = await DbContext.Users.Where(u => u.Id == userId)
+                pointDto.Subscribed = await DbContext.Users.Where(u => u.Id == userId)
                     .SelectMany(u => u.SubscribedPoints)
                     .Select(p => p.Id)
                     .ContainsAsync(point.Id);
@@ -75,7 +75,7 @@ namespace Keylol.Controllers.NormalPoint
                             level5 = p.VoteByArticles.Count(a => a.Vote == 5)
                         })
                     .SingleAsync();
-                pointDTO.VoteStats = new Dictionary<int, int>
+                pointDto.VoteStats = new Dictionary<int, int>
                 {
                     [1] = votesResult.level1,
                     [2] = votesResult.level2,
@@ -90,31 +90,31 @@ namespace Keylol.Controllers.NormalPoint
                 switch (point.Type)
                 {
                     case NormalPointType.Game:
-                        pointDTO.SteamAppId = point.SteamAppId;
-                        pointDTO.DisplayAliases = point.DisplayAliases;
-                        pointDTO.ReleaseDate = point.ReleaseDate;
-                        pointDTO.DeveloperPoints =
-                            point.DeveloperPoints.Select(p => new NormalPointDTO(p, true)).ToList();
-                        pointDTO.PublisherPoints =
-                            point.PublisherPoints.Select(p => new NormalPointDTO(p, true)).ToList();
-                        pointDTO.SeriesPoints = point.SeriesPoints.Select(p => new NormalPointDTO(p, true)).ToList();
-                        pointDTO.GenrePoints = point.GenrePoints.Select(p => new NormalPointDTO(p, true)).ToList();
-                        pointDTO.TagPoints = point.TagPoints.Select(p => new NormalPointDTO(p, true)).ToList();
-                        pointDTO.MajorPlatformPoints =
-                            point.MajorPlatformPoints.Select(p => new NormalPointDTO(p, true)).ToList();
-                        pointDTO.MinorPlatformPoints =
-                            point.MinorPlatformPoints.Select(p => new NormalPointDTO(p, true)).ToList();
+                        pointDto.SteamAppId = point.SteamAppId;
+                        pointDto.DisplayAliases = point.DisplayAliases;
+                        pointDto.ReleaseDate = point.ReleaseDate;
+                        pointDto.DeveloperPoints =
+                            point.DeveloperPoints.Select(p => new NormalPointDto(p, true)).ToList();
+                        pointDto.PublisherPoints =
+                            point.PublisherPoints.Select(p => new NormalPointDto(p, true)).ToList();
+                        pointDto.SeriesPoints = point.SeriesPoints.Select(p => new NormalPointDto(p, true)).ToList();
+                        pointDto.GenrePoints = point.GenrePoints.Select(p => new NormalPointDto(p, true)).ToList();
+                        pointDto.TagPoints = point.TagPoints.Select(p => new NormalPointDto(p, true)).ToList();
+                        pointDto.MajorPlatformPoints =
+                            point.MajorPlatformPoints.Select(p => new NormalPointDto(p, true)).ToList();
+                        pointDto.MinorPlatformPoints =
+                            point.MinorPlatformPoints.Select(p => new NormalPointDto(p, true)).ToList();
                         break;
 
                     case NormalPointType.Manufacturer:
-                        pointDTO.GameCountAsDeveloper = point.DeveloperForPoints.Count;
-                        pointDTO.GameCountAsPublisher = point.PublisherForPoints.Count;
+                        pointDto.GameCountAsDeveloper = point.DeveloperForPoints.Count;
+                        pointDto.GameCountAsPublisher = point.PublisherForPoints.Count;
                         break;
 
                     case NormalPointType.Genre:
-                        pointDTO.GameCountAsGenre = point.GenreForPoints.Count;
-                        pointDTO.GameCountAsSeries = point.SeriesForPoints.Count;
-                        pointDTO.GameCountAsTag = point.TagForPoints.Count;
+                        pointDto.GameCountAsGenre = point.GenreForPoints.Count;
+                        pointDto.GameCountAsSeries = point.SeriesForPoints.Count;
+                        pointDto.GameCountAsTag = point.TagForPoints.Count;
                         break;
                 }
             }
@@ -122,18 +122,18 @@ namespace Keylol.Controllers.NormalPoint
             if (coverDescription)
             {
                 if (point.Type == NormalPointType.Game)
-                    pointDTO.CoverImage = point.CoverImage;
-                pointDTO.Description = point.Description;
+                    pointDto.CoverImage = point.CoverImage;
+                pointDto.Description = point.Description;
             }
 
             if (more)
             {
-                pointDTO.ChineseAliases = point.ChineseAliases;
-                pointDTO.EnglishAliases = point.EnglishAliases;
-                pointDTO.NameInSteamStore = string.Join("; ", point.SteamStoreNames.Select(n => n.Name));
+                pointDto.ChineseAliases = point.ChineseAliases;
+                pointDto.EnglishAliases = point.EnglishAliases;
+                pointDto.NameInSteamStore = string.Join("; ", point.SteamStoreNames.Select(n => n.Name));
             }
 
-            return Ok(pointDTO);
+            return Ok(pointDto);
         }
     }
 }

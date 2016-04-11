@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Provider;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -34,9 +33,6 @@ namespace Keylol.Controllers.Favorite
             favorite.PointId = pointId;
             DbContext.Favorites.Add(favorite);
             await DbContext.SaveChangesAsync();
-            await RedisProvider.GetInstance()
-                .GetDatabase()
-                .KeyDeleteAsync($"user:{userId}:favorites");
             return Created($"favorite/{favorite.Id}", favorite.Id);
         }
     }

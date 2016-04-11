@@ -23,7 +23,6 @@
   </MetadataSources>
   <Metadata>
     <MetadataFile FileName="SteamBotCoodinator4.xsd" MetadataType="Schema" ID="84f51bf4-0244-4621-86a5-2160dfe4cb56" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd3" />
-    <MetadataFile FileName="SteamBotCoodinator1.xsd" MetadataType="Schema" ID="dfaaf2cc-5906-4b0d-9e8d-620f5b453dee" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd5" />
     <MetadataFile FileName="SteamBotCoodinator41.xsd" MetadataType="Schema" ID="97b114d7-62ce-42f7-8d51-454ce1a47139" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd0" />
     <MetadataFile FileName="SteamBotCoodinator.xsd" MetadataType="Schema" ID="b7669287-b0f9-4081-9d72-be55b6396338" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd4" />
     <MetadataFile FileName="SteamBotCoodinator42.xsd" MetadataType="Schema" ID="c407fec9-b0f5-4f9f-a5ea-94aa7e76b41a" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd2" />

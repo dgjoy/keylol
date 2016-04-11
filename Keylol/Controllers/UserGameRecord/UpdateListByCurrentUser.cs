@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.Services;
 using Keylol.Services.Contracts;
@@ -22,7 +23,7 @@ namespace Keylol.Controllers.UserGameRecord
     public partial class UserGameRecordController
     {
         /// <summary>
-        /// 重新抓取当前登录用户的游戏记录，并重新同步订阅
+        ///     重新抓取当前登录用户的游戏记录，并重新同步订阅
         /// </summary>
         /// <param name="manual">是否是用户手动触发的同步，默认 false</param>
         [Route("my")]
@@ -50,7 +51,7 @@ namespace Keylol.Controllers.UserGameRecord
             {
                 user.LastGameUpdateTime = DateTime.Now;
                 user.LastGameUpdateSucceed = true;
-                await DbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                 try
                 {
                     var steamId = new SteamID();
@@ -165,10 +166,10 @@ namespace Keylol.Controllers.UserGameRecord
                             await DbContext.SaveChangesAsync();
                             return Ok(new
                             {
-                                MostPlayed = mostPlayed.Select(p => new NormalPointDTO(p)),
-                                RecentPlayed = recentPlayed.Select(p => new NormalPointDTO(p)),
-                                Genres = genres.Select(p => new NormalPointDTO(p)),
-                                Manufacturers = manufactures.Select(p => new NormalPointDTO(p))
+                                MostPlayed = mostPlayed.Select(p => new NormalPointDto(p)),
+                                RecentPlayed = recentPlayed.Select(p => new NormalPointDto(p)),
+                                Genres = genres.Select(p => new NormalPointDto(p)),
+                                Manufacturers = manufactures.Select(p => new NormalPointDto(p))
                             });
                         }
                         if (Regex.IsMatch(allGamesHtml, @"This profile is private\."))
@@ -179,7 +180,7 @@ namespace Keylol.Controllers.UserGameRecord
                 catch (Exception)
                 {
                     user.LastGameUpdateSucceed = false;
-                    await DbContext.SaveChangesAsync();
+                    await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                 }
             }
             return NotFound();

@@ -16,10 +16,6 @@ namespace Keylol.Models
         [Index]
         public DateTime PublishTime { get; set; } = DateTime.Now;
 
-        public bool ReadByArticleAuthor { get; set; } = false;
-
-        public bool IgnoredByArticleAuthor { get; set; } = false;
-
         [Required]
         public string CommentatorId { get; set; }
 
@@ -30,12 +26,20 @@ namespace Keylol.Models
 
         public virtual Article Article { get; set; }
 
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int SequenceNumber { get; set; }
+
         [Index]
         public int SequenceNumberForArticle { get; set; }
 
         public bool IgnoreNewLikes { get; set; } = false;
 
         public bool IgnoreNewComments { get; set; } = false;
+
+        public ArchivedState Archived { get; set; } = ArchivedState.None;
+
+        public bool Warned { get; set; } = false;
 
         public virtual ICollection<CommentLike> Likes { get; set; }
 

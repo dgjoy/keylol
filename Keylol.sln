@@ -32,49 +32,48 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.SteamBot", "Keylol.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.Models", "Keylol.Models\Keylol.Models.csproj", "{B6C4CDB8-070E-422C-B243-1D488AC1548A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.ImageGarage", "Keylol.ImageGarage\Keylol.ImageGarage.csproj", "{D5B0C243-BAB2-4760-A3D2-D750499104BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.ServiceBase", "Keylol.ServiceBase\Keylol.ServiceBase.csproj", "{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug Gay|Any CPU = Debug Gay|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}.Debug Gay|Any CPU.ActiveCfg = Debug Gay|Any CPU
-		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}.Debug Gay|Any CPU.Build.0 = Debug Gay|Any CPU
 		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D6BE600-2386-4739-8C5D-FB767B84F6EA}.Debug Gay|Any CPU.ActiveCfg = Debug Gay|Any CPU
-		{4D6BE600-2386-4739-8C5D-FB767B84F6EA}.Debug Gay|Any CPU.Build.0 = Debug Gay|Any CPU
 		{4D6BE600-2386-4739-8C5D-FB767B84F6EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D6BE600-2386-4739-8C5D-FB767B84F6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D6BE600-2386-4739-8C5D-FB767B84F6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D6BE600-2386-4739-8C5D-FB767B84F6EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A52D0AF5-DA1A-49D3-98A1-FFDD59B80D9A}.Debug Gay|Any CPU.ActiveCfg = Debug Gay|Any CPU
-		{A52D0AF5-DA1A-49D3-98A1-FFDD59B80D9A}.Debug Gay|Any CPU.Build.0 = Debug Gay|Any CPU
 		{A52D0AF5-DA1A-49D3-98A1-FFDD59B80D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A52D0AF5-DA1A-49D3-98A1-FFDD59B80D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A52D0AF5-DA1A-49D3-98A1-FFDD59B80D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A52D0AF5-DA1A-49D3-98A1-FFDD59B80D9A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{677D7DEE-3340-4084-B3DF-303CA9DB865B}.Debug Gay|Any CPU.ActiveCfg = Debug Gay|Any CPU
-		{677D7DEE-3340-4084-B3DF-303CA9DB865B}.Debug Gay|Any CPU.Build.0 = Debug Gay|Any CPU
 		{677D7DEE-3340-4084-B3DF-303CA9DB865B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{677D7DEE-3340-4084-B3DF-303CA9DB865B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{677D7DEE-3340-4084-B3DF-303CA9DB865B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{677D7DEE-3340-4084-B3DF-303CA9DB865B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Debug Gay|Any CPU.ActiveCfg = Debug Gay|Any CPU
-		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Debug Gay|Any CPU.Build.0 = Debug Gay|Any CPU
 		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22296DE4-31A4-4BEA-9601-5C468D50CAAC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Debug Gay|Any CPU.ActiveCfg = Debug Gay|Any CPU
-		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Debug Gay|Any CPU.Build.0 = Debug Gay|Any CPU
 		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6C4CDB8-070E-422C-B243-1D488AC1548A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5B0C243-BAB2-4760-A3D2-D750499104BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5B0C243-BAB2-4760-A3D2-D750499104BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5B0C243-BAB2-4760-A3D2-D750499104BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5B0C243-BAB2-4760-A3D2-D750499104BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -20,26 +20,32 @@ namespace Keylol.Controllers.Like
         [HttpDelete]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.NotFound, "当前用户并没有对指定的文章或评论发出过认可")]
-        public async Task<IHttpActionResult> DeleteOneById(string targetId, LikeVM.LikeType type)
+        public async Task<IHttpActionResult> DeleteOneById(string targetId, LikeType type)
         {
             var operatorId = User.Identity.GetUserId();
             switch (type)
             {
-                case LikeVM.LikeType.ArticleLike:
-                    var existArticleLike = await DbContext.ArticleLikes.SingleOrDefaultAsync(
-                        l => l.ArticleId == targetId && l.OperatorId == operatorId && l.Backout == false);
-                    if (existArticleLike == null)
+                case LikeType.ArticleLike:
+                {
+                    var existLikes = await DbContext.ArticleLikes.Where(
+                        l => l.ArticleId == targetId && l.OperatorId == operatorId).ToListAsync();
+                    if (existLikes.Count == 0)
                         return NotFound();
-                    existArticleLike.Backout = true;
+                    existLikes.ForEach(async l => { await _statistics.DecreaseUserLikeCount(l.Article.PrincipalId); });
+                    DbContext.Likes.RemoveRange(existLikes);
                     break;
+                }
 
-                case LikeVM.LikeType.CommentLike:
-                    var existCommentLike = await DbContext.CommentLikes.SingleOrDefaultAsync(
-                        l => l.CommentId == targetId && l.OperatorId == operatorId && l.Backout == false);
-                    if (existCommentLike == null)
+                case LikeType.CommentLike:
+                {
+                    var existLikes = await DbContext.CommentLikes.Where(
+                        l => l.CommentId == targetId && l.OperatorId == operatorId).ToListAsync();
+                    if (existLikes.Count == 0)
                         return NotFound();
-                    existCommentLike.Backout = true;
+                    existLikes.ForEach(async l => { await _statistics.DecreaseUserLikeCount(l.Comment.CommentatorId); });
+                    DbContext.Likes.RemoveRange(existLikes);
                     break;
+                }
 
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-using System.IdentityModel.Selectors;
-using System.Linq;
+﻿using System.IdentityModel.Selectors;
 using System.ServiceModel;
 using System.ServiceModel.Security;
 using Keylol.Models.DAL;

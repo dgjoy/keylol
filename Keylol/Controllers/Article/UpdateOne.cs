@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
-using Keylol.Provider;
+using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
@@ -21,15 +21,15 @@ namespace Keylol.Controllers.Article
         ///     编辑指定文章
         /// </summary>
         /// <param name="id">文章 Id</param>
-        /// <param name="vm">文章相关属性</param>
+        /// <param name="requestDto">文章相关属性</param>
         [Route("{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> UpdateOne(string id, UpdateOneVM vm)
+        public async Task<IHttpActionResult> UpdateOne(string id, ArticleCreateOrUpdateOneRequestDto requestDto)
         {
-            if (vm == null)
+            if (requestDto == null)
             {
                 ModelState.AddModelError("vm", "Invalid view model.");
                 return BadRequest(ModelState);
@@ -47,17 +47,11 @@ namespace Keylol.Controllers.Article
             if (article.PrincipalId != editorId && editorStaffClaim != StaffClaim.Operator)
                 return Unauthorized();
 
-            var type = await DbContext.ArticleTypes.SingleOrDefaultAsync(t => t.Name == vm.TypeName);
-            if (type == null)
-            {
-                ModelState.AddModelError("vm.TypeName", "Invalid article type.");
-                return BadRequest(ModelState);
-            }
-            article.TypeId = type.Id;
+            article.Type = requestDto.TypeName.ToEnum<ArticleType>();
 
-            if (type.AllowVote)
+            if (article.Type.AllowVote())
             {
-                if (vm.VoteForPointId == null)
+                if (requestDto.VoteForPointId == null)
                 {
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
                     return BadRequest(ModelState);
@@ -68,7 +62,7 @@ namespace Keylol.Controllers.Article
                     .Include(p => p.SeriesPoints)
                     .Include(p => p.GenrePoints)
                     .Include(p => p.TagPoints)
-                    .SingleOrDefaultAsync(p => p.Id == vm.VoteForPointId);
+                    .SingleOrDefaultAsync(p => p.Id == requestDto.VoteForPointId);
                 if (voteForPoint == null)
                 {
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
@@ -80,15 +74,15 @@ namespace Keylol.Controllers.Article
                     return BadRequest(ModelState);
                 }
                 article.VoteForPointId = voteForPoint.Id;
-                article.Vote = vm.Vote > 5 ? 5 : (vm.Vote < 1 ? 1 : vm.Vote);
+                article.Vote = requestDto.Vote > 5 ? 5 : (requestDto.Vote < 1 ? 1 : requestDto.Vote);
 
-                if (vm.Pros == null)
-                    vm.Pros = new List<string>();
-                article.Pros = JsonConvert.SerializeObject(vm.Pros);
+                if (requestDto.Pros == null)
+                    requestDto.Pros = new List<string>();
+                article.Pros = JsonConvert.SerializeObject(requestDto.Pros);
 
-                if (vm.Cons == null)
-                    vm.Cons = new List<string>();
-                article.Cons = JsonConvert.SerializeObject(vm.Cons);
+                if (requestDto.Cons == null)
+                    requestDto.Cons = new List<string>();
+                article.Cons = JsonConvert.SerializeObject(requestDto.Cons);
 
                 article.AttachedPoints = voteForPoint.DeveloperPoints
                     .Concat(voteForPoint.PublisherPoints)
@@ -104,18 +98,18 @@ namespace Keylol.Controllers.Article
                 article.Pros = string.Empty;
                 article.Cons = string.Empty;
 
-                if (vm.AttachedPointsId == null)
+                if (requestDto.AttachedPointsId == null)
                 {
                     ModelState.AddModelError("vm.AttachedPointsId", "非评价类文章必须手动推送据点");
                     return BadRequest(ModelState);
                 }
-                if (vm.AttachedPointsId.Count > 50)
+                if (requestDto.AttachedPointsId.Count > 50)
                 {
                     ModelState.AddModelError("vm.AttachedPointsId", "推送据点数量太多");
                     return BadRequest(ModelState);
                 }
                 article.AttachedPoints = await DbContext.NormalPoints
-                    .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(vm.AttachedPointsId,
+                    .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(requestDto.AttachedPointsId,
                         point => point.Id)).ToListAsync();
             }
 
@@ -132,12 +126,12 @@ namespace Keylol.Controllers.Article
                 OldTitle = article.Title
             });
 
-            article.Title = vm.Title;
-            article.Content = vm.Content;
+            article.Title = requestDto.Title;
+            article.Content = requestDto.Content;
 
-            if (type.Name == "简评")
+            if (article.Type == ArticleType.简评)
             {
-                if (vm.Content.Length > 199)
+                if (requestDto.Content.Length > 199)
                 {
                     ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
                     return BadRequest(ModelState);
@@ -147,46 +141,23 @@ namespace Keylol.Controllers.Article
             }
             else
             {
-                if (string.IsNullOrEmpty(vm.Summary))
+                if (string.IsNullOrEmpty(requestDto.Summary))
                 {
-                    await SanitizeArticle(article, true, editorStaffClaim == StaffClaim.Operator);
+                    SanitizeArticle(article, true);
                 }
                 else
                 {
-                    article.UnstyledContent = vm.Summary;
-                    await SanitizeArticle(article, false, editorStaffClaim == StaffClaim.Operator);
+                    article.UnstyledContent = requestDto.Summary;
+                    SanitizeArticle(article, false);
                 }
             }
 
             await DbContext.SaveChangesAsync();
-            await RedisProvider.GetInstance()
-                .GetDatabase()
-                .KeyDeleteAsync($"user:{article.PrincipalId}:profile.timeline");
+            _mqChannel.SendRequest(MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            {
+                ArticleId = article.Id
+            });
             return Ok();
-        }
-
-        public class UpdateOneVM
-        {
-            [Required]
-            public string TypeName { get; set; }
-
-            [Required]
-            public string Title { get; set; }
-
-            public string Summary { get; set; }
-
-            [Required]
-            public string Content { get; set; }
-
-            public List<string> AttachedPointsId { get; set; }
-
-            public string VoteForPointId { get; set; }
-
-            public int? Vote { get; set; }
-
-            public List<string> Pros { get; set; }
-
-            public List<string> Cons { get; set; }
         }
     }
 }

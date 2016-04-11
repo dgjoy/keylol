@@ -2,21 +2,17 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Validation;
-using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading;
 using System.Threading.Tasks;
 using DevTrends.WCFDataAnnotations;
 using Keylol.Hubs;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
-using Keylol.Models.ViewModels;
 using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
-using StatusClaim = Keylol.Utilities.StatusClaim;
+using StatusClaim = Keylol.Services.Contracts.StatusClaim;
 
 namespace Keylol.Services
 {
@@ -24,11 +20,8 @@ namespace Keylol.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class SteamBotCoodinator : ISteamBotCoodinator
     {
-        private bool _botAllocated;
         private readonly string _sessionId = OperationContext.Current.SessionId;
-
-        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients { get; } =
-            new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
+        private bool _botAllocated;
 
         public SteamBotCoodinator()
         {
@@ -48,7 +41,10 @@ namespace Keylol.Services
             }
         }
 
-        public async Task<IEnumerable<SteamBotDTO>> AllocateBots()
+        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients { get; } =
+            new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
+
+        public async Task<IEnumerable<SteamBotDto>> AllocateBots()
         {
             if (_botAllocated)
             {
@@ -67,11 +63,11 @@ namespace Keylol.Services
                     bot.SessionId = _sessionId;
                 }
                 await dbContext.SaveChangesAsync();
-                return bots.Select(bot => new SteamBotDTO(bot, true));
+                return bots.Select(bot => new SteamBotDto(bot, true));
             }
         }
 
-        public async Task UpdateBots(IList<SteamBotVM> vms)
+        public async Task UpdateBots(IList<SteamBotUpdateRequestDto> vms)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -93,17 +89,17 @@ namespace Keylol.Services
             }
         }
 
-        public async Task<UserDTO> GetUserBySteamId(string steamId)
+        public async Task<UserDto> GetUserBySteamId(string steamId)
         {
             using (var dbContext = new KeylolDbContext())
             {
                 var user =
                     await dbContext.Users.Include(u => u.SteamBot).SingleOrDefaultAsync(u => u.SteamId == steamId);
-                return user == null ? null : new UserDTO(user, true, true) {SteamBot = new SteamBotDTO(user.SteamBot)};
+                return user == null ? null : new UserDto(user, true, true) {SteamBot = new SteamBotDto(user.SteamBot)};
             }
         }
 
-        public async Task<IList<UserDTO>> GetUsersBySteamIds(IList<string> steamIds)
+        public async Task<IList<UserDto>> GetUsersBySteamIds(IList<string> steamIds)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -111,12 +107,12 @@ namespace Keylol.Services
                     await
                         dbContext.Users.Include(u => u.SteamBot).Where(u => steamIds.Contains(u.SteamId)).ToListAsync();
                 return
-                    users.Select(user => new UserDTO(user, true, true) {SteamBot = new SteamBotDTO(user.SteamBot)})
+                    users.Select(user => new UserDto(user, true, true) {SteamBot = new SteamBotDto(user.SteamBot)})
                         .ToList();
             }
         }
 
-        public async Task SetUserStatus(string steamId, Contracts.StatusClaim status)
+        public async Task SetUserStatus(string steamId, StatusClaim status)
         {
             using (var dbContext = new KeylolDbContext())
             {
@@ -126,12 +122,12 @@ namespace Keylol.Services
                     var userManager = KeylolUserManager.Create(dbContext);
                     switch (status)
                     {
-                        case Contracts.StatusClaim.Normal:
+                        case StatusClaim.Normal:
                             await userManager.RemoveStatusClaimAsync(user.Id);
                             break;
 
-                        case Contracts.StatusClaim.Probationer:
-                            await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                        case StatusClaim.Probationer:
+                            await userManager.SetStatusClaimAsync(user.Id, Utilities.StatusClaim.Probationer);
                             break;
                     }
                 }

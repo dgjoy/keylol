@@ -8,7 +8,6 @@ using System.Web.Http.Description;
 using Keylol.Controllers.User;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Provider;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.Article
@@ -21,17 +20,16 @@ namespace Keylol.Controllers.Article
         /// <param name="userId">用户 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         /// <param name="articleTypeFilter">文章类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
-        /// <param name="source">来源过滤器，1 表示发表的文章，2 表示认可的文章，默认 1</param>
-        /// <param name="beforeSN">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
+        /// <param name="source">来源过滤器，1 表示发布的文章，2 表示认可的文章，默认 1</param>
+        /// <param name="beforeSn">获取编号小于这个数字的文章，用于分块加载，默认 2147483647</param>
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("user/{userId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
-            string articleTypeFilter = null, int source = 1, int beforeSN = int.MaxValue, int take = 30)
+            string articleTypeFilter = null, int source = 1, int beforeSn = int.MaxValue, int take = 30)
         {
-            var redisDb = RedisProvider.GetInstance().GetDatabase();
             KeylolUser user;
             switch (idType)
             {
@@ -50,31 +48,23 @@ namespace Keylol.Controllers.Article
                 default:
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
             }
-            var cacheKey = $"user:{user.Id}:profile.timeline";
-            var useCache = articleTypeFilter == null && source == 3 && beforeSN == int.MaxValue;
-            if (useCache)
-            {
-                var cache = await redisDb.StringGetAsync(cacheKey);
-                if (cache.HasValue)
-                    return Ok(RedisProvider.Deserialize(cache, true));
-            }
 
             if (take > 50) take = 50;
             var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == user.Id);
-            var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Entries.OfType<Models.Article>())
-                .Where(a => a.SequenceNumber < beforeSN)
+            var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Articles)
+                .Where(a => a.SequenceNumber < beforeSn && a.Archived == ArchivedState.None)
                 .Select(a => new
                 {
                     article = a,
-                    reason = ArticleDTO.TimelineReasonType.Publish,
+                    reason = ArticleDto.TimelineReasonType.Publish,
                     author = (KeylolUser) null
                 });
             var likedQuery = userQuery.SelectMany(u => u.Likes.OfType<ArticleLike>())
-                .Where(l => l.Backout == false && l.Article.SequenceNumber < beforeSN)
+                .Where(l => l.Article.SequenceNumber < beforeSn && l.Article.Archived == ArchivedState.None)
                 .Select(l => new
                 {
                     article = l.Article,
-                    reason = ArticleDTO.TimelineReasonType.Like,
+                    reason = ArticleDto.TimelineReasonType.Like,
                     author = l.Article.Principal.User
                 });
             var published = (source & 1) != 0;
@@ -94,11 +84,11 @@ namespace Keylol.Controllers.Article
             }
             if (articleTypeFilter != null)
             {
-                var typesName = articleTypeFilter.Split(',').Select(s => s.Trim()).ToList();
-                articleQuery = articleQuery.Where(PredicateBuilder.Contains(typesName, a => a.article.Type.Name, new
+                var types = articleTypeFilter.Split(',').Select(s => s.Trim().ToEnum<ArticleType>()).ToList();
+                articleQuery = articleQuery.Where(PredicateBuilder.Contains(types, a => a.article.Type, new
                 {
                     article = (Models.Article) null,
-                    reason = ArticleDTO.TimelineReasonType.Like,
+                    reason = ArticleDto.TimelineReasonType.Like,
                     author = (KeylolUser) null
                 }));
             }
@@ -116,36 +106,33 @@ namespace Keylol.Controllers.Article
                     g.reason,
                     g.candicates.FirstOrDefault(e => e.reason == g.reason).author,
                     voteForPoint = g.article.VoteForPoint,
-                    likeCount = g.article.Likes.Count(l => l.Backout == false),
+                    likeCount = g.article.Likes.Count,
                     commentCount = g.article.Comments.Count,
-                    typeName = g.article.Type.Name
+                    type = g.article.Type
                 })
                 .ToListAsync();
-            var result = articleEntries.Select(entry =>
+            return Ok(articleEntries.Select(entry =>
             {
-                var articleDTO = new ArticleDTO(entry.article, true, 256, true)
+                var articleDto = new ArticleDto(entry.article, true, 256, true)
                 {
                     TimelineReason = entry.reason,
                     LikeCount = entry.likeCount,
                     CommentCount = entry.commentCount,
-                    TypeName = entry.typeName,
-                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDTO(entry.voteForPoint, true)
+                    TypeName = entry.type.ToString(),
+                    VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
                 if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
                 {
-                    articleDTO.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
+                    articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }
-                if (articleDTO.TypeName != "简评")
-                    articleDTO.TruncateContent(128);
-                if (entry.reason != ArticleDTO.TimelineReasonType.Publish)
+                if (entry.type != ArticleType.简评)
+                    articleDto.TruncateContent(128);
+                if (entry.reason != ArticleDto.TimelineReasonType.Publish)
                 {
-                    articleDTO.Author = new UserDTO(entry.author);
+                    articleDto.Author = new UserDto(entry.author);
                 }
-                return articleDTO;
-            }).ToList();
-            if (useCache)
-                await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(7));
-            return Ok(result);
+                return articleDto;
+            }).ToList());
         }
     }
 }

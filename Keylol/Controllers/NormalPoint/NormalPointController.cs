@@ -5,18 +5,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
-using Keylol.Models.ViewModels;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.NormalPoint
 {
+    /// <summary>
+    ///     普通据点 Controller
+    /// </summary>
     [Authorize]
     [RoutePrefix("normal-point")]
     public partial class NormalPointController : KeylolApiController
     {
+        /// <summary>
+        ///     Id 类型
+        /// </summary>
         public enum IdType
         {
+            /// <summary>
+            ///     Id
+            /// </summary>
             Id,
+
+            /// <summary>
+            ///     识别码
+            /// </summary>
             IdCode
         }
 
@@ -35,55 +47,55 @@ namespace Keylol.Controllers.NormalPoint
             }
         }
 
-        private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint, NormalPointVM vm,
-            string editorStaffClaim, bool keepSteamAppId = false)
+        private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint,
+            NormalPointCreateOrUpdateOneRequestDto requestDto, string editorStaffClaim, bool keepSteamAppId = false)
         {
-            if (vm.DisplayAliases == null)
+            if (requestDto.DisplayAliases == null)
             {
                 ModelState.AddModelError("vm.DisplayAliases", "游戏据点必须填写别名");
                 return false;
             }
-            if (vm.CoverImage == null)
+            if (requestDto.CoverImage == null)
             {
                 ModelState.AddModelError("vm.CoverImage", "游戏据点必须填写封面图片");
                 return false;
             }
-            if (!vm.CoverImage.IsTrustedUrl())
+            if (!requestDto.CoverImage.IsTrustedUrl())
             {
                 ModelState.AddModelError("vm.CoverImage", "不允许使用可不信图片来源");
                 return false;
             }
-            if (vm.DeveloperPointsId == null)
+            if (requestDto.DeveloperPointsId == null)
             {
                 ModelState.AddModelError("vm.DeveloperPointsId", "游戏据点必须填写开发商据点");
                 return false;
             }
-            if (vm.PublisherPointsId == null)
+            if (requestDto.PublisherPointsId == null)
             {
                 ModelState.AddModelError("vm.PublisherPointsId", "游戏据点必须填写发行商据点");
                 return false;
             }
-            if (vm.GenrePointsId == null)
+            if (requestDto.GenrePointsId == null)
             {
                 ModelState.AddModelError("vm.GenrePointsId", "游戏据点必须填写类型据点");
                 return false;
             }
-            if (vm.TagPointsId == null)
+            if (requestDto.TagPointsId == null)
             {
                 ModelState.AddModelError("vm.TagPointsId", "游戏据点必须填写特性据点");
                 return false;
             }
-            if (vm.MajorPlatformPointsId == null)
+            if (requestDto.MajorPlatformPointsId == null)
             {
                 ModelState.AddModelError("vm.MajorPlatformPointsId", "游戏据点必须填写主要平台据点");
                 return false;
             }
-            if (vm.MinorPlatformPointsId == null)
+            if (requestDto.MinorPlatformPointsId == null)
             {
                 ModelState.AddModelError("vm.MinorPlatformPointsId", "游戏据点必须填写次要平台据点");
                 return false;
             }
-            if (vm.SeriesPointsId == null)
+            if (requestDto.SeriesPointsId == null)
             {
                 ModelState.AddModelError("vm.SeriesPointsId", "游戏据点必须填写系列据点");
                 return false;
@@ -92,43 +104,55 @@ namespace Keylol.Controllers.NormalPoint
             {
                 if (!keepSteamAppId)
                 {
-                    if (vm.SteamAppId == null)
+                    if (requestDto.SteamAppId == null)
                     {
                         ModelState.AddModelError("vm.SteamAppId", "游戏据点的 App ID 不能为空");
                         return false;
                     }
-                    normalPoint.SteamAppId = vm.SteamAppId.Value;
+                    normalPoint.SteamAppId = requestDto.SteamAppId.Value;
                 }
-                if (vm.ReleaseDate == null)
+                if (requestDto.ReleaseDate == null)
                 {
                     ModelState.AddModelError("vm.ReleaseDate", "游戏据点的面世日期不能为空");
                     return false;
                 }
-                normalPoint.ReleaseDate = vm.ReleaseDate.Value;
+                normalPoint.ReleaseDate = requestDto.ReleaseDate.Value;
             }
-            normalPoint.DisplayAliases = vm.DisplayAliases;
-            normalPoint.CoverImage = vm.CoverImage;
+            normalPoint.DisplayAliases = requestDto.DisplayAliases;
+            normalPoint.CoverImage = requestDto.CoverImage;
 
             normalPoint.DeveloperPoints = await DbContext.NormalPoints
-                .Where(p => p.Type == NormalPointType.Manufacturer && vm.DeveloperPointsId.Contains(p.Id))
+                .Where(
+                    p =>
+                        p.Type == NormalPointType.Manufacturer &&
+                        requestDto.DeveloperPointsId.Contains(p.Id))
                 .ToListAsync();
             normalPoint.PublisherPoints = await DbContext.NormalPoints
-                .Where(p => p.Type == NormalPointType.Manufacturer && vm.PublisherPointsId.Contains(p.Id))
+                .Where(
+                    p =>
+                        p.Type == NormalPointType.Manufacturer &&
+                        requestDto.PublisherPointsId.Contains(p.Id))
                 .ToListAsync();
             normalPoint.GenrePoints = await DbContext.NormalPoints
-                .Where(p => p.Type == NormalPointType.Genre && vm.GenrePointsId.Contains(p.Id))
+                .Where(p => p.Type == NormalPointType.Genre && requestDto.GenrePointsId.Contains(p.Id))
                 .ToListAsync();
             normalPoint.TagPoints = await DbContext.NormalPoints
-                .Where(p => p.Type == NormalPointType.Genre && vm.TagPointsId.Contains(p.Id))
+                .Where(p => p.Type == NormalPointType.Genre && requestDto.TagPointsId.Contains(p.Id))
                 .ToListAsync();
             normalPoint.MajorPlatformPoints = await DbContext.NormalPoints
-                .Where(p => p.Type == NormalPointType.Platform && vm.MajorPlatformPointsId.Contains(p.Id))
+                .Where(
+                    p =>
+                        p.Type == NormalPointType.Platform &&
+                        requestDto.MajorPlatformPointsId.Contains(p.Id))
                 .ToListAsync();
             normalPoint.MinorPlatformForPoints = await DbContext.NormalPoints
-                .Where(p => p.Type == NormalPointType.Platform && vm.MinorPlatformPointsId.Contains(p.Id))
+                .Where(
+                    p =>
+                        p.Type == NormalPointType.Platform &&
+                        requestDto.MinorPlatformPointsId.Contains(p.Id))
                 .ToListAsync();
             normalPoint.SeriesPoints = await DbContext.NormalPoints
-                .Where(p => p.Type == NormalPointType.Genre && vm.SeriesPointsId.Contains(p.Id))
+                .Where(p => p.Type == NormalPointType.Genre && requestDto.SeriesPointsId.Contains(p.Id))
                 .ToListAsync();
 
             return true;

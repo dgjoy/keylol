@@ -2,6 +2,9 @@
 
 namespace Keylol.Controllers.Login
 {
+    /// <summary>
+    ///     登录 Controller
+    /// </summary>
     [Authorize]
     [RoutePrefix("login")]
     public partial class LoginController : KeylolApiController

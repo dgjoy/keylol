@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Keylol.Models.DTO
+﻿namespace Keylol.Models.DTO
 {
-    public class SteamLoginTokenDTO
+    /// <summary>
+    ///     SteamLoginToken DTO
+    /// </summary>
+    public class SteamLoginTokenDto
     {
-        public SteamLoginTokenDTO(SteamLoginToken token)
-        {
-            Id = token.Id;
-            Code = token.Code;
-        }
-
+        /// <summary>
+        ///     Id
+        /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        ///     登录代码
+        /// </summary>
         public string Code { get; set; }
     }
 }

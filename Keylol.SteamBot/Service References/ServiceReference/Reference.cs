@@ -15,9 +15,9 @@ namespace Keylol.SteamBot.ServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotDTO", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
     [System.SerializableAttribute()]
-    public partial class SteamBotDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class SteamBotDto : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -140,9 +140,9 @@ namespace Keylol.SteamBot.ServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotVM", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.ViewModels")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotUpdateRequestDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
     [System.SerializableAttribute()]
-    public partial class SteamBotVM : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class SteamBotUpdateRequestDto : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -244,9 +244,9 @@ namespace Keylol.SteamBot.ServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="UserDTO", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="UserDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
     [System.SerializableAttribute()]
-    public partial class UserDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class UserDto : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -255,7 +255,16 @@ namespace Keylol.SteamBot.ServiceReference {
         private System.Nullable<int> ArticleCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<double> AutoSubscribeDaySpanField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> AutoSubscribeEnabledField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string AvatarImageField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<int> CouponField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string EmailField;
@@ -264,19 +273,19 @@ namespace Keylol.SteamBot.ServiceReference {
         private string GamerTagField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> HasNewCommentField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> HasNewLikeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string IdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string IdCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<int> LikeCountField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.Nullable<bool> LockoutEnabledField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string MessageCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ProfilePointBackgroundImageField;
@@ -294,13 +303,25 @@ namespace Keylol.SteamBot.ServiceReference {
         private string StatusClaimField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private Keylol.SteamBot.ServiceReference.SteamBotDTO SteamBotField;
+        private Keylol.SteamBot.ServiceReference.SteamBotDto SteamBotField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SteamIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SteamId64Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> SteamNotifyOnArticleLikedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> SteamNotifyOnArticleRepliedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> SteamNotifyOnCommentLikedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<bool> SteamNotifyOnCommentRepliedField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SteamProfileNameField;
@@ -341,6 +362,32 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<double> AutoSubscribeDaySpan {
+            get {
+                return this.AutoSubscribeDaySpanField;
+            }
+            set {
+                if ((this.AutoSubscribeDaySpanField.Equals(value) != true)) {
+                    this.AutoSubscribeDaySpanField = value;
+                    this.RaisePropertyChanged("AutoSubscribeDaySpan");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> AutoSubscribeEnabled {
+            get {
+                return this.AutoSubscribeEnabledField;
+            }
+            set {
+                if ((this.AutoSubscribeEnabledField.Equals(value) != true)) {
+                    this.AutoSubscribeEnabledField = value;
+                    this.RaisePropertyChanged("AutoSubscribeEnabled");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string AvatarImage {
             get {
                 return this.AvatarImageField;
@@ -349,6 +396,19 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.AvatarImageField, value) != true)) {
                     this.AvatarImageField = value;
                     this.RaisePropertyChanged("AvatarImage");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> Coupon {
+            get {
+                return this.CouponField;
+            }
+            set {
+                if ((this.CouponField.Equals(value) != true)) {
+                    this.CouponField = value;
+                    this.RaisePropertyChanged("Coupon");
                 }
             }
         }
@@ -380,32 +440,6 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> HasNewComment {
-            get {
-                return this.HasNewCommentField;
-            }
-            set {
-                if ((this.HasNewCommentField.Equals(value) != true)) {
-                    this.HasNewCommentField = value;
-                    this.RaisePropertyChanged("HasNewComment");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> HasNewLike {
-            get {
-                return this.HasNewLikeField;
-            }
-            set {
-                if ((this.HasNewLikeField.Equals(value) != true)) {
-                    this.HasNewLikeField = value;
-                    this.RaisePropertyChanged("HasNewLike");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public string Id {
             get {
                 return this.IdField;
@@ -432,6 +466,19 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> LikeCount {
+            get {
+                return this.LikeCountField;
+            }
+            set {
+                if ((this.LikeCountField.Equals(value) != true)) {
+                    this.LikeCountField = value;
+                    this.RaisePropertyChanged("LikeCount");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Nullable<bool> LockoutEnabled {
             get {
                 return this.LockoutEnabledField;
@@ -440,6 +487,19 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((this.LockoutEnabledField.Equals(value) != true)) {
                     this.LockoutEnabledField = value;
                     this.RaisePropertyChanged("LockoutEnabled");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string MessageCount {
+            get {
+                return this.MessageCountField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MessageCountField, value) != true)) {
+                    this.MessageCountField = value;
+                    this.RaisePropertyChanged("MessageCount");
                 }
             }
         }
@@ -510,7 +570,7 @@ namespace Keylol.SteamBot.ServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public Keylol.SteamBot.ServiceReference.SteamBotDTO SteamBot {
+        public Keylol.SteamBot.ServiceReference.SteamBotDto SteamBot {
             get {
                 return this.SteamBotField;
             }
@@ -544,6 +604,58 @@ namespace Keylol.SteamBot.ServiceReference {
                 if ((object.ReferenceEquals(this.SteamId64Field, value) != true)) {
                     this.SteamId64Field = value;
                     this.RaisePropertyChanged("SteamId64");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> SteamNotifyOnArticleLiked {
+            get {
+                return this.SteamNotifyOnArticleLikedField;
+            }
+            set {
+                if ((this.SteamNotifyOnArticleLikedField.Equals(value) != true)) {
+                    this.SteamNotifyOnArticleLikedField = value;
+                    this.RaisePropertyChanged("SteamNotifyOnArticleLiked");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> SteamNotifyOnArticleReplied {
+            get {
+                return this.SteamNotifyOnArticleRepliedField;
+            }
+            set {
+                if ((this.SteamNotifyOnArticleRepliedField.Equals(value) != true)) {
+                    this.SteamNotifyOnArticleRepliedField = value;
+                    this.RaisePropertyChanged("SteamNotifyOnArticleReplied");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> SteamNotifyOnCommentLiked {
+            get {
+                return this.SteamNotifyOnCommentLikedField;
+            }
+            set {
+                if ((this.SteamNotifyOnCommentLikedField.Equals(value) != true)) {
+                    this.SteamNotifyOnCommentLikedField = value;
+                    this.RaisePropertyChanged("SteamNotifyOnCommentLiked");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> SteamNotifyOnCommentReplied {
+            get {
+                return this.SteamNotifyOnCommentRepliedField;
+            }
+            set {
+                if ((this.SteamNotifyOnCommentRepliedField.Equals(value) != true)) {
+                    this.SteamNotifyOnCommentRepliedField = value;
+                    this.RaisePropertyChanged("SteamNotifyOnCommentReplied");
                 }
             }
         }
@@ -628,16 +740,16 @@ namespace Keylol.SteamBot.ServiceReference {
     public interface ISteamBotCoodinator {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/AllocateBotsResponse")]
-        Keylol.SteamBot.ServiceReference.SteamBotDTO[] AllocateBots();
+        Keylol.SteamBot.ServiceReference.SteamBotDto[] AllocateBots();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/AllocateBotsResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDTO[]> AllocateBotsAsync();
+        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDto[]> AllocateBotsAsync();
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
-        void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
+        void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
-        System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms);
+        System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus")]
         void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
@@ -664,16 +776,16 @@ namespace Keylol.SteamBot.ServiceReference {
         System.Threading.Tasks.Task<string> GetCMServerAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
-        Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId);
+        Keylol.SteamBot.ServiceReference.UserDto GetUserBySteamId(string steamId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO> GetUserBySteamIdAsync(string steamId);
+        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto> GetUserBySteamIdAsync(string steamId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIdsResponse")]
-        Keylol.SteamBot.ServiceReference.UserDTO[] GetUsersBySteamIds(string[] steamIds);
+        Keylol.SteamBot.ServiceReference.UserDto[] GetUsersBySteamIds(string[] steamIds);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIdsResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO[]> GetUsersBySteamIdsAsync(string[] steamIds);
+        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto[]> GetUsersBySteamIdsAsync(string[] steamIds);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
         bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
@@ -735,19 +847,19 @@ namespace Keylol.SteamBot.ServiceReference {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public Keylol.SteamBot.ServiceReference.SteamBotDTO[] AllocateBots() {
+        public Keylol.SteamBot.ServiceReference.SteamBotDto[] AllocateBots() {
             return base.Channel.AllocateBots();
         }
         
-        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDTO[]> AllocateBotsAsync() {
+        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDto[]> AllocateBotsAsync() {
             return base.Channel.AllocateBotsAsync();
         }
         
-        public void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms) {
+        public void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms) {
             base.Channel.UpdateBots(vms);
         }
         
-        public System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotVM[] vms) {
+        public System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms) {
             return base.Channel.UpdateBotsAsync(vms);
         }
         
@@ -783,19 +895,19 @@ namespace Keylol.SteamBot.ServiceReference {
             return base.Channel.GetCMServerAsync();
         }
         
-        public Keylol.SteamBot.ServiceReference.UserDTO GetUserBySteamId(string steamId) {
+        public Keylol.SteamBot.ServiceReference.UserDto GetUserBySteamId(string steamId) {
             return base.Channel.GetUserBySteamId(steamId);
         }
         
-        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO> GetUserBySteamIdAsync(string steamId) {
+        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto> GetUserBySteamIdAsync(string steamId) {
             return base.Channel.GetUserBySteamIdAsync(steamId);
         }
         
-        public Keylol.SteamBot.ServiceReference.UserDTO[] GetUsersBySteamIds(string[] steamIds) {
+        public Keylol.SteamBot.ServiceReference.UserDto[] GetUsersBySteamIds(string[] steamIds) {
             return base.Channel.GetUsersBySteamIds(steamIds);
         }
         
-        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDTO[]> GetUsersBySteamIdsAsync(string[] steamIds) {
+        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto[]> GetUsersBySteamIdsAsync(string[] steamIds) {
             return base.Channel.GetUsersBySteamIdsAsync(steamIds);
         }
         

@@ -15,12 +15,34 @@ namespace Keylol.Controllers.NormalPoint
 {
     public partial class NormalPointController
     {
+        /// <summary>
+        ///     据点关系
+        /// </summary>
         public enum PointRelationship
         {
+            /// <summary>
+            ///     开发商
+            /// </summary>
             Developer,
+
+            /// <summary>
+            ///     发行商
+            /// </summary>
             Publisher,
+
+            /// <summary>
+            ///     系列
+            /// </summary>
             Series,
+
+            /// <summary>
+            ///     流派
+            /// </summary>
             Genre,
+
+            /// <summary>
+            ///     特性
+            /// </summary>
             Tag
         }
 
@@ -36,7 +58,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}/games")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDTO>))]
+        [ResponseType(typeof (List<NormalPointDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是厂商或类型据点")]
         public async Task<IHttpActionResult> GetListOfRelatedGames(string id, PointRelationship relationship,
             bool stats = false, IdType idType = IdType.Id, int skip = 0, int take = 9)
@@ -81,7 +103,7 @@ namespace Keylol.Controllers.NormalPoint
             var userId = User.Identity.GetUserId();
             return Ok(points.Select(p =>
             {
-                var dto = new NormalPointDTO(p)
+                var dto = new NormalPointDto(p)
                 {
                     ReleaseDate = p.ReleaseDate
                 };

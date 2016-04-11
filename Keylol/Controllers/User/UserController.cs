@@ -1,11 +1,33 @@
 ﻿using System.Web.Http;
+using Keylol.Provider;
 
 namespace Keylol.Controllers.User
 {
+    /// <summary>
+    ///     用户 Controller
+    /// </summary>
     [Authorize]
     [RoutePrefix("user")]
     public partial class UserController : KeylolApiController
     {
+        private readonly CouponProvider _coupon;
+        private readonly StatisticsProvider _statistics;
+
+        /// <summary>
+        ///     创建 <see cref="UserController" />
+        /// </summary>
+        /// <param name="coupon">
+        ///     <see cref="CouponProvider" />
+        /// </param>
+        /// <param name="statistics">
+        ///     <see cref="StatisticsProvider" />
+        /// </param>
+        public UserController(CouponProvider coupon, StatisticsProvider statistics)
+        {
+            _coupon = coupon;
+            _statistics = statistics;
+        }
+
         //        public IHttpActionResult Login(string returnUrl)
         //        {
         //            ViewBag.ReturnUrl = returnUrl;

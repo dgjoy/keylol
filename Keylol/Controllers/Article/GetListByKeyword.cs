@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Utilities;
 
 namespace Keylol.Controllers.Article
 {
@@ -21,14 +23,14 @@ namespace Keylol.Controllers.Article
         [Route("keyword/{keyword}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDTO>))]
+        [ResponseType(typeof (List<ArticleDto>))]
         public async Task<HttpResponseMessage> GetListByKeyword(string keyword, bool full = false, int skip = 0,
             int take = 5)
         {
             if (take > 50) take = 50;
 
             if (!full)
-                return Request.CreateResponse(HttpStatusCode.OK, await DbContext.Database.SqlQuery<ArticleDTO>(@"SELECT
+                return Request.CreateResponse(HttpStatusCode.OK, await DbContext.Database.SqlQuery<ArticleDto>(@"SELECT
 	                [t3].[Id],
 	                [t3].[PublishTime],
 	                [t3].[Title],
@@ -42,18 +44,19 @@ namespace Keylol.Controllers.Article
 	                (SELECT
                         COUNT(1)
                         FROM [dbo].[Likes]
-                        WHERE ([dbo].[Likes].[Discriminator] = N'ArticleLike') AND ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
+                        WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId])) AS [LikeCount]
 	                FROM (SELECT
 		                [t1].*,
 		                [t4].[IdCode] AS [AuthorIdCode]
-		                FROM [dbo].[Entries] AS [t1]
-		                INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Entries], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
+		                FROM [dbo].[Articles] AS [t1]
+		                INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Articles], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
                         LEFT OUTER JOIN [dbo].[KeylolUsers] AS [t4] ON [t4].[Id] = [t1].[PrincipalId]
+                        WHERE [t1].[Archived] = 0 AND [t1].[Rejected] = 'False'
                         ORDER BY [t2].[RANK] DESC, [t1].[SequenceNumber] DESC
                         OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
                     $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync());
 
-            var articles = (await DbContext.Database.SqlQuery<ArticleDTO>(@"SELECT
+            var articles = (await DbContext.Database.SqlQuery<ArticleDto>(@"SELECT
                 [t3].[Count],
 	            [t3].[Id],
 	            [t3].[PublishTime],
@@ -66,7 +69,7 @@ namespace Keylol.Controllers.Article
                 END AS [ThumbnailImage],
 	            [t3].[SequenceNumberForAuthor],
 	            [t3].[SequenceNumber],
-	            [t3].[TypeName],
+	            [t3].[Type],
 	            [t3].[AuthorId],
 	            [t3].[AuthorIdCode],
 	            [t3].[AuthorUserName],
@@ -83,11 +86,10 @@ namespace Keylol.Controllers.Article
 	            (SELECT
                     COUNT(1)
                     FROM [dbo].[Likes]
-                    WHERE ([dbo].[Likes].[Discriminator] = N'ArticleLike') AND ([t3].[Id] = [dbo].[Likes].[ArticleId]) AND (0 = [dbo].[Likes].[Backout])) AS [LikeCount]
+                    WHERE ([t3].[Id] = [dbo].[Likes].[ArticleId])) AS [LikeCount]
 	            FROM (SELECT
                     COUNT(1) OVER() AS [Count],
 		            [t1].*,
-		            [t4].[Name] AS [TypeName],
 		            [t5].[Id] AS [AuthorId],
 		            [t5].[IdCode] AS [AuthorIdCode],
 		            [t5].[UserName] AS [AuthorUserName],
@@ -97,12 +99,12 @@ namespace Keylol.Controllers.Article
                     [t7].[ChineseName] AS [VoteForPointChineseName],
                     [t7].[EnglishName] AS [VoteForPointEnglishName],
                     [t7].[BackgroundImage] AS [VoteForPointBackgroundImage]
-		            FROM [dbo].[Entries] AS [t1]
-		            INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Entries], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
-                    LEFT OUTER JOIN [dbo].[ArticleTypes] AS [t4] ON [t1].[TypeId] = [t4].[Id]
+		            FROM [dbo].[Articles] AS [t1]
+		            INNER JOIN (SELECT * FROM CONTAINSTABLE([dbo].[Articles], ([Title], [Content]), {0})) AS [t2] ON [t1].[Id] = [t2].[KEY]
                     LEFT OUTER JOIN [dbo].[KeylolUsers] AS [t5] ON [t5].[Id] = [t1].[PrincipalId]
                     LEFT OUTER JOIN [dbo].[ProfilePoints] AS [t6] ON [t6].[Id] = [t1].[PrincipalId]
                     LEFT OUTER JOIN [dbo].[NormalPoints] AS [t7] ON [t7].[Id] = [t1].[VoteForPointId]
+                    WHERE [t1].[Archived] = 0 AND [t1].[Rejected] = 'False'
                     ORDER BY [t2].[RANK] DESC, [t1].[SequenceNumber] DESC
                     OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
                 $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync())
@@ -111,16 +113,18 @@ namespace Keylol.Controllers.Article
                     if (a.VoteForPointId != null)
                         a.UnflattenVoteForPoint();
                     a.UnflattenAuthor().TruncateContent(256);
-                    if (a.TypeName != "简评")
+                    if (a.Type != ArticleType.简评)
                         a.TruncateContent(128);
                     else
                         a.ThumbnailImage = null;
+                    a.TypeName = a.Type.ToString();
+                    a.Type = null;
                     return a;
                 })
                 .ToList();
 
             var response = Request.CreateResponse(HttpStatusCode.OK, articles);
-            response.Headers.Add("X-Total-Record-Count", articles.Count > 0 ? articles[0].Count.ToString() : "0");
+            response.Headers.SetTotalCount(articles.Count > 0 ? (articles[0].Count ?? 1) : 0);
             return response;
         }
     }

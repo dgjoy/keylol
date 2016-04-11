@@ -9,10 +9,10 @@ namespace Keylol.Utilities
     {
         public static T CastTo<T>(this object value, T targetType)
         {
-            return (T)value;
+            return (T) value;
         }
 
-        public static Expression<Func<TElement, bool>> Contains<TElement, TValue>(IEnumerable<TValue> values, 
+        public static Expression<Func<TElement, bool>> Contains<TElement, TValue>(IEnumerable<TValue> values,
             Expression<Func<TElement, TValue>> valueSelector, TElement typeHint = default(TElement))
         {
             if (null == valueSelector)

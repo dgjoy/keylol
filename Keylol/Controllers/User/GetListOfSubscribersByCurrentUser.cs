@@ -18,7 +18,7 @@ namespace Keylol.Controllers.User
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
         [HttpGet]
-        [ResponseType(typeof (List<UserDTO>))]
+        [ResponseType(typeof (List<UserDto>))]
         public async Task<IHttpActionResult> GetListOfSubscribersByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
@@ -29,13 +29,13 @@ namespace Keylol.Controllers.User
                 {
                     user = u,
                     profilePoint = u.ProfilePoint,
-                    articleCount = u.ProfilePoint.Entries.OfType<Models.Article>().Count(),
+                    articleCount = u.ProfilePoint.Articles.Count(),
                     subscriberCount = u.ProfilePoint.Subscribers.Count
                 })
                 .OrderBy(e => e.user.RegisterTime)
                 .Skip(() => skip).Take(() => take)
                 .ToListAsync())
-                .Select(entry => new UserDTO(entry.user)
+                .Select(entry => new UserDto(entry.user)
                 {
                     ProfilePointBackgroundImage = entry.profilePoint.BackgroundImage,
                     ArticleCount = entry.articleCount,

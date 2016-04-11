@@ -28,7 +28,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("from-app-id")]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDTO))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "使用了 fillExisted 参数但是身份不是管理员")]
         [SwaggerResponse(HttpStatusCode.NotFound, "使用了 fillExisted 参数但是拥有指定 App ID 的据点不存在")]
@@ -247,22 +247,22 @@ namespace Keylol.Controllers.NormalPoint
                         }
                     }
                     await DbContext.SaveChangesAsync();
-                    return Created($"normal-point/{gamePoint.Id}", new NormalPointDTO(gamePoint, false, true)
+                    return Created($"normal-point/{gamePoint.Id}", new NormalPointDto(gamePoint, false, true)
                     {
                         Description = gamePoint.Description,
                         SteamAppId = gamePoint.SteamAppId,
                         DisplayAliases = gamePoint.DisplayAliases,
                         CoverImage = gamePoint.CoverImage,
                         ReleaseDate = gamePoint.ReleaseDate,
-                        DeveloperPoints = gamePoint.DeveloperPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
-                        PublisherPoints = gamePoint.PublisherPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
-                        SeriesPoints = gamePoint.SeriesPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
-                        GenrePoints = gamePoint.GenrePoints.Select(p => new NormalPointDTO(p, true)).ToList(),
-                        TagPoints = gamePoint.TagPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                        DeveloperPoints = gamePoint.DeveloperPoints.Select(p => new NormalPointDto(p, true)).ToList(),
+                        PublisherPoints = gamePoint.PublisherPoints.Select(p => new NormalPointDto(p, true)).ToList(),
+                        SeriesPoints = gamePoint.SeriesPoints.Select(p => new NormalPointDto(p, true)).ToList(),
+                        GenrePoints = gamePoint.GenrePoints.Select(p => new NormalPointDto(p, true)).ToList(),
+                        TagPoints = gamePoint.TagPoints.Select(p => new NormalPointDto(p, true)).ToList(),
                         MajorPlatformPoints =
-                            gamePoint.MajorPlatformPoints.Select(p => new NormalPointDTO(p, true)).ToList(),
+                            gamePoint.MajorPlatformPoints.Select(p => new NormalPointDto(p, true)).ToList(),
                         MinorPlatformPoints =
-                            gamePoint.MinorPlatformPoints.Select(p => new NormalPointDTO(p, true)).ToList()
+                            gamePoint.MinorPlatformPoints.Select(p => new NormalPointDto(p, true)).ToList()
                     });
                 }
             }

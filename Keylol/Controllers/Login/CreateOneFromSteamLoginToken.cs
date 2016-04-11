@@ -18,7 +18,7 @@ namespace Keylol.Controllers.Login
         [Route("token/{steamLoginTokenId}")]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDTO))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDto))]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "指定 SteamLoginToken 无效或未经过授权")]
         public async Task<IHttpActionResult> CreateOneFromSteamLoginToken(string steamLoginTokenId)
         {
@@ -42,7 +42,7 @@ namespace Keylol.Controllers.Login
             };
             DbContext.LoginLogs.Add(loginLog);
             await DbContext.SaveChangesAsync();
-            return Created($"login/{loginLog.Id}", new LoginLogDTO(loginLog));
+            return Created($"login/{loginLog.Id}", new LoginLogDto(loginLog));
         }
     }
 }

@@ -25,7 +25,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>41</ApplicationRevision>
+    <ApplicationRevision>43</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -76,8 +76,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
@@ -136,9 +136,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="App.Debug Gay.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
     <None Include="App.Debug.config">
       <DependentUpon>App.config</DependentUpon>
     </None>
@@ -148,19 +145,16 @@
     </None>
     <None Include="Keylol.SteamBot_TemporaryKey.pfx" />
     <None Include="packages.config" />
-    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.SteamBotDTO.datasource">
+    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.SteamBotDto1.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.UserDTO.datasource">
+    <None Include="Service References\ServiceReference\Keylol.SteamBot.ServiceReference.UserDto1.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator1.wsdl" />
-    <None Include="Service References\ServiceReference\SteamBotCoodinator1.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\ServiceReference\SteamBotCoodinator4.xsd">
       <SubType>Designer</SubType>
     </None>

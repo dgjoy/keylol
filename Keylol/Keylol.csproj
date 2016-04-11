@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -112,24 +112,8 @@
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security.Facebook, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.3.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Google, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.Google.3.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.3.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Twitter, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.3.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -138,6 +122,22 @@
     </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RabbitMQ.Client, Version=3.6.1.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.3.6.1\lib\net45\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.1.2\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Extensions.ExecutionContextScoping, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Extensions.ExecutionContextScoping.3.1.2\lib\net45\SimpleInjector.Extensions.ExecutionContextScoping.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.WebApi, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.WebApi.3.1.2\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
@@ -178,10 +178,6 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Http.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.3\lib\net45\System.Web.Http.Cors.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Web.Http.Owin, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
       <Private>True</Private>
@@ -214,18 +210,27 @@
     <Compile Include="Controllers\Article\GetListByNormalPointId.cs" />
     <Compile Include="Controllers\Article\GetListBySubscription.cs" />
     <Compile Include="Controllers\Article\GetListByUser.cs" />
-    <Compile Include="Controllers\Article\GetListOfHot.cs" />
+    <Compile Include="Controllers\Article\GetListOfSpotlight.cs" />
     <Compile Include="Controllers\Article\GetListOfLatest.cs" />
     <Compile Include="Controllers\Article\GetOneById.cs" />
-    <Compile Include="Controllers\Article\GetOneByAuthorIdCodeWithSN.cs" />
+    <Compile Include="Controllers\Article\GetOneByAuthorIdCodeWithSn.cs" />
     <Compile Include="Controllers\Article\UpdateOne.cs" />
-    <Compile Include="Controllers\Article\UpdateOneIgnoreNewLikes.cs" />
-    <Compile Include="Controllers\Comment\UpdateAllRecalculateIgnored.cs" />
-    <Compile Include="Controllers\Comment\UpdateOneIgnoreNewLikes.cs" />
+    <Compile Include="Controllers\Article\UpdateOneIgnore.cs" />
+    <Compile Include="Controllers\Article\UpdateOneModeration.cs" />
+    <Compile Include="Controllers\Comment\UpdateOneIgnore.cs" />
     <Compile Include="Controllers\Comment\CreateOne.cs" />
-    <Compile Include="Controllers\Comment\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\Comment\GetListByArticleId.cs" />
-    <Compile Include="Controllers\DatabaseMigrationController.cs" />
+    <Compile Include="Controllers\Comment\UpdateOneModeration.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CouponGiftOrderController.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\GetListOfAll.cs" />
+    <Compile Include="Controllers\CouponGift\GetOneById.cs" />
+    <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
+    <Compile Include="Controllers\CouponLog\GetListByCurrentUser.cs" />
+    <Compile Include="Controllers\CouponLog\GetListOfUnreadByCurrentUser.cs" />
+    <Compile Include="Controllers\CouponGift\CouponGiftController.cs" />
+    <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Favorite\FavoriteController.cs" />
     <Compile Include="Controllers\Favorite\DeleteOneById.cs" />
     <Compile Include="Controllers\Favorite\CreateOne.cs" />
@@ -236,11 +241,12 @@
     <Compile Include="Controllers\InvitationCode\InvitationCodeController.cs" />
     <Compile Include="Controllers\Like\DeleteOneById.cs" />
     <Compile Include="Controllers\Like\CreateOne.cs" />
-    <Compile Include="Controllers\Like\UpdateOneIgnore.cs" />
-    <Compile Include="Controllers\Like\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\Login\DeleteOneByCurrentUser.cs" />
     <Compile Include="Controllers\Login\CreateOneFromSteamLoginToken.cs" />
     <Compile Include="Controllers\Login\CreateOneFromPassword.cs" />
+    <Compile Include="Controllers\Message\DeleteOneById.cs" />
+    <Compile Include="Controllers\Message\GetListByCurrentUser.cs" />
+    <Compile Include="Controllers\Message\MessageController.cs" />
     <Compile Include="Controllers\NormalPoint\GetListOfRelatedGames.cs" />
     <Compile Include="Controllers\NormalPoint\GetListOfRelated.cs" />
     <Compile Include="Controllers\NormalPoint\UpdateOneById.cs" />
@@ -252,57 +258,58 @@
     <Compile Include="Controllers\NormalPoint\GetListByRecentActivityOfEachType.cs" />
     <Compile Include="Controllers\NormalPoint\GetListByRecentActivity.cs" />
     <Compile Include="Controllers\NormalPoint\DeleteOneMerge.cs" />
+    <Compile Include="Controllers\RedisCache\DeleteListByKeyPattern.cs" />
+    <Compile Include="Controllers\RedisCache\GetOneByKey.cs" />
+    <Compile Include="Controllers\RedisCache\RedisCacheController.cs" />
+    <Compile Include="Controllers\UploadSignature\CreateOne.cs" />
     <Compile Include="Controllers\UserGameRecord\GetOnePlayTimeByUser.cs" />
     <Compile Include="Controllers\UserGameRecord\UpdateListByCurrentUser.cs" />
-    <Compile Include="Controllers\UserGameRecord\UserController.cs" />
+    <Compile Include="Controllers\UserGameRecord\UserGameRecordController.cs" />
     <Compile Include="Controllers\UserPointSubscription\GetListOfAutoByCurrentUser.cs" />
     <Compile Include="Controllers\UserPointSubscription\DeleteOneByCurrentUserWithPointId.cs" />
     <Compile Include="Controllers\UserPointSubscription\CreateOne.cs" />
     <Compile Include="Controllers\UserPointSubscription\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\UserPointSubscription\GetOneByCurrentUserWithPointId.cs" />
+    <Compile Include="Controllers\User\GetInvitedUserCount.cs" />
+    <Compile Include="Controllers\User\GetListByCouponRank.cs" />
     <Compile Include="Controllers\User\UpdateOneById.cs" />
     <Compile Include="Controllers\User\CreateOne.cs" />
     <Compile Include="Controllers\User\GetOneByUser.cs" />
     <Compile Include="Controllers\User\GetListOfSubscribersByCurrentUser.cs" />
-    <Compile Include="Models\DTO\FavoriteDTO.cs" />
-    <Compile Include="Models\DTO\InvitationCodeDTO.cs" />
-    <Compile Include="Models\DTO\LikeDTO.cs" />
-    <Compile Include="Models\DTO\SubscribedPointDTO.cs" />
+    <Compile Include="Models\DTO\CouponGiftDto.cs" />
+    <Compile Include="Models\DTO\CouponLogDto.cs" />
+    <Compile Include="Models\DTO\FavoriteDto.cs" />
+    <Compile Include="Models\DTO\InvitationCodeDto.cs" />
+    <Compile Include="Models\DTO\SubscribedPointDto.cs" />
+    <Compile Include="Provider\CouponProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
+    <Compile Include="Provider\StatisticsProvider.cs" />
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="App_Start\KeylolApiController.cs" />
+    <Compile Include="Controllers\KeylolApiController.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="App_Start\Startup.SignalR.cs" />
-    <Compile Include="App_Start\Startup.WebAPI.cs" />
     <Compile Include="Controllers\Like\LikeController.cs" />
     <Compile Include="Controllers\NormalPoint\NormalPointController.cs" />
     <Compile Include="Controllers\Comment\CommentController.cs" />
     <Compile Include="Controllers\Article\ArticleController.cs" />
     <Compile Include="Controllers\Login\LoginController.cs" />
-    <Compile Include="Controllers\UploadSignatureController.cs" />
+    <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Controllers\UserPointSubscription\UserPointSubscriptionController.cs" />
     <Compile Include="Hubs\DebugInfoHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
     <Compile Include="Hubs\SteamBindingHub.cs" />
-    <Compile Include="Models\DTO\CommentDTO.cs" />
-    <Compile Include="Models\DTO\NormalPointDTO.cs" />
-    <Compile Include="Models\DTO\SteamLoginTokenDTO.cs" />
-    <Compile Include="Models\DTO\SteamBindingTokenDTO.cs" />
-    <Compile Include="Models\DTO\SteamBotDTO.cs" />
-    <Compile Include="Models\ViewModels\CommentVM.cs" />
-    <Compile Include="Models\ViewModels\LikeVM.cs" />
-    <Compile Include="Models\ViewModels\NormalPointVM.cs" />
-    <Compile Include="Models\ViewModels\SteamBotVM.cs" />
-    <Compile Include="Models\DTO\ArticleDTO.cs" />
-    <Compile Include="Models\DTO\LogDTO.cs" />
-    <Compile Include="Models\DTO\UserDTO.cs" />
-    <Compile Include="Models\ViewModels\LoginVM.cs" />
+    <Compile Include="Models\DTO\CommentDto.cs" />
+    <Compile Include="Models\DTO\NormalPointDto.cs" />
+    <Compile Include="Models\DTO\SteamLoginTokenDto.cs" />
+    <Compile Include="Models\DTO\SteamBindingTokenDto.cs" />
+    <Compile Include="Models\DTO\SteamBotDto.cs" />
+    <Compile Include="Models\DTO\SteamBotUpdateRequestDto.cs" />
+    <Compile Include="Models\DTO\ArticleDto.cs" />
+    <Compile Include="Models\DTO\LogDto.cs" />
+    <Compile Include="Models\DTO\UserDto.cs" />
     <Compile Include="Provider\KeylolOAuthProvider.cs" />
-    <Compile Include="Models\ViewModels\UserVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Contracts\ISteamBotCoodinator.cs" />
     <Compile Include="Services\Providers\SteamBotIdentityValidator.cs" />
@@ -311,7 +318,6 @@
       <DependentUpon>SteamBotCoodinator.svc</DependentUpon>
     </Compile>
     <Compile Include="Utilities\PredicateBuilder.cs" />
-    <Compile Include="Utilities\Upyun.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Services\SteamBotCoodinator.svc" />
@@ -325,21 +331,21 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\keylol CN.pubxml" />
+    <None Include="Properties\PublishProfiles\keylol LGBT.pubxml" />
     <None Include="Properties\PublishProfiles\keylol-dev - Web Deploy.pubxml" />
-    <None Include="Web.Debug Gay.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Keylol.Models\Keylol.Models.csproj">
       <Project>{b6c4cdb8-070e-422c-b243-1d488ac1548a}</Project>
       <Name>Keylol.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Keylol.ServiceBase\Keylol.ServiceBase.csproj">
+      <Project>{0a50005c-7faa-48d3-8f36-d48df882dcdf}</Project>
+      <Name>Keylol.ServiceBase</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -391,7 +397,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Cors;
 using System.Web.Http.Controllers;
-using System.Web.Http.Cors;
 using System.Web.Http.Filters;
-using Microsoft.Owin;
 
 namespace Keylol.Utilities
 {
@@ -43,46 +38,6 @@ namespace Keylol.Utilities
 
             //User is Authorized, complete execution
             return Task.FromResult(0);
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class EnableCorsRegexAttribute : Attribute, ICorsPolicyProvider, Microsoft.Owin.Cors.ICorsPolicyProvider
-    {
-        private readonly string _originPattern;
-
-        public EnableCorsRegexAttribute(string originPattern)
-        {
-            _originPattern = originPattern;
-        }
-
-        public bool SupportsCredentials { get; set; } = false;
-
-        public Task<CorsPolicy> GetCorsPolicyAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(CreateCorsPolicyForPattern(request.GetCorsRequestContext().Origin));
-        }
-
-        public Task<CorsPolicy> GetCorsPolicyAsync(IOwinRequest request)
-        {
-            return Task.FromResult(CreateCorsPolicyForPattern(request.Headers.Get("Origin")));
-        }
-
-        private CorsPolicy CreateCorsPolicyForPattern(string origin)
-        {
-            var policy = new CorsPolicy
-            {
-                AllowAnyHeader = true,
-                AllowAnyMethod = true,
-                SupportsCredentials = SupportsCredentials,
-                PreflightMaxAge = 365*24*3600
-            };
-            if (Regex.IsMatch(origin, _originPattern, RegexOptions.IgnoreCase))
-            {
-                policy.Origins.Add(origin);
-                policy.ExposedHeaders.Add("X-Total-Record-Count");
-            }
-            return policy;
         }
     }
 }

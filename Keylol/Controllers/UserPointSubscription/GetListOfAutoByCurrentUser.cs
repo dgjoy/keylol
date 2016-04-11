@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Microsoft.AspNet.Identity;
@@ -27,13 +25,13 @@ namespace Keylol.Controllers.UserPointSubscription
             return Ok(new
             {
                 MostPlayed = subscriptions.Where(s => s.Type == AutoSubscriptionType.MostPlayed)
-                    .Select(s => new NormalPointDTO(s.NormalPoint)),
+                    .Select(s => new NormalPointDto(s.NormalPoint)),
                 RecentPlayed = subscriptions.Where(s => s.Type == AutoSubscriptionType.RecentPlayed)
-                    .Select(s => new NormalPointDTO(s.NormalPoint)),
+                    .Select(s => new NormalPointDto(s.NormalPoint)),
                 Genres = subscriptions.Where(s => s.Type == AutoSubscriptionType.Genre)
-                    .Select(s => new NormalPointDTO(s.NormalPoint)),
+                    .Select(s => new NormalPointDto(s.NormalPoint)),
                 Manufacturers = subscriptions.Where(s => s.Type == AutoSubscriptionType.Manufacture)
-                    .Select(s => new NormalPointDTO(s.NormalPoint))
+                    .Select(s => new NormalPointDto(s.NormalPoint))
             });
         }
     }

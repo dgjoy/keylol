@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
-using Keylol.Provider;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.NormalPoint
@@ -15,48 +13,54 @@ namespace Keylol.Controllers.NormalPoint
     public partial class NormalPointController
     {
         /// <summary>
-        ///     取得指定游戏据点的相关据点（开发商、发行商、系列、流派、特性），这些据点在发表文章时会自动推送
+        ///     取得指定游戏据点的相关据点（开发商、发行商、系列、流派、特性），这些据点在发布文章时会自动推送
         /// </summary>
         /// <param name="id">游戏据点 ID</param>
         /// <param name="idType">ID 类型，默认 "Id"</param>
         [Route("{id}/related")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<GetListOfRelatedEntryDTO>))]
+        [ResponseType(typeof (List<NormalPointGetListOfRelatedResponseDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是游戏据点")]
         public async Task<IHttpActionResult> GetListOfRelated(string id, IdType idType = IdType.Id)
         {
-            var redisDb = RedisProvider.GetInstance().GetDatabase();
             var point = await DbContext.NormalPoints
                 .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
             if (point == null || point.Type != NormalPointType.Game)
                 return NotFound();
 
-            var cacheKey = $"point:{point.Id}:related";
-            var cache = await redisDb.StringGetAsync(cacheKey);
-            if (cache.HasValue)
-                return Ok(RedisProvider.Deserialize(cache, true));
-
-            var result = point.DeveloperPoints
+            return Ok(point.DeveloperPoints
                 .Concat(point.PublisherPoints)
                 .Concat(point.SeriesPoints)
                 .Concat(point.GenrePoints)
                 .Concat(point.TagPoints)
                 .Distinct()
-                .Select(p => new GetListOfRelatedEntryDTO
+                .Select(p => new NormalPointGetListOfRelatedResponseDto
                 {
                     Id = p.Id,
                     IdCode = p.IdCode,
                     Name = GetPreferredName(p)
-                }).ToList();
-            await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(result), TimeSpan.FromDays(30));
-            return Ok(result);
+                }).ToList());
         }
 
-        public class GetListOfRelatedEntryDTO
+        /// <summary>
+        ///     响应 DTO
+        /// </summary>
+        public class NormalPointGetListOfRelatedResponseDto
         {
+            /// <summary>
+            ///     Id
+            /// </summary>
             public string Id { get; set; }
+
+            /// <summary>
+            ///     名称
+            /// </summary>
             public string Name { get; set; }
+
+            /// <summary>
+            ///     识别码
+            /// </summary>
             public string IdCode { get; set; }
         }
     }

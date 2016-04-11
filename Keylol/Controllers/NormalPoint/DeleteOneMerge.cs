@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using CsQuery.ExtensionMethods.Internal;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.NormalPoint
@@ -23,7 +18,7 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         /// <summary>
-        /// 把一个据点合并至另一个据点
+        ///     把一个据点合并至另一个据点
         /// </summary>
         /// <param name="sourceIdCode">原据点识别码，在据点合并之后将被删除</param>
         /// <param name="targetIdCode">合并到的目标据点识别码</param>

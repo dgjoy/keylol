@@ -1,28 +1,29 @@
 using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Diagnostics;
-using Keylol.Models;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models.DAL
 {
     public class KeylolDbContext : IdentityDbContext<KeylolUser>
     {
-        public static Action<string> LogAction;
+        /// <summary>
+        /// 当需要写入日志时
+        /// </summary>
+        public event EventHandler<string> WriteLog;
 
         public KeylolDbContext() : base("DefaultConnection", false)
         {
-            Database.Log = LogAction;
+            Database.Log = s => WriteLog?.Invoke(this, s);
         }
 
         public DbSet<Point> Points { get; set; }
         public DbSet<NormalPoint> NormalPoints { get; set; }
         public DbSet<ProfilePoint> ProfilePoints { get; set; }
-        public DbSet<Entry> Entries { get; set; }
         public DbSet<Article> Articles { get; set; }
-        public DbSet<ArticleType> ArticleTypes { get; set; }
-        public DbSet<Status> Statuses { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<CommentReply> CommentReplies { get; set; }
         public DbSet<Like> Likes { get; set; }
@@ -39,6 +40,10 @@ namespace Keylol.Models.DAL
         public DbSet<AutoSubscription> AutoSubscriptions { get; set; }
         public DbSet<UserGameRecord> UserGameRecords { get; set; }
         public DbSet<SteamStoreName> SteamStoreNames { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<CouponLog> CouponLogs { get; set; }
+        public DbSet<CouponGift> CouponGifts { get; set; }
+        public DbSet<CouponGiftOrder> CouponGiftOrders { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -126,6 +131,40 @@ namespace Keylol.Models.DAL
                 .Map(t => t.ToTable("PointStoreNameMappings"));
         }
 
+        public enum ConcurrencyStrategy
+        {
+            ClientWin,
+            DatabaseWin
+        }
+
+        public async Task<int> SaveChangesAsync(ConcurrencyStrategy concurrencyStrategy)
+        {
+            do
+            {
+                try
+                {
+                    return await SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    switch (concurrencyStrategy)
+                    {
+                        case ConcurrencyStrategy.ClientWin:
+                            var entry = e.Entries.Single();
+                            entry.OriginalValues.SetValues(await entry.GetDatabaseValuesAsync());
+                            break;
+
+                        case ConcurrencyStrategy.DatabaseWin:
+                            await e.Entries.Single().ReloadAsync();
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(concurrencyStrategy), concurrencyStrategy, null);
+                    }
+                }
+            } while (true);
+        }
+
         // Ignore validation error on unmodified properties
 //        protected override DbEntityValidationResult ValidateEntity(DbEntityEntry entityEntry,
 //            IDictionary<object, object> items)
@@ -146,10 +185,5 @@ namespace Keylol.Models.DAL
 //
 //            return result;
 //        }
-
-        public static KeylolDbContext Create()
-        {
-            return new KeylolDbContext();
-        }
     }
 }

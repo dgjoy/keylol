@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Provider;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -28,9 +27,6 @@ namespace Keylol.Controllers.Favorite
 
             DbContext.Favorites.Remove(favorite);
             await DbContext.SaveChangesAsync();
-            await RedisProvider.GetInstance()
-                .GetDatabase()
-                .KeyDeleteAsync($"user:{favorite.UserId}:favorites");
             return Ok();
         }
     }

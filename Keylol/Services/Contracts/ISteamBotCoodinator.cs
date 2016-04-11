@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
 using Keylol.Models.DTO;
-using Keylol.Models.ViewModels;
 
 namespace Keylol.Services.Contracts
 {
@@ -14,13 +10,13 @@ namespace Keylol.Services.Contracts
     public interface ISteamBotCoodinator
     {
         [OperationContract]
-        Task<IEnumerable<SteamBotDTO>> AllocateBots();
+        Task<IEnumerable<SteamBotDto>> AllocateBots();
 
         [OperationContract(IsOneWay = true)]
-        Task UpdateBots(IList<SteamBotVM> vms);
+        Task UpdateBots(IList<SteamBotUpdateRequestDto> vms);
 
         [OperationContract(IsOneWay = true)]
-        Task SetUserStatus(string steamId, Contracts.StatusClaim status);
+        Task SetUserStatus(string steamId, StatusClaim status);
 
         [OperationContract(IsOneWay = true)]
         Task SetUserSteamProfileName(string steamId, string name);
@@ -32,10 +28,10 @@ namespace Keylol.Services.Contracts
         Task<string> GetCMServer();
 
         [OperationContract]
-        Task<UserDTO> GetUserBySteamId(string steamId);
+        Task<UserDto> GetUserBySteamId(string steamId);
 
         [OperationContract]
-        Task<IList<UserDTO>> GetUsersBySteamIds(IList<string> steamIds);
+        Task<IList<UserDto>> GetUsersBySteamIds(IList<string> steamIds);
 
         [OperationContract]
         Task<bool> BindSteamUserWithBindingToken(string code, string botId, string userSteamId,
@@ -47,7 +43,7 @@ namespace Keylol.Services.Contracts
         [OperationContract(IsOneWay = true)]
         Task BroadcastBotOnFriendAdded(string botId);
     }
-    
+
     public interface ISteamBotCoodinatorCallback
     {
         [OperationContract(IsOneWay = true)]
@@ -63,9 +59,7 @@ namespace Keylol.Services.Contracts
     [DataContract]
     public enum StatusClaim
     {
-        [EnumMember]
-        Normal,
-        [EnumMember]
-        Probationer
+        [EnumMember] Normal,
+        [EnumMember] Probationer
     }
 }

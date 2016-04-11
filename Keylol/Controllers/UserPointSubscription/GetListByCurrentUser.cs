@@ -19,7 +19,7 @@ namespace Keylol.Controllers.UserPointSubscription
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
         [HttpGet]
-        [ResponseType(typeof (List<SubscribedPointDTO>))]
+        [ResponseType(typeof (List<SubscribedPointDto>))]
         public async Task<IHttpActionResult> GetListByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
@@ -40,17 +40,17 @@ namespace Keylol.Controllers.UserPointSubscription
                         user = p.User,
                         userProfilePoint = p.User.ProfilePoint,
                         point = (Models.NormalPoint) null,
-                        articleCount = p.Entries.OfType<Models.Article>().Count(),
+                        articleCount = p.Articles.Count(),
                         subscriberCount = p.Subscribers.Count
                     }))
                 .OrderBy(e => e.articleCount)
                 .Skip(() => skip).Take(() => take)
-                .ToListAsync()).Select(e => new SubscribedPointDTO
+                .ToListAsync()).Select(e => new SubscribedPointDto
                 {
                     User = e.user == null
                         ? null
-                        : new UserDTO(e.user) {ProfilePointBackgroundImage = e.userProfilePoint.BackgroundImage},
-                    NormalPoint = e.point == null ? null : new NormalPointDTO(e.point),
+                        : new UserDto(e.user) {ProfilePointBackgroundImage = e.userProfilePoint.BackgroundImage},
+                    NormalPoint = e.point == null ? null : new NormalPointDto(e.point),
                     ArticleCount = e.articleCount,
                     SubscriberCount = e.subscriberCount
                 }));

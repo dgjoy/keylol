@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Keylol.Models.DAL;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -51,9 +52,6 @@ namespace Keylol.Models
 
         public DateTime SteamBindingTime { get; set; }
 
-        [Index]
-        public int SequenceNumber { get; set; }
-
         public DateTime LastGameUpdateTime { get; set; } = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         public bool LastGameUpdateSucceed { get; set; } = false;
@@ -62,17 +60,8 @@ namespace Keylol.Models
 
         public int AutoSubscribeDaySpan { get; set; } = 7;
 
-        #region Steam bot notification options
-
-        public bool SteamNotifyOnArticleReplied { get; set; } = true;
-
-        public bool SteamNotifyOnCommentReplied { get; set; } = true;
-
-        public bool SteamNotifyOnArticleLiked { get; set; } = true;
-
-        public bool SteamNotifyOnCommentLiked { get; set; } = true;
-
-        #endregion
+        [Index]
+        public int Coupon { get; set; } = 0;
 
         public virtual ProfilePoint ProfilePoint { get; set; }
 
@@ -98,6 +87,22 @@ namespace Keylol.Models
 
         public virtual ICollection<Favorite> Favorites { get; set; }
 
+        public string InviterId { get; set; }
+        public virtual KeylolUser Inviter { get; set; }
+
+        public virtual ICollection<KeylolUser> InvitedUsers { get; set; }
+
+        public DateTime LastDailyRewardTime { get; set; } = DateTime.Now;
+
+        public int FreeLike { get; set; } = 5;
+
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int SequenceNumber { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
         //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
 
@@ -114,5 +119,17 @@ namespace Keylol.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        #region Steam bot notification options
+
+        public bool SteamNotifyOnArticleReplied { get; set; } = true;
+
+        public bool SteamNotifyOnCommentReplied { get; set; } = true;
+
+        public bool SteamNotifyOnArticleLiked { get; set; } = true;
+
+        public bool SteamNotifyOnCommentLiked { get; set; } = true;
+
+        #endregion
     }
 }

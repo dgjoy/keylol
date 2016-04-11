@@ -67,17 +67,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleType.cs" />
     <Compile Include="AutoSubscription.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
-    <Compile Include="Entry.cs" />
+    <Compile Include="CouponGift.cs" />
+    <Compile Include="CouponGiftOrder.cs" />
+    <Compile Include="CouponLog.cs" />
+    <Compile Include="DTO\ImageGarageRequestDto.cs" />
+    <Compile Include="Article.cs" />
     <Compile Include="Favorite.cs" />
     <Compile Include="InvitationCode.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
     <Compile Include="KeylolUser.cs" />
     <Compile Include="Like.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="Migrations\201510111634394_Initial.cs" />
     <Compile Include="Migrations\201510111634394_Initial.Designer.cs">
       <DependentUpon>201510111634394_Initial.cs</DependentUpon>
@@ -242,6 +246,114 @@
     <Compile Include="Migrations\201603091305456_RemoveDeprecatedProperties.Designer.cs">
       <DependentUpon>201603091305456_RemoveDeprecatedProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603191657264_ArticleRowVersion.cs" />
+    <Compile Include="Migrations\201603191657264_ArticleRowVersion.Designer.cs">
+      <DependentUpon>201603191657264_ArticleRowVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603220858063_EntryModelSimplify.cs" />
+    <Compile Include="Migrations\201603220858063_EntryModelSimplify.Designer.cs">
+      <DependentUpon>201603220858063_EntryModelSimplify.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603220921030_ArticleTypeSimplify.cs" />
+    <Compile Include="Migrations\201603220921030_ArticleTypeSimplify.Designer.cs">
+      <DependentUpon>201603220921030_ArticleTypeSimplify.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603221049328_RemoveOldArticleType.cs" />
+    <Compile Include="Migrations\201603221049328_RemoveOldArticleType.Designer.cs">
+      <DependentUpon>201603221049328_RemoveOldArticleType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603240426476_Message.cs" />
+    <Compile Include="Migrations\201603240426476_Message.Designer.cs">
+      <DependentUpon>201603240426476_Message.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603240535282_Moderation.cs" />
+    <Compile Include="Migrations\201603240535282_Moderation.Designer.cs">
+      <DependentUpon>201603240535282_Moderation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603240748433_MessageSequenceNumber.cs" />
+    <Compile Include="Migrations\201603240748433_MessageSequenceNumber.Designer.cs">
+      <DependentUpon>201603240748433_MessageSequenceNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603241353529_MoreArchivedStates.cs" />
+    <Compile Include="Migrations\201603241353529_MoreArchivedStates.Designer.cs">
+      <DependentUpon>201603241353529_MoreArchivedStates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603241457490_ArticleSpotlightTime.cs" />
+    <Compile Include="Migrations\201603241457490_ArticleSpotlightTime.Designer.cs">
+      <DependentUpon>201603241457490_ArticleSpotlightTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603260638027_PlainMessage.cs" />
+    <Compile Include="Migrations\201603260638027_PlainMessage.Designer.cs">
+      <DependentUpon>201603260638027_PlainMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603260910041_RemoveOldIgnoreProperties.cs" />
+    <Compile Include="Migrations\201603260910041_RemoveOldIgnoreProperties.Designer.cs">
+      <DependentUpon>201603260910041_RemoveOldIgnoreProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603260952226_RemoveLikeBackout.cs" />
+    <Compile Include="Migrations\201603260952226_RemoveLikeBackout.Designer.cs">
+      <DependentUpon>201603260952226_RemoveLikeBackout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603261339312_UserUniqueSequenceNumber.cs" />
+    <Compile Include="Migrations\201603261339312_UserUniqueSequenceNumber.Designer.cs">
+      <DependentUpon>201603261339312_UserUniqueSequenceNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603281018246_MessageReplyToComment.cs" />
+    <Compile Include="Migrations\201603281018246_MessageReplyToComment.Designer.cs">
+      <DependentUpon>201603281018246_MessageReplyToComment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603281347589_RemoveMessageReplyToCommentId.cs" />
+    <Compile Include="Migrations\201603281347589_RemoveMessageReplyToCommentId.Designer.cs">
+      <DependentUpon>201603281347589_RemoveMessageReplyToCommentId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300345598_ClusteredSequenceNumber.cs" />
+    <Compile Include="Migrations\201603300345598_ClusteredSequenceNumber.Designer.cs">
+      <DependentUpon>201603300345598_ClusteredSequenceNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300819006_Coupon.cs" />
+    <Compile Include="Migrations\201603300819006_Coupon.Designer.cs">
+      <DependentUpon>201603300819006_Coupon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300856216_UserRowVersion.cs" />
+    <Compile Include="Migrations\201603300856216_UserRowVersion.Designer.cs">
+      <DependentUpon>201603300856216_UserRowVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300947472_UserInvitor.cs" />
+    <Compile Include="Migrations\201603300947472_UserInvitor.Designer.cs">
+      <DependentUpon>201603300947472_UserInvitor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603300959086_UserLastVisitTime.cs" />
+    <Compile Include="Migrations\201603300959086_UserLastVisitTime.Designer.cs">
+      <DependentUpon>201603300959086_UserLastVisitTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603301023008_CouponLogCreateTimeIndex.cs" />
+    <Compile Include="Migrations\201603301023008_CouponLogCreateTimeIndex.Designer.cs">
+      <DependentUpon>201603301023008_CouponLogCreateTimeIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603301217398_CouponLogUser.cs" />
+    <Compile Include="Migrations\201603301217398_CouponLogUser.Designer.cs">
+      <DependentUpon>201603301217398_CouponLogUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603301846134_UserCouponIndex.cs" />
+    <Compile Include="Migrations\201603301846134_UserCouponIndex.Designer.cs">
+      <DependentUpon>201603301846134_UserCouponIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603311507186_UserFreeLike.cs" />
+    <Compile Include="Migrations\201603311507186_UserFreeLike.Designer.cs">
+      <DependentUpon>201603311507186_UserFreeLike.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604111105291_CouponGifts.cs" />
+    <Compile Include="Migrations\201604111105291_CouponGifts.Designer.cs">
+      <DependentUpon>201604111105291_CouponGifts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604111141225_LastDailyRewardTime.cs" />
+    <Compile Include="Migrations\201604111141225_LastDailyRewardTime.Designer.cs">
+      <DependentUpon>201604111141225_LastDailyRewardTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604111234442_CouponGiftThumbnailImage.cs" />
+    <Compile Include="Migrations\201604111234442_CouponGiftThumbnailImage.Designer.cs">
+      <DependentUpon>201604111234442_CouponGiftThumbnailImage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -376,10 +488,92 @@
     <EmbeddedResource Include="Migrations\201603091305456_RemoveDeprecatedProperties.resx">
       <DependentUpon>201603091305456_RemoveDeprecatedProperties.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603191657264_ArticleRowVersion.resx">
+      <DependentUpon>201603191657264_ArticleRowVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603220858063_EntryModelSimplify.resx">
+      <DependentUpon>201603220858063_EntryModelSimplify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603220921030_ArticleTypeSimplify.resx">
+      <DependentUpon>201603220921030_ArticleTypeSimplify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603221049328_RemoveOldArticleType.resx">
+      <DependentUpon>201603221049328_RemoveOldArticleType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240426476_Message.resx">
+      <DependentUpon>201603240426476_Message.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240535282_Moderation.resx">
+      <DependentUpon>201603240535282_Moderation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240748433_MessageSequenceNumber.resx">
+      <DependentUpon>201603240748433_MessageSequenceNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603241353529_MoreArchivedStates.resx">
+      <DependentUpon>201603241353529_MoreArchivedStates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603241457490_ArticleSpotlightTime.resx">
+      <DependentUpon>201603241457490_ArticleSpotlightTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603260638027_PlainMessage.resx">
+      <DependentUpon>201603260638027_PlainMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603260910041_RemoveOldIgnoreProperties.resx">
+      <DependentUpon>201603260910041_RemoveOldIgnoreProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603260952226_RemoveLikeBackout.resx">
+      <DependentUpon>201603260952226_RemoveLikeBackout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603261339312_UserUniqueSequenceNumber.resx">
+      <DependentUpon>201603261339312_UserUniqueSequenceNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603281018246_MessageReplyToComment.resx">
+      <DependentUpon>201603281018246_MessageReplyToComment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603281347589_RemoveMessageReplyToCommentId.resx">
+      <DependentUpon>201603281347589_RemoveMessageReplyToCommentId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300345598_ClusteredSequenceNumber.resx">
+      <DependentUpon>201603300345598_ClusteredSequenceNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300819006_Coupon.resx">
+      <DependentUpon>201603300819006_Coupon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300856216_UserRowVersion.resx">
+      <DependentUpon>201603300856216_UserRowVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300947472_UserInvitor.resx">
+      <DependentUpon>201603300947472_UserInvitor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603300959086_UserLastVisitTime.resx">
+      <DependentUpon>201603300959086_UserLastVisitTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603301023008_CouponLogCreateTimeIndex.resx">
+      <DependentUpon>201603301023008_CouponLogCreateTimeIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603301217398_CouponLogUser.resx">
+      <DependentUpon>201603301217398_CouponLogUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603301846134_UserCouponIndex.resx">
+      <DependentUpon>201603301846134_UserCouponIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603311507186_UserFreeLike.resx">
+      <DependentUpon>201603311507186_UserFreeLike.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604111105291_CouponGifts.resx">
+      <DependentUpon>201604111105291_CouponGifts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604111141225_LastDailyRewardTime.resx">
+      <DependentUpon>201604111141225_LastDailyRewardTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604111234442_CouponGiftThumbnailImage.resx">
+      <DependentUpon>201604111234442_CouponGiftThumbnailImage.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,29 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models.DTO
 {
-    public class InvitationCodeDTO
+    /// <summary>
+    ///     InvitationCode DTO
+    /// </summary>
+    public class InvitationCodeDto
     {
-        public InvitationCodeDTO(InvitationCode code, bool includeAll = false)
-        {
-            Id = code.Id;
-
-            if (includeAll)
-            {
-                GenerateTime = code.GenerateTime;
-                Source = code.Source;
-            }
-        }
-
+        /// <summary>
+        ///     Id
+        /// </summary>
         public string Id { get; set; }
 
+        /// <summary>
+        ///     生成时间
+        /// </summary>
         public DateTime? GenerateTime { get; set; }
 
+        /// <summary>
+        ///     来源标记
+        /// </summary>
         public string Source { get; set; }
     }
 }
