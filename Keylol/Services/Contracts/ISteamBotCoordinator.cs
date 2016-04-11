@@ -6,8 +6,8 @@ using Keylol.Models.DTO;
 
 namespace Keylol.Services.Contracts
 {
-    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof (ISteamBotCoodinatorCallback))]
-    public interface ISteamBotCoodinator
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof (ISteamBotCoordinatorCallback))]
+    public interface ISteamBotCoordinator
     {
         [OperationContract]
         Task<IEnumerable<SteamBotDto>> AllocateBots();
@@ -44,7 +44,7 @@ namespace Keylol.Services.Contracts
         Task BroadcastBotOnFriendAdded(string botId);
     }
 
-    public interface ISteamBotCoodinatorCallback
+    public interface ISteamBotCoordinatorCallback
     {
         [OperationContract(IsOneWay = true)]
         void RemoveSteamFriend(string botId, string steamId);

@@ -42,8 +42,8 @@ namespace Keylol.Hubs
             {
                 if (token.SteamId != null)
                 {
-                    ISteamBotCoodinatorCallback callback;
-                    if (SteamBotCoodinator.Clients.TryGetValue(token.Bot.SessionId, out callback))
+                    ISteamBotCoordinatorCallback callback;
+                    if (SteamBotCoordinator.Clients.TryGetValue(token.Bot.SessionId, out callback))
                         callback.RemoveSteamFriend(token.BotId, token.SteamId);
                 }
                 _dbContext.SteamBindingTokens.Remove(token);

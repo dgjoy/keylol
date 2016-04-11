@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.ServiceModel;
+using System.Threading;
+using System.Threading.Tasks;
+using ChannelAdam.ServiceModel;
 using CsQuery;
 using CsQuery.Output;
+using Keylol.ImageGarage.ServiceReference;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.ServiceBase;
@@ -18,13 +24,16 @@ namespace Keylol.ImageGarage
     {
         private readonly ILog _logger;
         private readonly IModel _mqChannel;
+        private readonly IServiceConsumer<IImageGarageCoordinator> _coordinator;
 
-        public ImageGarage(ILogProvider logProvider, MqClientProvider mqClientProvider)
+        public ImageGarage(ILogProvider logProvider, MqClientProvider mqClientProvider,
+            IServiceConsumer<IImageGarageCoordinator> coordinator)
         {
             ServiceName = "Keylol.ImageGarage";
 
             _logger = logProvider.Logger;
             _mqChannel = mqClientProvider.CreateModel();
+            _coordinator = coordinator;
             Config.HtmlEncoder = new HtmlEncoderMinimum();
         }
 
@@ -32,17 +41,37 @@ namespace Keylol.ImageGarage
         {
             _mqChannel.QueueDeclare(MqClientProvider.ImageGarageRequestQueue, true, false, false, null);
             _mqChannel.BasicQos(0, 1, false);
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        var test = await _coordinator.Operations.FindArticleAsync("1");
+                    }
+                    catch (FaultException ex)
+                    {
+                        _logger.Warn(ex.Message);
+                    }
+                    catch (Exception)
+                    {
+                        _logger.Warn("Unhandled exception");
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
+            return;
             var consumer = new EventingBasicConsumer(_mqChannel);
             consumer.Received += async (sender, eventArgs) =>
             {
                 try
                 {
-                    using (var dbContext = new KeylolDbContext())
                     using (var streamReader = new StreamReader(new MemoryStream(eventArgs.Body)))
                     {
                         var serializer = new JsonSerializer();
-                        var requestDto = serializer.Deserialize<ImageGarageRequestDto>(new JsonTextReader(streamReader));
-                        var article = await dbContext.Articles.FindAsync(requestDto.ArticleId);
+                        var requestDto =
+                            serializer.Deserialize<ImageGarageRequestDto>(new JsonTextReader(streamReader));
+                        var article = await _coordinator.Operations.FindArticleAsync(requestDto.ArticleId);
                         if (article == null)
                         {
                             _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
@@ -73,7 +102,9 @@ namespace Keylol.ImageGarage
                                     request.Headers["Accept-Language"] = "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4";
                                     using (var response = await request.GetResponseAsync())
                                     using (var ms =
-                                        new MemoryStream(response.ContentLength > 0 ? (int) response.ContentLength : 0))
+                                        new MemoryStream(response.ContentLength > 0
+                                            ? (int) response.ContentLength
+                                            : 0))
                                     {
                                         do
                                         {
@@ -107,7 +138,7 @@ namespace Keylol.ImageGarage
                         article.Content = dom.Render();
                         try
                         {
-                            await dbContext.SaveChangesAsync();
+//                            await dbContext.SaveChangesAsync();
                             _mqChannel.BasicAck(eventArgs.DeliveryTag, false);
                             using (NDC.Push("Consuming"))
                                 _logger.Info(

@@ -736,114 +736,114 @@ namespace Keylol.SteamBot.ServiceReference {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.ISteamBotCoodinator", CallbackContract=typeof(Keylol.SteamBot.ServiceReference.ISteamBotCoodinatorCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
-    public interface ISteamBotCoodinator {
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.ISteamBotCoordinator", CallbackContract=typeof(Keylol.SteamBot.ServiceReference.ISteamBotCoordinatorCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
+    public interface ISteamBotCoordinator {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/AllocateBotsResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/AllocateBotsResponse")]
         Keylol.SteamBot.ServiceReference.SteamBotDto[] AllocateBots();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoodinator/AllocateBotsResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/AllocateBotsResponse")]
         System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDto[]> AllocateBotsAsync();
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/UpdateBots")]
         void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/UpdateBots")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/UpdateBots")]
         System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserStatus")]
         void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserStatus")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserStatus")]
         System.Threading.Tasks.Task SetUserStatusAsync(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserSteamProfileName")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserSteamProfileName")]
         void SetUserSteamProfileName(string steamId, string name);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SetUserSteamProfileName")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserSteamProfileName")]
         System.Threading.Tasks.Task SetUserSteamProfileNameAsync(string steamId, string name);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/DeleteBindingToken")]
         void DeleteBindingToken(string botId, string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/DeleteBindingToken")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/DeleteBindingToken")]
         System.Threading.Tasks.Task DeleteBindingTokenAsync(string botId, string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetCMServerResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetCMServerResponse")]
         string GetCMServer();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetCMServerResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetCMServerResponse")]
         System.Threading.Tasks.Task<string> GetCMServerAsync();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamIdResponse")]
         Keylol.SteamBot.ServiceReference.UserDto GetUserBySteamId(string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUserBySteamIdResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamIdResponse")]
         System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto> GetUserBySteamIdAsync(string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIdsResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIdsResponse")]
         Keylol.SteamBot.ServiceReference.UserDto[] GetUsersBySteamIds(string[] steamIds);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoodinator/GetUsersBySteamIdsResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIdsResponse")]
         System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto[]> GetUsersBySteamIdsAsync(string[] steamIds);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingTokenResponse")]
         bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithBindingTokenResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingTokenResponse")]
         System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginTokenResponse")]
         bool BindSteamUserWithLoginToken(string userSteamId, string code);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoodinator/BindSteamUserWithLoginTokenResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginTokenResponse")]
         System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(string userSteamId, string code);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/BroadcastBotOnFriendAdded")]
         void BroadcastBotOnFriendAdded(string botId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/BroadcastBotOnFriendAdded")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/BroadcastBotOnFriendAdded")]
         System.Threading.Tasks.Task BroadcastBotOnFriendAddedAsync(string botId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface ISteamBotCoodinatorCallback {
+    public interface ISteamBotCoordinatorCallback {
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/RemoveSteamFriend")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/RemoveSteamFriend")]
         void RemoveSteamFriend(string botId, string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoodinator/SendMessage")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SendMessage")]
         void SendMessage(string botId, string steamId, string message);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoodinator/FetchUrl", ReplyAction="http://tempuri.org/ISteamBotCoodinator/FetchUrlResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/FetchUrl", ReplyAction="http://tempuri.org/ISteamBotCoordinator/FetchUrlResponse")]
         string FetchUrl(string botId, string url);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface ISteamBotCoodinatorChannel : Keylol.SteamBot.ServiceReference.ISteamBotCoodinator, System.ServiceModel.IClientChannel {
+    public interface ISteamBotCoordinatorChannel : Keylol.SteamBot.ServiceReference.ISteamBotCoordinator, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SteamBotCoodinatorClient : System.ServiceModel.DuplexClientBase<Keylol.SteamBot.ServiceReference.ISteamBotCoodinator>, Keylol.SteamBot.ServiceReference.ISteamBotCoodinator {
+    public partial class SteamBotCoordinatorClient : System.ServiceModel.DuplexClientBase<Keylol.SteamBot.ServiceReference.ISteamBotCoordinator>, Keylol.SteamBot.ServiceReference.ISteamBotCoordinator {
         
-        public SteamBotCoodinatorClient(System.ServiceModel.InstanceContext callbackInstance) : 
+        public SteamBotCoordinatorClient(System.ServiceModel.InstanceContext callbackInstance) : 
                 base(callbackInstance) {
         }
         
-        public SteamBotCoodinatorClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName) : 
+        public SteamBotCoordinatorClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName) : 
                 base(callbackInstance, endpointConfigurationName) {
         }
         
-        public SteamBotCoodinatorClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, string remoteAddress) : 
+        public SteamBotCoordinatorClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, string remoteAddress) : 
                 base(callbackInstance, endpointConfigurationName, remoteAddress) {
         }
         
-        public SteamBotCoodinatorClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public SteamBotCoordinatorClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(callbackInstance, endpointConfigurationName, remoteAddress) {
         }
         
-        public SteamBotCoodinatorClient(System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public SteamBotCoordinatorClient(System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(callbackInstance, binding, remoteAddress) {
         }
         

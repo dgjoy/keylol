@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
-  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" />
-  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoodinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
+  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" />
+  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:element name="AllocateBots">
     <xs:complexType>
       <xs:sequence />

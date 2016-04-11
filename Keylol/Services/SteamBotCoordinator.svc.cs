@@ -17,19 +17,19 @@ using StatusClaim = Keylol.Services.Contracts.StatusClaim;
 namespace Keylol.Services
 {
     [ValidateDataAnnotationsBehavior]
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
-    public class SteamBotCoodinator : ISteamBotCoodinator
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
+    public class SteamBotCoordinator : ISteamBotCoordinator
     {
         private readonly string _sessionId = OperationContext.Current.SessionId;
         private bool _botAllocated;
 
-        public SteamBotCoodinator()
+        public SteamBotCoordinator()
         {
             OperationContext.Current.Channel.Closed += OnClientClosed;
             if (_sessionId != null)
             {
                 Clients[_sessionId] =
-                    OperationContext.Current.GetCallbackChannel<ISteamBotCoodinatorCallback>();
+                    OperationContext.Current.GetCallbackChannel<ISteamBotCoordinatorCallback>();
             }
             using (var dbContext = new KeylolDbContext())
             {
@@ -41,8 +41,8 @@ namespace Keylol.Services
             }
         }
 
-        public static ConcurrentDictionary<string, ISteamBotCoodinatorCallback> Clients { get; } =
-            new ConcurrentDictionary<string, ISteamBotCoodinatorCallback>();
+        public static ConcurrentDictionary<string, ISteamBotCoordinatorCallback> Clients { get; } =
+            new ConcurrentDictionary<string, ISteamBotCoordinatorCallback>();
 
         public async Task<IEnumerable<SteamBotDto>> AllocateBots()
         {
@@ -220,7 +220,7 @@ namespace Keylol.Services
 
         private async void OnClientClosed(object sender, EventArgs eventArgs)
         {
-            ISteamBotCoodinatorCallback callback;
+            ISteamBotCoordinatorCallback callback;
             Clients.TryRemove(_sessionId, out callback);
             using (var dbContext = new KeylolDbContext())
             {

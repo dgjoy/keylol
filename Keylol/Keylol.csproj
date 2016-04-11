@@ -30,6 +30,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -270,13 +271,13 @@
     <Compile Include="Controllers\User\CreateOne.cs" />
     <Compile Include="Controllers\User\GetOneByUser.cs" />
     <Compile Include="Controllers\User\GetListOfSubscribersByCurrentUser.cs" />
-    <Compile Include="Models\DTO\CouponLogDto.cs" />
-    <Compile Include="Models\DTO\FavoriteDto.cs" />
-    <Compile Include="Models\DTO\InvitationCodeDto.cs" />
-    <Compile Include="Models\DTO\SubscribedPointDto.cs" />
     <Compile Include="Provider\CouponProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Provider\StatisticsProvider.cs" />
+    <Compile Include="Services\Contracts\IImageGarageCoordinator.cs" />
+    <Compile Include="Services\ImageGarageCoordinator.svc.cs">
+      <DependentUpon>ImageGarageCoordinator.svc</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Utilities\Geetest.cs" />
     <Compile Include="Utilities\Extensions.cs" />
@@ -293,27 +294,19 @@
     <Compile Include="Hubs\DebugInfoHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
     <Compile Include="Hubs\SteamBindingHub.cs" />
-    <Compile Include="Models\DTO\CommentDto.cs" />
-    <Compile Include="Models\DTO\NormalPointDto.cs" />
-    <Compile Include="Models\DTO\SteamLoginTokenDto.cs" />
-    <Compile Include="Models\DTO\SteamBindingTokenDto.cs" />
-    <Compile Include="Models\DTO\SteamBotDto.cs" />
-    <Compile Include="Models\DTO\SteamBotUpdateRequestDto.cs" />
-    <Compile Include="Models\DTO\ArticleDto.cs" />
-    <Compile Include="Models\DTO\LogDto.cs" />
-    <Compile Include="Models\DTO\UserDto.cs" />
     <Compile Include="Provider\KeylolOAuthProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Contracts\ISteamBotCoodinator.cs" />
-    <Compile Include="Services\Providers\SteamBotIdentityValidator.cs" />
+    <Compile Include="Services\Contracts\ISteamBotCoordinator.cs" />
+    <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="App_Start\Startup.cs" />
-    <Compile Include="Services\SteamBotCoodinator.svc.cs">
-      <DependentUpon>SteamBotCoodinator.svc</DependentUpon>
+    <Compile Include="Services\SteamBotCoordinator.svc.cs">
+      <DependentUpon>SteamBotCoordinator.svc</DependentUpon>
     </Compile>
     <Compile Include="Utilities\PredicateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Services\SteamBotCoodinator.svc" />
+    <Content Include="Services\ImageGarageCoordinator.svc" />
+    <Content Include="Services\SteamBotCoordinator.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

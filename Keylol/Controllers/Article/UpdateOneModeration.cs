@@ -172,9 +172,9 @@ namespace Keylol.Controllers.Article
                 DbContext.Messages.Add(missive);
 
                 // Steam 通知
-                ISteamBotCoodinatorCallback callback;
+                ISteamBotCoordinatorCallback callback;
                 if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.SessionId != null &&
-                    SteamBotCoodinator.Clients.TryGetValue(missive.Receiver.SteamBot.SessionId, out callback))
+                    SteamBotCoordinator.Clients.TryGetValue(missive.Receiver.SteamBot.SessionId, out callback))
                 {
                     callback.SendMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId, steamNotityText);
                 }

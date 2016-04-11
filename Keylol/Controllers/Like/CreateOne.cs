@@ -86,9 +86,9 @@ namespace Keylol.Controllers.Like
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
-                        ISteamBotCoodinatorCallback callback;
+                        ISteamBotCoordinatorCallback callback;
                         if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.SessionId != null &&
-                            SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                            SteamBotCoordinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
                         {
                             callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
@@ -155,9 +155,9 @@ namespace Keylol.Controllers.Like
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
-                        ISteamBotCoodinatorCallback callback;
+                        ISteamBotCoordinatorCallback callback;
                         if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.SessionId != null &&
-                            SteamBotCoodinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
+                            SteamBotCoordinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
                         {
                             callback.SendMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你在 《{comment.Article.Title}》 下的评论：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{comment.Article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");

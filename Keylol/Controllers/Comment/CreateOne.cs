@@ -108,9 +108,9 @@ namespace Keylol.Controllers.Comment
                     continue;
 
                 // Steam 通知
-                ISteamBotCoodinatorCallback callback;
+                ISteamBotCoordinatorCallback callback;
                 if (replyToUser.SteamBot.SessionId != null &&
-                    SteamBotCoodinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId, out callback))
+                    SteamBotCoordinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId, out callback))
                 {
                     callback.SendMessage(replyToUser.SteamBotId, replyToUser.SteamId,
                         $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
@@ -132,9 +132,9 @@ namespace Keylol.Controllers.Comment
                 if (!steamNotifiedArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
                 {
                     // Steam 通知
-                    ISteamBotCoodinatorCallback callback;
+                    ISteamBotCoordinatorCallback callback;
                     if (articleAuthor.SteamBot.SessionId != null &&
-                        SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                        SteamBotCoordinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
                     {
                         callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                             $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");

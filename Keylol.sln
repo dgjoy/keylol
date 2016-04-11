@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol", "Keylol\Keylol.csproj", "{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}"
 EndProject
@@ -33,6 +33,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.Models", "Keylol.Models\Keylol.Models.csproj", "{B6C4CDB8-070E-422C-B243-1D488AC1548A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.ImageGarage", "Keylol.ImageGarage\Keylol.ImageGarage.csproj", "{D5B0C243-BAB2-4760-A3D2-D750499104BC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB} = {567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.ServiceBase", "Keylol.ServiceBase\Keylol.ServiceBase.csproj", "{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}"
 EndProject

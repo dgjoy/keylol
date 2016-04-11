@@ -56,9 +56,22 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SteamKit2, Version=1.7.0.33680, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SteamKit2.1.7.0\lib\net45\SteamKit2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -71,8 +84,21 @@
     <Compile Include="Comment.cs" />
     <Compile Include="CommentReply.cs" />
     <Compile Include="CouponLog.cs" />
+    <Compile Include="DTO\ArticleDto.cs" />
+    <Compile Include="DTO\CommentDto.cs" />
+    <Compile Include="DTO\CouponLogDto.cs" />
+    <Compile Include="DTO\FavoriteDto.cs" />
     <Compile Include="DTO\ImageGarageRequestDto.cs" />
     <Compile Include="Article.cs" />
+    <Compile Include="DTO\InvitationCodeDto.cs" />
+    <Compile Include="DTO\LogDto.cs" />
+    <Compile Include="DTO\NormalPointDto.cs" />
+    <Compile Include="DTO\SteamBindingTokenDto.cs" />
+    <Compile Include="DTO\SteamBotDto.cs" />
+    <Compile Include="DTO\SteamBotUpdateRequestDto.cs" />
+    <Compile Include="DTO\SteamLoginTokenDto.cs" />
+    <Compile Include="DTO\SubscribedPointDto.cs" />
+    <Compile Include="DTO\UserDto.cs" />
     <Compile Include="Favorite.cs" />
     <Compile Include="InvitationCode.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />

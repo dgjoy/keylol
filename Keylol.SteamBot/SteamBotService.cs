@@ -22,7 +22,7 @@ namespace Keylol.SteamBot
 
         public bool IsRunning { get; private set; }
 
-        public SteamBotCoodinatorClient Coodinator { get; private set; }
+        public SteamBotCoordinatorClient Coordinator { get; private set; }
 
         public static object ConsoleOutputLock { get; } = new object();
 
@@ -40,9 +40,9 @@ namespace Keylol.SteamBot
             _healthReportTimer.Elapsed += (sender, args) => { ReportBotHealthAsync().Wait(); };
         }
 
-        private SteamBotCoodinatorClient CreateProxy()
+        private SteamBotCoordinatorClient CreateProxy()
         {
-            var proxy = new SteamBotCoodinatorClient(new InstanceContext(new SteamBotCoodinatorCallbackHandler(this)));
+            var proxy = new SteamBotCoordinatorClient(new InstanceContext(new SteamBotCoordinatorCallbackHandler(this)));
             if (proxy.ClientCredentials != null)
             {
                 proxy.ClientCredentials.UserName.UserName = "keylol-bot";
@@ -102,10 +102,10 @@ namespace Keylol.SteamBot
             {
                 Directory.CreateDirectory(AppDataFolder);
                 WriteLog($"Application data location: {AppDataFolder}");
-                Coodinator = CreateProxy();
+                Coordinator = CreateProxy();
                 WriteLog("Channel created.");
-                WriteLog($"Coodinator endpoint: {Coodinator.Endpoint.Address}");
-                var bots = await Coodinator.AllocateBotsAsync();
+                WriteLog($"Coordinator endpoint: {Coordinator.Endpoint.Address}");
+                var bots = await Coordinator.AllocateBotsAsync();
                 WriteLog($"{bots.Length} {(bots.Length > 1 ? "bots" : "bot")} allocated.");
                 foreach (var bot in bots)
                 {
@@ -140,10 +140,10 @@ namespace Keylol.SteamBot
             IsRunning = false;
             _healthReportTimer.Stop();
 
-            if (Coodinator.State == CommunicationState.Faulted)
-                Coodinator.Abort();
+            if (Coordinator.State == CommunicationState.Faulted)
+                Coordinator.Abort();
             else
-                Coodinator.Close();
+                Coordinator.Close();
 
             WriteLog("Channel destroyed.");
 
@@ -156,7 +156,7 @@ namespace Keylol.SteamBot
 
         private async Task ReportBotHealthAsync()
         {
-            await Coodinator.UpdateBotsAsync(_bots.Values.Select(bot =>
+            await Coordinator.UpdateBotsAsync(_bots.Values.Select(bot =>
             {
                 var online = bot.State == Bot.BotState.LoggedOnOnline;
                 var vm = new SteamBotUpdateRequestDto
@@ -186,11 +186,11 @@ namespace Keylol.SteamBot
             OnStop();
         }
 
-        private class SteamBotCoodinatorCallbackHandler : ISteamBotCoodinatorCallback
+        private class SteamBotCoordinatorCallbackHandler : ISteamBotCoordinatorCallback
         {
             private readonly SteamBotService _botService;
 
-            public SteamBotCoodinatorCallbackHandler(SteamBotService botService)
+            public SteamBotCoordinatorCallbackHandler(SteamBotService botService)
             {
                 _botService = botService;
             }
