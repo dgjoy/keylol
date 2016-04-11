@@ -47,16 +47,30 @@ namespace Keylol.Controllers.CouponLog
                     CreateTime = couponLog.CreateTime,
                     Description = JsonConvert.DeserializeObject(couponLog.Description)
                 };
+                await ParseDescription(dto);
+                result.Add(dto);
+            }
+            var response = Request.CreateResponse(HttpStatusCode.OK, result);
+            var totalCount = await DbContext.CouponLogs.CountAsync(cl => cl.UserId == userId);
+            response.Headers.SetTotalCount(totalCount);
+            return response;
+        }
 
-                #region 解析各种类型的描述
-
-                try
+        /// <summary>
+        /// 解析各种类型的 Description
+        /// </summary>
+        /// <param name="dto"><see cref="CouponLogDto"/></param>
+        private async Task ParseDescription(CouponLogDto dto)
+        {
+            try
+            {
+                Func<object, JObject> jObject =
+                    o => JObject.FromObject(o, new JsonSerializer {NullValueHandling = NullValueHandling.Ignore});
+                if (dto.Description.ArticleId != null)
                 {
-                    Func<object, JObject> jObject =
-                        o => JObject.FromObject(o, new JsonSerializer {NullValueHandling = NullValueHandling.Ignore});
-                    if (dto.Description.ArticleId != null)
+                    var article = await DbContext.Articles.FindAsync((string) dto.Description.ArticleId);
+                    if (article != null)
                     {
-                        var article = await DbContext.Articles.FindAsync((string) dto.Description.ArticleId);
                         ((JObject) dto.Description).Remove("ArticleId");
                         dto.Description.Article = jObject(new ArticleDto
                         {
@@ -66,23 +80,32 @@ namespace Keylol.Controllers.CouponLog
                             AuthorIdCode = article.Principal.User.IdCode
                         });
                     }
-                    if (dto.Description.CommentId != null)
+                }
+                if (dto.Description.CommentId != null)
+                {
+                    var comment = await DbContext.Comments.FindAsync((string) dto.Description.CommentId);
+                    if (comment != null)
                     {
-                        var comment = await DbContext.Comments.FindAsync((string) dto.Description.CommentId);
                         ((JObject) dto.Description).Remove("CommentId");
                         dto.Description.Comment = jObject(new CommentDto
                         {
                             Id = comment.Id,
                             Content =
-                                comment.Content.Length > 15 ? $"{comment.Content.Substring(0, 15)} …" : comment.Content,
+                                comment.Content.Length > 15
+                                    ? $"{comment.Content.Substring(0, 15)} …"
+                                    : comment.Content,
                             ArticleAuthorIdCode = comment.Article.Principal.User.IdCode,
                             ArticleSequenceNumberForAuthor = comment.Article.SequenceNumberForAuthor,
                             SequenceNumberForArticle = comment.SequenceNumberForArticle
                         });
                     }
-                    if (dto.Description.OperatorId != null)
+                }
+                if (dto.Description.OperatorId != null)
+                {
+                    var operatorId = (string) dto.Description.OperatorId;
+                    var user = await DbContext.Users.Where(u => u.Id == operatorId).SingleOrDefaultAsync();
+                    if (user != null)
                     {
-                        var user = DbContext.Users.Find((string) dto.Description.OperatorId);
                         ((JObject) dto.Description).Remove("OperatorId");
                         dto.Description.Operotor = jObject(new UserDto
                         {
@@ -91,9 +114,13 @@ namespace Keylol.Controllers.CouponLog
                             IdCode = user.IdCode
                         });
                     }
-                    if (dto.Description.UserId != null)
+                }
+                if (dto.Description.UserId != null)
+                {
+                    var targetUserId = (string) dto.Description.UserId;
+                    var user = await DbContext.Users.Where(u => u.Id == targetUserId).SingleOrDefaultAsync();
+                    if (user != null)
                     {
-                        var user = DbContext.Users.Find((string) dto.Description.UserId);
                         ((JObject) dto.Description).Remove("UserId");
                         dto.Description.User = jObject(new UserDto
                         {
@@ -102,9 +129,13 @@ namespace Keylol.Controllers.CouponLog
                             IdCode = user.IdCode
                         });
                     }
-                    if (dto.Description.InviterId != null)
+                }
+                if (dto.Description.InviterId != null)
+                {
+                    var inviterId = (string) dto.Description.InviterId;
+                    var user = await DbContext.Users.Where(u => u.Id == inviterId).SingleOrDefaultAsync();
+                    if (user != null)
                     {
-                        var user = DbContext.Users.Find((string) dto.Description.InviterId);
                         ((JObject) dto.Description).Remove("InviterId");
                         dto.Description.Inviter = jObject(new UserDto
                         {
@@ -114,18 +145,23 @@ namespace Keylol.Controllers.CouponLog
                         });
                     }
                 }
-                catch (RuntimeBinderException)
+                if (dto.Description.CouponGiftId != null)
                 {
+                    var gift = await DbContext.CouponGifts.FindAsync((string) dto.Description.CouponGiftId);
+                    if (gift != null)
+                    {
+                        ((JObject) dto.Description).Remove("CouponGiftId");
+                        dto.Description.CouponGift = jObject(new CouponGiftDto
+                        {
+                            Id = gift.Id,
+                            Name = gift.Name
+                        });
+                    }
                 }
-
-                #endregion
-
-                result.Add(dto);
             }
-            var response = Request.CreateResponse(HttpStatusCode.OK, result);
-            var totalCount = await DbContext.CouponLogs.CountAsync(cl => cl.UserId == userId);
-            response.Headers.SetTotalCount(totalCount);
-            return response;
+            catch (RuntimeBinderException)
+            {
+            }
         }
     }
 }

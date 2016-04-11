@@ -221,9 +221,15 @@
     <Compile Include="Controllers\Comment\CreateOne.cs" />
     <Compile Include="Controllers\Comment\GetListByArticleId.cs" />
     <Compile Include="Controllers\Comment\UpdateOneModeration.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CouponGiftOrderController.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\GetListOfAll.cs" />
+    <Compile Include="Controllers\CouponGift\GetOneById.cs" />
     <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
     <Compile Include="Controllers\CouponLog\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\CouponLog\GetListOfUnreadByCurrentUser.cs" />
+    <Compile Include="Controllers\CouponGift\CouponGiftController.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Favorite\FavoriteController.cs" />
     <Compile Include="Controllers\Favorite\DeleteOneById.cs" />
@@ -270,6 +276,7 @@
     <Compile Include="Controllers\User\CreateOne.cs" />
     <Compile Include="Controllers\User\GetOneByUser.cs" />
     <Compile Include="Controllers\User\GetListOfSubscribersByCurrentUser.cs" />
+    <Compile Include="Models\DTO\CouponGiftDto.cs" />
     <Compile Include="Models\DTO\CouponLogDto.cs" />
     <Compile Include="Models\DTO\FavoriteDto.cs" />
     <Compile Include="Models\DTO\InvitationCodeDto.cs" />
