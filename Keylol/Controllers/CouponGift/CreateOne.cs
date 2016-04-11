@@ -35,6 +35,7 @@ namespace Keylol.Controllers.CouponGift
             var gift = DbContext.CouponGifts.Create();
             gift.Name = requestDto.Name;
             gift.Descriptions = JsonConvert.SerializeObject(requestDto.Descriptions);
+            gift.ThumbnailImage = requestDto.ThumbnailImage;
             gift.PreviewImage = requestDto.PreviewImage;
             gift.AcceptedFields = JsonConvert.SerializeObject(requestDto.AcceptedFields);
             gift.Price = requestDto.Price;
@@ -60,6 +61,12 @@ namespace Keylol.Controllers.CouponGift
         /// </summary>
         [Required]
         public List<string> Descriptions { get; set; }
+
+        /// <summary>
+        /// 缩略图
+        /// </summary>
+        [Required]
+        public string ThumbnailImage { get; set; }
 
         /// <summary>
         /// 预览图片
