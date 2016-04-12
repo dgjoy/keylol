@@ -227,6 +227,7 @@
     <Compile Include="Controllers\CouponGift\GetListOfAll.cs" />
     <Compile Include="Controllers\CouponGift\GetOneById.cs" />
     <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
+    <Compile Include="Controllers\CouponLog\CreateOne.cs" />
     <Compile Include="Controllers\CouponLog\GetListByCurrentUser.cs" />
     <Compile Include="Controllers\CouponLog\GetListOfUnreadByCurrentUser.cs" />
     <Compile Include="Controllers\CouponGift\CouponGiftController.cs" />

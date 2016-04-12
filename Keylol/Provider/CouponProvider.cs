@@ -55,6 +55,8 @@ namespace Keylol.Provider
             DateTime? logTime = null)
         {
             var user = _dbContext.Users.Find(userId);
+            if (user == null)
+                throw new ArgumentException("指定用户不存在", nameof(userId));
             var log = new CouponLog
             {
                 Change = change,

@@ -174,9 +174,8 @@ namespace Keylol
             config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
 
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
-
-#if DEBUG
-            config.EnableSwagger(c =>
+            
+            config.EnableSwagger("swagger-hRwp3Pnm/docs/{apiVersion}", c =>
             {
                 c.SingleApiVersion("v1", "Keylol REST API")
                     .Contact(cc => cc.Name("Stackia")
@@ -185,8 +184,7 @@ namespace Keylol
                 var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.XML"));
                 c.DescribeAllEnumsAsStrings();
-            }).EnableSwaggerUi();
-#endif
+            }).EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}");
 
             config.MapHttpAttributeRoutes();
 
