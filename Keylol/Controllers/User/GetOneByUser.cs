@@ -60,6 +60,7 @@ namespace Keylol.Controllers.User
         [HttpGet]
         [ResponseType(typeof (UserDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "尝试获取无权获取的属性")]
         public async Task<IHttpActionResult> GetOneByUser(string id, bool profilePointBackgroundImage = false,
             bool claims = false, bool security = false, bool steam = false,
             bool steamBot = false, bool subscribeCount = false, bool stats = false,
@@ -112,6 +113,8 @@ namespace Keylol.Controllers.User
                 ? null
                 : await UserManager.GetStaffClaimAsync(visitorId);
 
+            var getSelf = visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator;
+
             var userDto = new UserDto(user);
 
             if (moreOptions)
@@ -133,17 +136,33 @@ namespace Keylol.Controllers.User
                 userDto.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
             }
 
-            if (security && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+            if (security)
+            {
+                if (!getSelf)
+                    return Unauthorized();
                 userDto.IncludeSecurity();
+            }
 
-            if (steam && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+            if (steam)
+            {
+                if (!getSelf)
+                    return Unauthorized();
                 userDto.IncludeSteam();
+            }
 
-            if (steamBot && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+            if (steamBot)
+            {
+                if (!getSelf)
+                    return Unauthorized();
                 userDto.SteamBot = new SteamBotDto(user.SteamBot);
+            }
 
-            if (coupon && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+            if (coupon)
+            {
+                if (!getSelf)
+                    return Unauthorized();
                 userDto.Coupon = user.Coupon;
+            }
 
             if (subscribeCount)
             {
@@ -187,8 +206,10 @@ namespace Keylol.Controllers.User
                     .ContainsAsync(user.Id);
             }
 
-            if (commentLike && (visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator))
+            if (commentLike)
             {
+                if (!getSelf)
+                    return Unauthorized();
                 userDto.MessageCount = string.Join(",", new[]
                 {
                     await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&

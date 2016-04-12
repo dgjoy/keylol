@@ -114,6 +114,12 @@ namespace Keylol.Models.DTO
         public string Content { get; set; }
 
         /// <summary>
+        /// RowVersion
+        /// </summary>
+        [DataMember]
+        public byte[] RowVersion { get; set; }
+
+        /// <summary>
         ///     缩略图
         /// </summary>
         [DataMember]

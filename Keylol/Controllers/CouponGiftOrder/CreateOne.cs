@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -31,6 +32,14 @@ namespace Keylol.Controllers.CouponGiftOrder
             var gift = await DbContext.CouponGifts.FindAsync(giftId);
             if (gift == null)
                 return NotFound();
+
+            if (DateTime.Now >= gift.EndTime)
+            {
+                {
+                    ModelState.AddModelError(nameof(giftId), "礼品已经下架，无法兑换");
+                    return BadRequest(ModelState);
+                }
+            }
 
             var userId = User.Identity.GetUserId();
             var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();

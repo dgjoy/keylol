@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
@@ -30,6 +31,8 @@ namespace Keylol.Models.DTO
             PreviewImage = gift.PreviewImage;
             AcceptedFields = JsonConvert.DeserializeObject<List<CouponGiftAcceptedFieldDto>>(gift.AcceptedFields);
             Price = gift.Price;
+            CreateTime = gift.CreateTime;
+            EndTime = gift.EndTime;
         }
 
         /// <summary>
@@ -53,6 +56,7 @@ namespace Keylol.Models.DTO
         /// <summary>
         /// 缩略图
         /// </summary>
+        [DataMember]
         public string ThumbnailImage { get; set; }
 
         /// <summary>
@@ -72,6 +76,18 @@ namespace Keylol.Models.DTO
         /// </summary>
         [DataMember]
         public int? Price { get; set; }
+
+        /// <summary>
+        /// 上架日期
+        /// </summary>
+        [DataMember]
+        public DateTime? CreateTime { get; set; }
+
+        /// <summary>
+        /// 下架日期
+        /// </summary>
+        [DataMember]
+        public DateTime? EndTime { get; set; }
 
         /// <summary>
         /// 被兑换的总次数
@@ -115,5 +131,11 @@ namespace Keylol.Models.DTO
         /// </summary>
         [DataMember]
         public string Description { get; set; }
+
+        /// <summary>
+        /// 用户输入类型，用于 input 标签 type 属性
+        /// </summary>
+        [DataMember]
+        public string InputType { get; set; }
     }
 }

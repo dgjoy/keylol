@@ -381,6 +381,10 @@
     <Compile Include="Migrations\201604111234442_CouponGiftThumbnailImage.Designer.cs">
       <DependentUpon>201604111234442_CouponGiftThumbnailImage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604121045352_CouponGiftEndTime.cs" />
+    <Compile Include="Migrations\201604121045352_CouponGiftEndTime.Designer.cs">
+      <DependentUpon>201604121045352_CouponGiftEndTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -595,6 +599,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604111234442_CouponGiftThumbnailImage.resx">
       <DependentUpon>201604111234442_CouponGiftThumbnailImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604121045352_CouponGiftEndTime.resx">
+      <DependentUpon>201604121045352_CouponGiftEndTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

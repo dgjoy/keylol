@@ -22,6 +22,7 @@
       <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Pros" nillable="true" type="q3:ArrayOfstring" />
       <xs:element minOccurs="0" name="PublishTime" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="Rejected" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="RowVersion" nillable="true" type="xs:base64Binary" />
       <xs:element minOccurs="0" name="SequenceNumber" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="SequenceNumberForAuthor" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="Spotlight" nillable="true" type="xs:boolean" />

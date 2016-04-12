@@ -22,7 +22,10 @@ namespace Keylol.Services.Contracts
         /// 更新指定文章
         /// </summary>
         /// <param name="id">文章 ID</param>
+        /// <param name="content">新的内容</param>
+        /// <param name="thumbnailImage">新的缩略图</param>
+        /// <param name="rowVersion">参考 RowVersion</param>
         [OperationContract]
-        Task UpdateArticle(string id);
+        Task UpdateArticle(string id, string content, string thumbnailImage, byte[] rowVersion);
     }
 }

@@ -23,7 +23,7 @@ namespace Keylol.ImageGarage
                             Password = "neLFDyJB8Vj2Xtsn2KMTUEFw"
                         }
                     }
-                }));
+                }, new NullServiceConsumerExceptionBehaviourStrategy()));
             KeylolService.Run<ImageGarage>(args, Container);
         }
     }

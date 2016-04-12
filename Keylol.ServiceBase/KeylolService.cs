@@ -29,7 +29,7 @@ namespace Keylol.ServiceBase
 
             var patternLayout = new PatternLayout
             {
-                ConversionPattern = "%date [%thread] %-5level %logger [%ndc] - %message%newline"
+                ConversionPattern = "%date [%thread] %-5level %logger - %message%newline"
             };
             patternLayout.ActivateOptions();
 

@@ -40,27 +40,7 @@ namespace Keylol.ImageGarage
         protected override void OnStart(string[] args)
         {
             _mqChannel.QueueDeclare(MqClientProvider.ImageGarageRequestQueue, true, false, false, null);
-            _mqChannel.BasicQos(0, 1, false);
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    try
-                    {
-                        var test = await _coordinator.Operations.FindArticleAsync("1");
-                    }
-                    catch (FaultException ex)
-                    {
-                        _logger.Warn(ex.Message);
-                    }
-                    catch (Exception)
-                    {
-                        _logger.Warn("Unhandled exception");
-                    }
-                    Thread.Sleep(1000);
-                }
-            });
-            return;
+            _mqChannel.BasicQos(0, 5, false);
             var consumer = new EventingBasicConsumer(_mqChannel);
             consumer.Received += async (sender, eventArgs) =>
             {
@@ -71,12 +51,11 @@ namespace Keylol.ImageGarage
                         var serializer = new JsonSerializer();
                         var requestDto =
                             serializer.Deserialize<ImageGarageRequestDto>(new JsonTextReader(streamReader));
-                        var article = await _coordinator.Operations.FindArticleAsync(requestDto.ArticleId);
+                        var article = _coordinator.Operations.FindArticle(requestDto.ArticleId);
                         if (article == null)
                         {
                             _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
-                            using (NDC.Push("Consuming"))
-                                _logger.Warn($"Article {requestDto.ArticleId} doesn't exist.");
+                            _logger.Warn($"Article {requestDto.ArticleId} doesn't exist.");
                             return;
                         }
                         var dom = CQ.Create(article.Content);
@@ -101,10 +80,9 @@ namespace Keylol.ImageGarage
                                     request.Accept = "image/webp,image/*,*/*;q=0.8";
                                     request.Headers["Accept-Language"] = "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4";
                                     using (var response = await request.GetResponseAsync())
-                                    using (var ms =
-                                        new MemoryStream(response.ContentLength > 0
-                                            ? (int) response.ContentLength
-                                            : 0))
+                                    using (var ms = new MemoryStream(response.ContentLength > 0
+                                        ? (int) response.ContentLength
+                                        : 0))
                                     {
                                         do
                                         {
@@ -125,8 +103,9 @@ namespace Keylol.ImageGarage
                                         } while (false);
                                     }
                                 }
-                                catch (WebException)
+                                catch (WebException e)
                                 {
+                                    _logger.Warn($"Download failed: {url}", e);
                                 }
                                 catch (UriFormatException)
                                 {
@@ -136,27 +115,22 @@ namespace Keylol.ImageGarage
                                 article.ThumbnailImage = url;
                         }
                         article.Content = dom.Render();
-                        try
-                        {
-//                            await dbContext.SaveChangesAsync();
-                            _mqChannel.BasicAck(eventArgs.DeliveryTag, false);
-                            using (NDC.Push("Consuming"))
-                                _logger.Info(
-                                    $"Article {requestDto.ArticleId} ({article.Title}) finished, {downloadCount} images downloaded.");
-                        }
-                        catch (DbUpdateConcurrencyException)
-                        {
-                            _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
-                            using (NDC.Push("Consuming"))
-                                _logger.Info($"Article {requestDto.ArticleId} update failed (concurrency conflict).");
-                        }
+                        _coordinator.Operations.UpdateArticle(article.Id, article.Content, article.ThumbnailImage,
+                            article.RowVersion);
+                        _mqChannel.BasicAck(eventArgs.DeliveryTag, false);
+                        _logger.Info(
+                            $"Article \"{article.Title}\" ({requestDto.ArticleId}) finished, {downloadCount} images downloaded.");
                     }
+                }
+                catch (FaultException e)
+                {
+                    _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
+                    _logger.Warn("WCF Channel fault.", e);
                 }
                 catch (Exception e)
                 {
                     _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
-                    using (NDC.Push("Consuming"))
-                        _logger.Fatal("Unhandled callback exception.", e);
+                    _logger.Fatal("RabbitMQ unhandled callback exception.", e);
                 }
             };
             _mqChannel.BasicConsume(MqClientProvider.ImageGarageRequestQueue, false, consumer);

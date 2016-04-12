@@ -18,14 +18,8 @@ namespace Keylol.ImageGarage.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/FindArticle", ReplyAction="http://tempuri.org/IImageGarageCoordinator/FindArticleResponse")]
         Keylol.Models.DTO.ArticleDto FindArticle(string id);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/FindArticle", ReplyAction="http://tempuri.org/IImageGarageCoordinator/FindArticleResponse")]
-        System.Threading.Tasks.Task<Keylol.Models.DTO.ArticleDto> FindArticleAsync(string id);
-        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticle", ReplyAction="http://tempuri.org/IImageGarageCoordinator/UpdateArticleResponse")]
-        void UpdateArticle(string id);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticle", ReplyAction="http://tempuri.org/IImageGarageCoordinator/UpdateArticleResponse")]
-        System.Threading.Tasks.Task UpdateArticleAsync(string id);
+        void UpdateArticle(string id, string content, string thumbnailImage, byte[] rowVersion);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -59,16 +53,8 @@ namespace Keylol.ImageGarage.ServiceReference {
             return base.Channel.FindArticle(id);
         }
         
-        public System.Threading.Tasks.Task<Keylol.Models.DTO.ArticleDto> FindArticleAsync(string id) {
-            return base.Channel.FindArticleAsync(id);
-        }
-        
-        public void UpdateArticle(string id) {
-            base.Channel.UpdateArticle(id);
-        }
-        
-        public System.Threading.Tasks.Task UpdateArticleAsync(string id) {
-            return base.Channel.UpdateArticleAsync(id);
+        public void UpdateArticle(string id, string content, string thumbnailImage, byte[] rowVersion) {
+            base.Channel.UpdateArticle(id, content, thumbnailImage, rowVersion);
         }
     }
 }

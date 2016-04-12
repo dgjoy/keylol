@@ -40,18 +40,14 @@ namespace Keylol.ServiceBase
                 TopologyRecoveryEnabled = true
             }.CreateConnection();
             Connection.ConnectionShutdown += OnConnectionShutdown;
-            ((IRecoverable) Connection).Recovery += (sender, eventArgs) =>
-            {
-                using (NDC.Push("RabbitMQ"))
-                    _logger.Info("Connection recovered.");
-            };
+            ((IRecoverable) Connection).Recovery +=
+                (sender, eventArgs) => { _logger.Info("RabbitMQ connection recovered."); };
         }
 
         private void OnConnectionShutdown(object sender, ShutdownEventArgs shutdownEventArgs)
         {
-            using (NDC.Push("RabbitMQ"))
-                _logger.Warn(
-                    $"Connection shutdown.{(shutdownEventArgs.Cause == null ? string.Empty : $" Reason: {shutdownEventArgs.Cause}")}");
+            _logger.Warn(
+                $"RabbitMQ connection shutdown.{(shutdownEventArgs.Cause == null ? string.Empty : $" Reason: {shutdownEventArgs.Cause}")}");
         }
 
         /// <summary>
@@ -84,8 +80,7 @@ namespace Keylol.ServiceBase
             {
                 Connection.ConnectionShutdown -= OnConnectionShutdown;
                 Connection.Dispose();
-                using (NDC.Push("RabbitMQ"))
-                    _logger.Info("Connection closed.");
+                _logger.Info("RabbitMQ Connection closed.");
             }
         }
     }

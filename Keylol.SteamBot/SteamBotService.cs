@@ -45,7 +45,7 @@ namespace Keylol.SteamBot
             var proxy = new SteamBotCoordinatorClient(new InstanceContext(new SteamBotCoordinatorCallbackHandler(this)));
             if (proxy.ClientCredentials != null)
             {
-                proxy.ClientCredentials.UserName.UserName = "keylol-bot";
+                proxy.ClientCredentials.UserName.UserName = "keylol-service-consumer";
                 proxy.ClientCredentials.UserName.Password = "neLFDyJB8Vj2Xtsn2KMTUEFw";
             }
             proxy.InnerChannel.Faulted += (sender, a) =>
