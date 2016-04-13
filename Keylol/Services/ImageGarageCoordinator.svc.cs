@@ -8,7 +8,7 @@ using Keylol.Services.Contracts;
 namespace Keylol.Services
 {
     /// <summary>
-    /// <see cref="ImageGarageCoordinator"/> 实现
+    /// <see cref="IImageGarageCoordinator"/> 实现
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ImageGarageCoordinator : IImageGarageCoordinator

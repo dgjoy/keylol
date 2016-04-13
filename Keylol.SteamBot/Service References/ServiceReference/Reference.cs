@@ -10,226 +10,7 @@
 
 namespace Keylol.SteamBot.ServiceReference {
     using System.Runtime.Serialization;
-    using System;
     
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
-    [System.SerializableAttribute()]
-    public partial class SteamBotDto : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool OnlineField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamId64Field;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamPasswordField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamUserNameField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IdField, value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Online {
-            get {
-                return this.OnlineField;
-            }
-            set {
-                if ((this.OnlineField.Equals(value) != true)) {
-                    this.OnlineField = value;
-                    this.RaisePropertyChanged("Online");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamId {
-            get {
-                return this.SteamIdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamIdField, value) != true)) {
-                    this.SteamIdField = value;
-                    this.RaisePropertyChanged("SteamId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamId64 {
-            get {
-                return this.SteamId64Field;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamId64Field, value) != true)) {
-                    this.SteamId64Field = value;
-                    this.RaisePropertyChanged("SteamId64");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamPassword {
-            get {
-                return this.SteamPasswordField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamPasswordField, value) != true)) {
-                    this.SteamPasswordField = value;
-                    this.RaisePropertyChanged("SteamPassword");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamUserName {
-            get {
-                return this.SteamUserNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamUserNameField, value) != true)) {
-                    this.SteamUserNameField = value;
-                    this.RaisePropertyChanged("SteamUserName");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SteamBotUpdateRequestDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
-    [System.SerializableAttribute()]
-    public partial class SteamBotUpdateRequestDto : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> FriendCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> OnlineField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamIdField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> FriendCount {
-            get {
-                return this.FriendCountField;
-            }
-            set {
-                if ((this.FriendCountField.Equals(value) != true)) {
-                    this.FriendCountField = value;
-                    this.RaisePropertyChanged("FriendCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IdField, value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> Online {
-            get {
-                return this.OnlineField;
-            }
-            set {
-                if ((this.OnlineField.Equals(value) != true)) {
-                    this.OnlineField = value;
-                    this.RaisePropertyChanged("Online");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamId {
-            get {
-                return this.SteamIdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamIdField, value) != true)) {
-                    this.SteamIdField = value;
-                    this.RaisePropertyChanged("SteamId");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="StatusClaim", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts")]
@@ -242,572 +23,55 @@ namespace Keylol.SteamBot.ServiceReference {
         Probationer = 1,
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="UserDto", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO")]
-    [System.SerializableAttribute()]
-    public partial class UserDto : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> ArticleCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<double> AutoSubscribeDaySpanField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> AutoSubscribeEnabledField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string AvatarImageField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> CouponField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string EmailField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string GamerTagField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IdCodeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> LikeCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> LockoutEnabledField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string MessageCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ProfilePointBackgroundImageField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> ReviewCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> ShortReviewCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string StaffClaimField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string StatusClaimField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private Keylol.SteamBot.ServiceReference.SteamBotDto SteamBotField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamId64Field;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> SteamNotifyOnArticleLikedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> SteamNotifyOnArticleRepliedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> SteamNotifyOnCommentLikedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> SteamNotifyOnCommentRepliedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SteamProfileNameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<bool> SubscribedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> SubscribedPointCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> SubscriberCountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UserNameField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> ArticleCount {
-            get {
-                return this.ArticleCountField;
-            }
-            set {
-                if ((this.ArticleCountField.Equals(value) != true)) {
-                    this.ArticleCountField = value;
-                    this.RaisePropertyChanged("ArticleCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<double> AutoSubscribeDaySpan {
-            get {
-                return this.AutoSubscribeDaySpanField;
-            }
-            set {
-                if ((this.AutoSubscribeDaySpanField.Equals(value) != true)) {
-                    this.AutoSubscribeDaySpanField = value;
-                    this.RaisePropertyChanged("AutoSubscribeDaySpan");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> AutoSubscribeEnabled {
-            get {
-                return this.AutoSubscribeEnabledField;
-            }
-            set {
-                if ((this.AutoSubscribeEnabledField.Equals(value) != true)) {
-                    this.AutoSubscribeEnabledField = value;
-                    this.RaisePropertyChanged("AutoSubscribeEnabled");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string AvatarImage {
-            get {
-                return this.AvatarImageField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.AvatarImageField, value) != true)) {
-                    this.AvatarImageField = value;
-                    this.RaisePropertyChanged("AvatarImage");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> Coupon {
-            get {
-                return this.CouponField;
-            }
-            set {
-                if ((this.CouponField.Equals(value) != true)) {
-                    this.CouponField = value;
-                    this.RaisePropertyChanged("Coupon");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Email {
-            get {
-                return this.EmailField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.EmailField, value) != true)) {
-                    this.EmailField = value;
-                    this.RaisePropertyChanged("Email");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string GamerTag {
-            get {
-                return this.GamerTagField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.GamerTagField, value) != true)) {
-                    this.GamerTagField = value;
-                    this.RaisePropertyChanged("GamerTag");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IdField, value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string IdCode {
-            get {
-                return this.IdCodeField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IdCodeField, value) != true)) {
-                    this.IdCodeField = value;
-                    this.RaisePropertyChanged("IdCode");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> LikeCount {
-            get {
-                return this.LikeCountField;
-            }
-            set {
-                if ((this.LikeCountField.Equals(value) != true)) {
-                    this.LikeCountField = value;
-                    this.RaisePropertyChanged("LikeCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> LockoutEnabled {
-            get {
-                return this.LockoutEnabledField;
-            }
-            set {
-                if ((this.LockoutEnabledField.Equals(value) != true)) {
-                    this.LockoutEnabledField = value;
-                    this.RaisePropertyChanged("LockoutEnabled");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string MessageCount {
-            get {
-                return this.MessageCountField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.MessageCountField, value) != true)) {
-                    this.MessageCountField = value;
-                    this.RaisePropertyChanged("MessageCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ProfilePointBackgroundImage {
-            get {
-                return this.ProfilePointBackgroundImageField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ProfilePointBackgroundImageField, value) != true)) {
-                    this.ProfilePointBackgroundImageField = value;
-                    this.RaisePropertyChanged("ProfilePointBackgroundImage");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> ReviewCount {
-            get {
-                return this.ReviewCountField;
-            }
-            set {
-                if ((this.ReviewCountField.Equals(value) != true)) {
-                    this.ReviewCountField = value;
-                    this.RaisePropertyChanged("ReviewCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> ShortReviewCount {
-            get {
-                return this.ShortReviewCountField;
-            }
-            set {
-                if ((this.ShortReviewCountField.Equals(value) != true)) {
-                    this.ShortReviewCountField = value;
-                    this.RaisePropertyChanged("ShortReviewCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string StaffClaim {
-            get {
-                return this.StaffClaimField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.StaffClaimField, value) != true)) {
-                    this.StaffClaimField = value;
-                    this.RaisePropertyChanged("StaffClaim");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string StatusClaim {
-            get {
-                return this.StatusClaimField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.StatusClaimField, value) != true)) {
-                    this.StatusClaimField = value;
-                    this.RaisePropertyChanged("StatusClaim");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public Keylol.SteamBot.ServiceReference.SteamBotDto SteamBot {
-            get {
-                return this.SteamBotField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamBotField, value) != true)) {
-                    this.SteamBotField = value;
-                    this.RaisePropertyChanged("SteamBot");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamId {
-            get {
-                return this.SteamIdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamIdField, value) != true)) {
-                    this.SteamIdField = value;
-                    this.RaisePropertyChanged("SteamId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamId64 {
-            get {
-                return this.SteamId64Field;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamId64Field, value) != true)) {
-                    this.SteamId64Field = value;
-                    this.RaisePropertyChanged("SteamId64");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> SteamNotifyOnArticleLiked {
-            get {
-                return this.SteamNotifyOnArticleLikedField;
-            }
-            set {
-                if ((this.SteamNotifyOnArticleLikedField.Equals(value) != true)) {
-                    this.SteamNotifyOnArticleLikedField = value;
-                    this.RaisePropertyChanged("SteamNotifyOnArticleLiked");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> SteamNotifyOnArticleReplied {
-            get {
-                return this.SteamNotifyOnArticleRepliedField;
-            }
-            set {
-                if ((this.SteamNotifyOnArticleRepliedField.Equals(value) != true)) {
-                    this.SteamNotifyOnArticleRepliedField = value;
-                    this.RaisePropertyChanged("SteamNotifyOnArticleReplied");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> SteamNotifyOnCommentLiked {
-            get {
-                return this.SteamNotifyOnCommentLikedField;
-            }
-            set {
-                if ((this.SteamNotifyOnCommentLikedField.Equals(value) != true)) {
-                    this.SteamNotifyOnCommentLikedField = value;
-                    this.RaisePropertyChanged("SteamNotifyOnCommentLiked");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> SteamNotifyOnCommentReplied {
-            get {
-                return this.SteamNotifyOnCommentRepliedField;
-            }
-            set {
-                if ((this.SteamNotifyOnCommentRepliedField.Equals(value) != true)) {
-                    this.SteamNotifyOnCommentRepliedField = value;
-                    this.RaisePropertyChanged("SteamNotifyOnCommentReplied");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SteamProfileName {
-            get {
-                return this.SteamProfileNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SteamProfileNameField, value) != true)) {
-                    this.SteamProfileNameField = value;
-                    this.RaisePropertyChanged("SteamProfileName");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<bool> Subscribed {
-            get {
-                return this.SubscribedField;
-            }
-            set {
-                if ((this.SubscribedField.Equals(value) != true)) {
-                    this.SubscribedField = value;
-                    this.RaisePropertyChanged("Subscribed");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> SubscribedPointCount {
-            get {
-                return this.SubscribedPointCountField;
-            }
-            set {
-                if ((this.SubscribedPointCountField.Equals(value) != true)) {
-                    this.SubscribedPointCountField = value;
-                    this.RaisePropertyChanged("SubscribedPointCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> SubscriberCount {
-            get {
-                return this.SubscriberCountField;
-            }
-            set {
-                if ((this.SubscriberCountField.Equals(value) != true)) {
-                    this.SubscriberCountField = value;
-                    this.RaisePropertyChanged("SubscriberCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string UserName {
-            get {
-                return this.UserNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UserNameField, value) != true)) {
-                    this.UserNameField = value;
-                    this.RaisePropertyChanged("UserName");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.ISteamBotCoordinator", CallbackContract=typeof(Keylol.SteamBot.ServiceReference.ISteamBotCoordinatorCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface ISteamBotCoordinator {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/AllocateBotsResponse")]
-        Keylol.SteamBot.ServiceReference.SteamBotDto[] AllocateBots();
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/RequestBots")]
+        void RequestBots();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/AllocateBotsResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDto[]> AllocateBotsAsync();
+        Keylol.Models.DTO.SteamBotDto[] AllocateBots(int count);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/UpdateBots")]
-        void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/DeallocateBot", ReplyAction="http://tempuri.org/ISteamBotCoordinator/DeallocateBotResponse")]
+        void DeallocateBot(string botId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/UpdateBots")]
-        System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/UpdateUser", ReplyAction="http://tempuri.org/ISteamBotCoordinator/UpdateUserResponse")]
+        void UpdateUser(string steamId, string profileName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/UpdateBot", ReplyAction="http://tempuri.org/ISteamBotCoordinator/UpdateBotResponse")]
+        void UpdateBot(string id, System.Nullable<int> friendCount, System.Nullable<bool> online, string steamId);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserStatus")]
         void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserStatus")]
-        System.Threading.Tasks.Task SetUserStatusAsync(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserSteamProfileName")]
-        void SetUserSteamProfileName(string steamId, string name);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserSteamProfileName")]
-        System.Threading.Tasks.Task SetUserSteamProfileNameAsync(string steamId, string name);
-        
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/DeleteBindingToken")]
         void DeleteBindingToken(string botId, string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/DeleteBindingToken")]
-        System.Threading.Tasks.Task DeleteBindingTokenAsync(string botId, string steamId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetCMServerResponse")]
-        string GetCMServer();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetCMServer", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetCMServerResponse")]
-        System.Threading.Tasks.Task<string> GetCMServerAsync();
-        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamIdResponse")]
-        Keylol.SteamBot.ServiceReference.UserDto GetUserBySteamId(string steamId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamIdResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto> GetUserBySteamIdAsync(string steamId);
+        Keylol.Models.DTO.UserDto GetUserBySteamId(string steamId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIdsResponse")]
-        Keylol.SteamBot.ServiceReference.UserDto[] GetUsersBySteamIds(string[] steamIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIdsResponse")]
-        System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto[]> GetUsersBySteamIdsAsync(string[] steamIds);
+        Keylol.Models.DTO.UserDto[] GetUsersBySteamIds(string[] steamIds);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingTokenResponse")]
         bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingTokenResponse")]
-        System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
-        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginTokenResponse")]
         bool BindSteamUserWithLoginToken(string userSteamId, string code);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginTokenResponse")]
-        System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(string userSteamId, string code);
-        
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/BroadcastBotOnFriendAdded")]
         void BroadcastBotOnFriendAdded(string botId);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/BroadcastBotOnFriendAdded")]
-        System.Threading.Tasks.Task BroadcastBotOnFriendAddedAsync(string botId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface ISteamBotCoordinatorCallback {
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetAllocatedBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetAllocatedBotsResponse")]
+        string[] GetAllocatedBots();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBotsResponse")]
+        void RequestReallocateBots(int count);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/RemoveSteamFriend")]
         void RemoveSteamFriend(string botId, string steamId);
@@ -847,92 +111,52 @@ namespace Keylol.SteamBot.ServiceReference {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public Keylol.SteamBot.ServiceReference.SteamBotDto[] AllocateBots() {
-            return base.Channel.AllocateBots();
+        public void RequestBots() {
+            base.Channel.RequestBots();
         }
         
-        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.SteamBotDto[]> AllocateBotsAsync() {
-            return base.Channel.AllocateBotsAsync();
+        public Keylol.Models.DTO.SteamBotDto[] AllocateBots(int count) {
+            return base.Channel.AllocateBots(count);
         }
         
-        public void UpdateBots(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms) {
-            base.Channel.UpdateBots(vms);
+        public void DeallocateBot(string botId) {
+            base.Channel.DeallocateBot(botId);
         }
         
-        public System.Threading.Tasks.Task UpdateBotsAsync(Keylol.SteamBot.ServiceReference.SteamBotUpdateRequestDto[] vms) {
-            return base.Channel.UpdateBotsAsync(vms);
+        public void UpdateUser(string steamId, string profileName) {
+            base.Channel.UpdateUser(steamId, profileName);
+        }
+        
+        public void UpdateBot(string id, System.Nullable<int> friendCount, System.Nullable<bool> online, string steamId) {
+            base.Channel.UpdateBot(id, friendCount, online, steamId);
         }
         
         public void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status) {
             base.Channel.SetUserStatus(steamId, status);
         }
         
-        public System.Threading.Tasks.Task SetUserStatusAsync(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status) {
-            return base.Channel.SetUserStatusAsync(steamId, status);
-        }
-        
-        public void SetUserSteamProfileName(string steamId, string name) {
-            base.Channel.SetUserSteamProfileName(steamId, name);
-        }
-        
-        public System.Threading.Tasks.Task SetUserSteamProfileNameAsync(string steamId, string name) {
-            return base.Channel.SetUserSteamProfileNameAsync(steamId, name);
-        }
-        
         public void DeleteBindingToken(string botId, string steamId) {
             base.Channel.DeleteBindingToken(botId, steamId);
         }
         
-        public System.Threading.Tasks.Task DeleteBindingTokenAsync(string botId, string steamId) {
-            return base.Channel.DeleteBindingTokenAsync(botId, steamId);
-        }
-        
-        public string GetCMServer() {
-            return base.Channel.GetCMServer();
-        }
-        
-        public System.Threading.Tasks.Task<string> GetCMServerAsync() {
-            return base.Channel.GetCMServerAsync();
-        }
-        
-        public Keylol.SteamBot.ServiceReference.UserDto GetUserBySteamId(string steamId) {
+        public Keylol.Models.DTO.UserDto GetUserBySteamId(string steamId) {
             return base.Channel.GetUserBySteamId(steamId);
         }
         
-        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto> GetUserBySteamIdAsync(string steamId) {
-            return base.Channel.GetUserBySteamIdAsync(steamId);
-        }
-        
-        public Keylol.SteamBot.ServiceReference.UserDto[] GetUsersBySteamIds(string[] steamIds) {
+        public Keylol.Models.DTO.UserDto[] GetUsersBySteamIds(string[] steamIds) {
             return base.Channel.GetUsersBySteamIds(steamIds);
-        }
-        
-        public System.Threading.Tasks.Task<Keylol.SteamBot.ServiceReference.UserDto[]> GetUsersBySteamIdsAsync(string[] steamIds) {
-            return base.Channel.GetUsersBySteamIdsAsync(steamIds);
         }
         
         public bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash) {
             return base.Channel.BindSteamUserWithBindingToken(code, botId, userSteamId, userSteamProfileName, userSteamAvatarHash);
         }
         
-        public System.Threading.Tasks.Task<bool> BindSteamUserWithBindingTokenAsync(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash) {
-            return base.Channel.BindSteamUserWithBindingTokenAsync(code, botId, userSteamId, userSteamProfileName, userSteamAvatarHash);
-        }
-        
         public bool BindSteamUserWithLoginToken(string userSteamId, string code) {
             return base.Channel.BindSteamUserWithLoginToken(userSteamId, code);
         }
         
-        public System.Threading.Tasks.Task<bool> BindSteamUserWithLoginTokenAsync(string userSteamId, string code) {
-            return base.Channel.BindSteamUserWithLoginTokenAsync(userSteamId, code);
-        }
-        
         public void BroadcastBotOnFriendAdded(string botId) {
             base.Channel.BroadcastBotOnFriendAdded(botId);
-        }
-        
-        public System.Threading.Tasks.Task BroadcastBotOnFriendAddedAsync(string botId) {
-            return base.Channel.BroadcastBotOnFriendAddedAsync(botId);
         }
     }
 }

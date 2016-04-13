@@ -86,11 +86,11 @@ namespace Keylol.Controllers.Like
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
-                        ISteamBotCoordinatorCallback callback;
+                        SteamBotCoordinator botCoordinator;
                         if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.SessionId != null &&
-                            SteamBotCoordinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                            SteamBotCoordinator.Sessions.TryGetValue(articleAuthor.SteamBot.SessionId, out botCoordinator))
                         {
-                            callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
+                            botCoordinator.Client.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
                         }
                     }
@@ -155,11 +155,11 @@ namespace Keylol.Controllers.Like
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
-                        ISteamBotCoordinatorCallback callback;
+                        SteamBotCoordinator botCoordinator;
                         if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.SessionId != null &&
-                            SteamBotCoordinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
+                            SteamBotCoordinator.Sessions.TryGetValue(commentAuthor.SteamBot.SessionId, out botCoordinator))
                         {
-                            callback.SendMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
+                            botCoordinator.Client.SendMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你在 《{comment.Article.Title}》 下的评论：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{comment.Article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                         }
                     }

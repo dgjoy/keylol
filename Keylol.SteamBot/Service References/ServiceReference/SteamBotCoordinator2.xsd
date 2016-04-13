@@ -10,6 +10,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Online" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SequenceNumber" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamId64" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SteamPassword" nillable="true" type="xs:string" />
@@ -17,21 +18,6 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="SteamBotDto" nillable="true" type="tns:SteamBotDto" />
-  <xs:complexType name="ArrayOfSteamBotUpdateRequestDto">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="SteamBotUpdateRequestDto" nillable="true" type="tns:SteamBotUpdateRequestDto" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfSteamBotUpdateRequestDto" nillable="true" type="tns:ArrayOfSteamBotUpdateRequestDto" />
-  <xs:complexType name="SteamBotUpdateRequestDto">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="FriendCount" nillable="true" type="xs:int" />
-      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Online" nillable="true" type="xs:boolean" />
-      <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="SteamBotUpdateRequestDto" nillable="true" type="tns:SteamBotUpdateRequestDto" />
   <xs:complexType name="UserDto">
     <xs:sequence>
       <xs:element minOccurs="0" name="ArticleCount" nillable="true" type="xs:int" />

@@ -42,9 +42,9 @@ namespace Keylol.Hubs
             {
                 if (token.SteamId != null)
                 {
-                    ISteamBotCoordinatorCallback callback;
-                    if (SteamBotCoordinator.Clients.TryGetValue(token.Bot.SessionId, out callback))
-                        callback.RemoveSteamFriend(token.BotId, token.SteamId);
+                    SteamBotCoordinator botCoordinator;
+                    if (SteamBotCoordinator.Sessions.TryGetValue(token.Bot.SessionId, out botCoordinator))
+                        botCoordinator.Client.RemoveSteamFriend(token.BotId, token.SteamId);
                 }
                 _dbContext.SteamBindingTokens.Remove(token);
             }

@@ -1,6 +1,8 @@
 ﻿using ChannelAdam.ServiceModel;
 using Keylol.ImageGarage.ServiceReference;
 using Keylol.ServiceBase;
+using Keylol.ServiceBase.TransientFaultHandling;
+using Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling;
 using SimpleInjector;
 
 namespace Keylol.ImageGarage
@@ -12,8 +14,8 @@ namespace Keylol.ImageGarage
         public static void Main(string[] args)
         {
             // 服务特定依赖注册点
-            Container.RegisterSingleton(
-                () => ServiceConsumerFactory.Create<IImageGarageCoordinator>(() => new ImageGarageCoordinatorClient
+            Container.RegisterSingleton(() => ServiceConsumerFactory.Create<IImageGarageCoordinator>(
+                () => new ImageGarageCoordinatorClient
                 {
                     ClientCredentials =
                     {
@@ -23,7 +25,9 @@ namespace Keylol.ImageGarage
                             Password = "neLFDyJB8Vj2Xtsn2KMTUEFw"
                         }
                     }
-                }, new NullServiceConsumerExceptionBehaviourStrategy()));
+                }, new RetryPolicyAdapter(Container.GetInstance<RetryPolicy>()),
+                new NullServiceConsumerExceptionBehaviourStrategy()));
+
             KeylolService.Run<ImageGarage>(args, Container);
         }
     }

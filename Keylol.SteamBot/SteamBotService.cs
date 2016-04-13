@@ -97,7 +97,7 @@ namespace Keylol.SteamBot
         }
 
         protected override async void OnStart(string[] args)
-        {
+        {  
             try
             {
                 Directory.CreateDirectory(AppDataFolder);

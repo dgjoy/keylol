@@ -17,6 +17,7 @@ namespace Keylol.Models.DTO
         public SteamBotDto(SteamBot bot, bool includeCredentials = false)
         {
             Id = bot.Id;
+            SequenceNumber = bot.SequenceNumber;
 
             if (includeCredentials)
             {
@@ -28,6 +29,7 @@ namespace Keylol.Models.DTO
             var steamId = new SteamID();
             steamId.SetFromSteam3String(SteamId);
             SteamId64 = steamId.ConvertToUInt64().ToString();
+            // TODO: 在线状态计算修正
             Online = bot.SessionId != null && bot.Online;
         }
 
@@ -36,6 +38,12 @@ namespace Keylol.Models.DTO
         /// </summary>
         [DataMember]
         public string Id { get; set; }
+
+        /// <summary>
+        /// 序号
+        /// </summary>
+        [DataMember]
+        public int? SequenceNumber { get; set; }
 
         /// <summary>
         ///     Steam 用户名

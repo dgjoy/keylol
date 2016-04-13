@@ -3,9 +3,16 @@
   <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
   <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" />
   <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-  <xs:element name="AllocateBots">
+  <xs:element name="RequestBots">
     <xs:complexType>
       <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AllocateBots">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="count" type="xs:int" />
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="AllocateBotsResponse">
@@ -15,26 +22,51 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="UpdateBots">
+  <xs:element name="DeallocateBot">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="vms" nillable="true" type="q2:ArrayOfSteamBotUpdateRequestDto" />
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
       </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeallocateBotResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateUser">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="profileName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateUserResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateBot">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="friendCount" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="online" nillable="true" type="xs:boolean" />
+        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateBotResponse">
+    <xs:complexType>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="SetUserStatus">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" minOccurs="0" name="status" type="q3:StatusClaim" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="SetUserSteamProfileName">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" minOccurs="0" name="status" type="q2:StatusClaim" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -43,18 +75,6 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetCMServer">
-    <xs:complexType>
-      <xs:sequence />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetCMServerResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="GetCMServerResult" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -68,21 +88,21 @@
   <xs:element name="GetUserBySteamIdResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUserBySteamIdResult" nillable="true" type="q4:UserDto" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUserBySteamIdResult" nillable="true" type="q3:UserDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="GetUsersBySteamIds">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="steamIds" nillable="true" type="q5:ArrayOfstring" />
+        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="steamIds" nillable="true" type="q4:ArrayOfstring" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="GetUsersBySteamIdsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUsersBySteamIdsResult" nillable="true" type="q6:ArrayOfUserDto" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUsersBySteamIdsResult" nillable="true" type="q5:ArrayOfUserDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -124,6 +144,30 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
       </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllocatedBots">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllocatedBotsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetAllocatedBotsResult" nillable="true" type="q6:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RequestReallocateBots">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="count" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RequestReallocateBotsResponse">
+    <xs:complexType>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="RemoveSteamFriend">

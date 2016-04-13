@@ -385,6 +385,10 @@
     <Compile Include="Migrations\201604121045352_CouponGiftEndTime.Designer.cs">
       <DependentUpon>201604121045352_CouponGiftEndTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604131721532_SteamBotSequenceNumber.cs" />
+    <Compile Include="Migrations\201604131721532_SteamBotSequenceNumber.Designer.cs">
+      <DependentUpon>201604131721532_SteamBotSequenceNumber.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -602,6 +606,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604121045352_CouponGiftEndTime.resx">
       <DependentUpon>201604121045352_CouponGiftEndTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604131721532_SteamBotSequenceNumber.resx">
+      <DependentUpon>201604131721532_SteamBotSequenceNumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Data.Entity.Infrastructure;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
-using System.Threading;
-using System.Threading.Tasks;
 using ChannelAdam.ServiceModel;
 using CsQuery;
 using CsQuery.Output;
 using Keylol.ImageGarage.ServiceReference;
-using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.ServiceBase;
 using log4net;
@@ -79,6 +74,8 @@ namespace Keylol.ImageGarage
                                         "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
                                     request.Accept = "image/webp,image/*,*/*;q=0.8";
                                     request.Headers["Accept-Language"] = "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4";
+                                    request.Timeout = 10000;
+                                    request.ReadWriteTimeout = 60000;
                                     using (var response = await request.GetResponseAsync())
                                     using (var ms = new MemoryStream(response.ContentLength > 0
                                         ? (int) response.ContentLength

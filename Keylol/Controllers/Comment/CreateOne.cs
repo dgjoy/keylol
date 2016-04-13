@@ -108,11 +108,11 @@ namespace Keylol.Controllers.Comment
                     continue;
 
                 // Steam 通知
-                ISteamBotCoordinatorCallback callback;
+                SteamBotCoordinator botCoordinator;
                 if (replyToUser.SteamBot.SessionId != null &&
-                    SteamBotCoordinator.Clients.TryGetValue(replyToUser.SteamBot.SessionId, out callback))
+                    SteamBotCoordinator.Sessions.TryGetValue(replyToUser.SteamBot.SessionId, out botCoordinator))
                 {
-                    callback.SendMessage(replyToUser.SteamBotId, replyToUser.SteamId,
+                    botCoordinator.Client.SendMessage(replyToUser.SteamBotId, replyToUser.SteamId,
                         $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                 }
             }
@@ -132,11 +132,11 @@ namespace Keylol.Controllers.Comment
                 if (!steamNotifiedArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
                 {
                     // Steam 通知
-                    ISteamBotCoordinatorCallback callback;
+                    SteamBotCoordinator botCoordinator;
                     if (articleAuthor.SteamBot.SessionId != null &&
-                        SteamBotCoordinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                        SteamBotCoordinator.Sessions.TryGetValue(articleAuthor.SteamBot.SessionId, out botCoordinator))
                     {
-                        callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
+                        botCoordinator.Client.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                             $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                     }
                 }

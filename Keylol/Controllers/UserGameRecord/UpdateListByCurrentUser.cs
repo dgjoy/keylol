@@ -56,12 +56,12 @@ namespace Keylol.Controllers.UserGameRecord
                 {
                     var steamId = new SteamID();
                     steamId.SetFromSteam3String(user.SteamId);
-                    ISteamBotCoordinatorCallback callback;
+                    SteamBotCoordinator botCoordinator;
                     string allGamesHtml;
                     if (user.SteamBot.Online &&
-                        SteamBotCoordinator.Clients.TryGetValue(user.SteamBot.SessionId, out callback))
+                        SteamBotCoordinator.Sessions.TryGetValue(user.SteamBot.SessionId, out botCoordinator))
                     {
-                        allGamesHtml = callback.FetchUrl(user.SteamBotId,
+                        allGamesHtml = botCoordinator.Client.FetchUrl(user.SteamBotId,
                             $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
                     }
                     else
