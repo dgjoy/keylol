@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
-  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" />
-  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:element name="RequestBots">
     <xs:complexType>
       <xs:sequence />
@@ -62,87 +61,42 @@
       <xs:sequence />
     </xs:complexType>
   </xs:element>
-  <xs:element name="SetUserStatus">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" minOccurs="0" name="status" type="q2:StatusClaim" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="DeleteBindingToken">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetUserBySteamId">
+  <xs:element name="IsKeylolUser">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="GetUserBySteamIdResponse">
+  <xs:element name="IsKeylolUserResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUserBySteamIdResult" nillable="true" type="q3:UserDto" />
+        <xs:element minOccurs="0" name="IsKeylolUserResult" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="GetUsersBySteamIds">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="steamIds" nillable="true" type="q4:ArrayOfstring" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetUsersBySteamIdsResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="GetUsersBySteamIdsResult" nillable="true" type="q5:ArrayOfUserDto" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="BindSteamUserWithBindingToken">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="code" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="userSteamId" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="userSteamProfileName" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="userSteamAvatarHash" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="BindSteamUserWithBindingTokenResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="BindSteamUserWithBindingTokenResult" type="xs:boolean" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="BindSteamUserWithLoginToken">
+  <xs:element name="OnBotNewFriendRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="userSteamId" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="code" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="BindSteamUserWithLoginTokenResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="BindSteamUserWithLoginTokenResult" type="xs:boolean" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="BroadcastBotOnFriendAdded">
-    <xs:complexType>
-      <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnUserBotRelationshipNone">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="userSteamId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnBotNewChatMessage">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="senderSteamId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -154,7 +108,7 @@
   <xs:element name="GetAllocatedBotsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetAllocatedBotsResult" nillable="true" type="q6:ArrayOfstring" />
+        <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetAllocatedBotsResult" nillable="true" type="q2:ArrayOfstring" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -170,7 +124,14 @@
       <xs:sequence />
     </xs:complexType>
   </xs:element>
-  <xs:element name="RemoveSteamFriend">
+  <xs:element name="StopBot">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddFriend">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
@@ -178,16 +139,69 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="SendMessage">
+  <xs:element name="RemoveFriend">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SendChatMessage">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="logMessage" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="FetchUrl">
+  <xs:element name="GetUserAvatarHash">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserAvatarHashResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetUserAvatarHashResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserProfileName">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserProfileNameResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetUserProfileNameResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFriendList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFriendListResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetFriendListResult" nillable="true" type="q3:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Curl">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
@@ -195,10 +209,10 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="FetchUrlResponse">
+  <xs:element name="CurlResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="FetchUrlResult" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="CurlResult" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

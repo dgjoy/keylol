@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Keylol.Models.DTO;
@@ -24,7 +23,7 @@ namespace Keylol.Services.Contracts
         /// <param name="count">要求分配的数量</param>
         /// <returns>分配给客户端的机器人列表</returns>
         [OperationContract]
-        Task<List<SteamBotDto>> AllocateBots(int count);
+        List<SteamBotDto> AllocateBots(int count);
 
         /// <summary>
         /// 撤销对指定机器人的会话分配
@@ -51,31 +50,38 @@ namespace Keylol.Services.Contracts
         [OperationContract]
         Task UpdateBot(string id, int? friendCount = null, bool? online = null, string steamId = null);
 
-        #region Deprecated
+        /// <summary>
+        /// 判断指定 Steam 账户是不是其乐用户
+        /// </summary>
+        /// <param name="steamId">Steam ID</param>
+        /// <returns><c>true</c> 表示是其乐用户，<c>false</c> 表示不是</returns>
+        [OperationContract]
+        Task<bool> IsKeylolUser(string steamId);
 
+        /// <summary>
+        /// 当机器人接收到用户好友请求时，通过此方法通知协调器
+        /// </summary>
+        /// <param name="userSteamId">用户 Steam ID</param>
+        /// <param name="botId">机器人 ID</param>
         [OperationContract(IsOneWay = true)]
-        Task SetUserStatus(string steamId, StatusClaim status);
+        Task OnBotNewFriendRequest(string userSteamId, string botId);
 
+        /// <summary>
+        /// 当用户与机器人不再为好友时，通过此方法通知协调器
+        /// </summary>
+        /// <param name="userSteamId">用户 Steam ID</param>
+        /// <param name="botId">机器人 ID</param>
         [OperationContract(IsOneWay = true)]
-        Task DeleteBindingToken(string botId, string steamId);
+        Task OnUserBotRelationshipNone(string userSteamId, string botId);
 
-        [OperationContract]
-        Task<UserDto> GetUserBySteamId(string steamId);
-
-        [OperationContract]
-        Task<IList<UserDto>> GetUsersBySteamIds(IList<string> steamIds);
-
-        [OperationContract]
-        Task<bool> BindSteamUserWithBindingToken(string code, string botId, string userSteamId,
-            string userSteamProfileName, string userSteamAvatarHash);
-
-        [OperationContract]
-        Task<bool> BindSteamUserWithLoginToken(string userSteamId, string code);
-
+        /// <summary>
+        /// 当机器人收到新的聊天消息时，通过此方法通知协调器
+        /// </summary>
+        /// <param name="senderSteamId">消息发送人 Steam ID</param>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="message">聊天消息内容</param>
         [OperationContract(IsOneWay = true)]
-        Task BroadcastBotOnFriendAdded(string botId);
-
-        #endregion
+        Task OnBotNewChatMessage(string senderSteamId, string botId, string message);
     }
 
     /// <summary>
@@ -98,24 +104,71 @@ namespace Keylol.Services.Contracts
         [OperationContract]
         Task RequestReallocateBots(int count);
 
-        #region Deprecated
-
+        /// <summary>
+        /// 要求客户端停止指定机器人实例
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
         [OperationContract(IsOneWay = true)]
-        void RemoveSteamFriend(string botId, string steamId);
+        Task StopBot(string botId);
 
+        /// <summary>
+        /// 要求机器人添加指定用户为好友
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="steamId">用户 Steam ID</param>
         [OperationContract(IsOneWay = true)]
-        void SendMessage(string botId, string steamId, string message);
+        Task AddFriend(string botId, string steamId);
 
+        /// <summary>
+        /// 要求机器人删除指定好友
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="steamId">用户 Steam ID</param>
+        [OperationContract(IsOneWay = true)]
+        Task RemoveFriend(string botId, string steamId);
+
+        /// <summary>
+        /// 要求机器人为指定好友发送聊天消息
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="steamId">用户 Steam ID</param>
+        /// <param name="message">聊天消息内容</param>
+        /// <param name="logMessage">是否将消息记录到日志中</param>
+        [OperationContract(IsOneWay = true)]
+        Task SendChatMessage(string botId, string steamId, string message, bool logMessage = false);
+
+        /// <summary>
+        /// 获取指定用户的头像 Hash
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="steamId">用户 Steam ID</param>
+        /// <returns>头像 Hash，<c>null</c> 表示获取失败</returns>
         [OperationContract]
-        string FetchUrl(string botId, string url);
+        Task<string> GetUserAvatarHash(string botId, string steamId);
 
-        #endregion
-    }
+        /// <summary>
+        /// 获取指定用户的 Steam 昵称
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="steamId">用户 Steam ID</param>
+        /// <returns>Steam 昵称，<c>null</c> 表示获取失败</returns>
+        [OperationContract]
+        Task<string> GetUserProfileName(string botId, string steamId);
 
-    [DataContract]
-    public enum StatusClaim
-    {
-        [EnumMember] Normal,
-        [EnumMember] Probationer
+        /// <summary>
+        /// 获取指定机器人的好友列表
+        /// </summary>
+        /// <returns>好友 Steam ID 列表，<c>null</c> 表示获取失败</returns>
+        [OperationContract]
+        Task<List<string>> GetFriendList(string botId);
+
+        /// <summary>
+        /// 要求机器人使用自己的 Cookies 抓取指定网页（使用 HTTP GET 方法）
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="url">URL</param>
+        /// <returns>响应的 HTTP Body，<c>null</c> 表示获取失败</returns>
+        [OperationContract]
+        Task<string> Curl(string botId, string url);
     }
 }

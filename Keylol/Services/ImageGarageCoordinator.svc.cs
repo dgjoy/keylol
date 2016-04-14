@@ -56,7 +56,7 @@ namespace Keylol.Services
                     article.Content = content;
                 if (thumbnailImage != null)
                     article.ThumbnailImage = thumbnailImage;
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
             }
         }
     }

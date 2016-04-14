@@ -45,8 +45,7 @@
       <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd0" namespace="http://tempuri.org/" />
       <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
-      <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts" />
-      <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="ISteamBotCoordinator_RequestBots_InputMessage">
@@ -76,38 +75,20 @@
   <wsdl:message name="ISteamBotCoordinator_UpdateBot_OutputMessage">
     <wsdl:part name="parameters" element="tns:UpdateBotResponse" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_SetUserStatus_InputMessage">
-    <wsdl:part name="parameters" element="tns:SetUserStatus" />
+  <wsdl:message name="ISteamBotCoordinator_IsKeylolUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsKeylolUser" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_DeleteBindingToken_InputMessage">
-    <wsdl:part name="parameters" element="tns:DeleteBindingToken" />
+  <wsdl:message name="ISteamBotCoordinator_IsKeylolUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsKeylolUserResponse" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_GetUserBySteamId_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetUserBySteamId" />
+  <wsdl:message name="ISteamBotCoordinator_OnBotNewFriendRequest_InputMessage">
+    <wsdl:part name="parameters" element="tns:OnBotNewFriendRequest" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_GetUserBySteamId_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetUserBySteamIdResponse" />
+  <wsdl:message name="ISteamBotCoordinator_OnUserBotRelationshipNone_InputMessage">
+    <wsdl:part name="parameters" element="tns:OnUserBotRelationshipNone" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_GetUsersBySteamIds_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetUsersBySteamIds" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_GetUsersBySteamIds_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetUsersBySteamIdsResponse" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_BindSteamUserWithBindingToken_InputMessage">
-    <wsdl:part name="parameters" element="tns:BindSteamUserWithBindingToken" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_BindSteamUserWithBindingToken_OutputMessage">
-    <wsdl:part name="parameters" element="tns:BindSteamUserWithBindingTokenResponse" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_BindSteamUserWithLoginToken_InputMessage">
-    <wsdl:part name="parameters" element="tns:BindSteamUserWithLoginToken" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_BindSteamUserWithLoginToken_OutputMessage">
-    <wsdl:part name="parameters" element="tns:BindSteamUserWithLoginTokenResponse" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_BroadcastBotOnFriendAdded_InputMessage">
-    <wsdl:part name="parameters" element="tns:BroadcastBotOnFriendAdded" />
+  <wsdl:message name="ISteamBotCoordinator_OnBotNewChatMessage_InputMessage">
+    <wsdl:part name="parameters" element="tns:OnBotNewChatMessage" />
   </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_GetAllocatedBots_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:GetAllocatedBots" />
@@ -121,17 +102,41 @@
   <wsdl:message name="ISteamBotCoordinator_RequestReallocateBots_InputCallbackMessage">
     <wsdl:part name="parameters" element="tns:RequestReallocateBotsResponse" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_RemoveSteamFriend_OutputCallbackMessage">
-    <wsdl:part name="parameters" element="tns:RemoveSteamFriend" />
+  <wsdl:message name="ISteamBotCoordinator_StopBot_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:StopBot" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_SendMessage_OutputCallbackMessage">
-    <wsdl:part name="parameters" element="tns:SendMessage" />
+  <wsdl:message name="ISteamBotCoordinator_AddFriend_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:AddFriend" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_FetchUrl_OutputCallbackMessage">
-    <wsdl:part name="parameters" element="tns:FetchUrl" />
+  <wsdl:message name="ISteamBotCoordinator_RemoveFriend_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:RemoveFriend" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_FetchUrl_InputCallbackMessage">
-    <wsdl:part name="parameters" element="tns:FetchUrlResponse" />
+  <wsdl:message name="ISteamBotCoordinator_SendChatMessage_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:SendChatMessage" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_GetUserAvatarHash_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:GetUserAvatarHash" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_GetUserAvatarHash_InputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:GetUserAvatarHashResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_GetUserProfileName_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:GetUserProfileName" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_GetUserProfileName_InputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:GetUserProfileNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_GetFriendList_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:GetFriendList" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_GetFriendList_InputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:GetFriendListResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_Curl_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:Curl" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_Curl_InputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:CurlResponse" />
   </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="ISteamBotCoordinator">
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="RequestBots">
@@ -153,30 +158,18 @@
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/UpdateBot" message="tns:ISteamBotCoordinator_UpdateBot_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/UpdateBotResponse" message="tns:ISteamBotCoordinator_UpdateBot_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetUserStatus">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/SetUserStatus" message="tns:ISteamBotCoordinator_SetUserStatus_InputMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="IsKeylolUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/IsKeylolUser" message="tns:ISteamBotCoordinator_IsKeylolUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/IsKeylolUserResponse" message="tns:ISteamBotCoordinator_IsKeylolUser_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="DeleteBindingToken">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/DeleteBindingToken" message="tns:ISteamBotCoordinator_DeleteBindingToken_InputMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="OnBotNewFriendRequest">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewFriendRequest" message="tns:ISteamBotCoordinator_OnBotNewFriendRequest_InputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUserBySteamId">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamId" message="tns:ISteamBotCoordinator_GetUserBySteamId_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamIdResponse" message="tns:ISteamBotCoordinator_GetUserBySteamId_OutputMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="OnUserBotRelationshipNone">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/OnUserBotRelationshipNone" message="tns:ISteamBotCoordinator_OnUserBotRelationshipNone_InputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUsersBySteamIds">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIds" message="tns:ISteamBotCoordinator_GetUsersBySteamIds_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIdsResponse" message="tns:ISteamBotCoordinator_GetUsersBySteamIds_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BindSteamUserWithBindingToken">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingToken" message="tns:ISteamBotCoordinator_BindSteamUserWithBindingToken_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingTokenResponse" message="tns:ISteamBotCoordinator_BindSteamUserWithBindingToken_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BindSteamUserWithLoginToken">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginToken" message="tns:ISteamBotCoordinator_BindSteamUserWithLoginToken_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginTokenResponse" message="tns:ISteamBotCoordinator_BindSteamUserWithLoginToken_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BroadcastBotOnFriendAdded">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/BroadcastBotOnFriendAdded" message="tns:ISteamBotCoordinator_BroadcastBotOnFriendAdded_InputMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="OnBotNewChatMessage">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewChatMessage" message="tns:ISteamBotCoordinator_OnBotNewChatMessage_InputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetAllocatedBots">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetAllocatedBots" message="tns:ISteamBotCoordinator_GetAllocatedBots_OutputCallbackMessage" />
@@ -186,15 +179,33 @@
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBots" message="tns:ISteamBotCoordinator_RequestReallocateBots_OutputCallbackMessage" />
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBotsResponse" message="tns:ISteamBotCoordinator_RequestReallocateBots_InputCallbackMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="RemoveSteamFriend">
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/RemoveSteamFriend" message="tns:ISteamBotCoordinator_RemoveSteamFriend_OutputCallbackMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="StopBot">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/StopBot" message="tns:ISteamBotCoordinator_StopBot_OutputCallbackMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendMessage">
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/SendMessage" message="tns:ISteamBotCoordinator_SendMessage_OutputCallbackMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="AddFriend">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/AddFriend" message="tns:ISteamBotCoordinator_AddFriend_OutputCallbackMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="FetchUrl">
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/FetchUrl" message="tns:ISteamBotCoordinator_FetchUrl_OutputCallbackMessage" />
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/FetchUrlResponse" message="tns:ISteamBotCoordinator_FetchUrl_InputCallbackMessage" />
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="RemoveFriend">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/RemoveFriend" message="tns:ISteamBotCoordinator_RemoveFriend_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendChatMessage">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/SendChatMessage" message="tns:ISteamBotCoordinator_SendChatMessage_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUserAvatarHash">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHash" message="tns:ISteamBotCoordinator_GetUserAvatarHash_OutputCallbackMessage" />
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHashResponse" message="tns:ISteamBotCoordinator_GetUserAvatarHash_InputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUserProfileName">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserProfileName" message="tns:ISteamBotCoordinator_GetUserProfileName_OutputCallbackMessage" />
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserProfileNameResponse" message="tns:ISteamBotCoordinator_GetUserProfileName_InputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetFriendList">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetFriendList" message="tns:ISteamBotCoordinator_GetFriendList_OutputCallbackMessage" />
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetFriendListResponse" message="tns:ISteamBotCoordinator_GetFriendList_InputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Curl">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/Curl" message="tns:ISteamBotCoordinator_Curl_OutputCallbackMessage" />
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/CurlResponse" message="tns:ISteamBotCoordinator_Curl_InputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetHttpBinding_ISteamBotCoordinator" type="tns:ISteamBotCoordinator">
@@ -242,20 +253,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="SetUserStatus">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/SetUserStatus" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-    </wsdl:operation>
-    <wsdl:operation name="DeleteBindingToken">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/DeleteBindingToken" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-    </wsdl:operation>
-    <wsdl:operation name="GetUserBySteamId">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamId" style="document" />
+    <wsdl:operation name="IsKeylolUser">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/IsKeylolUser" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -263,35 +262,20 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetUsersBySteamIds">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIds" style="document" />
+    <wsdl:operation name="OnBotNewFriendRequest">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/OnBotNewFriendRequest" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="BindSteamUserWithBindingToken">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingToken" style="document" />
+    <wsdl:operation name="OnUserBotRelationshipNone">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/OnUserBotRelationshipNone" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="BindSteamUserWithLoginToken">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginToken" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="BroadcastBotOnFriendAdded">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/BroadcastBotOnFriendAdded" style="document" />
+    <wsdl:operation name="OnBotNewChatMessage">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/OnBotNewChatMessage" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -314,20 +298,59 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="RemoveSteamFriend">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/RemoveSteamFriend" style="document" />
+    <wsdl:operation name="StopBot">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/StopBot" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="SendMessage">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/SendMessage" style="document" />
+    <wsdl:operation name="AddFriend">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/AddFriend" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="FetchUrl">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/FetchUrl" style="document" />
+    <wsdl:operation name="RemoveFriend">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/RemoveFriend" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendChatMessage">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/SendChatMessage" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserAvatarHash">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHash" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfileName">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/GetUserProfileName" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFriendList">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/GetFriendList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Curl">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/Curl" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

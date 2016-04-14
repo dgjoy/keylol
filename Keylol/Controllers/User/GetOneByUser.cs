@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
-using Keylol.Models.DAL;
 using Keylol.Models.DTO;
+using Keylol.Services;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -154,7 +154,10 @@ namespace Keylol.Controllers.User
             {
                 if (!getSelf)
                     return Unauthorized();
-                userDto.SteamBot = new SteamBotDto(user.SteamBot);
+                userDto.SteamBot = new SteamBotDto(user.SteamBot)
+                {
+                    Online = user.SteamBot.IsOnline()
+                };
             }
 
             if (coupon)

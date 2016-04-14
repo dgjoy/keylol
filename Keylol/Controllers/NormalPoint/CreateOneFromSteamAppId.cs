@@ -15,6 +15,7 @@ using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
+using Extensions = Keylol.Utilities.Extensions;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -165,7 +166,10 @@ namespace Keylol.Controllers.NormalPoint
                                 break;
 
                             case "Release Date:":
-                                gamePoint.ReleaseDate = DateTime.Parse(values[0]);
+                                DateTime releaseDate;
+                                gamePoint.ReleaseDate = DateTime.TryParse(values[0], out releaseDate)
+                                    ? releaseDate
+                                    : Extensions.DateTimeFromUnixTimeStamp(0);
                                 break;
                         }
                     }

@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="Keylol.Services.SteamBotCoordinator" CodeBehind="SteamBotCoordinator.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Keylol.Services.SteamBotCoordinator" CodeBehind="SteamBotCoordinator.svc.cs" Factory="SimpleInjector.Integration.Wcf.SimpleInjectorServiceHostFactory, SimpleInjector.Integration.Wcf" %>

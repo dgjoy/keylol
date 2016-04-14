@@ -29,8 +29,6 @@ namespace Keylol.Models.DTO
             var steamId = new SteamID();
             steamId.SetFromSteam3String(SteamId);
             SteamId64 = steamId.ConvertToUInt64().ToString();
-            // TODO: 在线状态计算修正
-            Online = bot.SessionId != null && bot.Online;
         }
 
         /// <summary>

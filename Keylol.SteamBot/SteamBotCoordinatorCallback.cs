@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.ServiceModel;
 using Keylol.ServiceBase;
 using Keylol.SteamBot.ServiceReference;
 using log4net;
+using SteamKit2;
 
 namespace Keylol.SteamBot
 {
@@ -61,19 +64,106 @@ namespace Keylol.SteamBot
             }
         }
 
-        public void RemoveSteamFriend(string botId, string steamId)
+        public void StopBot(string botId)
         {
-            throw new NotImplementedException();
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null) return;
+            SteamBot.BotInstances.Remove(botInstance);
+            botInstance.Dispose();
         }
 
-        public void SendMessage(string botId, string steamId, string message)
+        public void AddFriend(string botId, string steamId)
         {
-            throw new NotImplementedException();
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null)
+                return;
+            var id = new SteamID();
+            id.SetFromSteam3String(steamId);
+            botInstance.SteamFriends.AddFriend(id);
         }
 
-        public string FetchUrl(string botId, string url)
+        public void RemoveFriend(string botId, string steamId)
         {
-            throw new NotImplementedException();
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null)
+                return;
+            var id = new SteamID();
+            id.SetFromSteam3String(steamId);
+            botInstance.SteamFriends.RemoveFriend(id);
+        }
+
+        public void SendChatMessage(string botId, string steamId, string message, bool logMessage)
+        {
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null || string.IsNullOrEmpty(message))
+                return;
+            var id = new SteamID();
+            id.SetFromSteam3String(steamId);
+            botInstance.SteamFriends.SendChatMessage(id, EChatEntryType.ChatMsg, message);
+            if (logMessage)
+            {
+                var friendName = botInstance.SteamFriends.GetFriendPersonaName(id);
+                _logger.Info($"#{botInstance.SequenceNumber} [Chat TX] To {friendName} ({steamId}): {message}");
+            }
+        }
+
+        public string GetUserAvatarHash(string botId, string steamId)
+        {
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null)
+                return null;
+            var id = new SteamID();
+            id.SetFromSteam3String(steamId);
+            return BitConverter.ToString(botInstance.SteamFriends.GetFriendAvatar(id))
+                .Replace("-", string.Empty)
+                .ToLower();
+        }
+
+        public string GetUserProfileName(string botId, string steamId)
+        {
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null)
+                return null;
+            var id = new SteamID();
+            id.SetFromSteam3String(steamId);
+            return botInstance.SteamFriends.GetFriendPersonaName(id);
+        }
+
+        public string[] GetFriendList(string botId)
+        {
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null)
+                return null;
+            var count = botInstance.SteamFriends.GetFriendCount();
+            var result = new List<string>(count);
+            for (var i = 0; i < count; i++)
+            {
+                result.Add(botInstance.SteamFriends.GetFriendByIndex(i).Render(true));
+            }
+            return result.ToArray();
+        }
+
+        public string Curl(string botId, string url)
+        {
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null)
+                return null;
+            try
+            {
+                var request = botInstance.CookieManager.CreateWebRequest(url);
+                using (var response = request.GetResponse())
+                {
+                    var responseStream = response.GetResponseStream();
+                    if (responseStream == null)
+                        return null;
+                    var reader = new StreamReader(responseStream);
+                    return reader.ReadToEnd();
+                }
+            }
+            catch (WebException)
+            {
+                return null;
+            }
         }
     }
 }

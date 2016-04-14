@@ -3,10 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Net.Http;
 using System.ServiceModel;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DevTrends.WCFDataAnnotations;
+using System.Web;
 using Keylol.Hubs;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
@@ -14,7 +15,9 @@ using Keylol.ServiceBase;
 using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
-using StatusClaim = Keylol.Services.Contracts.StatusClaim;
+using Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling;
+using Newtonsoft.Json.Linq;
+using RabbitMQ.Client;
 
 namespace Keylol.Services
 {
@@ -24,6 +27,11 @@ namespace Keylol.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class SteamBotCoordinator : ISteamBotCoordinator
     {
+        private readonly RetryPolicy _retryPolicy;
+        private readonly IModel _mqChannel;
+        private readonly HttpClient _httpClient = new HttpClient();
+        private static readonly object AllocationLock = new object(); // 在真正分配机器人前必须取得该锁
+
         /// <summary>
         /// 所有正在进行的会话，Key 为 Session ID，Value 为 <see cref="SteamBotCoordinator"/>
         /// </summary>
@@ -44,8 +52,11 @@ namespace Keylol.Services
         /// <summary>
         /// 创建 <see cref="SteamBotCoordinator"/>
         /// </summary>
-        public SteamBotCoordinator()
+        public SteamBotCoordinator(RetryPolicy retryPolicy, IModel mqChannel)
         {
+            _retryPolicy = retryPolicy;
+            _mqChannel = mqChannel;
+
             Sessions[SessionId] = this;
             OperationContext.Current.InstanceContext.Closing += OnSessionEnd;
             OnSessionBegin();
@@ -64,6 +75,10 @@ namespace Keylol.Services
                         var bots = await dbContext.SteamBots.Where(b => allocatedBots.Contains(b.Id)).ToListAsync();
                         foreach (var bot in bots)
                         {
+                            if (Sessions.ContainsKey(bot.SessionId))
+                            {
+                                await Sessions[bot.SessionId].Client.StopBot(bot.Id);
+                            }
                             bot.SessionId = SessionId;
                         }
                         await dbContext.SaveChangesAsync();
@@ -72,7 +87,7 @@ namespace Keylol.Services
             }
             catch (Exception)
             {
-                OperationContext.Current.Channel.Close();
+                // ignored
             }
         }
 
@@ -80,6 +95,7 @@ namespace Keylol.Services
         {
             try
             {
+                _mqChannel.Dispose();
                 SteamBotCoordinator coordinator;
                 Sessions.TryRemove(SessionId, out coordinator);
                 if (Sessions.Count > 0)
@@ -113,7 +129,7 @@ namespace Keylol.Services
             }
             catch (Exception)
             {
-                OperationContext.Current.Channel.Close();
+                // ignored
             }
         }
 
@@ -130,26 +146,27 @@ namespace Keylol.Services
         /// </summary>
         /// <param name="count">要求分配的数量</param>
         /// <returns>分配给客户端的机器人列表</returns>
-        public async Task<List<SteamBotDto>> AllocateBots(int count)
+        public List<SteamBotDto> AllocateBots(int count)
         {
-            using (var dbContext = new KeylolDbContext())
-            {
-                // 机器人的 SessionId 不存在 Sessions 中则认定为没有被分配过
-                var bots = await dbContext.SteamBots.Where(bot => !Sessions.Keys.Contains(bot.SessionId) && bot.Enabled)
-                    .Take(() => count)
-                    .ToListAsync();
-                foreach (var bot in bots)
+            lock (AllocationLock)
+                using (var dbContext = new KeylolDbContext())
                 {
-                    bot.Online = false;
-                    bot.SessionId = SessionId;
+                    // 机器人的 SessionId 不存在 Sessions 中则认定为没有被分配过
+                    var bots = dbContext.SteamBots.Where(bot => !Sessions.Keys.Contains(bot.SessionId) && bot.Enabled)
+                        .Take(() => count)
+                        .ToList();
+                    foreach (var bot in bots)
+                    {
+                        bot.Online = false;
+                        bot.SessionId = SessionId;
+                    }
+                    dbContext.SaveChanges();
+                    return bots.Select(bot => new SteamBotDto(bot, true)).ToList();
                 }
-                await dbContext.SaveChangesAsync();
-                return bots.Select(bot => new SteamBotDto(bot, true)).ToList();
-            }
         }
 
         /// <summary>
-        /// 撤销对指定机器人的会话分配
+        /// 撤销对指定机器人的会话分配，如果这个机器人的会话 ID 不是当前会话的话，则不进行任何操作
         /// </summary>
         /// <param name="botId">机器人 ID</param>
         public async Task DeallocateBot(string botId)
@@ -157,6 +174,7 @@ namespace Keylol.Services
             using (var dbContext = new KeylolDbContext())
             {
                 var bot = await dbContext.SteamBots.FindAsync(botId);
+                if (bot.SessionId != SessionId) return;
                 bot.Online = false;
                 bot.SessionId = null;
                 await dbContext.SaveChangesAsync();
@@ -205,119 +223,225 @@ namespace Keylol.Services
             }
         }
 
-        public async Task<UserDto> GetUserBySteamId(string steamId)
+        /// <summary>
+        /// 判断指定 Steam 账户是不是其乐用户
+        /// </summary>
+        /// <param name="steamId">Steam ID</param>
+        /// <returns><c>true</c> 表示是其乐用户，<c>false</c> 表示不是</returns>
+        public async Task<bool> IsKeylolUser(string steamId)
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var user =
-                    await dbContext.Users.Include(u => u.SteamBot).SingleOrDefaultAsync(u => u.SteamId == steamId);
-                return user == null ? null : new UserDto(user, true, true) {SteamBot = new SteamBotDto(user.SteamBot)};
+                return await dbContext.Users.AnyAsync(u => u.SteamId == steamId);
             }
         }
 
-        public async Task<IList<UserDto>> GetUsersBySteamIds(IList<string> steamIds)
+        /// <summary>
+        /// 当机器人接收到用户好友请求时，通过此方法通知协调器
+        /// </summary>
+        /// <param name="userSteamId">用户 Steam ID</param>
+        /// <param name="botId">机器人 ID</param>
+        public async Task OnBotNewFriendRequest(string userSteamId, string botId)
         {
+            await Client.AddFriend(botId, userSteamId); // 先接受请求
             using (var dbContext = new KeylolDbContext())
             {
-                var users =
-                    await
-                        dbContext.Users.Include(u => u.SteamBot).Where(u => steamIds.Contains(u.SteamId)).ToListAsync();
-                return
-                    users.Select(user => new UserDto(user, true, true) {SteamBot = new SteamBotDto(user.SteamBot)})
-                        .ToList();
-            }
-        }
-
-        public async Task SetUserStatus(string steamId, StatusClaim status)
-        {
-            using (var dbContext = new KeylolDbContext())
-            {
-                var user = await dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamId);
-                if (user != null)
+                var user = await dbContext.Users.Where(u => u.SteamId == userSteamId).SingleOrDefaultAsync();
+                if (user == null)
                 {
+                    // 非会员，在注册时绑定机器人
+                    GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
+                        .Clients.Clients(await dbContext.SteamBindingTokens.Where(t => t.BotId == botId)
+                            .Select(t => t.BrowserConnectionId)
+                            .ToListAsync())?
+                        .NotifySteamFriendAdded();
+                    await Task.Delay(TimeSpan.FromSeconds(3));
+                    await Client.SendChatMessage(botId, userSteamId,
+                        "欢迎使用当前 Steam 账号加入其乐，请输入你在网页上获取的 8 位绑定验证码。");
+                    _mqChannel.SendMessage(MqClientProvider.DelayedMessageExchange,
+                        $"{MqClientProvider.SteamBotDelayedActionQueue}.{botId}", new SteamBotDelayedActionDto
+                        {
+                            Type = SteamBotDelayedActionType.RemoveFriend,
+                            Properties = new
+                            {
+                                OnlyIfNotKeylolUser = true,
+                                Message = "抱歉，你的会话因超时被强制结束，机器人已将你从好友列表中暂时移除。若要加入其乐，请重新按照网页指示注册账号。",
+                                SteamId = userSteamId
+                            }
+                        }, 60000);
+                }
+                else
+                {
+                    // 现有会员添加机器人为好友
+                    var bot = await dbContext.SteamBots.FindAsync(botId);
                     var userManager = KeylolUserManager.Create(dbContext);
-                    switch (status)
+                    if (bot != null && bot.FriendCount < bot.FriendUpperLimit &&
+                        await userManager.GetStatusClaimAsync(user.Id) == StatusClaim.Probationer)
                     {
-                        case StatusClaim.Normal:
-                            await userManager.RemoveStatusClaimAsync(user.Id);
-                            break;
-
-                        case StatusClaim.Probationer:
-                            await userManager.SetStatusClaimAsync(user.Id, Utilities.StatusClaim.Probationer);
-                            break;
+                        // 用户此前删除了机器人好友，重新设定当前机器人为绑定的机器人
+                        user.SteamBotId = botId;
+                        await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
+                        await userManager.RemoveStatusClaimAsync(user.Id);
+                        await Task.Delay(TimeSpan.FromSeconds(3));
+                        await Client.SendChatMessage(botId, userSteamId,
+                            "你已成功与其乐机器人再次绑定，请务必不要将其乐机器人从好友列表中移除。");
+                    }
+                    else
+                    {
+                        // 用户状态正常但是添加了新的机器人好友，应当移除好友
+                        await Task.Delay(TimeSpan.FromSeconds(3));
+                        await Client.SendChatMessage(botId, userSteamId,
+                            "你已绑定另一其乐机器人，当前机器人已拒绝你的好友请求。如有需要，你可以在其乐设置表单中找到你绑定的机器人帐号。");
+                        await Client.RemoveFriend(botId, userSteamId);
                     }
                 }
             }
         }
 
-        public async Task DeleteBindingToken(string botId, string steamId)
+        /// <summary>
+        /// 当用户与机器人不再为好友时，通过此方法通知协调器
+        /// </summary>
+        /// <param name="userSteamId">用户 Steam ID</param>
+        /// <param name="botId">机器人 ID</param>
+        public async Task OnUserBotRelationshipNone(string userSteamId, string botId)
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var tokens =
-                    await
-                        dbContext.SteamBindingTokens.Where(t => t.SteamId == steamId && t.BotId == botId).ToListAsync();
-                dbContext.SteamBindingTokens.RemoveRange(tokens);
-                await dbContext.SaveChangesAsync();
+                var user = await dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == userSteamId);
+                if (user == null)
+                {
+                    // 非会员不再为好友时，如果存在已绑定的 SteamBindingToken 则清除之
+                    var bindingTokens = await dbContext.SteamBindingTokens
+                        .Where(t => t.SteamId == userSteamId && t.BotId == botId)
+                        .ToListAsync();
+                    dbContext.SteamBindingTokens.RemoveRange(bindingTokens);
+                    await dbContext.SaveChangesAsync();
+                }
+                else if (user.SteamBotId == botId)
+                {
+                    // 会员与自己的机器人不再为好友时，设置为暂准状态
+                    var userManager = KeylolUserManager.Create(dbContext);
+                    await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                }
             }
         }
 
-        public Task<string> GetCMServer()
-        {
-            return Task.FromResult("58.215.54.121:27018");
-        }
-
-        public async Task<bool> BindSteamUserWithBindingToken(string code, string botId, string userSteamId,
-            string userSteamProfileName, string userSteamAvatarHash)
+        /// <summary>
+        /// 当机器人收到新的聊天消息时，通过此方法通知协调器
+        /// </summary>
+        /// <param name="senderSteamId">消息发送人 Steam ID</param>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="message">聊天消息内容</param>
+        public async Task OnBotNewChatMessage(string senderSteamId, string botId, string message)
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var token =
-                    await
-                        dbContext.SteamBindingTokens.SingleOrDefaultAsync(
-                            t => t.Code == code && t.BotId == botId && t.SteamId == null);
-                if (token == null)
-                    return false;
-
-                token.SteamId = userSteamId;
-                await dbContext.SaveChangesAsync();
-                GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
-                    .Clients.Client(token.BrowserConnectionId)?
-                    .NotifyCodeReceived(userSteamProfileName, userSteamAvatarHash);
-                return true;
+                var user = await dbContext.Users.Where(u => u.SteamId == senderSteamId).SingleOrDefaultAsync();
+                if (user == null)
+                {
+                    // 非会员，只接受绑定验证码
+                    var code = message.Trim();
+                    var token = await dbContext.SteamBindingTokens
+                        .SingleOrDefaultAsync(t => t.Code == code && t.SteamId == null);
+                    if (token == null)
+                    {
+                        await Client.SendChatMessage(botId, senderSteamId,
+                            "你的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
+                    }
+                    else
+                    {
+                        token.BotId = botId;
+                        token.SteamId = senderSteamId;
+                        await dbContext.SaveChangesAsync();
+                        GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
+                            .Clients.Client(token.BrowserConnectionId)?
+                            .NotifyCodeReceived(await Client.GetUserProfileName(botId, senderSteamId),
+                                await Client.GetUserAvatarHash(botId, senderSteamId));
+                        await Client.SendChatMessage(botId, senderSteamId,
+                            "绑定成功，欢迎加入其乐！今后你可以向机器人发送对话快速登录社区，请勿将机器人从好友列表移除。");
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+                        await Client.SendChatMessage(botId, senderSteamId,
+                            "若希望在其乐上获得符合游戏兴趣的据点推荐，请避免将 Steam 资料隐私设置为「仅自己可见」。");
+                    }
+                }
+                else
+                {
+                    // 已有会员，接受登录验证码和调侃调戏
+                    var match = Regex.Match(message, @"^\s*(\d{4})\s*$");
+                    if (match.Success)
+                    {
+                        var code = match.Groups[1].Value;
+                        var token = await dbContext.SteamLoginTokens.SingleOrDefaultAsync(t => t.Code == code);
+                        if (token == null)
+                        {
+                            await Client.SendChatMessage(botId, senderSteamId,
+                                "你的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
+                        }
+                        else
+                        {
+                            token.SteamId = senderSteamId;
+                            await dbContext.SaveChangesAsync();
+                            GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
+                                .Clients.Client(token.BrowserConnectionId)?
+                                .NotifyCodeReceived();
+                            await Client.SendChatMessage(botId, senderSteamId, "欢迎回来，你已成功登录其乐社区。");
+                        }
+                    }
+                    else
+                    {
+                        await Client.SendChatMessage(botId, senderSteamId, await AskTulingBot(message, user.Id), true);
+                    }
+                }
             }
         }
 
-        public async Task<bool> BindSteamUserWithLoginToken(string userSteamId, string code)
+        /// <summary>
+        /// 询问图灵机器人问题
+        /// </summary>
+        /// <param name="question">问题内容</param>
+        /// <param name="userId">上下文关联用户 ID</param>
+        /// <returns>图灵机器人的回答，null 表示询问失败</returns>
+        private async Task<string> AskTulingBot(string question, string userId)
         {
-            using (var dbContext = new KeylolDbContext())
+            const string apiKey = "51c3bd1bb6a9d092f8b63aca01262edf";
+            JToken result = null;
+            try
             {
-                var token =
-                    await dbContext.SteamLoginTokens.SingleOrDefaultAsync(t => t.Code == code);
-                if (token == null)
-                    return false;
-
-                token.SteamId = userSteamId;
-                await dbContext.SaveChangesAsync();
-                GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
-                    .Clients.Client(token.BrowserConnectionId)?
-                    .NotifyCodeReceived();
-                return true;
+                await _retryPolicy.ExecuteAsync(async () =>
+                {
+                    result = JToken.Parse(await _httpClient.GetStringAsync(
+                        $"http://www.tuling123.com/openapi/api?key={apiKey}&info={HttpUtility.UrlEncode(question)}&userid={userId}"));
+                });
             }
-        }
-
-        public async Task BroadcastBotOnFriendAdded(string botId)
-        {
-            using (var dbContext = new KeylolDbContext())
+            catch (Exception)
             {
-                GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
-                    .Clients.Clients(
-                        await dbContext.SteamBots.Where(bot => bot.Id == botId)
-                            .SelectMany(bot => bot.BindingTokens)
-                            .Select(token => token.BrowserConnectionId)
-                            .ToListAsync()
-                    )?
-                    .NotifySteamFriendAdded();
+                return null;
+            }
+            if (result == null)
+                return null;
+            switch ((int) result["code"])
+            {
+                case 200000: // 链接类
+                    return $"{(string) result["text"]}\n{(string) result["url"]}";
+
+                case 302000: // 新闻
+                    return
+                        $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(news => $"{news["article"]}\n{news["detailurl"]}"))}";
+
+                case 305000: // 列车
+                    return
+                        $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(train => $"{train["trainnum"]}\n{train["start"]} --> {train["terminal"]}\n{train["starttime"]} --> {train["endtime"]}"))}";
+
+                case 306000: // 航班
+                    return
+                        $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(flight => $"{flight["flight"]}\n{flight["starttime"]} --> {flight["endtime"]}"))}";
+
+                case 308000: // 菜谱
+                    return
+                        $"{(string) result["text"]}\n{string.Join("\n\n", result["list"].Select(dish => $"{dish["name"]}\n{dish["info"]}\n{dish["detailurl"]}"))}";
+
+                default:
+                    return (string) result["text"];
             }
         }
     }

@@ -108,11 +108,10 @@ namespace Keylol.Controllers.Comment
                     continue;
 
                 // Steam 通知
-                SteamBotCoordinator botCoordinator;
-                if (replyToUser.SteamBot.SessionId != null &&
-                    SteamBotCoordinator.Sessions.TryGetValue(replyToUser.SteamBot.SessionId, out botCoordinator))
+                if (replyToUser.SteamBot.IsOnline())
                 {
-                    botCoordinator.Client.SendMessage(replyToUser.SteamBotId, replyToUser.SteamId,
+                    var botCoordinator = SteamBotCoordinator.Sessions[replyToUser.SteamBot.SessionId];
+                    await botCoordinator.Client.SendChatMessage(replyToUser.SteamBotId, replyToUser.SteamId,
                         $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                 }
             }
@@ -132,11 +131,10 @@ namespace Keylol.Controllers.Comment
                 if (!steamNotifiedArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
                 {
                     // Steam 通知
-                    SteamBotCoordinator botCoordinator;
-                    if (articleAuthor.SteamBot.SessionId != null &&
-                        SteamBotCoordinator.Sessions.TryGetValue(articleAuthor.SteamBot.SessionId, out botCoordinator))
+                    if (articleAuthor.SteamBot.IsOnline())
                     {
-                        botCoordinator.Client.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
+                        var botCoordinator = SteamBotCoordinator.Sessions[articleAuthor.SteamBot.SessionId];
+                        await botCoordinator.Client.SendChatMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                             $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                     }
                 }

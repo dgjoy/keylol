@@ -13,6 +13,8 @@ namespace Keylol.Provider
     /// </summary>
     public class RedisProvider : IDisposable
     {
+        private bool _disposed;
+
         /// <summary>
         ///     Redis <see cref="ConnectionMultiplexer"/> 对象
         /// </summary>
@@ -76,10 +78,12 @@ namespace Keylol.Provider
         /// <param name="disposing">是否清理托管对象</param>
         protected virtual void Dispose(bool disposing)
         {
+            if (_disposed) return;
             if (disposing)
             {
                 Connection.Dispose();
             }
+            _disposed = true;
         }
     }
 }

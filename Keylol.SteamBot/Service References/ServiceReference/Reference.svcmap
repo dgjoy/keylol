@@ -23,7 +23,6 @@
   <Metadata>
     <MetadataFile FileName="SteamBotCoordinator.disco" MetadataType="Disco" ID="57262ad7-6d95-40e4-9304-7c3c9888a2bd" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoordinator.svc?disco" />
     <MetadataFile FileName="SteamBotCoordinator.wsdl" MetadataType="Wsdl" ID="cc4a8ae4-5c90-463b-82be-e4f32eba79b0" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoordinator.svc?wsdl" />
-    <MetadataFile FileName="SteamBotCoordinator.xsd" MetadataType="Schema" ID="2c650aa1-100d-4d62-9c55-9cc7943634f5" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd4" />
     <MetadataFile FileName="SteamBotCoordinator1.xsd" MetadataType="Schema" ID="a5201f28-3bb9-4d0d-82ef-9024dbf8be5f" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" />
     <MetadataFile FileName="SteamBotCoordinator2.xsd" MetadataType="Schema" ID="3fb06c6d-e1bc-4af9-b640-d94b66ef1f4c" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd2" />
     <MetadataFile FileName="SteamBotCoordinator3.xsd" MetadataType="Schema" ID="3cbb4a09-dcbf-4f55-ab00-1ce78156b844" SourceId="1" SourceUrl="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd1" />

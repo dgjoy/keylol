@@ -9,19 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace Keylol.SteamBot.ServiceReference {
-    using System.Runtime.Serialization;
     
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="StatusClaim", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Services.Contracts")]
-    public enum StatusClaim : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Normal = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Probationer = 1,
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.ISteamBotCoordinator", CallbackContract=typeof(Keylol.SteamBot.ServiceReference.ISteamBotCoordinatorCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
@@ -42,26 +30,17 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/UpdateBot", ReplyAction="http://tempuri.org/ISteamBotCoordinator/UpdateBotResponse")]
         void UpdateBot(string id, System.Nullable<int> friendCount, System.Nullable<bool> online, string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetUserStatus")]
-        void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/IsKeylolUser", ReplyAction="http://tempuri.org/ISteamBotCoordinator/IsKeylolUserResponse")]
+        bool IsKeylolUser(string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/DeleteBindingToken")]
-        void DeleteBindingToken(string botId, string steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewFriendRequest")]
+        void OnBotNewFriendRequest(string userSteamId, string botId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamId", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserBySteamIdResponse")]
-        Keylol.Models.DTO.UserDto GetUserBySteamId(string steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/OnUserBotRelationshipNone")]
+        void OnUserBotRelationshipNone(string userSteamId, string botId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIds", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUsersBySteamIdsResponse")]
-        Keylol.Models.DTO.UserDto[] GetUsersBySteamIds(string[] steamIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithBindingTokenResponse")]
-        bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginToken", ReplyAction="http://tempuri.org/ISteamBotCoordinator/BindSteamUserWithLoginTokenResponse")]
-        bool BindSteamUserWithLoginToken(string userSteamId, string code);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/BroadcastBotOnFriendAdded")]
-        void BroadcastBotOnFriendAdded(string botId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewChatMessage")]
+        void OnBotNewChatMessage(string senderSteamId, string botId, string message);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -73,14 +52,29 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBotsResponse")]
         void RequestReallocateBots(int count);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/RemoveSteamFriend")]
-        void RemoveSteamFriend(string botId, string steamId);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/StopBot")]
+        void StopBot(string botId);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SendMessage")]
-        void SendMessage(string botId, string steamId, string message);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/AddFriend")]
+        void AddFriend(string botId, string steamId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/FetchUrl", ReplyAction="http://tempuri.org/ISteamBotCoordinator/FetchUrlResponse")]
-        string FetchUrl(string botId, string url);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/RemoveFriend")]
+        void RemoveFriend(string botId, string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SendChatMessage")]
+        void SendChatMessage(string botId, string steamId, string message, bool logMessage);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHash", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHashResponse")]
+        string GetUserAvatarHash(string botId, string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserProfileName", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserProfileNameResponse")]
+        string GetUserProfileName(string botId, string steamId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetFriendList", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetFriendListResponse")]
+        string[] GetFriendList(string botId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/Curl", ReplyAction="http://tempuri.org/ISteamBotCoordinator/CurlResponse")]
+        string Curl(string botId, string url);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -131,32 +125,20 @@ namespace Keylol.SteamBot.ServiceReference {
             base.Channel.UpdateBot(id, friendCount, online, steamId);
         }
         
-        public void SetUserStatus(string steamId, Keylol.SteamBot.ServiceReference.StatusClaim status) {
-            base.Channel.SetUserStatus(steamId, status);
+        public bool IsKeylolUser(string steamId) {
+            return base.Channel.IsKeylolUser(steamId);
         }
         
-        public void DeleteBindingToken(string botId, string steamId) {
-            base.Channel.DeleteBindingToken(botId, steamId);
+        public void OnBotNewFriendRequest(string userSteamId, string botId) {
+            base.Channel.OnBotNewFriendRequest(userSteamId, botId);
         }
         
-        public Keylol.Models.DTO.UserDto GetUserBySteamId(string steamId) {
-            return base.Channel.GetUserBySteamId(steamId);
+        public void OnUserBotRelationshipNone(string userSteamId, string botId) {
+            base.Channel.OnUserBotRelationshipNone(userSteamId, botId);
         }
         
-        public Keylol.Models.DTO.UserDto[] GetUsersBySteamIds(string[] steamIds) {
-            return base.Channel.GetUsersBySteamIds(steamIds);
-        }
-        
-        public bool BindSteamUserWithBindingToken(string code, string botId, string userSteamId, string userSteamProfileName, string userSteamAvatarHash) {
-            return base.Channel.BindSteamUserWithBindingToken(code, botId, userSteamId, userSteamProfileName, userSteamAvatarHash);
-        }
-        
-        public bool BindSteamUserWithLoginToken(string userSteamId, string code) {
-            return base.Channel.BindSteamUserWithLoginToken(userSteamId, code);
-        }
-        
-        public void BroadcastBotOnFriendAdded(string botId) {
-            base.Channel.BroadcastBotOnFriendAdded(botId);
+        public void OnBotNewChatMessage(string senderSteamId, string botId, string message) {
+            base.Channel.OnBotNewChatMessage(senderSteamId, botId, message);
         }
     }
 }

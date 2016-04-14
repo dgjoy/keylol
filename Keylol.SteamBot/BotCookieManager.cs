@@ -17,6 +17,7 @@ namespace Keylol.SteamBot
         private readonly ILog _logger;
         private readonly CookieContainer _cookieContainer = new CookieContainer();
         private readonly Timer _checkTimer = new Timer(600000); // 10min
+        private bool _disposed;
 
         public int BotSequenceNumber { get; set; }
         public EUniverse ConnectedUniverse { get; set; }
@@ -162,10 +163,12 @@ namespace Keylol.SteamBot
 
         protected virtual void Dispose(bool disposing)
         {
+            if (_disposed) return;
             if (disposing)
             {
                 _checkTimer.Stop();
             }
+            _disposed = true;
         }
     }
 }

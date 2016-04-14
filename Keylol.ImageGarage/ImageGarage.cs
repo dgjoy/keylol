@@ -34,7 +34,6 @@ namespace Keylol.ImageGarage
 
         protected override void OnStart(string[] args)
         {
-            _mqChannel.QueueDeclare(MqClientProvider.ImageGarageRequestQueue, true, false, false, null);
             _mqChannel.BasicQos(0, 5, false);
             var consumer = new EventingBasicConsumer(_mqChannel);
             consumer.Received += async (sender, eventArgs) =>
