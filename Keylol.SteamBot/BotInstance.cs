@@ -24,7 +24,6 @@ namespace Keylol.SteamBot
         private readonly ILog _logger;
         private readonly MqClientProvider _mqClientProvider;
         private readonly CallbackManager _callbackManager;
-        private readonly SteamClient _steamClient = new SteamClient();
         private readonly SteamUser _steamUser;
 
         private bool _disposed;
@@ -35,13 +34,10 @@ namespace Keylol.SteamBot
         private static readonly Semaphore LoginSemaphore = new Semaphore(5, 5); // 最多 5 个机器人同时登录
 
         public string Id { get; set; }
-
         public int SequenceNumber { get; set; }
-
         public SteamUser.LogOnDetails LogOnDetails { get; set; } = new SteamUser.LogOnDetails();
-
+        public SteamClient SteamClient { get; } = new SteamClient();
         public SteamFriends SteamFriends { get; }
-
         public BotCookieManager CookieManager { get; }
 
         public BotInstance(IServiceConsumer<ISteamBotCoordinator> coordinator, ILogProvider logProvider,
@@ -52,7 +48,7 @@ namespace Keylol.SteamBot
             _mqClientProvider = mqClientProvider;
             CookieManager = cookieManager;
 
-            _callbackManager = new CallbackManager(_steamClient);
+            _callbackManager = new CallbackManager(SteamClient);
 
             _callbackManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             _callbackManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
@@ -65,8 +61,8 @@ namespace Keylol.SteamBot
             _callbackManager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendListUpdated);
             _callbackManager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMessageReceived);
 
-            _steamUser = _steamClient.GetHandler<SteamUser>();
-            SteamFriends = _steamClient.GetHandler<SteamFriends>();
+            _steamUser = SteamClient.GetHandler<SteamUser>();
+            SteamFriends = SteamClient.GetHandler<SteamFriends>();
         }
 
         /// <summary>
@@ -106,7 +102,7 @@ namespace Keylol.SteamBot
                 LoginSemaphore.WaitOne();
                 _loginPending = true;
             }
-            _steamClient.Connect();
+            SteamClient.Connect();
 
             _mqChannel = _mqClientProvider.CreateModel();
             _mqChannel.BasicQos(0, 5, false);
@@ -142,11 +138,18 @@ namespace Keylol.SteamBot
             }
             if (deallocate)
             {
-                _coordinator.Operations.DeallocateBot(Id);
+                try
+                {
+                    _coordinator.Operations.DeallocateBot(Id);
+                }
+                catch (Exception e)
+                {
+                    _logger.Fatal($"#{SequenceNumber} Failed to tell coordinator to deallocate this bot.", e);
+                }
                 _deallocated = true;
             }
             _mqChannel?.Close();
-            _steamClient.Disconnect();
+            SteamClient.Disconnect();
         }
 
         private void OnDelayedActionReceived(object sender, BasicDeliverEventArgs basicDeliverEventArgs)
@@ -259,7 +262,7 @@ namespace Keylol.SteamBot
             {
                 case EResult.OK:
                     CookieManager.BotSequenceNumber = SequenceNumber;
-                    CookieManager.ConnectedUniverse = _steamClient.ConnectedUniverse;
+                    CookieManager.ConnectedUniverse = SteamClient.ConnectedUniverse;
                     CookieManager.SteamId = _steamUser.SteamID;
                     CookieManager.WebApiUserNonce = loggedOnCallback.WebAPIUserNonce;
                     _logger.Info($"#{SequenceNumber} logged on.");
@@ -270,12 +273,12 @@ namespace Keylol.SteamBot
                         _coordinator.Consume(
                             coordinator => coordinator.UpdateBot(Id, null, true, _steamUser.SteamID.Render(true)));
                         _logger.Info($"#{SequenceNumber} is now online.");
-                        var playGame = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-                        playGame.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                        var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
+                        playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
                         {
-                            game_id = new GameID(250820) // SteamVR
+                            game_id = new GameID(250820) // 默认玩 SteamVR
                         });
-                        _steamClient.Send(playGame);
+                        SteamClient.Send(playGameMessage);
                     }
                     catch (TaskCanceledException)
                     {

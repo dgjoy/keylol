@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.ServiceModel;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -404,6 +406,12 @@ namespace Keylol.Services
         private async Task<string> AskTulingBot(string question, string userId)
         {
             const string apiKey = "51c3bd1bb6a9d092f8b63aca01262edf";
+            using (var md5 = MD5.Create())
+            {
+                userId = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(userId)))
+                    .Replace("-", "")
+                    .ToLower();
+            }
             JToken result = null;
             try
             {

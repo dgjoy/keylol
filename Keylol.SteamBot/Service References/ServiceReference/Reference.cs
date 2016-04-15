@@ -64,6 +64,9 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SendChatMessage")]
         void SendChatMessage(string botId, string steamId, string message, bool logMessage);
         
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/BroadcastMessage")]
+        void BroadcastMessage(string message);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHash", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHashResponse")]
         string GetUserAvatarHash(string botId, string steamId);
         
@@ -72,6 +75,9 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/GetFriendList", ReplyAction="http://tempuri.org/ISteamBotCoordinator/GetFriendListResponse")]
         string[] GetFriendList(string botId);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetPlayingGame")]
+        void SetPlayingGame(string botId, int appId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/Curl", ReplyAction="http://tempuri.org/ISteamBotCoordinator/CurlResponse")]
         string Curl(string botId, string url);

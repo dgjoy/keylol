@@ -9,6 +9,7 @@ using Keylol.ServiceBase;
 using Keylol.SteamBot.ServiceReference;
 using log4net;
 using SteamKit2;
+using SteamKit2.Internal;
 
 namespace Keylol.SteamBot
 {
@@ -107,6 +108,22 @@ namespace Keylol.SteamBot
             }
         }
 
+        public void BroadcastMessage(string message)
+        {
+            if (SteamBot.BotInstances == null || string.IsNullOrEmpty(message))
+                return;
+            _logger.Info($"Broadcasting chat message: {message}");
+            foreach (var botInstance in SteamBot.BotInstances)
+            {
+                var count = botInstance.SteamFriends.GetFriendCount();
+                for (var i = 0; i < count; i++)
+                {
+                    botInstance.SteamFriends.SendChatMessage(botInstance.SteamFriends.GetFriendByIndex(i),
+                        EChatEntryType.ChatMsg, message);
+                }
+            }
+        }
+
         public string GetUserAvatarHash(string botId, string steamId)
         {
             var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
@@ -141,6 +158,27 @@ namespace Keylol.SteamBot
                 result.Add(botInstance.SteamFriends.GetFriendByIndex(i).Render(true));
             }
             return result.ToArray();
+        }
+
+        public void SetPlayingGame(string botId, int appId)
+        {
+            var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
+            playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+            {
+                game_id = new GameID(appId)
+            });
+            if (botId == null)
+            {
+                if (SteamBot.BotInstances == null)
+                    return;
+                foreach (var bot in SteamBot.BotInstances)
+                {
+                    bot.SteamClient.Send(playGameMessage);
+                }
+                return;
+            }
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            botInstance?.SteamClient.Send(playGameMessage);
         }
 
         public string Curl(string botId, string url)

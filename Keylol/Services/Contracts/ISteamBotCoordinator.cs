@@ -133,9 +133,16 @@ namespace Keylol.Services.Contracts
         /// <param name="botId">机器人 ID</param>
         /// <param name="steamId">用户 Steam ID</param>
         /// <param name="message">聊天消息内容</param>
-        /// <param name="logMessage">是否将消息记录到日志中</param>
+        /// <param name="logMessage">是否将消息记录到日志中，默认 false</param>
         [OperationContract(IsOneWay = true)]
         Task SendChatMessage(string botId, string steamId, string message, bool logMessage = false);
+
+        /// <summary>
+        /// 要求机器人向所有好友发送聊天消息
+        /// </summary>
+        /// <param name="message">聊天消息内容</param>
+        [OperationContract(IsOneWay = true)]
+        Task BroadcastMessage(string message);
 
         /// <summary>
         /// 获取指定用户的头像 Hash
@@ -161,6 +168,14 @@ namespace Keylol.Services.Contracts
         /// <returns>好友 Steam ID 列表，<c>null</c> 表示获取失败</returns>
         [OperationContract]
         Task<List<string>> GetFriendList(string botId);
+
+        /// <summary>
+        /// 设置机器人正在玩的游戏
+        /// </summary>
+        /// <param name="botId">机器人 ID，<c>null</c> 表示所有机器人</param>
+        /// <param name="appId">App ID，0 表示停止游戏</param>
+        [OperationContract(IsOneWay = true)]
+        Task SetPlayingGame(string botId, int appId);
 
         /// <summary>
         /// 要求机器人使用自己的 Cookies 抓取指定网页（使用 HTTP GET 方法）

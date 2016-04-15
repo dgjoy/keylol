@@ -36,7 +36,7 @@ namespace Keylol.Controllers.UserGameRecord
             var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();
             if (manual)
             {
-                if (user.LastGameUpdateSucceed || DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromMinutes(1))
+                if (user.LastGameUpdateSucceed && DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromMinutes(1))
                     return NotFound();
             }
             else

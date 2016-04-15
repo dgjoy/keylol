@@ -385,6 +385,10 @@
     <Compile Include="Migrations\201604140926329_SteamBindingTokenBotIdOptional.Designer.cs">
       <DependentUpon>201604140926329_SteamBindingTokenBotIdOptional.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604141521195_UserGameRecordIdentity.cs" />
+    <Compile Include="Migrations\201604141521195_UserGameRecordIdentity.Designer.cs">
+      <DependentUpon>201604141521195_UserGameRecordIdentity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -608,6 +612,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604140926329_SteamBindingTokenBotIdOptional.resx">
       <DependentUpon>201604140926329_SteamBindingTokenBotIdOptional.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604141521195_UserGameRecordIdentity.resx">
+      <DependentUpon>201604141521195_UserGameRecordIdentity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

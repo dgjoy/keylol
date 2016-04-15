@@ -271,6 +271,9 @@
     <Compile Include="Controllers\RedisCache\DeleteListByKeyPattern.cs" />
     <Compile Include="Controllers\RedisCache\GetOneByKey.cs" />
     <Compile Include="Controllers\RedisCache\RedisCacheController.cs" />
+    <Compile Include="Controllers\SteamBot\BroadcastMessage.cs" />
+    <Compile Include="Controllers\SteamBot\SetPlayingGame.cs" />
+    <Compile Include="Controllers\SteamBot\SteamBotController.cs" />
     <Compile Include="Controllers\UploadSignature\CreateOne.cs" />
     <Compile Include="Controllers\UserGameRecord\GetOnePlayTimeByUser.cs" />
     <Compile Include="Controllers\UserGameRecord\UpdateListByCurrentUser.cs" />

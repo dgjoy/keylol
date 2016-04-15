@@ -114,6 +114,9 @@
   <wsdl:message name="ISteamBotCoordinator_SendChatMessage_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:SendChatMessage" />
   </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_BroadcastMessage_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:BroadcastMessage" />
+  </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_GetUserAvatarHash_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:GetUserAvatarHash" />
   </wsdl:message>
@@ -131,6 +134,9 @@
   </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_GetFriendList_InputCallbackMessage">
     <wsdl:part name="parameters" element="tns:GetFriendListResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_SetPlayingGame_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:SetPlayingGame" />
   </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_Curl_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:Curl" />
@@ -191,6 +197,9 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendChatMessage">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/SendChatMessage" message="tns:ISteamBotCoordinator_SendChatMessage_OutputCallbackMessage" />
     </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="BroadcastMessage">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/BroadcastMessage" message="tns:ISteamBotCoordinator_BroadcastMessage_OutputCallbackMessage" />
+    </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetUserAvatarHash">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHash" message="tns:ISteamBotCoordinator_GetUserAvatarHash_OutputCallbackMessage" />
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHashResponse" message="tns:ISteamBotCoordinator_GetUserAvatarHash_InputCallbackMessage" />
@@ -202,6 +211,9 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetFriendList">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetFriendList" message="tns:ISteamBotCoordinator_GetFriendList_OutputCallbackMessage" />
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetFriendListResponse" message="tns:ISteamBotCoordinator_GetFriendList_InputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetPlayingGame">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/SetPlayingGame" message="tns:ISteamBotCoordinator_SetPlayingGame_OutputCallbackMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Curl">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/Curl" message="tns:ISteamBotCoordinator_Curl_OutputCallbackMessage" />
@@ -322,6 +334,12 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="BroadcastMessage">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/BroadcastMessage" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetUserAvatarHash">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/GetUserAvatarHash" style="document" />
       <wsdl:input>
@@ -345,6 +363,12 @@
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetPlayingGame">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/SetPlayingGame" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
