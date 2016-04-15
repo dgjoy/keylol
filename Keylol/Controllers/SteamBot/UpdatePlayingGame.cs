@@ -12,11 +12,11 @@ namespace Keylol.Controllers.SteamBot
         /// <summary>
         /// 设置指定机器人正在玩的游戏
         /// </summary>
-        /// <param name="botSequenceNumbers">机器人序号列表，用逗号分隔，例如“1,22,33”，“*” 表示所以机器人</param>
+        /// <param name="botSequenceNumbers">机器人序号列表，用逗号分隔，例如 "1,22,33"，"*" 表示所有机器人</param>
         /// <param name="appId">App ID，0 表示停止游戏</param>
-        [Route("set-playing-game")]
+        [Route("playing-game")]
         [HttpPost]
-        public async Task<IHttpActionResult> SetPlayingGame(string botSequenceNumbers, int appId)
+        public async Task<IHttpActionResult> UpdatePlayingGame(string botSequenceNumbers, int appId)
         {
             if (botSequenceNumbers == "*")
             {
@@ -30,8 +30,7 @@ namespace Keylol.Controllers.SteamBot
                 var sns = botSequenceNumbers.Split(',').Select(int.Parse);
                 var bots = await DbContext.SteamBots.Where(b => sns.Contains(b.SequenceNumber))
                     .ToListAsync();
-                foreach (var bot in bots.Where(b => b.IsOnline() &&
-                                                    SteamBotCoordinator.Sessions.ContainsKey(b.SessionId)))
+                foreach (var bot in bots.Where(b => b.IsOnline()))
                 {
                     await SteamBotCoordinator.Sessions[bot.SessionId].Client.SetPlayingGame(bot.Id, appId);
                 }
