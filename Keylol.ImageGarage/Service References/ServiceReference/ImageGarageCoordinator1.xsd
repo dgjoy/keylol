@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models" />
+  <xs:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="ArticleDto">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Keylol.Models" minOccurs="0" name="Archived" nillable="true" type="q1:ArchivedState" />
+      <xs:element minOccurs="0" name="AttachedPoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element minOccurs="0" name="Author" nillable="true" type="tns:UserDto" />
+      <xs:element minOccurs="0" name="AuthorAvatarImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AuthorId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AuthorIdCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AuthorUserName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CommentCount" nillable="true" type="xs:int" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Cons" nillable="true" type="q2:ArrayOfstring" />
+      <xs:element minOccurs="0" name="Content" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Count" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LikeByUsers" nillable="true" type="tns:ArrayOfUserDto" />
+      <xs:element minOccurs="0" name="LikeCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Liked" nillable="true" type="xs:boolean" />
+      <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Pros" nillable="true" type="q3:ArrayOfstring" />
+      <xs:element minOccurs="0" name="PublishTime" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Rejected" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="RowVersion" nillable="true" type="xs:base64Binary" />
+      <xs:element minOccurs="0" name="SequenceNumber" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SequenceNumberForAuthor" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Spotlight" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Summary" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ThumbnailImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TimelineReason" nillable="true" type="tns:ArticleDto.TimelineReasonType" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Keylol.Models" minOccurs="0" name="Type" nillable="true" type="q4:ArticleType" />
+      <xs:element minOccurs="0" name="TypeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Vote" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="VoteForPoint" nillable="true" type="tns:NormalPointDto" />
+      <xs:element minOccurs="0" name="VoteForPointChineseName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VoteForPointEnglishName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VoteForPointId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VoteForPointIdCode" nillable="true" type="xs:string" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Keylol.Models" minOccurs="0" name="VoteForPointPreferredName" nillable="true" type="q5:PreferredNameType" />
+      <xs:element minOccurs="0" name="Warned" nillable="true" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArticleDto" nillable="true" type="tns:ArticleDto" />
+  <xs:complexType name="ArrayOfNormalPointDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="NormalPointDto" nillable="true" type="tns:NormalPointDto" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfNormalPointDto" nillable="true" type="tns:ArrayOfNormalPointDto" />
+  <xs:complexType name="NormalPointDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ArticleCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="AvatarImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BackgroundImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ChineseAliases" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ChineseName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Count" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="CoverImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DeveloperPoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element minOccurs="0" name="DisplayAliases" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EnglishAliases" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EnglishName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GameCountAsDeveloper" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GameCountAsGenre" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GameCountAsPublisher" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GameCountAsSeries" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GameCountAsTag" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GenrePoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MajorPlatformPoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element minOccurs="0" name="MinorPlatformPoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element minOccurs="0" name="NameInSteamStore" nillable="true" type="xs:string" />
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Keylol.Models" minOccurs="0" name="PreferredName" nillable="true" type="q6:PreferredNameType" />
+      <xs:element minOccurs="0" name="PublisherPoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element minOccurs="0" name="ReleaseDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="SeriesPoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element minOccurs="0" name="SteamAppId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Subscribed" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SubscriberCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="TagPoints" nillable="true" type="tns:ArrayOfNormalPointDto" />
+      <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Keylol.Models" minOccurs="0" name="Type" nillable="true" type="q7:NormalPointType" />
+      <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="VoteStats" nillable="true" type="q8:ArrayOfKeyValueOfintint" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="NormalPointDto" nillable="true" type="tns:NormalPointDto" />
+  <xs:complexType name="UserDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ArticleCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="AutoSubscribeDaySpan" nillable="true" type="xs:double" />
+      <xs:element minOccurs="0" name="AutoSubscribeEnabled" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AvatarImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Coupon" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GamerTag" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LikeCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="LockoutEnabled" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MessageCount" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProfilePointBackgroundImage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ReviewCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ShortReviewCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="StaffClaim" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StatusClaim" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamBot" nillable="true" type="tns:SteamBotDto" />
+      <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamId64" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamNotifyOnArticleLiked" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SteamNotifyOnArticleReplied" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SteamNotifyOnCommentLiked" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SteamNotifyOnCommentReplied" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SteamProfileName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Subscribed" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SubscribedPointCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SubscriberCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UserDto" nillable="true" type="tns:UserDto" />
+  <xs:complexType name="SteamBotDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Online" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SteamId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamId64" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamPassword" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SteamUserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SteamBotDto" nillable="true" type="tns:SteamBotDto" />
+  <xs:complexType name="ArrayOfUserDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UserDto" nillable="true" type="tns:UserDto" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUserDto" nillable="true" type="tns:ArrayOfUserDto" />
+  <xs:simpleType name="ArticleDto.TimelineReasonType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Like" />
+      <xs:enumeration value="Publish" />
+      <xs:enumeration value="Point" />
+      <xs:enumeration value="AutoSubscription" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ArticleDto.TimelineReasonType" nillable="true" type="tns:ArticleDto.TimelineReasonType" />
+</xs:schema>

@@ -45,6 +45,8 @@ namespace Keylol.ServiceBase
                     BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(signature))).Replace("-", "").ToLower();
             }
             request.Headers[HttpRequestHeader.Authorization] = $"UpYun {Operator}:{signature}";
+            request.Timeout = 15000; // 15s
+            request.ReadWriteTimeout = 120000; // 120s
             return request;
         }
 

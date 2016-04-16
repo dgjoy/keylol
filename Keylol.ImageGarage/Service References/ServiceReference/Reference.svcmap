@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="002a4dd7-3981-4c73-b746-314cf83669d2" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="https://localhost:44300/Services/ImageGarageCoordinator.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="ImageGarageCoordinator.xsd" MetadataType="Schema" ID="52d28c37-626f-4bfd-97f0-8594ee1d0b6a" SourceId="1" SourceUrl="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd0" />
+    <MetadataFile FileName="ImageGarageCoordinator1.xsd" MetadataType="Schema" ID="5d51755a-4957-4ecb-94b9-4548523200fc" SourceId="1" SourceUrl="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd2" />
+    <MetadataFile FileName="ImageGarageCoordinator2.xsd" MetadataType="Schema" ID="f7c696d4-9557-4f6c-98bf-51058adacfa7" SourceId="1" SourceUrl="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd1" />
+    <MetadataFile FileName="ImageGarageCoordinator3.xsd" MetadataType="Schema" ID="26003967-077c-4fcc-9633-e21c4fab14d3" SourceId="1" SourceUrl="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd4" />
+    <MetadataFile FileName="ImageGarageCoordinator4.xsd" MetadataType="Schema" ID="71558f5d-dd47-4022-a5bb-a70f4d01664e" SourceId="1" SourceUrl="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd3" />
+    <MetadataFile FileName="ImageGarageCoordinator.wsdl" MetadataType="Wsdl" ID="8f90f933-f3e7-4eb5-9ef5-8b17a212df54" SourceId="1" SourceUrl="https://localhost:44300/Services/ImageGarageCoordinator.svc?wsdl" />
+    <MetadataFile FileName="ImageGarageCoordinator.disco" MetadataType="Disco" ID="fb23783e-b20d-40de-bf91-4918bc6447e1" SourceId="1" SourceUrl="https://localhost:44300/Services/ImageGarageCoordinator.svc?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

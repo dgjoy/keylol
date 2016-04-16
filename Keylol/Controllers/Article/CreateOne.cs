@@ -116,9 +116,9 @@ namespace Keylol.Controllers.Article
 
             if (article.Type == ArticleType.简评)
             {
-                if (requestDto.Content.Length > 199)
+                if (requestDto.Content.Length > 99)
                 {
-                    ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
+                    ModelState.AddModelError("vm.Content", "简评内容最多 99 字符");
                     return BadRequest(ModelState);
                 }
                 article.UnstyledContent = article.Content;
@@ -145,7 +145,7 @@ namespace Keylol.Controllers.Article
                     .DefaultIfEmpty(0)
                     .Max() + 1;
             DbContext.SaveChanges();
-            _mqChannel.SendRequest(MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
                 ArticleId = article.Id
             });

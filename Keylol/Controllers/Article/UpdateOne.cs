@@ -47,7 +47,10 @@ namespace Keylol.Controllers.Article
             if (article.PrincipalId != editorId && editorStaffClaim != StaffClaim.Operator)
                 return Unauthorized();
 
-            article.Type = requestDto.TypeName.ToEnum<ArticleType>();
+            var newArticleType = requestDto.TypeName.ToEnum<ArticleType>();
+            if (article.Type == ArticleType.简评 != (newArticleType == ArticleType.简评))
+                return Unauthorized();
+            article.Type = newArticleType;
 
             if (article.Type.AllowVote())
             {
@@ -131,9 +134,9 @@ namespace Keylol.Controllers.Article
 
             if (article.Type == ArticleType.简评)
             {
-                if (requestDto.Content.Length > 199)
+                if (requestDto.Content.Length > 99)
                 {
-                    ModelState.AddModelError("vm.Content", "简评内容最多 199 字符");
+                    ModelState.AddModelError("vm.Content", "简评内容最多 99 字符");
                     return BadRequest(ModelState);
                 }
                 article.UnstyledContent = article.Content;
@@ -153,7 +156,7 @@ namespace Keylol.Controllers.Article
             }
 
             await DbContext.SaveChangesAsync();
-            _mqChannel.SendRequest(MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
                 ArticleId = article.Id
             });

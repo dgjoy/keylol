@@ -11,7 +11,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.Services;
-using Keylol.Services.Contracts;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
 using SteamKit2;
@@ -36,7 +36,7 @@ namespace Keylol.Controllers.UserGameRecord
             var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();
             if (manual)
             {
-                if (DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromMinutes(1))
+                if (user.LastGameUpdateSucceed && DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromMinutes(1))
                     return NotFound();
             }
             else
@@ -47,141 +47,144 @@ namespace Keylol.Controllers.UserGameRecord
                     return NotFound();
             }
 
-            if (user.SteamBot.Enabled)
+            user.LastGameUpdateTime = DateTime.Now;
+            user.LastGameUpdateSucceed = true;
+            await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+            try
             {
-                user.LastGameUpdateTime = DateTime.Now;
-                user.LastGameUpdateSucceed = true;
-                await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
-                try
+                var steamId = new SteamID();
+                steamId.SetFromSteam3String(user.SteamId);
+                string allGamesHtml;
+                if (user.SteamBot.IsOnline())
                 {
-                    var steamId = new SteamID();
-                    steamId.SetFromSteam3String(user.SteamId);
-                    ISteamBotCoodinatorCallback callback;
-                    string allGamesHtml;
-                    if (user.SteamBot.Online &&
-                        SteamBotCoodinator.Clients.TryGetValue(user.SteamBot.SessionId, out callback))
+                    var botCoordinator = SteamBotCoordinator.Sessions[user.SteamBot.SessionId];
+                    allGamesHtml = await botCoordinator.Client.Curl(user.SteamBotId,
+                        $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
+                }
+                else
+                {
+                    var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(10)};
+                    allGamesHtml = await httpClient.GetStringAsync(
+                        $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
+                }
+                if (!string.IsNullOrEmpty(allGamesHtml))
+                {
+                    var match = Regex.Match(allGamesHtml, @"<script language=""javascript"">\s*var rgGames = (.*)");
+                    if (match.Success)
                     {
-                        allGamesHtml = callback.FetchUrl(user.SteamBotId,
-                            $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
-                    }
-                    else
-                    {
-                        var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
-                        allGamesHtml = await httpClient.GetStringAsync(
-                            $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
-                    }
-                    if (!string.IsNullOrEmpty(allGamesHtml))
-                    {
-                        var match = Regex.Match(allGamesHtml, @"<script language=""javascript"">\s*var rgGames = (.*)");
-                        if (match.Success)
+                        var trimed = match.Groups[1].Value.Trim();
+                        var games = JArray.Parse(trimed.Substring(0, trimed.Length - 1));
+                        foreach (var game in games)
                         {
-                            var trimed = match.Groups[1].Value.Trim();
-                            var games = JArray.Parse(trimed.Substring(0, trimed.Length - 1));
-                            foreach (var game in games)
+                            var appId = (int) game["appid"];
+
+                            double totalPlayedTime = 0;
+                            if (game["hours_forever"] != null)
+                                totalPlayedTime = (double) game["hours_forever"];
+                            if (Math.Abs(totalPlayedTime) <= 0.5)
+                                continue;
+
+                            var record = await DbContext.UserGameRecords
+                                .Where(r => r.UserId == userId && r.SteamAppId == appId)
+                                .SingleOrDefaultAsync();
+                            if (record == null)
                             {
-                                var appId = (int) game["appid"];
-                                var record = await DbContext.UserGameRecords
-                                    .Where(r => r.UserId == userId && r.SteamAppId == appId)
-                                    .SingleOrDefaultAsync();
-                                if (record == null)
-                                {
-                                    record = DbContext.UserGameRecords.Create();
-                                    record.UserId = userId;
-                                    record.SteamAppId = appId;
-                                    DbContext.UserGameRecords.Add(record);
-                                }
-                                if (game["hours_forever"] != null)
-                                    record.TotalPlayedTime = (double) game["hours_forever"];
-                                if (game["last_played"] != null)
-                                    record.LastPlayTime =
-                                        Extensions.DateTimeFromUnixTimeStamp((int) game["last_played"]);
+                                record = DbContext.UserGameRecords.Create();
+                                record.UserId = userId;
+                                record.SteamAppId = appId;
+                                DbContext.UserGameRecords.Add(record);
                             }
-                            await DbContext.SaveChangesAsync();
-                            var gameEntries = await DbContext.UserGameRecords
-                                .Where(r => r.UserId == userId)
-                                .OrderByDescending(r => r.TotalPlayedTime)
-                                .Select(r =>
-                                    new
-                                    {
-                                        record = r,
-                                        point = DbContext.NormalPoints.FirstOrDefault(
-                                            p => p.Type == NormalPointType.Game && p.SteamAppId == r.SteamAppId)
-                                    })
-                                .Where(e => e.point != null)
-                                .ToListAsync();
-                            var mostPlayed = gameEntries.Where(g =>
-                                !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(g.point))
-                                .Select(g => g.point).Take(6).ToList();
-                            var recentPlayed = gameEntries.Where(g =>
-                                !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(g.point) &&
-                                !mostPlayed.Contains(g.point))
-                                .OrderByDescending(g => g.record.LastPlayTime)
-                                .Select(g => g.point).Take(3).ToList();
-                            var genreStats = new Dictionary<Models.NormalPoint, int>();
-                            var manufacturerStats = new Dictionary<Models.NormalPoint, int>();
-                            foreach (var game in gameEntries)
-                            {
-                                foreach (var point in game.point.TagPoints
-                                    .Concat(game.point.SeriesPoints)
-                                    .Concat(game.point.GenrePoints)
-                                    .Where(p => !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(p)))
-                                {
-                                    if (genreStats.ContainsKey(point))
-                                        genreStats[point]++;
-                                    else
-                                        genreStats[point] = 1;
-                                }
-                                foreach (var point in game.point.DeveloperPoints
-                                    .Concat(game.point.PublisherPoints)
-                                    .Where(p => !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(p)))
-                                {
-                                    if (manufacturerStats.ContainsKey(point))
-                                        manufacturerStats[point]++;
-                                    else
-                                        manufacturerStats[point] = 1;
-                                }
-                            }
-                            var genres = genreStats.OrderByDescending(pair => pair.Value)
-                                .Select(pair => pair.Key).Take(3).ToList();
-                            var manufactures = manufacturerStats.OrderByDescending(pair => pair.Value)
-                                .Select(pair => pair.Key).Take(3).ToList();
-                            DbContext.AutoSubscriptions.RemoveRange(
-                                await DbContext.AutoSubscriptions.Where(s => s.UserId == userId).ToListAsync());
-                            var i = 0;
-                            DbContext.AutoSubscriptions.AddRange(
-                                mostPlayed.Select(p => new {p, t = AutoSubscriptionType.MostPlayed})
-                                    .Concat(recentPlayed.Select(p => new {p, t = AutoSubscriptionType.RecentPlayed}))
-                                    .Concat(genres.Select(p => new {p, t = AutoSubscriptionType.Genre}))
-                                    .Concat(manufactures.Select(p => new {p, t = AutoSubscriptionType.Manufacture}))
-                                    .Select(e =>
-                                    {
-                                        var subscription = DbContext.AutoSubscriptions.Create();
-                                        subscription.UserId = userId;
-                                        subscription.NormalPointId = e.p.Id;
-                                        subscription.Type = e.t;
-                                        subscription.DisplayOrder = i;
-                                        i++;
-                                        return subscription;
-                                    }));
-                            await DbContext.SaveChangesAsync();
-                            return Ok(new
-                            {
-                                MostPlayed = mostPlayed.Select(p => new NormalPointDto(p)),
-                                RecentPlayed = recentPlayed.Select(p => new NormalPointDto(p)),
-                                Genres = genres.Select(p => new NormalPointDto(p)),
-                                Manufacturers = manufactures.Select(p => new NormalPointDto(p))
-                            });
+                            record.TotalPlayedTime = totalPlayedTime;
+
+                            if (game["last_played"] != null)
+                                record.LastPlayTime =
+                                    Extensions.DateTimeFromUnixTimeStamp((int) game["last_played"]);
                         }
-                        if (Regex.IsMatch(allGamesHtml, @"This profile is private\."))
-                            return Unauthorized();
-                        throw new Exception();
+                        await DbContext.SaveChangesAsync();
+                        var gameEntries = await DbContext.UserGameRecords
+                            .Where(r => r.UserId == userId)
+                            .OrderByDescending(r => r.TotalPlayedTime)
+                            .Select(r =>
+                                new
+                                {
+                                    record = r,
+                                    point = DbContext.NormalPoints.FirstOrDefault(
+                                        p => p.Type == NormalPointType.Game && p.SteamAppId == r.SteamAppId)
+                                })
+                            .Where(e => e.point != null)
+                            .ToListAsync();
+                        var mostPlayed = gameEntries.Where(g =>
+                            !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(g.point))
+                            .Select(g => g.point).Take(6).ToList();
+                        var recentPlayed = gameEntries.Where(g =>
+                            !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(g.point) &&
+                            !mostPlayed.Contains(g.point))
+                            .OrderByDescending(g => g.record.LastPlayTime)
+                            .Select(g => g.point).Take(3).ToList();
+                        var genreStats = new Dictionary<Models.NormalPoint, int>();
+                        var manufacturerStats = new Dictionary<Models.NormalPoint, int>();
+                        foreach (var game in gameEntries)
+                        {
+                            foreach (var point in game.point.TagPoints
+                                .Concat(game.point.SeriesPoints)
+                                .Concat(game.point.GenrePoints)
+                                .Where(p => !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(p)))
+                            {
+                                if (genreStats.ContainsKey(point))
+                                    genreStats[point]++;
+                                else
+                                    genreStats[point] = 1;
+                            }
+                            foreach (var point in game.point.DeveloperPoints
+                                .Concat(game.point.PublisherPoints)
+                                .Where(p => !user.SubscribedPoints.OfType<Models.NormalPoint>().Contains(p)))
+                            {
+                                if (manufacturerStats.ContainsKey(point))
+                                    manufacturerStats[point]++;
+                                else
+                                    manufacturerStats[point] = 1;
+                            }
+                        }
+                        var genres = genreStats.OrderByDescending(pair => pair.Value)
+                            .Select(pair => pair.Key).Take(3).ToList();
+                        var manufactures = manufacturerStats.OrderByDescending(pair => pair.Value)
+                            .Select(pair => pair.Key).Take(3).ToList();
+                        DbContext.AutoSubscriptions.RemoveRange(
+                            await DbContext.AutoSubscriptions.Where(s => s.UserId == userId).ToListAsync());
+                        var i = 0;
+                        DbContext.AutoSubscriptions.AddRange(
+                            mostPlayed.Select(p => new {p, t = AutoSubscriptionType.MostPlayed})
+                                .Concat(recentPlayed.Select(p => new {p, t = AutoSubscriptionType.RecentPlayed}))
+                                .Concat(genres.Select(p => new {p, t = AutoSubscriptionType.Genre}))
+                                .Concat(manufactures.Select(p => new {p, t = AutoSubscriptionType.Manufacture}))
+                                .Select(e =>
+                                {
+                                    var subscription = DbContext.AutoSubscriptions.Create();
+                                    subscription.UserId = userId;
+                                    subscription.NormalPointId = e.p.Id;
+                                    subscription.Type = e.t;
+                                    subscription.DisplayOrder = i;
+                                    i++;
+                                    return subscription;
+                                }));
+                        await DbContext.SaveChangesAsync();
+                        return Ok(new
+                        {
+                            MostPlayed = mostPlayed.Select(p => new NormalPointDto(p)),
+                            RecentPlayed = recentPlayed.Select(p => new NormalPointDto(p)),
+                            Genres = genres.Select(p => new NormalPointDto(p)),
+                            Manufacturers = manufactures.Select(p => new NormalPointDto(p))
+                        });
                     }
+                    if (Regex.IsMatch(allGamesHtml, @"This profile is private\."))
+                        return Unauthorized();
+                    throw new Exception();
                 }
-                catch (Exception)
-                {
-                    user.LastGameUpdateSucceed = false;
-                    await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
-                }
+            }
+            catch (Exception)
+            {
+                user.LastGameUpdateSucceed = false;
+                await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
             }
             return NotFound();
         }

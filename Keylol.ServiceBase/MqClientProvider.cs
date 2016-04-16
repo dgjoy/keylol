@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using log4net;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 
 namespace Keylol.ServiceBase
@@ -16,13 +12,24 @@ namespace Keylol.ServiceBase
     public class MqClientProvider : IDisposable
     {
         private readonly ILog _logger;
+        private bool _disposed;
 
-        #region 预定义队列名称
+        #region 预定义名称
 
         /// <summary>
-        ///     ImageGarage 请求队列
+        /// 延迟消息交换机
+        /// </summary>
+        public static readonly string DelayedMessageExchange = "delayed-message-exchange";
+
+        /// <summary>
+        ///     Image Garage 请求队列
         /// </summary>
         public static readonly string ImageGarageRequestQueue = "image-garage-requests";
+
+        /// <summary>
+        /// Steam Bot 延迟操作队列
+        /// </summary>
+        public static readonly string SteamBotDelayedActionQueue = "steam-bot-delayed-actions";
 
         #endregion
 
@@ -40,18 +47,22 @@ namespace Keylol.ServiceBase
                 TopologyRecoveryEnabled = true
             }.CreateConnection();
             Connection.ConnectionShutdown += OnConnectionShutdown;
-            ((IRecoverable) Connection).Recovery += (sender, eventArgs) =>
+            ((IRecoverable) Connection).Recovery +=
+                (sender, eventArgs) => { _logger.Info("RabbitMQ connection recovered."); };
+
+            // 统一声明交换机、队列
+            using (var channel = CreateModel())
             {
-                using (NDC.Push("RabbitMQ"))
-                    _logger.Info("Connection recovered.");
-            };
+                channel.ExchangeDeclare(DelayedMessageExchange, "x-delayed-message", true, false,
+                    new Dictionary<string, object> {{"x-delayed-type", "direct"}});
+                channel.QueueDeclare(ImageGarageRequestQueue, true, false, false, null);
+            }
         }
 
         private void OnConnectionShutdown(object sender, ShutdownEventArgs shutdownEventArgs)
         {
-            using (NDC.Push("RabbitMQ"))
-                _logger.Warn(
-                    $"Connection shutdown.{(shutdownEventArgs.Cause == null ? string.Empty : $" Reason: {shutdownEventArgs.Cause}")}");
+            _logger.Warn(
+                $"RabbitMQ connection shutdown.{(shutdownEventArgs.Cause == null ? string.Empty : $" Reason: {shutdownEventArgs.Cause}")}");
         }
 
         /// <summary>
@@ -80,13 +91,14 @@ namespace Keylol.ServiceBase
         /// <param name="disposing">是否清理托管对象</param>
         protected virtual void Dispose(bool disposing)
         {
+            if (_disposed) return;
             if (disposing)
             {
                 Connection.ConnectionShutdown -= OnConnectionShutdown;
                 Connection.Dispose();
-                using (NDC.Push("RabbitMQ"))
-                    _logger.Info("Connection closed.");
+                _logger.Info("RabbitMQ Connection closed.");
             }
+            _disposed = true;
         }
     }
 }

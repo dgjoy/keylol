@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Keylol.Models" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Keylol.Models" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="ArchivedState">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="User" />
+      <xs:enumeration value="Operator" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ArchivedState" nillable="true" type="tns:ArchivedState" />
+  <xs:simpleType name="PreferredNameType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Chinese" />
+      <xs:enumeration value="English" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="PreferredNameType" nillable="true" type="tns:PreferredNameType" />
+  <xs:simpleType name="NormalPointType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Game" />
+      <xs:enumeration value="Genre" />
+      <xs:enumeration value="Manufacturer" />
+      <xs:enumeration value="Platform" />
+      <xs:enumeration value="Unspecified" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="NormalPointType" nillable="true" type="tns:NormalPointType" />
+  <xs:simpleType name="ArticleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="简评" />
+      <xs:enumeration value="评" />
+      <xs:enumeration value="研" />
+      <xs:enumeration value="谈" />
+      <xs:enumeration value="讯" />
+      <xs:enumeration value="档" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ArticleType" nillable="true" type="tns:ArticleType" />
+</xs:schema>

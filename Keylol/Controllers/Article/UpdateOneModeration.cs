@@ -172,11 +172,11 @@ namespace Keylol.Controllers.Article
                 DbContext.Messages.Add(missive);
 
                 // Steam 通知
-                ISteamBotCoodinatorCallback callback;
-                if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.SessionId != null &&
-                    SteamBotCoodinator.Clients.TryGetValue(missive.Receiver.SteamBot.SessionId, out callback))
+                if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.IsOnline())
                 {
-                    callback.SendMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId, steamNotityText);
+                    var botCoordinator = SteamBotCoordinator.Sessions[missive.Receiver.SteamBot.SessionId];
+                    await botCoordinator.Client.SendChatMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId,
+                        steamNotityText);
                 }
             }
             await DbContext.SaveChangesAsync();
