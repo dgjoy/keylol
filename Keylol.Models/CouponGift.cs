@@ -29,7 +29,7 @@ namespace Keylol.Models
 
         /// <summary>
         /// JSON 数组，元素示例：
-        /// { Id: "UID", Title: "蒸汽动力用户编号", Description: "论坛用户码（UID），在资料中可以找到。" }
+        /// { Id: "UID", Title: "蒸汽动力用户编号", Description: "论坛用户码（UID），在资料中可以找到。", InputType: "number" }
         /// </summary>
         [Required]
         public string AcceptedFields { get; set; } = "[]";
@@ -38,5 +38,7 @@ namespace Keylol.Models
 
         [Index]
         public DateTime CreateTime { get; set; } = DateTime.Now;
+
+        public DateTime EndTime { get; set; }
     }
 }

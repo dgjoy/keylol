@@ -7,7 +7,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.Services;
-using Keylol.Services.Contracts;
+using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
 using SteamKit2;
 
@@ -22,6 +22,7 @@ namespace Keylol.Hubs
     public class SteamBindingHub : Hub<ISteamBindingHubClient>
     {
         private readonly KeylolDbContext _dbContext = new KeylolDbContext();
+        private static int _botSkip = 0;
 
         protected override void Dispose(bool disposing)
         {
@@ -42,9 +43,11 @@ namespace Keylol.Hubs
             {
                 if (token.SteamId != null)
                 {
-                    ISteamBotCoodinatorCallback callback;
-                    if (SteamBotCoodinator.Clients.TryGetValue(token.Bot.SessionId, out callback))
-                        callback.RemoveSteamFriend(token.BotId, token.SteamId);
+                    if (token.Bot.IsOnline())
+                    {
+                        var botCoordinator = SteamBotCoordinator.Sessions[token.Bot.SessionId];
+                        await botCoordinator.Client.RemoveFriend(token.BotId, token.SteamId);
+                    }
                 }
                 _dbContext.SteamBindingTokens.Remove(token);
             }
@@ -54,16 +57,21 @@ namespace Keylol.Hubs
 
         public async Task<SteamBindingTokenDto> CreateToken()
         {
-            var bots =
-                await
-                    _dbContext.SteamBots.Where(b =>
-                        b.Online && b.SessionId != null && b.SteamId != null && b.FriendCount < b.FriendUpperLimit &&
-                        b.Enabled).ToListAsync();
-            var random = new Random();
-            var bot = bots.Skip(random.Next(0, bots.Count)).FirstOrDefault();
+            var sessions = SteamBotCoordinator.Sessions.Keys;
+            var bot = await _dbContext.SteamBots.Where(b =>
+                b.Online && sessions.Contains(b.SessionId)
+                && b.SteamId != null && b.FriendCount < b.FriendUpperLimit && b.Enabled)
+                .OrderBy(b => b.SequenceNumber)
+                .Skip(() => _botSkip)
+                .FirstOrDefaultAsync();
+            if (_botSkip >= await _dbContext.SteamBots.CountAsync() - 1)
+                _botSkip = 0;
+            else
+                _botSkip++;
             if (bot == null)
                 return null;
 
+            var random = new Random();
             string code;
             do
             {
@@ -82,14 +90,13 @@ namespace Keylol.Hubs
             var token = new SteamBindingToken
             {
                 Code = code,
-                Bot = bot,
                 BrowserConnectionId = Context.ConnectionId
             };
             _dbContext.SteamBindingTokens.Add(token);
             await _dbContext.SaveChangesAsync();
 
             var steamId = new SteamID();
-            steamId.SetFromSteam3String(token.Bot.SteamId);
+            steamId.SetFromSteam3String(bot.SteamId);
             return new SteamBindingTokenDto
             {
                 Id = token.Id,

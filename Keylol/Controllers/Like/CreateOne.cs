@@ -10,6 +10,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Services;
 using Keylol.Services.Contracts;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -86,11 +87,10 @@ namespace Keylol.Controllers.Like
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
-                        ISteamBotCoodinatorCallback callback;
-                        if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.SessionId != null &&
-                            SteamBotCoodinator.Clients.TryGetValue(articleAuthor.SteamBot.SessionId, out callback))
+                        if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.IsOnline())
                         {
-                            callback.SendMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
+                            var botCoordinator = SteamBotCoordinator.Sessions[articleAuthor.SteamBot.SessionId];
+                            await botCoordinator.Client.SendChatMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
                         }
                     }
@@ -155,11 +155,10 @@ namespace Keylol.Controllers.Like
                         DbContext.Messages.Add(message);
 
                         // Steam 通知
-                        ISteamBotCoodinatorCallback callback;
-                        if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.SessionId != null &&
-                            SteamBotCoodinator.Clients.TryGetValue(commentAuthor.SteamBot.SessionId, out callback))
+                        if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.IsOnline())
                         {
-                            callback.SendMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
+                            var botCoordinator = SteamBotCoordinator.Sessions[commentAuthor.SteamBot.SessionId];
+                            await botCoordinator.Client.SendChatMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
                                 $"@{@operator.UserName} 认可了你在 《{comment.Article.Title}》 下的评论：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{comment.Article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                         }
                     }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Keylol.Services;
 using Microsoft.AspNet.Identity;
 
 namespace Keylol.Utilities
@@ -118,6 +118,17 @@ namespace Keylol.Utilities
             if (headers.Contains("X-Total-Record-Count"))
                 headers.Remove("X-Total-Record-Count");
             headers.Add("X-Total-Record-Count", totalCount.ToString());
+        }
+
+        /// <summary>
+        /// 判断 Steam 机器人是否属于“在线”状态
+        /// </summary>
+        /// <param name="bot">Steam 机器人实体</param>
+        /// <returns>是否在线</returns>
+        public static bool IsOnline(this Models.SteamBot bot)
+        {
+            return bot.Online && bot.SessionId != null &&
+                   SteamBotCoordinator.Sessions.ContainsKey(bot.SessionId);
         }
     }
 

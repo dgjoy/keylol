@@ -21,8 +21,7 @@ namespace Keylol.Models
         [MaxLength(64)]
         [Index]
         public string SteamId { get; set; }
-
-        [Required]
+        
         public string BotId { get; set; }
 
         public virtual SteamBot Bot { get; set; }

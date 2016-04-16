@@ -9,6 +9,10 @@ namespace Keylol.Models
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int SequenceNumber { get; set; }
+
         [Required]
         [MaxLength(64)]
         [Index(IsUnique = true)]

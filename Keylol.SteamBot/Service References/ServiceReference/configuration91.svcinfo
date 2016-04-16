@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="QQtTrRo0sv3ln+wSGYPfZDCB9ck=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="wRapEgLn6S6/QuZ66B09+yqToo4=">
   <bindingConfigurations>
-    <bindingConfiguration bindingType="netHttpBinding" name="NetHttpBinding_ISteamBotCoodinator">
+    <bindingConfiguration bindingType="netHttpBinding" name="NetHttpBinding_ISteamBotCoordinator">
       <properties>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>NetHttpBinding_ISteamBotCoodinator</serializedValue>
+          <serializedValue>NetHttpBinding_ISteamBotCoordinator</serializedValue>
         </property>
         <property path="/closeTimeout" isComplexType="false" isExplicitlyDefined="true" clrType="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -145,10 +145,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="NetHttpBinding_ISteamBotCoodinator" contract="ServiceReference.ISteamBotCoodinator" bindingType="netHttpBinding" address="wss://localhost:44300/Services/SteamBotCoodinator.svc" bindingConfiguration="NetHttpBinding_ISteamBotCoodinator">
+    <endpoint name="NetHttpBinding_ISteamBotCoordinator" contract="ServiceReference.ISteamBotCoordinator" bindingType="netHttpBinding" address="wss://localhost:44300/Services/SteamBotCoordinator.svc" bindingConfiguration="NetHttpBinding_ISteamBotCoordinator">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>wss://localhost:44300/Services/SteamBotCoodinator.svc</serializedValue>
+          <serializedValue>wss://localhost:44300/Services/SteamBotCoordinator.svc</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -157,10 +157,10 @@
           <serializedValue>netHttpBinding</serializedValue>
         </property>
         <property path="/bindingConfiguration" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>NetHttpBinding_ISteamBotCoodinator</serializedValue>
+          <serializedValue>NetHttpBinding_ISteamBotCoordinator</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>ServiceReference.ISteamBotCoodinator</serializedValue>
+          <serializedValue>ServiceReference.ISteamBotCoordinator</serializedValue>
         </property>
         <property path="/headers" isComplexType="true" isExplicitlyDefined="false" clrType="System.ServiceModel.Configuration.AddressHeaderCollectionElement, System.ServiceModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>System.ServiceModel.Configuration.AddressHeaderCollectionElement</serializedValue>
@@ -220,7 +220,7 @@
           <serializedValue>False</serializedValue>
         </property>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>NetHttpBinding_ISteamBotCoodinator</serializedValue>
+          <serializedValue>NetHttpBinding_ISteamBotCoordinator</serializedValue>
         </property>
         <property path="/kind" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

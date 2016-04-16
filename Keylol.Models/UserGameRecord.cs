@@ -6,7 +6,7 @@ namespace Keylol.Models
 {
     public class UserGameRecord
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public int Id { get; set; }
 
         [Required]
         public string UserId { get; set; }

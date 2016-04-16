@@ -20,7 +20,9 @@ namespace Keylol.Controllers.CouponGift
         [ResponseType(typeof (List<CouponGiftDto>))]
         public async Task<IHttpActionResult> GetListOfAll()
         {
-            return Ok((await DbContext.CouponGifts.OrderByDescending(g => g.CreateTime).Select(g => new
+            return Ok((await DbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)
+                .OrderByDescending(g => g.CreateTime)
+                .Select(g => new
             {
                 gift = g,
                 redeemCount = DbContext.CouponGiftOrders.Count(o => o.GiftId == g.Id)

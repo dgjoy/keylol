@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace Keylol.Controllers.CouponGift
             gift.PreviewImage = requestDto.PreviewImage;
             gift.AcceptedFields = JsonConvert.SerializeObject(requestDto.AcceptedFields);
             gift.Price = requestDto.Price;
+            gift.EndTime = requestDto.EndTime;
             DbContext.CouponGifts.Add(gift);
             await DbContext.SaveChangesAsync();
             return Created($"coupon-gift/{gift.Id}", new CouponGiftDto(gift));
@@ -84,5 +86,10 @@ namespace Keylol.Controllers.CouponGift
         /// 价格
         /// </summary>
         public int Price { get; set; }
+
+        /// <summary>
+        /// 下架日期
+        /// </summary>
+        public DateTime EndTime { get; set; }
     }
 }

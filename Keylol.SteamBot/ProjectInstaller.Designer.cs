@@ -33,15 +33,15 @@
             // 
             // serviceProcessInstaller
             // 
-            this.serviceProcessInstaller.Account = System.ServiceProcess.ServiceAccount.NetworkService;
+            this.serviceProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.serviceProcessInstaller.Password = null;
             this.serviceProcessInstaller.Username = null;
             // 
             // serviceInstaller
             // 
             this.serviceInstaller.Description = "Provides Steam bot support for Keylol.com.";
-            this.serviceInstaller.DisplayName = "Keylol Steam Bot Service";
-            this.serviceInstaller.ServiceName = "SteamBotService";
+            this.serviceInstaller.DisplayName = "Keylol Steam Bot";
+            this.serviceInstaller.ServiceName = "Keylol.SteamBot";
             this.serviceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
