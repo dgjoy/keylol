@@ -186,7 +186,7 @@ namespace Keylol.SteamBot
                                 if (!skip && (bool) actionDto.Properties.OnlyIfNotKeylolUser)
                                 {
                                     var result = _coordinator.Consume(
-                                        coordinator => coordinator.IsKeylolUser(steamId.Render(true)));
+                                        coordinator => coordinator.IsKeylolUser(steamId.Render(true), Id));
                                     if (!result.HasNoException || result.Value)
                                     {
                                         skip = true;

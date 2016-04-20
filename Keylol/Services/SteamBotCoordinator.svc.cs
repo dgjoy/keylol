@@ -209,15 +209,16 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 判断指定 Steam 账户是不是其乐用户
+        /// 判断指定 Steam 账户是不是其乐用户并且匹配指定机器人
         /// </summary>
         /// <param name="steamId">Steam ID</param>
-        /// <returns><c>true</c> 表示是其乐用户，<c>false</c> 表示不是</returns>
-        public async Task<bool> IsKeylolUser(string steamId)
+        /// <param name="botId">机器人 ID</param>
+        /// <returns><c>true</c> 表示是其乐用户并于目标机器人匹配，<c>false</c> 表示不是</returns>
+        public async Task<bool> IsKeylolUser(string steamId, string botId)
         {
             using (var dbContext = new KeylolDbContext())
             {
-                return await dbContext.Users.AnyAsync(u => u.SteamId == steamId);
+                return await dbContext.Users.AnyAsync(u => u.SteamId == steamId && u.SteamBotId == botId);
             }
         }
 

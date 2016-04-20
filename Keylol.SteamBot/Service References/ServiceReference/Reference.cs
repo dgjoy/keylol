@@ -28,7 +28,7 @@ namespace Keylol.SteamBot.ServiceReference {
         void UpdateBot(string id, System.Nullable<int> friendCount, System.Nullable<bool> online, string steamId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/IsKeylolUser", ReplyAction="http://tempuri.org/ISteamBotCoordinator/IsKeylolUserResponse")]
-        bool IsKeylolUser(string steamId);
+        bool IsKeylolUser(string steamId, string botId);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewFriendRequest")]
         void OnBotNewFriendRequest(string userSteamId, string botId);
@@ -127,8 +127,8 @@ namespace Keylol.SteamBot.ServiceReference {
             base.Channel.UpdateBot(id, friendCount, online, steamId);
         }
         
-        public bool IsKeylolUser(string steamId) {
-            return base.Channel.IsKeylolUser(steamId);
+        public bool IsKeylolUser(string steamId, string botId) {
+            return base.Channel.IsKeylolUser(steamId, botId);
         }
         
         public void OnBotNewFriendRequest(string userSteamId, string botId) {
