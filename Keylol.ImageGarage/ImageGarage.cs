@@ -83,10 +83,11 @@ namespace Keylol.ImageGarage
                                     {
                                         do
                                         {
-                                            var extension = MimeTypeToFileExtension(response.ContentType);
+                                            var extension = MimeTypeToFileExtension(response.ContentType?.Split(';')[0]);
                                             if (extension == null) // 不支持的类型
                                             {
                                                 _logger.Warn($"Unsupported MIME type: {url}");
+                                                img.Attributes["alt"] = $"格式不支持 {url}";
                                                 img.RemoveAttribute("src");
                                                 break;
                                             }

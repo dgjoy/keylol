@@ -67,7 +67,8 @@ namespace Keylol.SteamBot
         /// <summary>
         /// 启动机器人实例
         /// </summary>
-        public void Start()
+        /// <param name="startWait">是否等待三秒后再启动，默认 <c>false</c></param>
+        public void Start(bool startWait = false)
         {
             if (_disposed)
             {
@@ -80,13 +81,20 @@ namespace Keylol.SteamBot
                 _callbackPumpStarted = true;
                 Task.Run(() =>
                 {
-                    _logger.Info($"#{SequenceNumber} Bot started.");
+                    _logger.Info($"#{SequenceNumber} Listening callbacks...");
                     while (!_disposed)
                     {
-                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(100));
+                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(10));
                     }
-                    _logger.Info($"#{SequenceNumber} Bot stopped.");
+                    _logger.Info($"#{SequenceNumber} Stopped listening callbacks.");
                 });
+            }
+
+            _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, null, false, null));
+            if (startWait)
+            {
+                _logger.Info($"#{SequenceNumber} Starting in 3 seconds...");
+                Thread.Sleep(TimeSpan.FromSeconds(3));
             }
 
             var sfhPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", $"{LogOnDetails.Username}.sfh");
@@ -119,9 +127,7 @@ namespace Keylol.SteamBot
         public void Restart()
         {
             Stop();
-            _logger.Info($"#{SequenceNumber} Stopped, restarting in 3 seconds...");
-            Thread.Sleep(TimeSpan.FromSeconds(3));
-            Start();
+            Start(true);
         }
 
         /// <summary>
@@ -136,6 +142,7 @@ namespace Keylol.SteamBot
             }
             _mqChannel?.Close();
             SteamClient.Disconnect();
+            _logger.Info($"#{SequenceNumber} Stopped.");
         }
 
         private void OnDelayedActionReceived(object sender, BasicDeliverEventArgs basicDeliverEventArgs)
