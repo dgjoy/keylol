@@ -21,9 +21,6 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/AllocateBotsResponse")]
         Keylol.Models.DTO.SteamBotDto[] AllocateBots(int count);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/DeallocateBot", ReplyAction="http://tempuri.org/ISteamBotCoordinator/DeallocateBotResponse")]
-        void DeallocateBot(string botId);
-        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/UpdateUser", ReplyAction="http://tempuri.org/ISteamBotCoordinator/UpdateUserResponse")]
         void UpdateUser(string steamId, string profileName);
         
@@ -41,6 +38,9 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewChatMessage")]
         void OnBotNewChatMessage(string senderSteamId, string botId, string message);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/Ping", ReplyAction="http://tempuri.org/ISteamBotCoordinator/PingResponse")]
+        void Ping();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -119,10 +119,6 @@ namespace Keylol.SteamBot.ServiceReference {
             return base.Channel.AllocateBots(count);
         }
         
-        public void DeallocateBot(string botId) {
-            base.Channel.DeallocateBot(botId);
-        }
-        
         public void UpdateUser(string steamId, string profileName) {
             base.Channel.UpdateUser(steamId, profileName);
         }
@@ -145,6 +141,10 @@ namespace Keylol.SteamBot.ServiceReference {
         
         public void OnBotNewChatMessage(string senderSteamId, string botId, string message) {
             base.Channel.OnBotNewChatMessage(senderSteamId, botId, message);
+        }
+        
+        public void Ping() {
+            base.Channel.Ping();
         }
     }
 }

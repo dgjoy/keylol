@@ -27,7 +27,6 @@ namespace Keylol.SteamBot
         private readonly SteamUser _steamUser;
 
         private bool _disposed;
-        private bool _deallocated; // 是否已被撤销分配
         private bool _loginPending; // 是否处于登录过程中
         private bool _callbackPumpStarted; // 回调泵是否已启用
         private IModel _mqChannel;
@@ -70,10 +69,10 @@ namespace Keylol.SteamBot
         /// </summary>
         public void Start()
         {
-            if (_deallocated)
+            if (_disposed)
             {
-                _logger.Fatal($"#{SequenceNumber} Try to restart deallocated bot.");
-                throw new InvalidOperationException("Try to restart deallocated bot.");
+                _logger.Fatal($"#{SequenceNumber} Try to restart disposed bot.");
+                throw new InvalidOperationException("Try to restart disposed bot.");
             }
 
             if (!_callbackPumpStarted)
@@ -128,25 +127,12 @@ namespace Keylol.SteamBot
         /// <summary>
         /// 停止机器人实例
         /// </summary>
-        /// <param name="deallocate">是否通知协作器撤销分配此机器人，撤销分配后该实例将不可重新启动</param>
-        public void Stop(bool deallocate = false)
+        public void Stop()
         {
             if (_loginPending)
             {
                 LoginSemaphore.Release();
                 _loginPending = false;
-            }
-            if (deallocate)
-            {
-                try
-                {
-                    _coordinator.Operations.DeallocateBot(Id);
-                }
-                catch (Exception e)
-                {
-                    _logger.Fatal($"#{SequenceNumber} Failed to tell coordinator to deallocate this bot.", e);
-                }
-                _deallocated = true;
             }
             _mqChannel?.Close();
             SteamClient.Disconnect();
@@ -440,7 +426,7 @@ namespace Keylol.SteamBot
             if (disposing)
             {
                 CookieManager.Dispose();
-                Stop(true);
+                Stop();
             }
             _disposed = true;
         }

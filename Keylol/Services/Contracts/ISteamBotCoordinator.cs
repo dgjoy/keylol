@@ -26,13 +26,6 @@ namespace Keylol.Services.Contracts
         List<SteamBotDto> AllocateBots(int count);
 
         /// <summary>
-        /// 撤销对指定机器人的会话分配
-        /// </summary>
-        /// <param name="botId">机器人 ID</param>
-        [OperationContract]
-        Task DeallocateBot(string botId);
-
-        /// <summary>
         /// 更新指定用户的属性
         /// </summary>
         /// <param name="steamId">要更新的用户 Steam ID</param>
@@ -82,6 +75,12 @@ namespace Keylol.Services.Contracts
         /// <param name="message">聊天消息内容</param>
         [OperationContract(IsOneWay = true)]
         Task OnBotNewChatMessage(string senderSteamId, string botId, string message);
+
+        /// <summary>
+        /// 心跳测试
+        /// </summary>
+        [OperationContract]
+        void Ping();
     }
 
     /// <summary>

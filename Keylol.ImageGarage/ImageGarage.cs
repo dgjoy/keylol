@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
@@ -82,16 +83,32 @@ namespace Keylol.ImageGarage
                                     {
                                         do
                                         {
+                                            var extension = MimeTypeToFileExtension(response.ContentType);
+                                            if (extension == null) // 不支持的类型
+                                            {
+                                                _logger.Warn($"Unsupported MIME type: {url}");
+                                                img.RemoveAttribute("src");
+                                                break;
+                                            }
                                             var responseStream = response.GetResponseStream();
-                                            if (responseStream == null) break;
+                                            if (responseStream == null)
+                                            {
+                                                _logger.Warn($"Null response stream: {url}");
+                                                break;
+                                            }
                                             await responseStream.CopyToAsync(ms);
                                             var fileData = ms.ToArray();
-                                            if (fileData.Length <= 0) break;
-                                            var uri = new Uri(url);
-                                            var extension = Path.GetExtension(uri.AbsolutePath);
-                                            if (string.IsNullOrEmpty(extension)) break;
+                                            if (fileData.Length <= 0)
+                                            {
+                                                _logger.Warn($"Empty response stream: {url}");
+                                                break;
+                                            }
                                             var name = await UpyunProvider.UploadFile(fileData, extension);
-                                            if (string.IsNullOrEmpty(name)) break;
+                                            if (string.IsNullOrEmpty(name))
+                                            {
+                                                _logger.Warn($"Upload failed: {url}");
+                                                break;
+                                            }
                                             downloadCount++;
                                             url = $"keylol://{name}";
                                             img.Attributes["article-image-src"] = url;
@@ -99,12 +116,9 @@ namespace Keylol.ImageGarage
                                         } while (false);
                                     }
                                 }
-                                catch (WebException e)
+                                catch (Exception e)
                                 {
                                     _logger.Warn($"Download failed: {url}", e);
-                                }
-                                catch (UriFormatException)
-                                {
                                 }
                             }
                             if (string.IsNullOrEmpty(article.ThumbnailImage))
@@ -136,6 +150,22 @@ namespace Keylol.ImageGarage
         {
             _mqChannel.Close();
             base.OnStop();
+        }
+
+        private static string MimeTypeToFileExtension(string mimeType)
+        {
+            if (string.IsNullOrEmpty(mimeType)) return null;
+            var map = new Dictionary<string, string>
+            {
+                {"image/bmp", "bmp"},
+                {"image/gif", "gif"},
+                {"image/x-icon", "ico"},
+                {"image/jpeg", "jpg"},
+                {"image/png", "png"},
+                {"image/svg+xml", "svg"},
+                {"image/webp", "webp"}
+            };
+            return map.ContainsKey(mimeType) ? map[mimeType] : null;
         }
     }
 }
