@@ -321,7 +321,7 @@
     <Compile Include="Hubs\DebugInfoHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
     <Compile Include="Hubs\SteamBindingHub.cs" />
-    <Compile Include="Provider\KeylolOAuthProvider.cs" />
+    <Compile Include="App_Start\KeylolOAuthAuthorizationServerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Utilities\PredicateBuilder.cs" />

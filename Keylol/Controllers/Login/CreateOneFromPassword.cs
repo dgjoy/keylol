@@ -35,15 +35,15 @@ namespace Keylol.Controllers.Login
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var geetest = new Geetest();
-            if (
-                !await
-                    geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
-                        requestDto.GeetestValidate))
-            {
-                ModelState.AddModelError("authCode", "true");
-                return BadRequest(ModelState);
-            }
+//            var geetest = new Geetest();
+//            if (
+//                !await
+//                    geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
+//                        requestDto.GeetestValidate))
+//            {
+//                ModelState.AddModelError("authCode", "true");
+//                return BadRequest(ModelState);
+//            }
             var user = Regex.IsMatch(requestDto.EmailOrIdCode, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$",
                 RegexOptions.IgnoreCase)
                 ? await UserManager.FindByEmailAsync(requestDto.EmailOrIdCode)

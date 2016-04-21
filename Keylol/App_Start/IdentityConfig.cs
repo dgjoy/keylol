@@ -12,6 +12,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol
 {
@@ -149,9 +150,11 @@ namespace Keylol
         {
         }
 
-        public override Task<ClaimsIdentity> CreateUserIdentityAsync(KeylolUser user)
+        public override async Task<ClaimsIdentity> CreateUserIdentityAsync(KeylolUser user)
         {
-            return user.GenerateUserIdentityAsync((KeylolUserManager) UserManager);
+            var userIdentity = await UserManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType);
+            // Add custom user claims here
+            return userIdentity;
         }
 
         public static KeylolSignInManager Create(IdentityFactoryOptions<KeylolSignInManager> options,

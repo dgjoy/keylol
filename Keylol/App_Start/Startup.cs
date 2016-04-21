@@ -18,6 +18,7 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Owin;
@@ -92,7 +93,7 @@ namespace Keylol
             Container.Verify();
         }
 
-        private void RegisterServices()
+        private static void RegisterServices()
         {
             // 配置容器
             Container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
@@ -130,7 +131,7 @@ namespace Keylol
             Container.RegisterWebApiRequest<StatisticsProvider>();
         }
 
-        private void UseCors(IAppBuilder app)
+        private static void UseCors(IAppBuilder app)
         {
             app.Use(async (context, next) =>
             {
@@ -165,7 +166,7 @@ namespace Keylol
             });
         }
 
-        private void UseWebApi(IAppBuilder app)
+        private static void UseWebApi(IAppBuilder app)
         {
             var config = new HttpConfiguration();
             var server = new HttpServer(config);
@@ -174,17 +175,25 @@ namespace Keylol
             config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
 
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
-            
+
             config.EnableSwagger("swagger-hRwp3Pnm/docs/{apiVersion}", c =>
             {
                 c.SingleApiVersion("v1", "Keylol REST API")
                     .Contact(cc => cc.Name("Stackia")
                         .Email("stackia@keylol.com"));
 
+                c.OAuth2("OAuth2 Password Grant")
+                    .Flow("password")
+                    .AuthorizationUrl("/oauth/authorization")
+                    .TokenUrl("/oauth/token");
+
                 var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.XML"));
                 c.DescribeAllEnumsAsStrings();
-            }).EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}");
+            }).EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}", c =>
+            {
+                c.EnableOAuth2Support("swagger-ui", "app", "Swagger UI");
+            });
 
             config.MapHttpAttributeRoutes();
 
@@ -194,36 +203,34 @@ namespace Keylol
             app.UseWebApi(server);
         }
 
-        private void UseAuth(IAppBuilder app)
+        private static void UseAuth(IAppBuilder app)
         {
             app.CreatePerOwinContext<KeylolDbContext>((o, c) => Container.GetInstance<KeylolDbContext>(),
                 (o, c) => { }); // 忽略 disposeCallback，交给 Container 自身处理
             app.CreatePerOwinContext<KeylolUserManager>(KeylolUserManager.Create);
             app.CreatePerOwinContext<KeylolSignInManager>(KeylolSignInManager.Create);
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = PathString.Empty,
-                CookieHttpOnly = true,
-                CookieName = ".Keylol.Cookies",
-                SlidingExpiration = true,
-                ExpireTimeSpan = TimeSpan.FromDays(15),
-                Provider = new CookieAuthenticationProvider
-                {
-                    OnValidateIdentity =
-                        SecurityStampValidator.OnValidateIdentity<KeylolUserManager, KeylolUser>(
-                            TimeSpan.FromMinutes(30), (manager, user) => user.GenerateUserIdentityAsync(manager))
-                }
-            });
-
-//            app.UseOAuthBearerTokens(new OAuthAuthorizationServerOptions()
+//            app.UseCookieAuthentication(new CookieAuthenticationOptions
 //            {
-//                AllowInsecureHttp = true,
-//                TokenEndpointPath = new PathString("/oauth/token"),
-//                AuthorizeEndpointPath = new PathString("/oauth/authorize"),
-//                Provider = new KeylolOAuthProvider()
+//                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+//                LoginPath = PathString.Empty,
+//                CookieHttpOnly = true,
+//                CookieName = ".Keylol.Cookies",
+//                SlidingExpiration = true,
+//                ExpireTimeSpan = TimeSpan.FromDays(15),
+//                Provider = new CookieAuthenticationProvider
+//                {
+//                    OnValidateIdentity =
+//                        SecurityStampValidator.OnValidateIdentity<KeylolUserManager, KeylolUser>(
+//                            TimeSpan.FromMinutes(30), (manager, user) => user.GenerateUserIdentityAsync(manager))
+//                }
 //            });
+            app.UseOAuthBearerTokens(new OAuthAuthorizationServerOptions
+            {
+                TokenEndpointPath = new PathString("/oauth/token"),
+                AuthorizeEndpointPath = new PathString("/oauth/authorization"),
+                Provider = new KeylolOAuthAuthorizationServerProvider()
+            });
         }
     }
 }
