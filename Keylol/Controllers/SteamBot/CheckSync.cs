@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using Keylol.Services;
 using Keylol.Utilities;
@@ -45,16 +43,9 @@ namespace Keylol.Controllers.SteamBot
                         if (tryFix)
                             await client.RemoveFriend(bot.Id, steamId);
                     }
-                    else
+                    else if (tryFix)
                     {
-                        if (await UserManager.GetStatusClaimAsync(user.Id) != StatusClaim.Normal)
-                        {
-                            usersToRemoveStatusClaim.Add(user.IdCode);
-                            if (tryFix)
-                            {
-                                await UserManager.RemoveStatusClaimAsync(user.Id);
-                            }
-                        }
+                        await UserManager.RemoveStatusClaimAsync(user.Id);
                     }
                     markedUsers.Add(steamId);
                 }
@@ -67,15 +58,11 @@ namespace Keylol.Controllers.SteamBot
                 })
                 .ToListAsync();
             var usersToAddStatusClaim = new List<string>();
-            foreach (var user in usersWithoutBotFriend)
+            if (tryFix)
             {
-                if (await UserManager.GetStatusClaimAsync(user.Id) != StatusClaim.Probationer)
+                foreach (var user in usersWithoutBotFriend)
                 {
-                    usersToAddStatusClaim.Add(user.IdCode);
-                    if (tryFix)
-                    {
-                        await UserManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
-                    }
+                    await UserManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
                 }
             }
             await DbContext.SaveChangesAsync();

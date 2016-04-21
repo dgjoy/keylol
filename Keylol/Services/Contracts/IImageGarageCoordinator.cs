@@ -11,6 +11,12 @@ namespace Keylol.Services.Contracts
     public interface IImageGarageCoordinator
     {
         /// <summary>
+        /// 心跳测试
+        /// </summary>
+        [OperationContract]
+        void Ping();
+
+        /// <summary>
         /// 获取指定 ID 的文章
         /// </summary>
         /// <param name="id">文章 ID</param>

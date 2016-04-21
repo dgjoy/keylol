@@ -13,6 +13,7 @@ namespace Keylol.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ImageGarageCoordinator : IImageGarageCoordinator
     {
+
         /// <summary>
         /// 获取指定 ID 的文章
         /// </summary>
@@ -33,6 +34,13 @@ namespace Keylol.Services
                     RowVersion = article.RowVersion
                 };
             }
+        }
+
+        /// <summary>
+        /// 心跳测试
+        /// </summary>
+        public void Ping()
+        {
         }
 
         /// <summary>

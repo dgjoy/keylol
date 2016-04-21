@@ -15,6 +15,9 @@ namespace Keylol.ImageGarage.ServiceReference {
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IImageGarageCoordinator", SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface IImageGarageCoordinator {
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/Ping", ReplyAction="http://tempuri.org/IImageGarageCoordinator/PingResponse")]
+        void Ping();
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/FindArticle", ReplyAction="http://tempuri.org/IImageGarageCoordinator/FindArticleResponse")]
         Keylol.Models.DTO.ArticleDto FindArticle(string id);
         
@@ -47,6 +50,10 @@ namespace Keylol.ImageGarage.ServiceReference {
         
         public ImageGarageCoordinatorClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
+        }
+        
+        public void Ping() {
+            base.Channel.Ping();
         }
         
         public Keylol.Models.DTO.ArticleDto FindArticle(string id) {

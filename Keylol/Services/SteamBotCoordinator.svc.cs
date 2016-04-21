@@ -110,6 +110,13 @@ namespace Keylol.Services
         }
 
         /// <summary>
+        /// 心跳测试
+        /// </summary>
+        public void Ping()
+        {
+        }
+
+        /// <summary>
         /// 重新计算每个客户端应该分配的机器人数量并通知客户端
         /// </summary>
         /// <param name="newSession">新 Session，在分配机器人时会最后分配</param>
@@ -380,14 +387,7 @@ namespace Keylol.Services
                 }
             }
         }
-
-        /// <summary>
-        /// 心跳测试
-        /// </summary>
-        public void Ping()
-        {
-        }
-
+        
         /// <summary>
         /// 询问图灵机器人问题
         /// </summary>

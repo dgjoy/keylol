@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
+using System.Timers;
 using ChannelAdam.ServiceModel;
 using CsQuery;
 using CsQuery.Output;
@@ -21,6 +22,7 @@ namespace Keylol.ImageGarage
         private readonly ILog _logger;
         private readonly IModel _mqChannel;
         private readonly IServiceConsumer<IImageGarageCoordinator> _coordinator;
+        private readonly Timer _heartbeatTimer = new Timer(10000) { AutoReset = false }; // 10s
 
         public ImageGarage(ILogProvider logProvider, MqClientProvider mqClientProvider,
             IServiceConsumer<IImageGarageCoordinator> coordinator)
@@ -31,6 +33,20 @@ namespace Keylol.ImageGarage
             _mqChannel = mqClientProvider.CreateModel();
             _coordinator = coordinator;
             Config.HtmlEncoder = new HtmlEncoderMinimum();
+
+            _heartbeatTimer.Elapsed += (sender, args) =>
+            {
+                try
+                {
+                    _coordinator.Operations.Ping();
+                }
+                catch (Exception e)
+                {
+                    _logger.Warn("Ping failed.", e);
+                    _coordinator.Close();
+                }
+                _heartbeatTimer.Start();
+            };
         }
 
         protected override void OnStart(string[] args)
@@ -149,6 +165,7 @@ namespace Keylol.ImageGarage
 
         protected override void OnStop()
         {
+            _heartbeatTimer.Stop();
             _mqChannel.Close();
             base.OnStop();
         }

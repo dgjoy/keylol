@@ -15,7 +15,7 @@ namespace Keylol.SteamBot
     {
         private readonly ILog _logger;
         private readonly RetryPolicy _retryPolicy;
-        private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false};
+        private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false}; // 10s
 
         public IServiceConsumer<ISteamBotCoordinator> Coordinator { get; }
 
@@ -30,7 +30,7 @@ namespace Keylol.SteamBot
             Coordinator = coordinator;
             _retryPolicy = retryPolicy;
             callback.SteamBot = this;
-
+            
             _heartbeatTimer.Elapsed += (sender, args) =>
             {
                 try
@@ -40,6 +40,7 @@ namespace Keylol.SteamBot
                 catch (Exception e)
                 {
                     _logger.Warn("Ping failed.", e);
+                    Coordinator.Close();
                 }
                 _heartbeatTimer.Start();
             };

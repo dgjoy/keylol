@@ -12,6 +12,12 @@ namespace Keylol.Services.Contracts
     public interface ISteamBotCoordinator
     {
         /// <summary>
+        /// 心跳测试
+        /// </summary>
+        [OperationContract]
+        void Ping();
+
+        /// <summary>
         /// 请求分配机器人，协作器在计算好机器人数量后将通过 RequestReallocateBots 回调通知客户端
         /// </summary>
         [OperationContract(IsOneWay = true)]
@@ -76,12 +82,6 @@ namespace Keylol.Services.Contracts
         /// <param name="message">聊天消息内容</param>
         [OperationContract(IsOneWay = true)]
         Task OnBotNewChatMessage(string senderSteamId, string botId, string message);
-
-        /// <summary>
-        /// 心跳测试
-        /// </summary>
-        [OperationContract]
-        void Ping();
     }
 
     /// <summary>
