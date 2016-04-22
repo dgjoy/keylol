@@ -9,6 +9,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Web;
 using Keylol.Hubs;
 using Keylol.Models.DAL;
@@ -39,6 +40,12 @@ namespace Keylol.Services
         /// </summary>
         public static ConcurrentDictionary<string, SteamBotCoordinator> Sessions { get; } =
             new ConcurrentDictionary<string, SteamBotCoordinator>();
+
+        /// <summary>
+        /// 暂时关闭自动回复的机器人列表，Key 为机器人 ID，Value 为对应的计时 Timer
+        /// </summary>
+        public static ConcurrentDictionary<string, Timer> AutoChatDisabledBots { get; } =
+            new ConcurrentDictionary<string, Timer>();
 
         /// <summary>
         /// 当前会话 ID
@@ -382,12 +389,16 @@ namespace Keylol.Services
                     }
                     else
                     {
-                        await Client.SendChatMessage(botId, senderSteamId, await AskTulingBot(message, user.Id), true);
+                        if (!AutoChatDisabledBots.ContainsKey(botId))
+                        {
+                            await Client.SendChatMessage(botId, senderSteamId, await AskTulingBot(message, user.Id),
+                                true);
+                        }
                     }
                 }
             }
         }
-        
+
         /// <summary>
         /// 询问图灵机器人问题
         /// </summary>
