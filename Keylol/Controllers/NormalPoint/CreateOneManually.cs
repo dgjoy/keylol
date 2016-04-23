@@ -45,7 +45,7 @@ namespace Keylol.Controllers.NormalPoint
                 return BadRequest(ModelState);
             }
 
-            if (await DbContext.NormalPoints.AnyAsync(u => u.IdCode == requestDto.IdCode))
+            if (await _dbContext.NormalPoints.AnyAsync(u => u.IdCode == requestDto.IdCode))
             {
                 ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
                 return BadRequest(ModelState);
@@ -81,7 +81,7 @@ namespace Keylol.Controllers.NormalPoint
                 return BadRequest(ModelState);
             }
 
-            var normalPoint = DbContext.NormalPoints.Create();
+            var normalPoint = _dbContext.NormalPoints.Create();
             normalPoint.IdCode = requestDto.IdCode;
             normalPoint.BackgroundImage = requestDto.BackgroundImage;
             normalPoint.AvatarImage = requestDto.AvatarImage;
@@ -108,8 +108,8 @@ namespace Keylol.Controllers.NormalPoint
                 foreach (var nameString in nameStrings)
                 {
                     var name =
-                        await DbContext.SteamStoreNames.Where(n => n.Name == nameString).SingleOrDefaultAsync() ??
-                        DbContext.SteamStoreNames.Create();
+                        await _dbContext.SteamStoreNames.Where(n => n.Name == nameString).SingleOrDefaultAsync() ??
+                        _dbContext.SteamStoreNames.Create();
                     name.Name = nameString;
                     names.Add(name);
                 }
@@ -120,8 +120,8 @@ namespace Keylol.Controllers.NormalPoint
             {
                 return BadRequest(ModelState);
             }
-            DbContext.NormalPoints.Add(normalPoint);
-            await DbContext.SaveChangesAsync();
+            _dbContext.NormalPoints.Add(normalPoint);
+            await _dbContext.SaveChangesAsync();
 
             return Created($"normal-point/{normalPoint.Id}", new NormalPointDto(normalPoint));
         }

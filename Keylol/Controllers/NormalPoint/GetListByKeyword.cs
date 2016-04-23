@@ -35,7 +35,7 @@ namespace Keylol.Controllers.NormalPoint
             {
                 if (type != NormalPointType.Unspecified)
                     typeFilterSql = @"WHERE [t1].[Type] = {3}";
-                return Request.CreateResponse(HttpStatusCode.OK, (await DbContext.NormalPoints.SqlQuery(
+                return Request.CreateResponse(HttpStatusCode.OK, (await _dbContext.NormalPoints.SqlQuery(
                     @"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
                         SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
 		                    SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([EnglishName], [EnglishAliases]), {0})
@@ -51,7 +51,7 @@ namespace Keylol.Controllers.NormalPoint
 
             if (type != NormalPointType.Unspecified)
                 typeFilterSql = @"WHERE [t1].[Type] = {4}";
-            var points = await DbContext.Database.SqlQuery<NormalPointDto>(@"SELECT
+            var points = await _dbContext.Database.SqlQuery<NormalPointDto>(@"SELECT
                 [t4].[Count],
                 [t4].[Id],
                 [t4].[PreferredName],

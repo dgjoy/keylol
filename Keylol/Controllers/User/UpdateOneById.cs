@@ -44,7 +44,7 @@ namespace Keylol.Controllers.User
                 return BadRequest(ModelState);
             }
 
-            var user = await UserManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
 
             if (requestDto.NewPassword != null || requestDto.LockoutEnabled != null)
             {
@@ -53,12 +53,11 @@ namespace Keylol.Controllers.User
                     ModelState.AddModelError("vm.Password", "Password cannot be empty.");
                     return BadRequest(ModelState);
                 }
-
-                var geetest = new Geetest();
+                
                 if (requestDto.GeetestChallenge == null || requestDto.GeetestSeccode == null ||
                     requestDto.GeetestValidate == null ||
                     !await
-                        geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
+                        _geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
                             requestDto.GeetestValidate))
                 {
                     ModelState.AddModelError("authCode", "true");
@@ -68,7 +67,7 @@ namespace Keylol.Controllers.User
                 if (requestDto.NewPassword != null)
                 {
                     var resultPassword =
-                        await UserManager.ChangePasswordAsync(id, requestDto.Password, requestDto.NewPassword);
+                        await _userManager.ChangePasswordAsync(id, requestDto.Password, requestDto.NewPassword);
                     if (!resultPassword.Succeeded)
                     {
                         foreach (var error in resultPassword.Errors)
@@ -83,7 +82,7 @@ namespace Keylol.Controllers.User
                 }
                 else
                 {
-                    if (!await UserManager.CheckPasswordAsync(user, requestDto.Password))
+                    if (!await _userManager.CheckPasswordAsync(user, requestDto.Password))
                     {
                         ModelState.AddModelError("vm.Password", "Password is not correct.");
                         return BadRequest(ModelState);
@@ -114,7 +113,7 @@ namespace Keylol.Controllers.User
             if (requestDto.AutoSubscribeDaySpan != null)
                 user.AutoSubscribeDaySpan = requestDto.AutoSubscribeDaySpan.Value;
 
-            var result = await UserManager.UpdateAsync(user);
+            var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Keylol.Identity;
 using Keylol.Services;
 using Microsoft.AspNet.Identity;
 

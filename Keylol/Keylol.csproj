@@ -100,6 +100,10 @@
       <HintPath>..\packages\Microsoft.Owin.Cors.3.0.1\lib\net45\Microsoft.Owin.Cors.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Owin.Diagnostics, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Diagnostics.3.0.1\lib\net45\Microsoft.Owin.Diagnostics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
       <Private>True</Private>
@@ -251,7 +255,6 @@
     <Compile Include="Controllers\InvitationCode\InvitationCodeController.cs" />
     <Compile Include="Controllers\Like\DeleteOneById.cs" />
     <Compile Include="Controllers\Like\CreateOne.cs" />
-    <Compile Include="Controllers\Login\DeleteOneByCurrentUser.cs" />
     <Compile Include="Controllers\Login\CreateOneFromSteamLoginToken.cs" />
     <Compile Include="Controllers\Login\CreateOneFromPassword.cs" />
     <Compile Include="Controllers\Message\DeleteOneById.cs" />
@@ -293,7 +296,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Identity\KeylolUserManager.cs" />
     <Compile Include="Provider\CouponProvider.cs" />
+    <Compile Include="Provider\OwinContextProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Provider\StatisticsProvider.cs" />
     <Compile Include="Services\Contracts\IImageGarageCoordinator.cs" />
@@ -306,10 +311,9 @@
     </Compile>
     <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="Utilities\Attributes.cs" />
-    <Compile Include="Utilities\Geetest.cs" />
+    <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Controllers\KeylolApiController.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="Identity\IdentityConfig.cs" />
     <Compile Include="Controllers\Like\LikeController.cs" />
     <Compile Include="Controllers\NormalPoint\NormalPointController.cs" />
     <Compile Include="Controllers\Comment\CommentController.cs" />
@@ -321,7 +325,7 @@
     <Compile Include="Hubs\DebugInfoHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
     <Compile Include="Hubs\SteamBindingHub.cs" />
-    <Compile Include="App_Start\KeylolOAuthAuthorizationServerProvider.cs" />
+    <Compile Include="Identity\KeylolOAuthAuthorizationServerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Utilities\PredicateBuilder.cs" />

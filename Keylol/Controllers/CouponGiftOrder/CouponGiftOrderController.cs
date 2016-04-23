@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Keylol.Models.DAL;
 using Keylol.Provider;
 
 namespace Keylol.Controllers.CouponGiftOrder
@@ -8,17 +9,20 @@ namespace Keylol.Controllers.CouponGiftOrder
     /// </summary>
     [Authorize]
     [RoutePrefix("coupon-gift-order")]
-    public partial class CouponGiftOrderController : KeylolApiController
+    public partial class CouponGiftOrderController : ApiController
     {
         private readonly CouponProvider _coupon;
+        private readonly KeylolDbContext _dbContext;
 
         /// <summary>
         /// 创建 <see cref="CouponGiftOrderController"/>
         /// </summary>
         /// <param name="coupon"><see cref="CouponProvider"/></param>
-        public CouponGiftOrderController(CouponProvider coupon)
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        public CouponGiftOrderController(CouponProvider coupon, KeylolDbContext dbContext)
         {
             _coupon = coupon;
+            _dbContext = dbContext;
         }
     }
 }

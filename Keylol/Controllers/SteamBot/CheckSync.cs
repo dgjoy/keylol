@@ -22,7 +22,7 @@ namespace Keylol.Controllers.SteamBot
             var markedUsers = new HashSet<string>();
             var botFriendsToRemove = new List<string>();
             var usersToRemoveStatusClaim = new List<string>();
-            var bots = await DbContext.SteamBots.ToListAsync();
+            var bots = await _dbContext.SteamBots.ToListAsync();
             foreach (var bot in bots)
             {
                 if (!bot.IsOnline())
@@ -30,7 +30,7 @@ namespace Keylol.Controllers.SteamBot
                 var client = SteamBotCoordinator.Sessions[bot.SessionId].Client;
                 foreach (var steamId in await client.GetFriendList(bot.Id))
                 {
-                    var user = await DbContext.Users.Where(u => u.SteamId == steamId && u.SteamBotId == bot.Id)
+                    var user = await _dbContext.Users.Where(u => u.SteamId == steamId && u.SteamBotId == bot.Id)
                         .Select(u => new
                         {
                             u.Id,
@@ -45,12 +45,12 @@ namespace Keylol.Controllers.SteamBot
                     }
                     else if (tryFix)
                     {
-                        await UserManager.RemoveStatusClaimAsync(user.Id);
+                        await _userManager.RemoveStatusClaimAsync(user.Id);
                     }
                     markedUsers.Add(steamId);
                 }
             }
-            var usersWithoutBotFriend = await DbContext.Users.Where(u => !markedUsers.Contains(u.SteamId))
+            var usersWithoutBotFriend = await _dbContext.Users.Where(u => !markedUsers.Contains(u.SteamId))
                 .Select(u => new
                 {
                     u.Id,
@@ -62,10 +62,10 @@ namespace Keylol.Controllers.SteamBot
             {
                 foreach (var user in usersWithoutBotFriend)
                 {
-                    await UserManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                    await _userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
                 }
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok(new
             {
                 botFriendsToRemove,

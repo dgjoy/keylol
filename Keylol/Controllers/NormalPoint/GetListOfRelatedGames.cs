@@ -61,17 +61,17 @@ namespace Keylol.Controllers.NormalPoint
         [ResponseType(typeof (List<NormalPointDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是厂商或类型据点")]
         public async Task<IHttpActionResult> GetListOfRelatedGames(string id, PointRelationship relationship,
-            bool stats = false, IdType idType = IdType.Id, int skip = 0, int take = 9)
+            bool stats = false, NormalPointIdentityType idType = NormalPointIdentityType.Id, int skip = 0, int take = 9)
         {
             if (take > 50)
                 take = 50;
 
-            var point = await DbContext.NormalPoints
-                .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
+            var point = await _dbContext.NormalPoints
+                .SingleOrDefaultAsync(p => idType == NormalPointIdentityType.IdCode ? p.IdCode == id : p.Id == id);
             if (point == null || (point.Type != NormalPointType.Manufacturer && point.Type != NormalPointType.Genre))
                 return NotFound();
 
-            var queryBase = DbContext.NormalPoints.Where(p => p.Id == point.Id);
+            var queryBase = _dbContext.NormalPoints.Where(p => p.Id == point.Id);
             IQueryable<Models.NormalPoint> queryNext;
             switch (relationship)
             {
@@ -109,13 +109,13 @@ namespace Keylol.Controllers.NormalPoint
                 };
                 if (stats)
                 {
-                    dto.SubscriberCount = DbContext.NormalPoints.Where(np => np.Id == p.Id)
+                    dto.SubscriberCount = _dbContext.NormalPoints.Where(np => np.Id == p.Id)
                         .Select(np => np.Subscribers.Count)
                         .Single();
-                    dto.ArticleCount = DbContext.NormalPoints.Where(np => np.Id == p.Id)
+                    dto.ArticleCount = _dbContext.NormalPoints.Where(np => np.Id == p.Id)
                         .Select(np => np.Articles.Count)
                         .Single();
-                    dto.Subscribed = DbContext.NormalPoints.Where(np => np.Id == p.Id)
+                    dto.Subscribed = _dbContext.NormalPoints.Where(np => np.Id == p.Id)
                         .SelectMany(np => np.Subscribers)
                         .Select(u => u.Id)
                         .Contains(userId);

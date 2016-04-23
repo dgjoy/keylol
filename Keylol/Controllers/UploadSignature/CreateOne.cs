@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -38,7 +39,8 @@ namespace Keylol.Controllers.UploadSignature
             byte[] hash;
             using (var md5 = MD5.Create())
             {
-                hash = md5.ComputeHash(Encoding.UTF8.GetBytes($"{policy}&{FormKey}"));
+                var formKey = ConfigurationManager.AppSettings["upyunFormKey"];
+                hash = md5.ComputeHash(Encoding.UTF8.GetBytes($"{policy}&{formKey}"));
             }
             return Created("upload-signature", BitConverter.ToString(hash).Replace("-", string.Empty).ToLower());
         }

@@ -27,20 +27,20 @@ namespace Keylol.Controllers.Article
         [HttpGet]
         [ResponseType(typeof (List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByNormalPointId(string normalPointId,
-            NormalPointController.IdType idType, string articleTypeFilter = null, int beforeSn = int.MaxValue,
+            NormalPointIdentityType idType, string articleTypeFilter = null, int beforeSn = int.MaxValue,
             int take = 30)
         {
             if (take > 50) take = 50;
-            var articleQuery = DbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSn &&
+            var articleQuery = _dbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSn &&
                                                                             a.Archived == ArchivedState.None &&
                                                                             a.Rejected == false);
             switch (idType)
             {
-                case NormalPointController.IdType.Id:
+                case NormalPointIdentityType.Id:
                     articleQuery = articleQuery.Where(a => a.AttachedPoints.Select(p => p.Id).Contains(normalPointId));
                     break;
 
-                case NormalPointController.IdType.IdCode:
+                case NormalPointIdentityType.IdCode:
                     articleQuery =
                         articleQuery.Where(a => a.AttachedPoints.Select(p => p.IdCode).Contains(normalPointId));
                     break;

@@ -250,4 +250,31 @@ namespace Keylol.Models.DTO
             return this;
         }
     }
+
+    /// <summary>
+    ///    用户身份类型
+    /// </summary>
+    [DataContract]
+    public enum UserIdentityType
+    {
+        /// <summary>
+        ///     Id
+        /// </summary>
+        [EnumMember] Id,
+
+        /// <summary>
+        ///     识别码
+        /// </summary>
+        [EnumMember] IdCode,
+
+        /// <summary>
+        ///     用户名
+        /// </summary>
+        [EnumMember] UserName,
+
+        /// <summary>
+        /// Steam ID
+        /// </summary>
+        [EnumMember] SteamId
+    }
 }

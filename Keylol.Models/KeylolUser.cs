@@ -112,14 +112,6 @@ namespace Keylol.Models
         //        public bool HearingImpairment { get; set; } = false;
         //        public bool PhotosensitiveEpilepsy { get; set; } = false;
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<KeylolUser> manager)
-        {
-            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
-            // Add custom user claims here
-            return userIdentity;
-        }
-
         #region Steam bot notification options
 
         public bool SteamNotifyOnArticleReplied { get; set; } = true;

@@ -21,7 +21,7 @@ namespace Keylol.Controllers.Article
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权对该文章进行操作")]
         public async Task<IHttpActionResult> UpdateOneIgnore(string id, bool ignore, IgnoreType type)
         {
-            var article = await DbContext.Articles.FindAsync(id);
+            var article = await _dbContext.Articles.FindAsync(id);
             if (article == null)
                 return NotFound();
 
@@ -42,7 +42,7 @@ namespace Keylol.Controllers.Article
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

@@ -22,15 +22,15 @@ namespace Keylol.Controllers.NormalPoint
         {
             return Ok(new Dictionary<NormalPointType, List<NormalPointDto>>
             {
-                [NormalPointType.Game] = (await DbContext.NormalPoints.AsNoTracking()
+                [NormalPointType.Game] = (await _dbContext.NormalPoints.AsNoTracking()
                     .Where(p => p.Type == NormalPointType.Game)
                     .OrderByDescending(p => p.LastActivityTime).Take(() => 10)
                     .ToListAsync()).Select(point => new NormalPointDto(point, true)).ToList(),
-                [NormalPointType.Genre] = (await DbContext.NormalPoints.AsNoTracking()
+                [NormalPointType.Genre] = (await _dbContext.NormalPoints.AsNoTracking()
                     .Where(p => p.Type == NormalPointType.Genre)
                     .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
                     .ToListAsync()).Select(point => new NormalPointDto(point, true)).ToList(),
-                [NormalPointType.Manufacturer] = (await DbContext.NormalPoints.AsNoTracking()
+                [NormalPointType.Manufacturer] = (await _dbContext.NormalPoints.AsNoTracking()
                     .Where(p => p.Type == NormalPointType.Manufacturer)
                     .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
                     .ToListAsync()).Select(point => new NormalPointDto(point, true)).ToList()

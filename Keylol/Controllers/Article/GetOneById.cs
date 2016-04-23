@@ -27,7 +27,7 @@ namespace Keylol.Controllers.Article
         public async Task<IHttpActionResult> GetOneById(string id)
         {
             var userId = User.Identity.GetUserId();
-            var articleEntry = await DbContext.Articles.Where(a => a.Id == id).Select(
+            var articleEntry = await _dbContext.Articles.Where(a => a.Id == id).Select(
                 a =>
                     new
                     {
@@ -43,7 +43,7 @@ namespace Keylol.Controllers.Article
             if (articleEntry == null)
                 return NotFound();
 
-            var staffClaim = string.IsNullOrEmpty(userId) ? null : await UserManager.GetStaffClaimAsync(userId);
+            var staffClaim = string.IsNullOrEmpty(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
             if (articleEntry.article.Archived != ArchivedState.None &&
                 userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();

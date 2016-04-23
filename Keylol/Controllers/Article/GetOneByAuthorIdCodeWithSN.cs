@@ -30,7 +30,7 @@ namespace Keylol.Controllers.Article
             var userId = User.Identity.GetUserId();
             var articleEntry =
                 await
-                    DbContext.Articles.Where(a =>
+                    _dbContext.Articles.Where(a =>
                         a.Principal.User.IdCode == authorIdCode &&
                         a.SequenceNumberForAuthor == sequenceNumberForAuthor)
                         .Select(a => new
@@ -46,7 +46,7 @@ namespace Keylol.Controllers.Article
             if (articleEntry == null)
                 return NotFound();
 
-            var staffClaim = string.IsNullOrEmpty(userId) ? null : await UserManager.GetStaffClaimAsync(userId);
+            var staffClaim = string.IsNullOrEmpty(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
             if (articleEntry.article.Archived != ArchivedState.None &&
                 userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();

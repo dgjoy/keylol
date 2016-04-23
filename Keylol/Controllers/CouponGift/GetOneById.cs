@@ -27,10 +27,10 @@ namespace Keylol.Controllers.CouponGift
         public async Task<IHttpActionResult> GetOneById(string id)
         {
             var userId = User.Identity.GetUserId();
-            var gift = await DbContext.CouponGifts.FindAsync(id);
+            var gift = await _dbContext.CouponGifts.FindAsync(id);
             if (gift == null)
                 return NotFound();
-            var order = await DbContext.CouponGiftOrders.FirstOrDefaultAsync(o => o.GiftId == id && o.UserId == userId);
+            var order = await _dbContext.CouponGiftOrders.FirstOrDefaultAsync(o => o.GiftId == id && o.UserId == userId);
             return Ok(new CouponGiftDto(gift)
             {
                 Redeemed = order != null,

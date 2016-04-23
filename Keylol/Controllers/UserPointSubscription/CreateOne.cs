@@ -22,7 +22,7 @@ namespace Keylol.Controllers.UserPointSubscription
         [SwaggerResponse(HttpStatusCode.Conflict, "用户已经订阅过该据点或用户")]
         public async Task<IHttpActionResult> CreateOne(string pointId)
         {
-            var point = await DbContext.Points.FindAsync(pointId);
+            var point = await _dbContext.Points.FindAsync(pointId);
             if (point == null)
                 return NotFound();
 
@@ -30,11 +30,11 @@ namespace Keylol.Controllers.UserPointSubscription
             if (point.Id == userId)
                 return Unauthorized();
 
-            var user = await DbContext.Users.Include(u => u.SubscribedPoints).SingleOrDefaultAsync(u => u.Id == userId);
+            var user = await _dbContext.Users.Include(u => u.SubscribedPoints).SingleOrDefaultAsync(u => u.Id == userId);
             if (user.SubscribedPoints.Contains(point))
                 return Conflict();
             user.SubscribedPoints.Add(point);
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Created($"user-point-subscription/{point.Id}", "Subscribed!");
         }
     }

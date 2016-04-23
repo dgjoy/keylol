@@ -36,12 +36,12 @@ namespace Keylol.Controllers.Comment
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var comment = await DbContext.Comments.FindAsync(id);
+            var comment = await _dbContext.Comments.FindAsync(id);
             if (comment == null)
                 return NotFound();
 
             var operatorId = User.Identity.GetUserId();
-            var operatorStaffClaim = await UserManager.GetStaffClaimAsync(operatorId);
+            var operatorStaffClaim = await _userManager.GetStaffClaimAsync(operatorId);
 
             if (operatorStaffClaim != StaffClaim.Operator)
             {
@@ -88,7 +88,7 @@ namespace Keylol.Controllers.Comment
             }
             if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
             {
-                var missive = DbContext.Messages.Create();
+                var missive = _dbContext.Messages.Create();
                 missive.OperatorId = operatorId;
                 missive.Receiver = comment.Commentator;
                 missive.CommentId = comment.Id;
@@ -134,7 +134,7 @@ namespace Keylol.Controllers.Comment
                             break;
                     }
                 }
-                DbContext.Messages.Add(missive);
+                _dbContext.Messages.Add(missive);
 
                 // Steam 通知
                 if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.IsOnline())
@@ -143,7 +143,7 @@ namespace Keylol.Controllers.Comment
                     await botCoordinator.Client.SendChatMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId, steamNotityText);
                 }
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

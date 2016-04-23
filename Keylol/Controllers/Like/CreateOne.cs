@@ -40,7 +40,7 @@ namespace Keylol.Controllers.Like
                 return BadRequest(ModelState);
 
             var operatorId = User.Identity.GetUserId();
-            var @operator = await DbContext.Users.SingleAsync(u => u.Id == operatorId);
+            var @operator = await _dbContext.Users.SingleAsync(u => u.Id == operatorId);
             if (@operator.FreeLike <= 0 && !_coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
                 return Unauthorized();
 
@@ -50,14 +50,14 @@ namespace Keylol.Controllers.Like
             {
                 case LikeType.ArticleLike:
                 {
-                    var existLike = await DbContext.ArticleLikes.FirstOrDefaultAsync(
+                    var existLike = await _dbContext.ArticleLikes.FirstOrDefaultAsync(
                         l => l.ArticleId == createOneDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
                     {
                         ModelState.AddModelError("vm.TargetId", "不能对同一篇文章重复认可。");
                         return BadRequest(ModelState);
                     }
-                    var article = await DbContext.Articles.FindAsync(createOneDto.TargetId);
+                    var article = await _dbContext.Articles.FindAsync(createOneDto.TargetId);
                     if (article == null)
                     {
                         ModelState.AddModelError("vm.TargetId", "指定文章不存在。");
@@ -70,21 +70,21 @@ namespace Keylol.Controllers.Like
                     }
                     if (article.Archived != ArchivedState.None)
                         return Unauthorized();
-                    var articleLike = DbContext.ArticleLikes.Create();
+                    var articleLike = _dbContext.ArticleLikes.Create();
                     articleLike.ArticleId = createOneDto.TargetId;
                     like = articleLike;
                     if (!article.IgnoreNewLikes)
                     {
-                        var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
+                        var articleAuthor = await _dbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == article.PrincipalId);
 
                         // 邮政中心
-                        var message = DbContext.Messages.Create();
+                        var message = _dbContext.Messages.Create();
                         message.Type = MessageType.ArticleLike;
                         message.OperatorId = operatorId;
                         message.ReceiverId = articleAuthor.Id;
                         message.ArticleId = article.Id;
-                        DbContext.Messages.Add(message);
+                        _dbContext.Messages.Add(message);
 
                         // Steam 通知
                         if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.IsOnline())
@@ -114,7 +114,7 @@ namespace Keylol.Controllers.Like
 
                 case LikeType.CommentLike:
                 {
-                    var existLike = await DbContext.CommentLikes.FirstOrDefaultAsync(
+                    var existLike = await _dbContext.CommentLikes.FirstOrDefaultAsync(
                         l => l.CommentId == createOneDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
                     {
@@ -123,7 +123,7 @@ namespace Keylol.Controllers.Like
                     }
                     var comment =
                         await
-                            DbContext.Comments.Include(c => c.Article)
+                            _dbContext.Comments.Include(c => c.Article)
                                 .SingleOrDefaultAsync(c => c.Id == createOneDto.TargetId);
                     if (comment == null)
                     {
@@ -137,22 +137,22 @@ namespace Keylol.Controllers.Like
                     }
                     if (comment.Archived != ArchivedState.None || comment.Article.Archived != ArchivedState.None)
                         return Unauthorized();
-                    var commentLike = DbContext.CommentLikes.Create();
+                    var commentLike = _dbContext.CommentLikes.Create();
                     commentLike.CommentId = createOneDto.TargetId;
                     like = commentLike;
                     if (!comment.IgnoreNewLikes)
                     {
-                        var commentAuthor = await DbContext.Users.Include(u => u.SteamBot)
+                        var commentAuthor = await _dbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == comment.CommentatorId);
-                        var articleAuthor = await DbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
+                        var articleAuthor = await _dbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
 
                         // 邮政中心
-                        var message = DbContext.Messages.Create();
+                        var message = _dbContext.Messages.Create();
                         message.Type = MessageType.CommentLike;
                         message.OperatorId = operatorId;
                         message.ReceiverId = commentAuthor.Id;
                         message.CommentId = comment.Id;
-                        DbContext.Messages.Add(message);
+                        _dbContext.Messages.Add(message);
 
                         // Steam 通知
                         if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.IsOnline())
@@ -184,8 +184,8 @@ namespace Keylol.Controllers.Like
                     throw new ArgumentOutOfRangeException();
             }
             like.OperatorId = operatorId;
-            DbContext.Likes.Add(like);
-            await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+            _dbContext.Likes.Add(like);
+            await _dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
             return Created($"like/{like.Id}", free ? "Free" : string.Empty);
         }
 

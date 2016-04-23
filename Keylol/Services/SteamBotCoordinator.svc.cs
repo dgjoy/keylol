@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Web;
 using Keylol.Hubs;
+using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.ServiceBase;
@@ -274,7 +275,7 @@ namespace Keylol.Services
                 {
                     // 现有会员添加机器人为好友
                     var bot = await dbContext.SteamBots.FindAsync(botId);
-                    var userManager = KeylolUserManager.Create(dbContext);
+                    var userManager = new KeylolUserManager(dbContext);
                     if (bot != null && bot.FriendCount < bot.FriendUpperLimit &&
                         await userManager.GetStatusClaimAsync(user.Id) == StatusClaim.Probationer)
                     {
@@ -320,7 +321,7 @@ namespace Keylol.Services
                 else if (user.SteamBotId == botId)
                 {
                     // 会员与自己的机器人不再为好友时，设置为暂准状态
-                    var userManager = KeylolUserManager.Create(dbContext);
+                    var userManager = new KeylolUserManager(dbContext);
                     await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
                 }
             }

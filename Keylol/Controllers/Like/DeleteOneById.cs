@@ -27,30 +27,30 @@ namespace Keylol.Controllers.Like
             {
                 case LikeType.ArticleLike:
                 {
-                    var existLikes = await DbContext.ArticleLikes.Where(
+                    var existLikes = await _dbContext.ArticleLikes.Where(
                         l => l.ArticleId == targetId && l.OperatorId == operatorId).ToListAsync();
                     if (existLikes.Count == 0)
                         return NotFound();
                     existLikes.ForEach(async l => { await _statistics.DecreaseUserLikeCount(l.Article.PrincipalId); });
-                    DbContext.Likes.RemoveRange(existLikes);
+                    _dbContext.Likes.RemoveRange(existLikes);
                     break;
                 }
 
                 case LikeType.CommentLike:
                 {
-                    var existLikes = await DbContext.CommentLikes.Where(
+                    var existLikes = await _dbContext.CommentLikes.Where(
                         l => l.CommentId == targetId && l.OperatorId == operatorId).ToListAsync();
                     if (existLikes.Count == 0)
                         return NotFound();
                     existLikes.ForEach(async l => { await _statistics.DecreaseUserLikeCount(l.Comment.CommentatorId); });
-                    DbContext.Likes.RemoveRange(existLikes);
+                    _dbContext.Likes.RemoveRange(existLikes);
                     break;
                 }
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

@@ -33,7 +33,7 @@ namespace Keylol.Controllers.CouponGift
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var gift = DbContext.CouponGifts.Create();
+            var gift = _dbContext.CouponGifts.Create();
             gift.Name = requestDto.Name;
             gift.Descriptions = JsonConvert.SerializeObject(requestDto.Descriptions);
             gift.ThumbnailImage = requestDto.ThumbnailImage;
@@ -41,8 +41,8 @@ namespace Keylol.Controllers.CouponGift
             gift.AcceptedFields = JsonConvert.SerializeObject(requestDto.AcceptedFields);
             gift.Price = requestDto.Price;
             gift.EndTime = requestDto.EndTime;
-            DbContext.CouponGifts.Add(gift);
-            await DbContext.SaveChangesAsync();
+            _dbContext.CouponGifts.Add(gift);
+            await _dbContext.SaveChangesAsync();
             return Created($"coupon-gift/{gift.Id}", new CouponGiftDto(gift));
         }
     }

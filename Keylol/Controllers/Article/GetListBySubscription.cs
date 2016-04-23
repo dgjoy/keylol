@@ -29,7 +29,7 @@ namespace Keylol.Controllers.Article
             var userId = User.Identity.GetUserId();
 
             if (take > 50) take = 50;
-            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
+            var userQuery = _dbContext.Users.AsNoTracking().Where(u => u.Id == userId);
             var profilePointsQuery = userQuery.SelectMany(u => u.SubscribedPoints.OfType<ProfilePoint>());
 
             var shortReviewFilter1 = (shortReviewFilter & 1) != 0;
@@ -71,7 +71,7 @@ namespace Keylol.Controllers.Article
                             reason = ArticleDto.TimelineReasonType.Like,
                             likedByUser = l.Operator
                         }))
-                    .Concat(DbContext.AutoSubscriptions.Where(s => s.UserId == userId)
+                    .Concat(_dbContext.AutoSubscriptions.Where(s => s.UserId == userId)
                         .SelectMany(
                             s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
                         .Where(e =>

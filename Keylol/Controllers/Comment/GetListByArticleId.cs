@@ -55,16 +55,16 @@ namespace Keylol.Controllers.Comment
             var userId = User.Identity.GetUserId();
             if (take > 50) take = 50;
 
-            var article = await DbContext.Articles.FindAsync(articleId);
+            var article = await _dbContext.Articles.FindAsync(articleId);
             if (article == null)
                 return Request.CreateResponse(HttpStatusCode.NotFound);
 
-            var staffClaim = string.IsNullOrEmpty(userId) ? null : await UserManager.GetStaffClaimAsync(userId);
+            var staffClaim = string.IsNullOrEmpty(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
             if (article.Archived != ArchivedState.None &&
                 userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
-            var commentsQuery = DbContext.Comments.AsNoTracking()
+            var commentsQuery = _dbContext.Comments.AsNoTracking()
                 .Where(comment => comment.ArticleId == articleId);
             switch (orderBy)
             {
@@ -110,7 +110,7 @@ namespace Keylol.Controllers.Comment
                         Warned = entry.comment.Warned
                     };
                 }).ToList());
-            var commentCount = await DbContext.Comments.Where(c => c.ArticleId == articleId).CountAsync();
+            var commentCount = await _dbContext.Comments.Where(c => c.ArticleId == articleId).CountAsync();
             response.Headers.SetTotalCount(commentCount);
             return response;
         }

@@ -30,7 +30,7 @@ namespace Keylol.Controllers.Article
             if (take > 50) take = 50;
 
             if (!full)
-                return Request.CreateResponse(HttpStatusCode.OK, await DbContext.Database.SqlQuery<ArticleDto>(@"SELECT
+                return Request.CreateResponse(HttpStatusCode.OK, await _dbContext.Database.SqlQuery<ArticleDto>(@"SELECT
 	                [t3].[Id],
 	                [t3].[PublishTime],
 	                [t3].[Title],
@@ -56,7 +56,7 @@ namespace Keylol.Controllers.Article
                         OFFSET({1}) ROWS FETCH NEXT({2}) ROWS ONLY) AS [t3]",
                     $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync());
 
-            var articles = (await DbContext.Database.SqlQuery<ArticleDto>(@"SELECT
+            var articles = (await _dbContext.Database.SqlQuery<ArticleDto>(@"SELECT
                 [t3].[Count],
 	            [t3].[Id],
 	            [t3].[PublishTime],

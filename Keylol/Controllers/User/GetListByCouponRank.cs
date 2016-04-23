@@ -22,7 +22,7 @@ namespace Keylol.Controllers.User
         public async Task<HttpResponseMessage> GetListByCouponRank(int skip = 0, int take = 20)
         {
             var userId = User.Identity.GetUserId();
-            var topUsers = await DbContext.Users.OrderByDescending(u => u.Coupon).Take(() => 100).ToListAsync();
+            var topUsers = await _dbContext.Users.OrderByDescending(u => u.Coupon).Take(() => 100).ToListAsync();
             var myRank = topUsers.Select(u => u.Id).ToList().IndexOf(userId) + 1;
             var result = new List<UserDto>(take);
             foreach (var topUser in topUsers.Skip(skip).Take(take))

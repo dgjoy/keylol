@@ -24,7 +24,7 @@ namespace Keylol.Controllers.NormalPoint
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
         public async Task<IHttpActionResult> UpdateOneById(string id, NormalPointCreateOrUpdateOneRequestDto requestDto)
         {
-            var normalPoint = await DbContext.NormalPoints
+            var normalPoint = await _dbContext.NormalPoints
                 .Include(p => p.DeveloperPoints)
                 .Include(p => p.PublisherPoints)
                 .Include(p => p.SeriesPoints)
@@ -58,7 +58,7 @@ namespace Keylol.Controllers.NormalPoint
                 return BadRequest(ModelState);
             }
 
-            var editorStaffClaim = await UserManager.GetStaffClaimAsync(User.Identity.GetUserId());
+            var editorStaffClaim = await _userManager.GetStaffClaimAsync(User.Identity.GetUserId());
             if (editorStaffClaim == StaffClaim.Operator)
             {
                 if (string.IsNullOrEmpty(requestDto.EnglishName))
@@ -82,7 +82,7 @@ namespace Keylol.Controllers.NormalPoint
                     return BadRequest(ModelState);
                 }
                 if (requestDto.IdCode != normalPoint.IdCode &&
-                    await DbContext.NormalPoints.AnyAsync(u => u.IdCode == requestDto.IdCode))
+                    await _dbContext.NormalPoints.AnyAsync(u => u.IdCode == requestDto.IdCode))
                 {
                     ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
                     return BadRequest(ModelState);
@@ -105,8 +105,8 @@ namespace Keylol.Controllers.NormalPoint
                     foreach (var nameString in nameStrings)
                     {
                         var name =
-                            await DbContext.SteamStoreNames.Where(n => n.Name == nameString).SingleOrDefaultAsync() ??
-                            DbContext.SteamStoreNames.Create();
+                            await _dbContext.SteamStoreNames.Where(n => n.Name == nameString).SingleOrDefaultAsync() ??
+                            _dbContext.SteamStoreNames.Create();
                         name.Name = nameString;
                         names.Add(name);
                     }
@@ -128,7 +128,7 @@ namespace Keylol.Controllers.NormalPoint
             {
                 return BadRequest(ModelState);
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

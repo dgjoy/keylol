@@ -59,8 +59,8 @@ namespace Keylol.Controllers.InvitationCode
                     Source = source
                 });
             }
-            DbContext.InvitationCodes.AddRange(codes);
-            await DbContext.SaveChangesAsync();
+            _dbContext.InvitationCodes.AddRange(codes);
+            await _dbContext.SaveChangesAsync();
             return Created("invitation-code", $"{source}\n{string.Join("\n", codes.Select(c => c.Id))}");
         }
     }

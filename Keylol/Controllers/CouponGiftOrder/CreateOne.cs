@@ -29,7 +29,7 @@ namespace Keylol.Controllers.CouponGiftOrder
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文券礼品不存在")]
         public async Task<IHttpActionResult> CreateOne(string giftId, JObject extra)
         {
-            var gift = await DbContext.CouponGifts.FindAsync(giftId);
+            var gift = await _dbContext.CouponGifts.FindAsync(giftId);
             if (gift == null)
                 return NotFound();
 
@@ -42,20 +42,20 @@ namespace Keylol.Controllers.CouponGiftOrder
             }
 
             var userId = User.Identity.GetUserId();
-            var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();
+            var user = await _dbContext.Users.Where(u => u.Id == userId).SingleAsync();
             if (user.Coupon - gift.Price < 0)
             {
                 ModelState.AddModelError("userId", "文券不足，无法兑换");
                 return BadRequest(ModelState);
             }
 
-            if (await DbContext.CouponGiftOrders.Where(o => o.UserId == userId && o.GiftId == giftId).AnyAsync())
+            if (await _dbContext.CouponGiftOrders.Where(o => o.UserId == userId && o.GiftId == giftId).AnyAsync())
             {
                 ModelState.AddModelError("userId", "已经兑换过这个礼品，无法重复兑换");
                 return BadRequest(ModelState);
             }
 
-            var order = DbContext.CouponGiftOrders.Create();
+            var order = _dbContext.CouponGiftOrders.Create();
             order.UserId = userId;
             order.GiftId = gift.Id;
             var sanitizedExtra = new JObject();
@@ -70,8 +70,8 @@ namespace Keylol.Controllers.CouponGiftOrder
                 sanitizedExtra[field.Id] = extra[field.Id];
             }
             order.Extra = JsonConvert.SerializeObject(sanitizedExtra);
-            DbContext.CouponGiftOrders.Add(order);
-            await DbContext.SaveChangesAsync();
+            _dbContext.CouponGiftOrders.Add(order);
+            await _dbContext.SaveChangesAsync();
             await _coupon.Update(userId, CouponEvent.兑换商品, -gift.Price, new {CouponGiftId = giftId});
             return Created($"coupon-gift-order/{order.Id}", string.Empty);
         }

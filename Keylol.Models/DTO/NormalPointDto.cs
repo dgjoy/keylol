@@ -262,4 +262,21 @@ namespace Keylol.Models.DTO
 
         #endregion
     }
+
+    /// <summary>
+    ///     Id 类型
+    /// </summary>
+    [DataContract]
+    public enum NormalPointIdentityType
+    {
+        /// <summary>
+        ///     Id
+        /// </summary>
+        [EnumMember] Id,
+
+        /// <summary>
+        ///     识别码
+        /// </summary>
+        [EnumMember] IdCode
+    }
 }

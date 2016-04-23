@@ -28,7 +28,7 @@ namespace Keylol.Controllers.SteamBot
             else
             {
                 var sns = botSequenceNumbers.Split(',').Select(int.Parse);
-                var bots = await DbContext.SteamBots.Where(b => sns.Contains(b.SequenceNumber))
+                var bots = await _dbContext.SteamBots.Where(b => sns.Contains(b.SequenceNumber))
                     .ToListAsync();
                 foreach (var bot in bots.Where(b => b.IsOnline()))
                 {

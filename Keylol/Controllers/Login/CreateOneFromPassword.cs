@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity.Owin;
 using Swashbuckle.Swagger.Annotations;
@@ -46,39 +47,39 @@ namespace Keylol.Controllers.Login
 //            }
             var user = Regex.IsMatch(requestDto.EmailOrIdCode, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$",
                 RegexOptions.IgnoreCase)
-                ? await UserManager.FindByEmailAsync(requestDto.EmailOrIdCode)
+                ? await _userManager.FindByEmailAsync(requestDto.EmailOrIdCode)
                 : await
-                    DbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == requestDto.EmailOrIdCode);
+                    _dbContext.Users.SingleOrDefaultAsync(keylolUser => keylolUser.IdCode == requestDto.EmailOrIdCode);
             if (user == null)
             {
                 ModelState.AddModelError("vm.EmailOrIdCode", "User doesn't exist.");
                 return BadRequest(ModelState);
             }
-            var result = await SignInManager.PasswordSignInAsync(user.UserName, requestDto.Password, true, true);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    var loginLog = new LoginLog
-                    {
-                        Ip = OwinContext.Request.RemoteIpAddress,
-                        User = user
-                    };
-                    DbContext.LoginLogs.Add(loginLog);
-                    await DbContext.SaveChangesAsync();
-                    return Created($"login/{loginLog.Id}", new LoginLogDto(loginLog));
-
-                case SignInStatus.LockedOut:
-                    ModelState.AddModelError("vm.EmailOrIdCode", "The user is locked out temporarily.");
-                    break;
-
-                case SignInStatus.Failure:
-                    ModelState.AddModelError("vm.Password", "Password is not correct.");
-                    break;
-
-                default:
-                    ModelState.AddModelError("vm.Email", "Login failed.");
-                    break;
-            }
+//            var result = await SignInManager.PasswordSignInAsync(user.UserName, requestDto.Password, true, true);
+//            switch (result)
+//            {
+//                case SignInStatus.Success:
+//                    var loginLog = new LoginLog
+//                    {
+//                        Ip = _owinContext.Request.RemoteIpAddress,
+//                        User = user
+//                    };
+//                    _dbContext.LoginLogs.Add(loginLog);
+//                    await _dbContext.SaveChangesAsync();
+//                    return Created($"login/{loginLog.Id}", new LoginLogDto(loginLog));
+//
+//                case SignInStatus.LockedOut:
+//                    ModelState.AddModelError("vm.EmailOrIdCode", "The user is locked out temporarily.");
+//                    break;
+//
+//                case SignInStatus.Failure:
+//                    ModelState.AddModelError("vm.Password", "Password is not correct.");
+//                    break;
+//
+//                default:
+//                    ModelState.AddModelError("vm.Email", "Login failed.");
+//                    break;
+//            }
             return BadRequest(ModelState);
         }
 

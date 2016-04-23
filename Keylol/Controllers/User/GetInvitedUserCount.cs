@@ -17,7 +17,7 @@ namespace Keylol.Controllers.User
         public async Task<IHttpActionResult> GetInvitedUserCount()
         {
             var userId = User.Identity.GetUserId();
-            return Ok(await DbContext.Users.CountAsync(u => u.InviterId == userId));
+            return Ok(await _dbContext.Users.CountAsync(u => u.InviterId == userId));
         }
     }
 }

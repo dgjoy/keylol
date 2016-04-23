@@ -40,10 +40,10 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("appId", "无效的 App ID");
                 return BadRequest(ModelState);
             }
-            var gamePoint = await DbContext.NormalPoints.Where(p => p.SteamAppId == appId).SingleOrDefaultAsync();
+            var gamePoint = await _dbContext.NormalPoints.Where(p => p.SteamAppId == appId).SingleOrDefaultAsync();
             if (fillExisted)
             {
-                if (await UserManager.GetStaffClaimAsync(User.Identity.GetUserId()) != StaffClaim.Operator)
+                if (await _userManager.GetStaffClaimAsync(User.Identity.GetUserId()) != StaffClaim.Operator)
                 {
                     return Unauthorized();
                 }
@@ -59,8 +59,8 @@ namespace Keylol.Controllers.NormalPoint
             }
             else
             {
-                gamePoint = DbContext.NormalPoints.Create();
-                DbContext.NormalPoints.Add(gamePoint);
+                gamePoint = _dbContext.NormalPoints.Create();
+                _dbContext.NormalPoints.Add(gamePoint);
             }
 
             try
@@ -184,28 +184,28 @@ namespace Keylol.Controllers.NormalPoint
                         .Concat(developerNames.Concat(publisherNames).Distinct()
                             .Select(n => new KeyValuePair<NormalPointType, string>(NormalPointType.Manufacturer, n))))
                     {
-                        var relatedPoint = await DbContext.NormalPoints
+                        var relatedPoint = await _dbContext.NormalPoints
                             .Where(p => p.Type == pair.Key && p.SteamStoreNames.Select(n => n.Name).Contains(pair.Value))
                             .SingleOrDefaultAsync();
                         if (relatedPoint == null)
                         {
-                            relatedPoint = DbContext.NormalPoints.Create();
+                            relatedPoint = _dbContext.NormalPoints.Create();
                             relatedPoint.EnglishName = pair.Value;
-                            var name = await DbContext.SteamStoreNames
+                            var name = await _dbContext.SteamStoreNames
                                 .Where(n => n.Name == pair.Value).SingleOrDefaultAsync();
                             if (name == null)
                             {
-                                name = DbContext.SteamStoreNames.Create();
+                                name = _dbContext.SteamStoreNames.Create();
                                 name.Name = pair.Value;
-                                DbContext.SteamStoreNames.Add(name);
-                                await DbContext.SaveChangesAsync();
+                                _dbContext.SteamStoreNames.Add(name);
+                                await _dbContext.SaveChangesAsync();
                             }
                             relatedPoint.SteamStoreNames = new[] {name};
                             relatedPoint.Type = pair.Key;
                             relatedPoint.PreferredName = PreferredNameType.English;
                             relatedPoint.IdCode = await GenerateIdCode(pair.Value);
-                            DbContext.NormalPoints.Add(relatedPoint);
-                            await DbContext.SaveChangesAsync();
+                            _dbContext.NormalPoints.Add(relatedPoint);
+                            await _dbContext.SaveChangesAsync();
                         }
                         switch (pair.Key)
                         {
@@ -234,7 +234,7 @@ namespace Keylol.Controllers.NormalPoint
                         gamePoint.DeveloperPoints = new List<Models.NormalPoint>();
                         gamePoint.PublisherPoints = new List<Models.NormalPoint>();
                     }
-                    gamePoint.MajorPlatformPoints.Add(await DbContext.NormalPoints.SingleAsync(p => p.IdCode == "STEAM"));
+                    gamePoint.MajorPlatformPoints.Add(await _dbContext.NormalPoints.SingleAsync(p => p.IdCode == "STEAM"));
                     gamePoint.GenrePoints.AddRange(genreNames.Select(n => genrePointsMap[n]).ToList());
                     gamePoint.TagPoints.AddRange(tags.Select(n => genrePointsMap[n]).ToList());
                     gamePoint.DeveloperPoints.AddRange(developerNames.Select(n => manufacturerPointsMap[n]).ToList());
@@ -250,7 +250,7 @@ namespace Keylol.Controllers.NormalPoint
                                 $"keylol://steam/app-icons/{appId}-{(string) root["apps"][appId.ToString()]["common"]["icon"]}";
                         }
                     }
-                    await DbContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
                     return Created($"normal-point/{gamePoint.Id}", new NormalPointDto(gamePoint, false, true)
                     {
                         Description = gamePoint.Description,

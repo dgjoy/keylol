@@ -36,12 +36,12 @@ namespace Keylol.Controllers.Article
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var article = await DbContext.Articles.FindAsync(id);
+            var article = await _dbContext.Articles.FindAsync(id);
             if (article == null)
                 return NotFound();
 
             var operatorId = User.Identity.GetUserId();
-            var operatorStaffClaim = await UserManager.GetStaffClaimAsync(operatorId);
+            var operatorStaffClaim = await _userManager.GetStaffClaimAsync(operatorId);
 
             if (operatorStaffClaim != StaffClaim.Operator)
             {
@@ -108,7 +108,7 @@ namespace Keylol.Controllers.Article
             }
             if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
             {
-                var missive = DbContext.Messages.Create();
+                var missive = _dbContext.Messages.Create();
                 missive.OperatorId = operatorId;
                 missive.Receiver = article.Principal.User;
                 missive.ArticleId = article.Id;
@@ -169,7 +169,7 @@ namespace Keylol.Controllers.Article
                             break;
                     }
                 }
-                DbContext.Messages.Add(missive);
+                _dbContext.Messages.Add(missive);
 
                 // Steam 通知
                 if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.IsOnline())
@@ -179,7 +179,7 @@ namespace Keylol.Controllers.Article
                         steamNotityText);
                 }
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

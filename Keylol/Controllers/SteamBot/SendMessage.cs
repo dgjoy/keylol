@@ -7,6 +7,7 @@ using System.Timers;
 using System.Web.Http;
 using Keylol.Controllers.User;
 using Keylol.Models;
+using Keylol.Models.DTO;
 using Keylol.Services;
 using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
@@ -26,7 +27,7 @@ namespace Keylol.Controllers.SteamBot
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
         public async Task<IHttpActionResult> SendMessage(string userId, string message, bool tempSilence = false,
-            UserController.IdType idType = UserController.IdType.IdCode)
+            UserIdentityType idType = UserIdentityType.IdCode)
         {
             if (userId == "*")
             {
@@ -40,20 +41,20 @@ namespace Keylol.Controllers.SteamBot
                 KeylolUser user;
                 switch (idType)
                 {
-                    case UserController.IdType.UserName:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.UserName == userId);
+                    case UserIdentityType.UserName:
+                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.UserName == userId);
                         break;
 
-                    case UserController.IdType.IdCode:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == userId);
+                    case UserIdentityType.IdCode:
+                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.IdCode == userId);
                         break;
 
-                    case UserController.IdType.Id:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+                    case UserIdentityType.Id:
+                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
                         break;
 
-                    case UserController.IdType.SteamId:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == userId);
+                    case UserIdentityType.SteamId:
+                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == userId);
                         break;
 
                     default:

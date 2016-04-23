@@ -8,7 +8,6 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Services;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -17,32 +16,6 @@ namespace Keylol.Controllers.User
 {
     public partial class UserController
     {
-        /// <summary>
-        ///     Id 类型
-        /// </summary>
-        public enum IdType
-        {
-            /// <summary>
-            ///     Id
-            /// </summary>
-            Id,
-
-            /// <summary>
-            ///     识别码
-            /// </summary>
-            IdCode,
-
-            /// <summary>
-            ///     用户名
-            /// </summary>
-            UserName,
-
-            /// <summary>
-            /// Steam ID
-            /// </summary>
-            SteamId
-        }
-
         /// <summary>
         ///     根据 Id、UserName 或者 IdCode 取得一名用户
         /// </summary>
@@ -70,21 +43,21 @@ namespace Keylol.Controllers.User
             bool claims = false, bool security = false, bool steam = false,
             bool steamBot = false, bool subscribeCount = false, bool stats = false,
             bool subscribed = false, bool moreOptions = false, bool commentLike = false, bool coupon = false,
-            bool reviewStats = false, IdType idType = IdType.Id)
+            bool reviewStats = false, UserIdentityType idType = UserIdentityType.Id)
         {
             KeylolUser user;
             switch (idType)
             {
-                case IdType.UserName:
-                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.UserName == id);
+                case UserIdentityType.UserName:
+                    user = await _dbContext.Users.SingleOrDefaultAsync(u => u.UserName == id);
                     break;
 
-                case IdType.IdCode:
-                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == id);
+                case UserIdentityType.IdCode:
+                    user = await _dbContext.Users.SingleOrDefaultAsync(u => u.IdCode == id);
                     break;
 
-                case IdType.Id:
-                    user = await DbContext.Users.SingleOrDefaultAsync(u => u.Id == id);
+                case UserIdentityType.Id:
+                    user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id);
                     break;
 
                 default:
@@ -105,7 +78,7 @@ namespace Keylol.Controllers.User
                     user.FreeLike = 5; // 免费认可重置
                     try
                     {
-                        await DbContext.SaveChangesAsync();
+                        await _dbContext.SaveChangesAsync();
                         await _coupon.Update(user.Id, CouponEvent.每日访问);
                     }
                     catch (DbUpdateConcurrencyException)
@@ -116,7 +89,7 @@ namespace Keylol.Controllers.User
 
             var visitorStaffClaim = string.IsNullOrEmpty(visitorId)
                 ? null
-                : await UserManager.GetStaffClaimAsync(visitorId);
+                : await _userManager.GetStaffClaimAsync(visitorId);
 
             var getSelf = visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator;
 
@@ -137,8 +110,8 @@ namespace Keylol.Controllers.User
 
             if (claims)
             {
-                userDto.StatusClaim = await UserManager.GetStatusClaimAsync(user.Id);
-                userDto.StaffClaim = await UserManager.GetStaffClaimAsync(user.Id);
+                userDto.StatusClaim = await _userManager.GetStatusClaimAsync(user.Id);
+                userDto.StaffClaim = await _userManager.GetStaffClaimAsync(user.Id);
             }
 
             if (security)
@@ -175,12 +148,12 @@ namespace Keylol.Controllers.User
             if (subscribeCount)
             {
                 userDto.SubscribedPointCount =
-                    await DbContext.Users.Where(u => u.Id == user.Id).SelectMany(u => u.SubscribedPoints).CountAsync();
+                    await _dbContext.Users.Where(u => u.Id == user.Id).SelectMany(u => u.SubscribedPoints).CountAsync();
             }
 
             if (stats)
             {
-                var statsResult = await DbContext.Users.Where(u => u.Id == user.Id)
+                var statsResult = await _dbContext.Users.Where(u => u.Id == user.Id)
                     .Select(u =>
                         new
                         {
@@ -194,7 +167,7 @@ namespace Keylol.Controllers.User
 
             if (reviewStats)
             {
-                var reviewStatsResult = await DbContext.Users.Where(u => u.Id == user.Id)
+                var reviewStatsResult = await _dbContext.Users.Where(u => u.Id == user.Id)
                     .Select(u => new
                     {
                         reviewCount = u.ProfilePoint.Articles.Count(a => a.Type == ArticleType.评),
@@ -208,7 +181,7 @@ namespace Keylol.Controllers.User
 
             if (subscribed)
             {
-                userDto.Subscribed = await DbContext.Users.Where(u => u.Id == visitorId)
+                userDto.Subscribed = await _dbContext.Users.Where(u => u.Id == visitorId)
                     .SelectMany(u => u.SubscribedPoints)
                     .Select(p => p.Id)
                     .ContainsAsync(user.Id);
@@ -220,13 +193,13 @@ namespace Keylol.Controllers.User
                     return Unauthorized();
                 userDto.MessageCount = string.Join(",", new[]
                 {
-                    await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
+                    await _dbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
                                                         m.Type >= 0 && (int) m.Type <= 99)
                         .CountAsync(),
-                    await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
+                    await _dbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
                                                         (int) m.Type >= 100 && (int) m.Type <= 199)
                         .CountAsync(),
-                    await DbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
+                    await _dbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
                                                         (int) m.Type >= 200 && (int) m.Type <= 299)
                         .CountAsync()
                 });
