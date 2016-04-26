@@ -16,14 +16,24 @@ namespace Keylol.Provider
         private bool _disposed;
 
         /// <summary>
-        ///     Redis <see cref="ConnectionMultiplexer"/> 对象
+        ///     Redis <see cref="ConnectionMultiplexer" /> 对象
         /// </summary>
         public ConnectionMultiplexer Connection { get; } =
             ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redisConnection"] ??
                                           "localhost,abortConnect=false,allowAdmin=true");
 
         /// <summary>
-        /// 获取指定 Redis Database
+        ///     资源清理
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     获取指定 Redis Database
         /// </summary>
         /// <param name="db">Database 编号</param>
         /// <returns>IDatabase 对象</returns>
@@ -63,17 +73,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 资源清理
-        /// </summary>
-        /// <filterpriority>2</filterpriority>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// 资源清理
+        ///     资源清理
         /// </summary>
         /// <param name="disposing">是否清理托管对象</param>
         protected virtual void Dispose(bool disposing)

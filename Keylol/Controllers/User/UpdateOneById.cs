@@ -53,7 +53,7 @@ namespace Keylol.Controllers.User
                     ModelState.AddModelError("vm.Password", "Password cannot be empty.");
                     return BadRequest(ModelState);
                 }
-                
+
                 if (requestDto.GeetestChallenge == null || requestDto.GeetestSeccode == null ||
                     requestDto.GeetestValidate == null ||
                     !await

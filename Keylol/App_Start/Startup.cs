@@ -19,7 +19,6 @@ using Microsoft.Owin.Cors;
 using Microsoft.Owin.Diagnostics;
 using Microsoft.Owin.Extensions;
 using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -37,7 +36,7 @@ namespace Keylol
     public class Startup
     {
         /// <summary>
-        /// 全局 IoC 容器
+        ///     全局 IoC 容器
         /// </summary>
         public static Container Container { get; set; } = new Container();
 

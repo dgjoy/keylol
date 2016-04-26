@@ -13,9 +13,11 @@ namespace Keylol.Controllers.UserPointSubscription
         private readonly KeylolDbContext _dbContext;
 
         /// <summary>
-        /// 创建 <see cref="UserPointSubscriptionController"/>
+        ///     创建 <see cref="UserPointSubscriptionController" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
         public UserPointSubscriptionController(KeylolDbContext dbContext)
         {
             _dbContext = dbContext;

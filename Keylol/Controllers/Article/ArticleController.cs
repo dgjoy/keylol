@@ -18,8 +18,8 @@ namespace Keylol.Controllers.Article
     public partial class ArticleController : ApiController
     {
         private readonly CouponProvider _coupon;
-        private readonly IModel _mqChannel;
         private readonly KeylolDbContext _dbContext;
+        private readonly IModel _mqChannel;
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
@@ -31,8 +31,12 @@ namespace Keylol.Controllers.Article
         /// <param name="coupon">
         ///     <see cref="CouponProvider" />
         /// </param>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public ArticleController(IModel mqChannel, CouponProvider coupon, KeylolDbContext dbContext,
             KeylolUserManager userManager)
         {

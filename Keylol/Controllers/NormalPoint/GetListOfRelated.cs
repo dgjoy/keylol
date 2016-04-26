@@ -23,7 +23,8 @@ namespace Keylol.Controllers.NormalPoint
         [HttpGet]
         [ResponseType(typeof (List<NormalPointGetListOfRelatedResponseDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是游戏据点")]
-        public async Task<IHttpActionResult> GetListOfRelated(string id, NormalPointIdentityType idType = NormalPointIdentityType.Id)
+        public async Task<IHttpActionResult> GetListOfRelated(string id,
+            NormalPointIdentityType idType = NormalPointIdentityType.Id)
         {
             var point = await _dbContext.NormalPoints
                 .SingleOrDefaultAsync(p => idType == NormalPointIdentityType.IdCode ? p.IdCode == id : p.Id == id);

@@ -15,17 +15,17 @@ using SimpleInjector;
 namespace Keylol.ServiceBase
 {
     /// <summary>
-    /// 所有微服务都要继承于这个类
+    ///     所有微服务都要继承于这个类
     /// </summary>
     public class KeylolService : System.ServiceProcess.ServiceBase
     {
         /// <summary>
-        /// 服务中止事件
+        ///     服务中止事件
         /// </summary>
         public event EventHandler Stopped;
 
         /// <summary>
-        /// 为容器注册公用依赖（log4net 和 RabbitMQ Iconnection），然后启动新服务
+        ///     为容器注册公用依赖（log4net 和 RabbitMQ Iconnection），然后启动新服务
         /// </summary>
         /// <param name="args">服务启动参数</param>
         /// <param name="container">IoC 容器</param>

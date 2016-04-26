@@ -13,7 +13,7 @@ namespace Keylol.Controllers.SteamBot
     public partial class SteamBotController
     {
         /// <summary>
-        /// 命令机器人给指定用户发送聊天消息
+        ///     命令机器人给指定用户发送聊天消息
         /// </summary>
         /// <param name="userId">用户 ID，"*" 表示所有机器人给所有好友发送消息</param>
         /// <param name="message">消息内容</param>

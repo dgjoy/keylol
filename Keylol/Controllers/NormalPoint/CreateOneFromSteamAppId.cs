@@ -234,7 +234,8 @@ namespace Keylol.Controllers.NormalPoint
                         gamePoint.DeveloperPoints = new List<Models.NormalPoint>();
                         gamePoint.PublisherPoints = new List<Models.NormalPoint>();
                     }
-                    gamePoint.MajorPlatformPoints.Add(await _dbContext.NormalPoints.SingleAsync(p => p.IdCode == "STEAM"));
+                    gamePoint.MajorPlatformPoints.Add(
+                        await _dbContext.NormalPoints.SingleAsync(p => p.IdCode == "STEAM"));
                     gamePoint.GenrePoints.AddRange(genreNames.Select(n => genrePointsMap[n]).ToList());
                     gamePoint.TagPoints.AddRange(tags.Select(n => genrePointsMap[n]).ToList());
                     gamePoint.DeveloperPoints.AddRange(developerNames.Select(n => manufacturerPointsMap[n]).ToList());

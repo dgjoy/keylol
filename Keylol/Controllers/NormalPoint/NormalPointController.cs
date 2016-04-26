@@ -22,10 +22,14 @@ namespace Keylol.Controllers.NormalPoint
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
-        /// 创建 <see cref="NormalPointController"/>
+        ///     创建 <see cref="NormalPointController" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public NormalPointController(KeylolDbContext dbContext, KeylolUserManager userManager)
         {
             _dbContext = dbContext;

@@ -13,16 +13,22 @@ namespace Keylol.Controllers.Login
     [RoutePrefix("login")]
     public partial class LoginController : ApiController
     {
-        private readonly IOwinContext _owinContext;
         private readonly KeylolDbContext _dbContext;
+        private readonly IOwinContext _owinContext;
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
-        /// 创建 <see cref="LoginController"/>
+        ///     创建 <see cref="LoginController" />
         /// </summary>
-        /// <param name="owinContextProvider"><see cref="OwinContextProvider"/></param>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="owinContextProvider">
+        ///     <see cref="OwinContextProvider" />
+        /// </param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public LoginController(OwinContextProvider owinContextProvider, KeylolDbContext dbContext,
             KeylolUserManager userManager)
         {

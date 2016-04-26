@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Keylol.ServiceBase
 {
     /// <summary>
-    /// 提供又拍云相关的一些方法
+    ///     提供又拍云相关的一些方法
     /// </summary>
     public static class UpyunProvider
     {
@@ -18,7 +18,7 @@ namespace Keylol.ServiceBase
         private const string PasswordHash = "9fed63e0ecf16aad31a9c3ccd31b0737";
 
         /// <summary>
-        /// 从又拍云格式的 URL 中提取文件名
+        ///     从又拍云格式的 URL 中提取文件名
         /// </summary>
         /// <param name="url">要提取的 URL</param>
         /// <returns>提取到的文件名，如果提取失败返回 null</returns>
@@ -51,7 +51,7 @@ namespace Keylol.ServiceBase
         }
 
         /// <summary>
-        /// 上传文件到又拍云空间，新上传的文件将被命名为 {file-md5}.{extension}
+        ///     上传文件到又拍云空间，新上传的文件将被命名为 {file-md5}.{extension}
         /// </summary>
         /// <param name="fileData">文件的二进制数据</param>
         /// <param name="extension">文件扩展名</param>

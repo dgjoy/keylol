@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Controllers.User;
 using Keylol.Models.DTO;
 using Swashbuckle.Swagger.Annotations;
 
@@ -32,14 +31,14 @@ namespace Keylol.Controllers.UserGameRecord
             {
                 case UserIdentityType.UserName:
                 {
-                    var user = await _dbContext.Users.SingleAsync(u => u.UserName == id);
+                    var user = await _userManager.FindByNameAsync(id);
                     userId = user.Id;
                     break;
                 }
 
                 case UserIdentityType.IdCode:
                 {
-                    var user = await _dbContext.Users.SingleAsync(u => u.IdCode == id);
+                    var user = await _userManager.FindByIdCodeAsync(id);
                     userId = user.Id;
                     break;
                 }

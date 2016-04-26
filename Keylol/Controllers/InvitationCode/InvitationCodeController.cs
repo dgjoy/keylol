@@ -13,9 +13,11 @@ namespace Keylol.Controllers.InvitationCode
         private readonly KeylolDbContext _dbContext;
 
         /// <summary>
-        /// 创建 <see cref="InvitationCodeController"/>
+        ///     创建 <see cref="InvitationCodeController" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
         public InvitationCodeController(KeylolDbContext dbContext)
         {
             _dbContext = dbContext;

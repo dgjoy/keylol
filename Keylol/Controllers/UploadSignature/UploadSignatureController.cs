@@ -13,9 +13,11 @@ namespace Keylol.Controllers.UploadSignature
         private readonly KeylolDbContext _dbContext;
 
         /// <summary>
-        /// 创建 <see cref="UploadSignatureController"/>
+        ///     创建 <see cref="UploadSignatureController" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
         public UploadSignatureController(KeylolDbContext dbContext)
         {
             _dbContext = dbContext;

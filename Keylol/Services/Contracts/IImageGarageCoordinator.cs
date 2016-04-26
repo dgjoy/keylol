@@ -5,27 +5,29 @@ using Keylol.Models.DTO;
 namespace Keylol.Services.Contracts
 {
     /// <summary>
-    /// ImageGarage 协作器
+    ///     ImageGarage 协作器
     /// </summary>
     [ServiceContract(SessionMode = SessionMode.Required)]
     public interface IImageGarageCoordinator
     {
         /// <summary>
-        /// 心跳测试
+        ///     心跳测试
         /// </summary>
         [OperationContract]
         void Ping();
 
         /// <summary>
-        /// 获取指定 ID 的文章
+        ///     获取指定 ID 的文章
         /// </summary>
         /// <param name="id">文章 ID</param>
-        /// <returns><see cref="ArticleDto"/></returns>
+        /// <returns>
+        ///     <see cref="ArticleDto" />
+        /// </returns>
         [OperationContract]
         Task<ArticleDto> FindArticle(string id);
 
         /// <summary>
-        /// 更新指定文章
+        ///     更新指定文章
         /// </summary>
         /// <param name="id">文章 ID</param>
         /// <param name="content">新的内容</param>

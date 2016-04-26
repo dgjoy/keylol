@@ -33,7 +33,7 @@ namespace Keylol.Controllers.UserGameRecord
         public async Task<IHttpActionResult> UpdateListByCurrentUser(bool manual = false)
         {
             var userId = User.Identity.GetUserId();
-            var user = await _dbContext.Users.Where(u => u.Id == userId).SingleAsync();
+            var user = await _userManager.FindByIdAsync(userId);
             if (manual)
             {
                 if (user.LastGameUpdateSucceed && DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromMinutes(1))

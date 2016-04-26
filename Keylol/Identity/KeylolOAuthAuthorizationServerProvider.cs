@@ -2,13 +2,12 @@
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
-using Keylol.Provider;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol.Identity
 {
     /// <summary>
-    /// OAuth Authorzation Server 实现
+    ///     OAuth Authorzation Server 实现
     /// </summary>
     public class KeylolOAuthAuthorizationServerProvider : OAuthAuthorizationServerProvider
     {
@@ -112,15 +111,18 @@ namespace Keylol.Identity
         }
 
         /// <summary>
-        /// Called when a request to the Token endpoint arrives with a "grant_type" of any other value. If the application supports custom grant types
-        ///             it is entirely responsible for determining if the request should result in an access_token. If context.Validated is called with ticket
-        ///             information the response body is produced in the same way as the other standard grant types. If additional response parameters must be
-        ///             included they may be added in the final TokenEndpoint call.
-        ///             See also http://tools.ietf.org/html/rfc6749#section-4.5
+        ///     Called when a request to the Token endpoint arrives with a "grant_type" of any other value. If the application
+        ///     supports custom grant types
+        ///     it is entirely responsible for determining if the request should result in an access_token. If context.Validated is
+        ///     called with ticket
+        ///     information the response body is produced in the same way as the other standard grant types. If additional response
+        ///     parameters must be
+        ///     included they may be added in the final TokenEndpoint call.
+        ///     See also http://tools.ietf.org/html/rfc6749#section-4.5
         /// </summary>
         /// <param name="context">The context of the event carries information in and results out.</param>
         /// <returns>
-        /// Task to enable asynchronous execution
+        ///     Task to enable asynchronous execution
         /// </returns>
         public override async Task GrantCustomExtension(OAuthGrantCustomExtensionContext context)
         {
@@ -135,16 +137,19 @@ namespace Keylol.Identity
         }
 
         /// <summary>
-        /// Called to validate that the origin of the request is a registered "client_id", and that the correct credentials for that client are
-        ///             present on the request. If the web application accepts Basic authentication credentials, 
-        ///             context.TryGetBasicCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request header. If the web 
-        ///             application accepts "client_id" and "client_secret" as form encoded POST parameters, 
-        ///             context.TryGetFormCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request body.
-        ///             If context.Validated is not called the request will not proceed further. 
+        ///     Called to validate that the origin of the request is a registered "client_id", and that the correct credentials for
+        ///     that client are
+        ///     present on the request. If the web application accepts Basic authentication credentials,
+        ///     context.TryGetBasicCredentials(out clientId, out clientSecret) may be called to acquire those values if present in
+        ///     the request header. If the web
+        ///     application accepts "client_id" and "client_secret" as form encoded POST parameters,
+        ///     context.TryGetFormCredentials(out clientId, out clientSecret) may be called to acquire those values if present in
+        ///     the request body.
+        ///     If context.Validated is not called the request will not proceed further.
         /// </summary>
         /// <param name="context">The context of the event carries information in and results out.</param>
         /// <returns>
-        /// Task to enable asynchronous execution
+        ///     Task to enable asynchronous execution
         /// </returns>
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {

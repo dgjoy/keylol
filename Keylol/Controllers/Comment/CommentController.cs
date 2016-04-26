@@ -15,10 +15,14 @@ namespace Keylol.Controllers.Comment
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
-        /// 创建 <see cref="CommentController"/>
+        ///     创建 <see cref="CommentController" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public CommentController(KeylolDbContext dbContext, KeylolUserManager userManager)
         {
             _dbContext = dbContext;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -35,7 +34,7 @@ namespace Keylol.Controllers.User
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
+
             if (
                 !await
                     _geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
@@ -50,7 +49,7 @@ namespace Keylol.Controllers.User
                 ModelState.AddModelError("vm.SteamBindingTokenId", "Invalid steam binding token.");
                 return BadRequest(ModelState);
             }
-            if (await _dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamBindingToken.SteamId) != null)
+            if (await _userManager.FindBySteamIdAsync(steamBindingToken.SteamId) != null)
             {
                 ModelState.AddModelError("vm.SteamBindingTokenId",
                     "Steam account has been binded to another Keylol account.");
@@ -62,7 +61,7 @@ namespace Keylol.Controllers.User
                 return BadRequest(ModelState);
             }
 
-            if (await _dbContext.Users.SingleOrDefaultAsync(u => u.IdCode == requestDto.IdCode) != null ||
+            if (await _userManager.FindByIdCodeAsync(requestDto.IdCode) != null ||
                 !IsIdCodeLegit(requestDto.IdCode))
             {
                 ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
@@ -112,7 +111,7 @@ namespace Keylol.Controllers.User
             if (requestDto.Inviter != null)
             {
                 var inviterIdCode = requestDto.Inviter;
-                var inviter = await _dbContext.Users.Where(u => u.IdCode == inviterIdCode).SingleOrDefaultAsync();
+                var inviter = await _userManager.FindByIdCodeAsync(inviterIdCode);
                 if (inviter != null)
                 {
                     await _dbContext.Entry(user).ReloadAsync();

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Services;
-using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -40,7 +37,7 @@ namespace Keylol.Controllers.Like
                 return BadRequest(ModelState);
 
             var operatorId = User.Identity.GetUserId();
-            var @operator = await _dbContext.Users.SingleAsync(u => u.Id == operatorId);
+            var @operator = await _userManager.FindByIdAsync(operatorId);
             if (@operator.FreeLike <= 0 && !await _coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
                 return Unauthorized();
 
@@ -144,7 +141,7 @@ namespace Keylol.Controllers.Like
                     {
                         var commentAuthor = await _dbContext.Users.Include(u => u.SteamBot)
                             .SingleAsync(u => u.Id == comment.CommentatorId);
-                        var articleAuthor = await _dbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
+                        var articleAuthor = await _userManager.FindByIdAsync(comment.Article.PrincipalId);
 
                         // 邮政中心
                         var message = _dbContext.Messages.Create();

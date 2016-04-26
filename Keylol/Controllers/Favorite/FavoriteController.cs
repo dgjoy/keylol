@@ -14,9 +14,11 @@ namespace Keylol.Controllers.Favorite
         private readonly KeylolDbContext _dbContext;
 
         /// <summary>
-        /// 创建 <see cref="FavoriteController"/>
+        ///     创建 <see cref="FavoriteController" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
         public FavoriteController(KeylolDbContext dbContext)
         {
             _dbContext = dbContext;

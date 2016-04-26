@@ -26,41 +26,18 @@ using RabbitMQ.Client;
 namespace Keylol.Services
 {
     /// <summary>
-    /// <see cref="ISteamBotCoordinator"/> 实现
+    ///     <see cref="ISteamBotCoordinator" /> 实现
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class SteamBotCoordinator : ISteamBotCoordinator
     {
-        private readonly RetryPolicy _retryPolicy;
-        private readonly IModel _mqChannel;
-        private readonly HttpClient _httpClient = new HttpClient();
         private static readonly object AllocationLock = new object(); // 在真正分配机器人前必须取得该锁
+        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly IModel _mqChannel;
+        private readonly RetryPolicy _retryPolicy;
 
         /// <summary>
-        /// 所有正在进行的会话，Key 为 Session ID，Value 为 <see cref="SteamBotCoordinator"/>
-        /// </summary>
-        public static ConcurrentDictionary<string, SteamBotCoordinator> Sessions { get; } =
-            new ConcurrentDictionary<string, SteamBotCoordinator>();
-
-        /// <summary>
-        /// 暂时关闭自动回复的机器人列表，Key 为机器人 ID，Value 为对应的计时 Timer
-        /// </summary>
-        public static ConcurrentDictionary<string, Timer> AutoChatDisabledBots { get; } =
-            new ConcurrentDictionary<string, Timer>();
-
-        /// <summary>
-        /// 当前会话 ID
-        /// </summary>
-        public string SessionId { get; } = OperationContext.Current.SessionId;
-
-        /// <summary>
-        /// 当前会话的客户端
-        /// </summary>
-        public ISteamBotCoordinatorCallback Client { get; } =
-            OperationContext.Current.GetCallbackChannel<ISteamBotCoordinatorCallback>();
-
-        /// <summary>
-        /// 创建 <see cref="SteamBotCoordinator"/>
+        ///     创建 <see cref="SteamBotCoordinator" />
         /// </summary>
         public SteamBotCoordinator(RetryPolicy retryPolicy, IModel mqChannel)
         {
@@ -72,98 +49,38 @@ namespace Keylol.Services
             OnSessionBegin();
         }
 
-        private async void OnSessionBegin()
-        {
-            // 更新已分配机器人的 SessionId
-            try
-            {
-                var allocatedBots = await Client.GetAllocatedBots();
-                if (allocatedBots != null)
-                {
-                    using (var dbContext = new KeylolDbContext())
-                    {
-                        var bots = await dbContext.SteamBots.Where(b => allocatedBots.Contains(b.Id)).ToListAsync();
-                        foreach (var bot in bots)
-                        {
-                            if (Sessions.ContainsKey(bot.SessionId))
-                            {
-                                await Sessions[bot.SessionId].Client.StopBot(bot.Id);
-                            }
-                            bot.SessionId = SessionId;
-                        }
-                        await dbContext.SaveChangesAsync();
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
-        private async void OnSessionEnd(object sender, EventArgs eventArgs)
-        {
-            try
-            {
-                _mqChannel.Dispose();
-                SteamBotCoordinator coordinator;
-                Sessions.TryRemove(SessionId, out coordinator);
-                if (Sessions.Count > 0)
-                    await ReallocateBots(Sessions.Values.Last());
-            }
-            catch (Exception)
-            {
-                // ignore
-            }
-        }
+        /// <summary>
+        ///     所有正在进行的会话，Key 为 Session ID，Value 为 <see cref="SteamBotCoordinator" />
+        /// </summary>
+        public static ConcurrentDictionary<string, SteamBotCoordinator> Sessions { get; } =
+            new ConcurrentDictionary<string, SteamBotCoordinator>();
 
         /// <summary>
-        /// 心跳测试
+        ///     暂时关闭自动回复的机器人列表，Key 为机器人 ID，Value 为对应的计时 Timer
+        /// </summary>
+        public static ConcurrentDictionary<string, Timer> AutoChatDisabledBots { get; } =
+            new ConcurrentDictionary<string, Timer>();
+
+        /// <summary>
+        ///     当前会话 ID
+        /// </summary>
+        public string SessionId { get; } = OperationContext.Current.SessionId;
+
+        /// <summary>
+        ///     当前会话的客户端
+        /// </summary>
+        public ISteamBotCoordinatorCallback Client { get; } =
+            OperationContext.Current.GetCallbackChannel<ISteamBotCoordinatorCallback>();
+
+        /// <summary>
+        ///     心跳测试
         /// </summary>
         public void Ping()
         {
         }
 
         /// <summary>
-        /// 重新计算每个客户端应该分配的机器人数量并通知客户端
-        /// </summary>
-        /// <param name="newSession">新 Session，在分配机器人时会最后分配</param>
-        private static async Task ReallocateBots(SteamBotCoordinator newSession)
-        {
-            try
-            {
-                using (var dbContext = new KeylolDbContext())
-                {
-                    var botCount = await dbContext.SteamBots.CountAsync(b => b.Enabled);
-                    var averageCount = botCount/Sessions.Count;
-                    var lastCount = botCount - averageCount*(Sessions.Count - 1);
-
-                    Func<List<string>, KeylolDbContext, Task> prepareDeallocatedBots = async (botIds, db) =>
-                    {
-                        var deallocatedBots = await db.SteamBots.Where(b => botIds.Contains(b.Id)).ToListAsync();
-                        foreach (var bot in deallocatedBots)
-                        {
-                            bot.SessionId = null;
-                        }
-                        await db.SaveChangesAsync();
-                    };
-
-                    foreach (var session in Sessions.Values.Where(s => s != newSession))
-                    {
-                        await
-                            prepareDeallocatedBots(await session.Client.RequestReallocateBots(averageCount), dbContext);
-                    }
-                    await prepareDeallocatedBots(await newSession.Client.RequestReallocateBots(lastCount), dbContext);
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
-        /// <summary>
-        /// 请求分配机器人，协作器在计算好机器人数量后将通过 RequestReallocateBots 回调通知客户端
+        ///     请求分配机器人，协作器在计算好机器人数量后将通过 RequestReallocateBots 回调通知客户端
         /// </summary>
         public async Task RequestBots()
         {
@@ -171,7 +88,7 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 请求分配指定数量的机器人
+        ///     请求分配指定数量的机器人
         /// </summary>
         /// <param name="count">要求分配的数量</param>
         /// <returns>分配给客户端的机器人列表</returns>
@@ -194,7 +111,7 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 更新指定用户的属性
+        ///     更新指定用户的属性
         /// </summary>
         /// <param name="steamId">要更新的用户 Steam ID</param>
         /// <param name="profileName">Steam 昵称，<c>null</c> 表示不更新</param>
@@ -202,7 +119,8 @@ namespace Keylol.Services
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var user = await dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamId);
+                var userManager = new KeylolUserManager(dbContext);
+                var user = await userManager.FindBySteamIdAsync(steamId);
                 if (user == null)
                     return;
                 if (profileName != null)
@@ -212,7 +130,7 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 更新指定机器人的属性
+        ///     更新指定机器人的属性
         /// </summary>
         /// <param name="id">要更新的机器人 ID</param>
         /// <param name="friendCount">好友数，<c>null</c> 表示不更新</param>
@@ -236,7 +154,7 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 判断指定 Steam 账户是不是其乐用户并且匹配指定机器人
+        ///     判断指定 Steam 账户是不是其乐用户并且匹配指定机器人
         /// </summary>
         /// <param name="steamId">Steam ID</param>
         /// <param name="botId">机器人 ID</param>
@@ -250,7 +168,7 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 当机器人接收到用户好友请求时，通过此方法通知协调器
+        ///     当机器人接收到用户好友请求时，通过此方法通知协调器
         /// </summary>
         /// <param name="userSteamId">用户 Steam ID</param>
         /// <param name="botId">机器人 ID</param>
@@ -259,7 +177,8 @@ namespace Keylol.Services
             await Client.AddFriend(botId, userSteamId); // 先接受请求
             using (var dbContext = new KeylolDbContext())
             {
-                var user = await dbContext.Users.Where(u => u.SteamId == userSteamId).SingleOrDefaultAsync();
+                var userManager = new KeylolUserManager(dbContext);
+                var user = await userManager.FindBySteamIdAsync(userSteamId);
                 if (user == null)
                 {
                     // 非会员，在注册时绑定机器人
@@ -287,7 +206,6 @@ namespace Keylol.Services
                 {
                     // 现有会员添加机器人为好友
                     var bot = await dbContext.SteamBots.FindAsync(botId);
-                    var userManager = new KeylolUserManager(dbContext);
                     if (bot != null && bot.FriendCount < bot.FriendUpperLimit &&
                         await userManager.GetStatusClaimAsync(user.Id) == StatusClaim.Probationer)
                     {
@@ -312,7 +230,7 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 当用户与机器人不再为好友时，通过此方法通知协调器
+        ///     当用户与机器人不再为好友时，通过此方法通知协调器
         /// </summary>
         /// <param name="userSteamId">用户 Steam ID</param>
         /// <param name="botId">机器人 ID</param>
@@ -320,7 +238,8 @@ namespace Keylol.Services
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var user = await dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == userSteamId);
+                var userManager = new KeylolUserManager(dbContext);
+                var user = await userManager.FindBySteamIdAsync(userSteamId);
                 if (user == null)
                 {
                     // 非会员不再为好友时，如果存在已绑定的 SteamBindingToken 则清除之
@@ -333,14 +252,13 @@ namespace Keylol.Services
                 else if (user.SteamBotId == botId)
                 {
                     // 会员与自己的机器人不再为好友时，设置为暂准状态
-                    var userManager = new KeylolUserManager(dbContext);
                     await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
                 }
             }
         }
 
         /// <summary>
-        /// 当机器人收到新的聊天消息时，通过此方法通知协调器
+        ///     当机器人收到新的聊天消息时，通过此方法通知协调器
         /// </summary>
         /// <param name="senderSteamId">消息发送人 Steam ID</param>
         /// <param name="botId">机器人 ID</param>
@@ -349,7 +267,8 @@ namespace Keylol.Services
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var user = await dbContext.Users.Where(u => u.SteamId == senderSteamId).SingleOrDefaultAsync();
+                var userManager = new KeylolUserManager(dbContext);
+                var user = await userManager.FindBySteamIdAsync(senderSteamId);
                 if (user == null)
                 {
                     // 非会员，只接受绑定验证码
@@ -412,8 +331,91 @@ namespace Keylol.Services
             }
         }
 
+        private async void OnSessionBegin()
+        {
+            // 更新已分配机器人的 SessionId
+            try
+            {
+                var allocatedBots = await Client.GetAllocatedBots();
+                if (allocatedBots != null)
+                {
+                    using (var dbContext = new KeylolDbContext())
+                    {
+                        var bots = await dbContext.SteamBots.Where(b => allocatedBots.Contains(b.Id)).ToListAsync();
+                        foreach (var bot in bots)
+                        {
+                            if (Sessions.ContainsKey(bot.SessionId))
+                            {
+                                await Sessions[bot.SessionId].Client.StopBot(bot.Id);
+                            }
+                            bot.SessionId = SessionId;
+                        }
+                        await dbContext.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private async void OnSessionEnd(object sender, EventArgs eventArgs)
+        {
+            try
+            {
+                _mqChannel.Dispose();
+                SteamBotCoordinator coordinator;
+                Sessions.TryRemove(SessionId, out coordinator);
+                if (Sessions.Count > 0)
+                    await ReallocateBots(Sessions.Values.Last());
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
+        }
+
         /// <summary>
-        /// 询问图灵机器人问题
+        ///     重新计算每个客户端应该分配的机器人数量并通知客户端
+        /// </summary>
+        /// <param name="newSession">新 Session，在分配机器人时会最后分配</param>
+        private static async Task ReallocateBots(SteamBotCoordinator newSession)
+        {
+            try
+            {
+                using (var dbContext = new KeylolDbContext())
+                {
+                    var botCount = await dbContext.SteamBots.CountAsync(b => b.Enabled);
+                    var averageCount = botCount/Sessions.Count;
+                    var lastCount = botCount - averageCount*(Sessions.Count - 1);
+
+                    Func<List<string>, KeylolDbContext, Task> prepareDeallocatedBots = async (botIds, db) =>
+                    {
+                        var deallocatedBots = await db.SteamBots.Where(b => botIds.Contains(b.Id)).ToListAsync();
+                        foreach (var bot in deallocatedBots)
+                        {
+                            bot.SessionId = null;
+                        }
+                        await db.SaveChangesAsync();
+                    };
+
+                    foreach (var session in Sessions.Values.Where(s => s != newSession))
+                    {
+                        await
+                            prepareDeallocatedBots(await session.Client.RequestReallocateBots(averageCount), dbContext);
+                    }
+                    await prepareDeallocatedBots(await newSession.Client.RequestReallocateBots(lastCount), dbContext);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        /// <summary>
+        ///     询问图灵机器人问题
         /// </summary>
         /// <param name="question">问题内容</param>
         /// <param name="userId">上下文关联用户 ID</param>

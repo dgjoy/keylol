@@ -14,10 +14,10 @@ namespace Keylol.Controllers.User
     public partial class UserController : ApiController
     {
         private readonly CouponProvider _coupon;
-        private readonly StatisticsProvider _statistics;
+        private readonly KeylolDbContext _dbContext;
         private readonly GeetestProvider _geetest;
         private readonly IOwinContext _owinContext;
-        private readonly KeylolDbContext _dbContext;
+        private readonly StatisticsProvider _statistics;
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
@@ -29,10 +29,18 @@ namespace Keylol.Controllers.User
         /// <param name="statistics">
         ///     <see cref="StatisticsProvider" />
         /// </param>
-        /// <param name="geetest"><see cref="GeetestProvider"/></param>
-        /// <param name="owinContextProvider"><see cref="OwinContextProvider"/></param>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="geetest">
+        ///     <see cref="GeetestProvider" />
+        /// </param>
+        /// <param name="owinContextProvider">
+        ///     <see cref="OwinContextProvider" />
+        /// </param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public UserController(CouponProvider coupon, StatisticsProvider statistics, GeetestProvider geetest,
             OwinContextProvider owinContextProvider, KeylolDbContext dbContext, KeylolUserManager userManager)
         {

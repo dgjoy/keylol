@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Controllers.NormalPoint;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
@@ -32,8 +31,8 @@ namespace Keylol.Controllers.Article
         {
             if (take > 50) take = 50;
             var articleQuery = _dbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSn &&
-                                                                            a.Archived == ArchivedState.None &&
-                                                                            a.Rejected == false);
+                                                                             a.Archived == ArchivedState.None &&
+                                                                             a.Rejected == false);
             switch (idType)
             {
                 case NormalPointIdentityType.Id:

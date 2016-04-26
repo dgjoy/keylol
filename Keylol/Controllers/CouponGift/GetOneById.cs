@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Data.Entity;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models.DTO;
@@ -17,7 +13,7 @@ namespace Keylol.Controllers.CouponGift
     public partial class CouponGiftController
     {
         /// <summary>
-        /// 获取指定礼品的详细信息
+        ///     获取指定礼品的详细信息
         /// </summary>
         /// <param name="id">礼品 ID</param>
         [Route("{id}")]

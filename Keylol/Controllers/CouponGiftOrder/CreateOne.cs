@@ -17,7 +17,7 @@ namespace Keylol.Controllers.CouponGiftOrder
     public partial class CouponGiftOrderController
     {
         /// <summary>
-        /// 兑换一件文券礼品
+        ///     兑换一件文券礼品
         /// </summary>
         /// <param name="giftId">礼品 ID</param>
         /// <param name="extra">用户输入的额外属性</param>
@@ -42,7 +42,7 @@ namespace Keylol.Controllers.CouponGiftOrder
             }
 
             var userId = User.Identity.GetUserId();
-            var user = await _dbContext.Users.Where(u => u.Id == userId).SingleAsync();
+            var user = await _userManager.FindByIdAsync(userId);
             if (user.Coupon - gift.Price < 0)
             {
                 ModelState.AddModelError("userId", "文券不足，无法兑换");

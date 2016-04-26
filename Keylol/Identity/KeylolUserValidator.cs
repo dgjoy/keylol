@@ -9,23 +9,23 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.Identity
 {
     /// <summary>
-    /// ASP.NET Identity UserValidator Keylol implementation
+    ///     ASP.NET Identity UserValidator Keylol implementation
     /// </summary>
     public class KeylolUserValidator : UserValidator<KeylolUser>
     {
         /// <summary>
-        /// 创建 <see cref="KeylolUserValidator"/>
+        ///     创建 <see cref="KeylolUserValidator" />
         /// </summary>
-        /// <param name="manager"><see cref="KeylolUserManager"/> 对象</param>
+        /// <param name="manager"><see cref="KeylolUserManager" /> 对象</param>
         public KeylolUserValidator(KeylolUserManager manager) : base(manager)
         {
         }
 
         /// <summary>
-        /// Validates a user before saving
+        ///     Validates a user before saving
         /// </summary>
-        /// <param name="user"/>
-        /// <returns/>
+        /// <param name="user" />
+        /// <returns />
         public override async Task<IdentityResult> ValidateAsync(KeylolUser user)
         {
             var errors = new List<string>();

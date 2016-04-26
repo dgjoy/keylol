@@ -6,7 +6,7 @@ using Keylol.Utilities;
 namespace Keylol.Controllers.SteamBot
 {
     /// <summary>
-    /// Steam 机器人 Controller
+    ///     Steam 机器人 Controller
     /// </summary>
     [Authorize]
     [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
@@ -17,10 +17,14 @@ namespace Keylol.Controllers.SteamBot
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
-        /// 创建 <see cref="SteamBotController"/>
+        ///     创建 <see cref="SteamBotController" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public SteamBotController(KeylolDbContext dbContext, KeylolUserManager userManager)
         {
             _dbContext = dbContext;

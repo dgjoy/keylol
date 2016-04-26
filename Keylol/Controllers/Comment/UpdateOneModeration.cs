@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Services;
-using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -140,7 +139,9 @@ namespace Keylol.Controllers.Comment
                 if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.IsOnline())
                 {
                     var botCoordinator = SteamBotCoordinator.Sessions[missive.Receiver.SteamBot.SessionId];
-                    await botCoordinator.Client.SendChatMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId, steamNotityText);
+                    await
+                        botCoordinator.Client.SendChatMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId,
+                            steamNotityText);
                 }
             }
             await _dbContext.SaveChangesAsync();

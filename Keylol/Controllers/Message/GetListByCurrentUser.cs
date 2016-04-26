@@ -53,20 +53,20 @@ namespace Keylol.Controllers.Message
             {
                 case MessageFilter.Like:
                     query = _dbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          m.Type >= 0 && (int) m.Type <= 99 &&
-                                                          m.SequenceNumber < beforeSn);
+                                                           m.Type >= 0 && (int) m.Type <= 99 &&
+                                                           m.SequenceNumber < beforeSn);
                     break;
 
                 case MessageFilter.Comment:
                     query = _dbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          (int) m.Type >= 100 && (int) m.Type <= 199 &&
-                                                          m.SequenceNumber < beforeSn);
+                                                           (int) m.Type >= 100 && (int) m.Type <= 199 &&
+                                                           m.SequenceNumber < beforeSn);
                     break;
 
                 case MessageFilter.Missive:
                     query = _dbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          (int) m.Type >= 200 && (int) m.Type <= 299 &&
-                                                          m.SequenceNumber < beforeSn);
+                                                           (int) m.Type >= 200 && (int) m.Type <= 299 &&
+                                                           m.SequenceNumber < beforeSn);
                     break;
 
                 case null:

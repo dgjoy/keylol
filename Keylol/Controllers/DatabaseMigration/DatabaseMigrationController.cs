@@ -1,8 +1,5 @@
-﻿using System.Threading.Tasks;
-using System.Web.Http;
-using Keylol.Models.DAL;
+﻿using System.Web.Http;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.Controllers.DatabaseMigration
 {

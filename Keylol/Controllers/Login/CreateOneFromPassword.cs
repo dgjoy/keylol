@@ -4,11 +4,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Provider;
-using Keylol.Utilities;
-using Microsoft.AspNet.Identity.Owin;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.Login

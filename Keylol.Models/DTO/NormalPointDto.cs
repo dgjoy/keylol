@@ -153,7 +153,7 @@ namespace Keylol.Models.DTO
         public bool? Subscribed { get; set; }
 
         /// <summary>
-        /// 计数，仅用于搜索
+        ///     计数，仅用于搜索
         /// </summary>
         [DataMember]
         public int? Count { get; set; }

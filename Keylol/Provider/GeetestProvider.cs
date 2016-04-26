@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Keylol.Provider
 {
     /// <summary>
-    /// 提供极验验证服务
+    ///     提供极验验证服务
     /// </summary>
     public class GeetestProvider
     {
@@ -22,7 +22,7 @@ namespace Keylol.Provider
         };
 
         /// <summary>
-        /// 验证 Challenge / Seccode / Validate 组合是否正确
+        ///     验证 Challenge / Seccode / Validate 组合是否正确
         /// </summary>
         /// <param name="challenge">Challenge</param>
         /// <param name="seccode">Seccode</param>

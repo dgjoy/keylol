@@ -8,17 +8,18 @@ using Keylol.Services.Contracts;
 namespace Keylol.Services
 {
     /// <summary>
-    /// <see cref="IImageGarageCoordinator"/> 实现
+    ///     <see cref="IImageGarageCoordinator" /> 实现
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ImageGarageCoordinator : IImageGarageCoordinator
     {
-
         /// <summary>
-        /// 获取指定 ID 的文章
+        ///     获取指定 ID 的文章
         /// </summary>
         /// <param name="id">文章 ID</param>
-        /// <returns><see cref="ArticleDto"/></returns>
+        /// <returns>
+        ///     <see cref="ArticleDto" />
+        /// </returns>
         public async Task<ArticleDto> FindArticle(string id)
         {
             using (var dbContext = new KeylolDbContext())
@@ -37,14 +38,14 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 心跳测试
+        ///     心跳测试
         /// </summary>
         public void Ping()
         {
         }
 
         /// <summary>
-        /// 更新指定文章
+        ///     更新指定文章
         /// </summary>
         /// <param name="id">文章 ID</param>
         /// <param name="content">新的内容</param>

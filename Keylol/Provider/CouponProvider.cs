@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace Keylol.Provider
 {
     /// <summary>
-    /// 提供文券操作服务
+    ///     提供文券操作服务
     /// </summary>
     public class CouponProvider
     {
@@ -20,14 +20,18 @@ namespace Keylol.Provider
         private readonly RedisProvider _redis;
         private readonly KeylolUserManager _userManager;
 
-        private static string UnreadLogsCacheKey(string userId) => $"user-unread-coupon-logs:{userId}";
-
         /// <summary>
-        /// 创建新 <see cref="CouponProvider"/>
+        ///     创建新 <see cref="CouponProvider" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="redis"><see cref="RedisProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="redis">
+        ///     <see cref="RedisProvider" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public CouponProvider(KeylolDbContext dbContext, RedisProvider redis, KeylolUserManager userManager)
         {
             _dbContext = dbContext;
@@ -35,8 +39,10 @@ namespace Keylol.Provider
             _userManager = userManager;
         }
 
+        private static string UnreadLogsCacheKey(string userId) => $"user-unread-coupon-logs:{userId}";
+
         /// <summary>
-        /// 根据文券事件更新用户的文券数量
+        ///     根据文券事件更新用户的文券数量
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <param name="event">文券事件</param>
@@ -48,7 +54,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 增减用户的文券数量
+        ///     增减用户的文券数量
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <param name="event">文券事件</param>
@@ -96,7 +102,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 判断指定用户是否有足够文券触发指定事件
+        ///     判断指定用户是否有足够文券触发指定事件
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <param name="event">文券事件</param>
@@ -108,7 +114,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 取出用户未读的文券变动记录（取出之后将从未读记录中清空）
+        ///     取出用户未读的文券变动记录（取出之后将从未读记录中清空）
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>未读的 CouponLog 列表</returns>
@@ -125,12 +131,12 @@ namespace Keylol.Provider
     }
 
     /// <summary>
-    /// CouponEvent 的一些常用扩展
+    ///     CouponEvent 的一些常用扩展
     /// </summary>
     public static class CouponEventExtensions
     {
         /// <summary>
-        /// 获取指定事件的文券变动量
+        ///     获取指定事件的文券变动量
         /// </summary>
         /// <param name="event">文券事件</param>
         /// <returns>变动量，可以为正数或者负数</returns>

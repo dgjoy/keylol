@@ -57,9 +57,11 @@ namespace Keylol.Controllers.CouponLog
         }
 
         /// <summary>
-        /// 解析各种类型的 Description
+        ///     解析各种类型的 Description
         /// </summary>
-        /// <param name="dto"><see cref="CouponLogDto"/></param>
+        /// <param name="dto">
+        ///     <see cref="CouponLogDto" />
+        /// </param>
         private async Task ParseDescription(CouponLogDto dto)
         {
             try
@@ -103,7 +105,7 @@ namespace Keylol.Controllers.CouponLog
                 if (dto.Description.OperatorId != null)
                 {
                     var operatorId = (string) dto.Description.OperatorId;
-                    var user = await _dbContext.Users.Where(u => u.Id == operatorId).SingleOrDefaultAsync();
+                    var user = await _userManager.FindByIdAsync(operatorId);
                     if (user != null)
                     {
                         ((JObject) dto.Description).Remove("OperatorId");
@@ -118,7 +120,7 @@ namespace Keylol.Controllers.CouponLog
                 if (dto.Description.UserId != null)
                 {
                     var targetUserId = (string) dto.Description.UserId;
-                    var user = await _dbContext.Users.Where(u => u.Id == targetUserId).SingleOrDefaultAsync();
+                    var user = await _userManager.FindByIdAsync(targetUserId);
                     if (user != null)
                     {
                         ((JObject) dto.Description).Remove("UserId");
@@ -133,7 +135,7 @@ namespace Keylol.Controllers.CouponLog
                 if (dto.Description.InviterId != null)
                 {
                     var inviterId = (string) dto.Description.InviterId;
-                    var user = await _dbContext.Users.Where(u => u.Id == inviterId).SingleOrDefaultAsync();
+                    var user = await _userManager.FindByIdAsync(inviterId);
                     if (user != null)
                     {
                         ((JObject) dto.Description).Remove("InviterId");

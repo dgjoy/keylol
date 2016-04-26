@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Keylol.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
+﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol.Identity
 {
     /// <summary>
-    /// OAuth bearer authentication provider Keylol implementation
+    ///     OAuth bearer authentication provider Keylol implementation
     /// </summary>
     public class KeylolOAuthBearerAuthenticationProvider : OAuthBearerAuthenticationProvider
     {
         /// <summary>
-        /// 创建 <see cref="KeylolOAuthBearerAuthenticationProvider"/>
+        ///     创建 <see cref="KeylolOAuthBearerAuthenticationProvider" />
         /// </summary>
         public KeylolOAuthBearerAuthenticationProvider()
         {

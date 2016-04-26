@@ -49,15 +49,15 @@ namespace Keylol.Controllers.User
             switch (idType)
             {
                 case UserIdentityType.UserName:
-                    user = await _dbContext.Users.SingleOrDefaultAsync(u => u.UserName == id);
+                    user = await _userManager.FindByNameAsync(id);
                     break;
 
                 case UserIdentityType.IdCode:
-                    user = await _dbContext.Users.SingleOrDefaultAsync(u => u.IdCode == id);
+                    user = await _userManager.FindByIdCodeAsync(id);
                     break;
 
                 case UserIdentityType.Id:
-                    user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id);
+                    user = await _userManager.FindByIdAsync(id);
                     break;
 
                 default:
@@ -194,13 +194,13 @@ namespace Keylol.Controllers.User
                 userDto.MessageCount = string.Join(",", new[]
                 {
                     await _dbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
-                                                        m.Type >= 0 && (int) m.Type <= 99)
+                                                         m.Type >= 0 && (int) m.Type <= 99)
                         .CountAsync(),
                     await _dbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
-                                                        (int) m.Type >= 100 && (int) m.Type <= 199)
+                                                         (int) m.Type >= 100 && (int) m.Type <= 199)
                         .CountAsync(),
                     await _dbContext.Messages.Where(m => m.ReceiverId == user.Id && m.Unread &&
-                                                        (int) m.Type >= 200 && (int) m.Type <= 299)
+                                                         (int) m.Type >= 200 && (int) m.Type <= 299)
                         .CountAsync()
                 });
             }

@@ -252,7 +252,7 @@ namespace Keylol.Models.DTO
     }
 
     /// <summary>
-    ///    用户身份类型
+    ///     用户身份类型
     /// </summary>
     [DataContract]
     public enum UserIdentityType
@@ -273,7 +273,7 @@ namespace Keylol.Models.DTO
         [EnumMember] UserName,
 
         /// <summary>
-        /// Steam ID
+        ///     Steam ID
         /// </summary>
         [EnumMember] SteamId
     }

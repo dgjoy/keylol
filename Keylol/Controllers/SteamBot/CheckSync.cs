@@ -11,7 +11,7 @@ namespace Keylol.Controllers.SteamBot
     public partial class SteamBotController
     {
         /// <summary>
-        /// 检查机器人好友列表和数据库暂准状态是否同步，返回不同步的用户列表
+        ///     检查机器人好友列表和数据库暂准状态是否同步，返回不同步的用户列表
         /// </summary>
         /// <param name="tryFix">是否尝试修复，默认 false</param>
         /// <returns></returns>
