@@ -17,6 +17,9 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Diagnostics;
+using Microsoft.Owin.Extensions;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -99,13 +102,21 @@ namespace Keylol
                 }
             });
 
-            // OAuth 认证
-            app.UseOAuthBearerTokens(new OAuthAuthorizationServerOptions
+            // OAuth 认证服务器
+            app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(7),
+                AuthenticationMode = AuthenticationMode.Passive,
                 TokenEndpointPath = new PathString("/oauth/token"),
                 AuthorizeEndpointPath = new PathString("/oauth/authorization"),
                 Provider = new KeylolOAuthAuthorizationServerProvider()
             });
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+            {
+                Provider = new KeylolOAuthBearerAuthenticationProvider()
+            });
+
+            app.UseStageMarker(PipelineStage.Authenticate);
 
             // SignalR
             app.MapSignalR();

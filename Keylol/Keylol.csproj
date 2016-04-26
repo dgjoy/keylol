@@ -18,7 +18,7 @@
     <AssemblyName>Keylol</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -53,10 +53,6 @@
   <ItemGroup>
     <Reference Include="CsQuery, Version=1.3.3.249, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DevTrends.WCFDataAnnotations, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WCFDataAnnotations.1.1.0\lib\net40\DevTrends.WCFDataAnnotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -296,7 +292,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Identity\KeylolClaimTypes.cs" />
     <Compile Include="Identity\KeylolUserManager.cs" />
+    <Compile Include="Identity\KeylolUserValidator.cs" />
+    <Compile Include="Identity\MessageServices\KeylolSmsService.cs" />
+    <Compile Include="Identity\KeylolOAuthBearerAuthenticationProvider.cs" />
+    <Compile Include="Identity\MessageServices\KeylolSteamChatMessageService.cs" />
     <Compile Include="Provider\CouponProvider.cs" />
     <Compile Include="Provider\OwinContextProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
@@ -313,7 +314,7 @@
     <Compile Include="Utilities\Attributes.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Identity\IdentityConfig.cs" />
+    <Compile Include="Identity\MessageServices\KeylolEmailService.cs" />
     <Compile Include="Controllers\Like\LikeController.cs" />
     <Compile Include="Controllers\NormalPoint\NormalPointController.cs" />
     <Compile Include="Controllers\Comment\CommentController.cs" />

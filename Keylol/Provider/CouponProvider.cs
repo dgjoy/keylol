@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
@@ -17,6 +18,7 @@ namespace Keylol.Provider
     {
         private readonly KeylolDbContext _dbContext;
         private readonly RedisProvider _redis;
+        private readonly KeylolUserManager _userManager;
 
         private static string UnreadLogsCacheKey(string userId) => $"user-unread-coupon-logs:{userId}";
 
@@ -25,10 +27,12 @@ namespace Keylol.Provider
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="redis"><see cref="RedisProvider"/></param>
-        public CouponProvider(KeylolDbContext dbContext, RedisProvider redis)
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        public CouponProvider(KeylolDbContext dbContext, RedisProvider redis, KeylolUserManager userManager)
         {
             _dbContext = dbContext;
             _redis = redis;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -54,7 +58,7 @@ namespace Keylol.Provider
         public async Task Update(string userId, CouponEvent @event, int change, object description = null,
             DateTime? logTime = null)
         {
-            var user = _dbContext.Users.Find(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new ArgumentException("指定用户不存在", nameof(userId));
             var log = new CouponLog
@@ -97,9 +101,9 @@ namespace Keylol.Provider
         /// <param name="userId">用户 ID</param>
         /// <param name="event">文券事件</param>
         /// <returns>可以触发指定事件返回 true，不能则返回 false</returns>
-        public bool CanTriggerEvent(string userId, CouponEvent @event)
+        public async Task<bool> CanTriggerEvent(string userId, CouponEvent @event)
         {
-            var user = _dbContext.Users.Find(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             return user.Coupon + @event.ToCouponChange() >= 0;
         }
 

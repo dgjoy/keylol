@@ -50,11 +50,9 @@ namespace Keylol.Utilities
                 var code = (int) str[i];
                 if (code <= 0xff) s++;
                 else if (code > 0xff && code <= 0xffff) s += 2;
-                if (code >= 0xDC00 && code <= 0xDFFF)
-                {
-                    i--;
-                    s++;
-                }
+                if (code < 0xDC00 || code > 0xDFFF) continue;
+                i--;
+                s++;
             }
             return s;
         }

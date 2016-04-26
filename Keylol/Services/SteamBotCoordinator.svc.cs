@@ -137,11 +137,23 @@ namespace Keylol.Services
                     var botCount = await dbContext.SteamBots.CountAsync(b => b.Enabled);
                     var averageCount = botCount/Sessions.Count;
                     var lastCount = botCount - averageCount*(Sessions.Count - 1);
+
+                    Func<List<string>, KeylolDbContext, Task> prepareDeallocatedBots = async (botIds, db) =>
+                    {
+                        var deallocatedBots = await db.SteamBots.Where(b => botIds.Contains(b.Id)).ToListAsync();
+                        foreach (var bot in deallocatedBots)
+                        {
+                            bot.SessionId = null;
+                        }
+                        await db.SaveChangesAsync();
+                    };
+
                     foreach (var session in Sessions.Values.Where(s => s != newSession))
                     {
-                        await session.Client.RequestReallocateBots(averageCount);
+                        await
+                            prepareDeallocatedBots(await session.Client.RequestReallocateBots(averageCount), dbContext);
                     }
-                    await newSession.Client.RequestReallocateBots(lastCount);
+                    await prepareDeallocatedBots(await newSession.Client.RequestReallocateBots(lastCount), dbContext);
                 }
             }
             catch (Exception)

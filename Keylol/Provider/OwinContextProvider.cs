@@ -20,18 +20,15 @@ namespace Keylol.Provider
             get
             {
                 var context = (IOwinContext) CallContext.LogicalGetData("IOwinContext");
-                if (context == null)
+                if (context != null) return context;
+                try
                 {
-                    try
-                    {
-                        context = HttpContext.Current.Request.GetOwinContext();
-                    }
-                    catch (Exception)
-                    {
-                        return null;
-                    }
+                    return HttpContext.Current.Request.GetOwinContext();
                 }
-                return context;
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
     }

@@ -2,6 +2,16 @@
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
   <xs:import schemaLocation="https://localhost:44300/Services/SteamBotCoordinator.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:element name="Ping">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PingResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
   <xs:element name="RequestBots">
     <xs:complexType>
       <xs:sequence />
@@ -89,16 +99,6 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Ping">
-    <xs:complexType>
-      <xs:sequence />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="PingResponse">
-    <xs:complexType>
-      <xs:sequence />
-    </xs:complexType>
-  </xs:element>
   <xs:element name="GetAllocatedBots">
     <xs:complexType>
       <xs:sequence />
@@ -120,7 +120,9 @@
   </xs:element>
   <xs:element name="RequestReallocateBotsResponse">
     <xs:complexType>
-      <xs:sequence />
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="RequestReallocateBotsResult" nillable="true" type="q3:ArrayOfstring" />
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="StopBot">
@@ -203,7 +205,7 @@
   <xs:element name="GetFriendListResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetFriendListResult" nillable="true" type="q3:ArrayOfstring" />
+        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetFriendListResult" nillable="true" type="q4:ArrayOfstring" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

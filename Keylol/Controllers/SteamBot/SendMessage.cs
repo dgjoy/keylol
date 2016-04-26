@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Web.Http;
-using Keylol.Controllers.User;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Services;
-using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.SteamBot
@@ -42,19 +38,19 @@ namespace Keylol.Controllers.SteamBot
                 switch (idType)
                 {
                     case UserIdentityType.UserName:
-                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.UserName == userId);
+                        user = await _userManager.FindByNameAsync(userId);
                         break;
 
                     case UserIdentityType.IdCode:
-                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.IdCode == userId);
+                        user = await _userManager.FindByIdCodeAsync(userId);
                         break;
 
                     case UserIdentityType.Id:
-                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+                        user = await _userManager.FindByIdAsync(userId);
                         break;
 
                     case UserIdentityType.SteamId:
-                        user = await _dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == userId);
+                        user = await _userManager.FindBySteamIdAsync(userId);
                         break;
 
                     default:
@@ -64,39 +60,7 @@ namespace Keylol.Controllers.SteamBot
                 if (user == null)
                     return NotFound();
 
-                if (user.SteamBot.IsOnline())
-                {
-                    if (tempSilence)
-                    {
-                        if (SteamBotCoordinator.AutoChatDisabledBots.ContainsKey(user.SteamBotId))
-                        {
-                            var timer = SteamBotCoordinator.AutoChatDisabledBots[user.SteamBotId];
-                            timer.Stop();
-                            timer.Start();
-                        }
-                        else
-                        {
-                            var timer = new Timer(120000) {AutoReset = false};
-                            timer.Elapsed +=
-                                (sender, args) =>
-                                {
-                                    SteamBotCoordinator.AutoChatDisabledBots.TryRemove(user.SteamBotId, out timer);
-                                };
-                            timer.Start();
-                            SteamBotCoordinator.AutoChatDisabledBots[user.SteamBotId] = timer;
-                        }
-                    }
-                    else if (SteamBotCoordinator.AutoChatDisabledBots.ContainsKey(user.SteamBotId))
-                    {
-                        Timer timer;
-                        if (SteamBotCoordinator.AutoChatDisabledBots.TryRemove(user.SteamBotId, out timer))
-                        {
-                            timer.Stop();
-                        }
-                    }
-                    await SteamBotCoordinator.Sessions[user.SteamBot.SessionId]
-                        .Client.SendChatMessage(user.SteamBotId, user.SteamId, message, true);
-                }
+                await _userManager.SendSteamChatMessageAsync(user, message, tempSilence);
             }
             return Ok();
         }

@@ -41,7 +41,7 @@ namespace Keylol.Controllers.Like
 
             var operatorId = User.Identity.GetUserId();
             var @operator = await _dbContext.Users.SingleAsync(u => u.Id == operatorId);
-            if (@operator.FreeLike <= 0 && !_coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
+            if (@operator.FreeLike <= 0 && !await _coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
                 return Unauthorized();
 
             Models.Like like;

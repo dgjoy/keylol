@@ -101,8 +101,9 @@ namespace Keylol.Services.Contracts
         /// 要求重新为客户端分配指定数量的机器人
         /// </summary>
         /// <param name="count">机器人数量</param>
+        /// <returns>如果目标分配数量小于当前已经分配的机器人数量，则返回被停止的机器人 ID 列表</returns>
         [OperationContract]
-        Task RequestReallocateBots(int count);
+        Task<List<string>> RequestReallocateBots(int count);
 
         /// <summary>
         /// 要求客户端停止指定机器人实例

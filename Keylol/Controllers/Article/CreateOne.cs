@@ -44,7 +44,7 @@ namespace Keylol.Controllers.Article
             article.Type = requestDto.TypeName.ToEnum<ArticleType>();
             var userId = User.Identity.GetUserId();
             var couponEvent = article.Type == ArticleType.简评 ? CouponEvent.发布简评 : CouponEvent.发布文章;
-            if (!_coupon.CanTriggerEvent(userId, couponEvent))
+            if (!await _coupon.CanTriggerEvent(userId, couponEvent))
                 return Unauthorized();
 
             if (article.Type.AllowVote())

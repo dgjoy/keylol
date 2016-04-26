@@ -1,45 +1,31 @@
-锘縰sing System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Keylol.Models;
-using Keylol.Models.DAL;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol.Identity
 {
-    public class EmailService : IIdentityMessageService
-    {
-        public Task SendAsync(IdentityMessage message)
-        {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
-        }
-    }
-
-    public class SmsService : IIdentityMessageService
-    {
-        public Task SendAsync(IdentityMessage message)
-        {
-            // Plug in your SMS service here to send a text message.
-            return Task.FromResult(0);
-        }
-    }
-
+    /// <summary>
+    /// ASP.NET Identity UserValidator Keylol implementation
+    /// </summary>
     public class KeylolUserValidator : UserValidator<KeylolUser>
     {
-        public KeylolUserValidator(UserManager<KeylolUser, string> manager) : base(manager)
+        /// <summary>
+        /// 创建 <see cref="KeylolUserValidator"/>
+        /// </summary>
+        /// <param name="manager"><see cref="KeylolUserManager"/> 对象</param>
+        public KeylolUserValidator(KeylolUserManager manager) : base(manager)
         {
         }
 
+        /// <summary>
+        /// Validates a user before saving
+        /// </summary>
+        /// <param name="user"/>
+        /// <returns/>
         public override async Task<IdentityResult> ValidateAsync(KeylolUser user)
         {
             var errors = new List<string>();

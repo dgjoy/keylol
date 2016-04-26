@@ -30,10 +30,11 @@ namespace Keylol.SteamBot
             return SteamBot.BotInstances?.Select(b => b.Id).ToArray();
         }
 
-        public void RequestReallocateBots(int count)
+        public string[] RequestReallocateBots(int count)
         {
             _logger.Info($"Received new allocation target: {count} bot(s).");
             if (SteamBot.BotInstances == null) SteamBot.BotInstances = new List<BotInstance>(count);
+
             if (SteamBot.BotInstances.Count < count)
             {
                 var botInfos = SteamBot.Coordinator.Operations.AllocateBots(count - SteamBot.BotInstances.Count);
@@ -52,8 +53,10 @@ namespace Keylol.SteamBot
                 {
                     botInstance.Start();
                 }
+                return null;
             }
-            else if (SteamBot.BotInstances.Count > count)
+
+            if (SteamBot.BotInstances.Count > count)
             {
                 var deallocCount = SteamBot.BotInstances.Count - count;
                 var botToDealloc = SteamBot.BotInstances.Take(deallocCount).ToList();
@@ -62,7 +65,10 @@ namespace Keylol.SteamBot
                 {
                     botInstance.Dispose();
                 }
+                return botToDealloc.Select(b => b.Id).ToArray();
             }
+
+            return null;
         }
 
         public void StopBot(string botId)
