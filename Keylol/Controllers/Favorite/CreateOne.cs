@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -23,11 +24,10 @@ namespace Keylol.Controllers.Favorite
         {
             var userId = User.Identity.GetUserId();
             var count = await _dbContext.Favorites.Where(f => f.UserId == userId).CountAsync();
+
             if (count >= FavoriteSize)
-            {
-                ModelState.AddModelError("pointId", "收藏夹已满。");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(pointId), Errors.TooMany);
+
             var favorite = _dbContext.Favorites.Create();
             favorite.UserId = userId;
             favorite.PointId = pointId;

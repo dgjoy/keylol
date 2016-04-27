@@ -18,7 +18,6 @@ namespace Keylol.Controllers.Like
         /// <param name="type">认可类型</param>
         [Route]
         [HttpDelete]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.NotFound, "当前用户并没有对指定的文章或评论发出过认可")]
         public async Task<IHttpActionResult> DeleteOneById(string targetId, LikeType type)
         {

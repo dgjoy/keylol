@@ -10,13 +10,13 @@ using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Services;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
 using SteamKit2;
 using Swashbuckle.Swagger.Annotations;
-using Extensions = Keylol.Utilities.Extensions;
 
 namespace Keylol.Controllers.UserGameRecord
 {
@@ -98,7 +98,7 @@ namespace Keylol.Controllers.UserGameRecord
 
                             if (game["last_played"] != null)
                                 record.LastPlayTime =
-                                    Extensions.DateTimeFromUnixTimeStamp((int) game["last_played"]);
+                                    Helpers.DateTimeFromTimeStamp((int) game["last_played"]);
                         }
                         await _dbContext.SaveChangesAsync();
                         var gameEntries = await _dbContext.UserGameRecords

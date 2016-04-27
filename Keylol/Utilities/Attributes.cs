@@ -22,7 +22,7 @@ namespace Keylol.Utilities
         public override Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
             var principal = actionContext.RequestContext.Principal as ClaimsPrincipal;
-            
+
             if (principal == null || !principal.Identity.IsAuthenticated)
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);

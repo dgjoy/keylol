@@ -1,12 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
@@ -24,59 +25,18 @@ namespace Keylol.Controllers.User
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> CreateOne(UserCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] UserCreateOneRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
+            if (!await _geetest.ValidateAsync(requestDto.GeetestChallenge,
+                requestDto.GeetestSeccode,
+                requestDto.GeetestValidate))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.GeetestSeccode), Errors.Invalid);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (
-                !await
-                    _geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
-                        requestDto.GeetestValidate))
-            {
-                ModelState.AddModelError("authCode", "true");
-                return BadRequest(ModelState);
-            }
             var steamBindingToken = await _dbContext.SteamBindingTokens.FindAsync(requestDto.SteamBindingTokenId);
-            if (steamBindingToken == null)
-            {
-                ModelState.AddModelError("vm.SteamBindingTokenId", "Invalid steam binding token.");
-                return BadRequest(ModelState);
-            }
-            if (await _userManager.FindBySteamIdAsync(steamBindingToken.SteamId) != null)
-            {
-                ModelState.AddModelError("vm.SteamBindingTokenId",
-                    "Steam account has been binded to another Keylol account.");
-                return BadRequest(ModelState);
-            }
-            if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
-            {
-                ModelState.AddModelError("vm.IdCode", "Only 5 uppercase letters and digits are allowed in IdCode.");
-                return BadRequest(ModelState);
-            }
 
-            if (await _userManager.FindByIdCodeAsync(requestDto.IdCode) != null ||
-                !IsIdCodeLegit(requestDto.IdCode))
-            {
-                ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
-                return BadRequest(ModelState);
-            }
-            if (await _userManager.FindByNameAsync(requestDto.UserName) != null)
-            {
-                ModelState.AddModelError("vm.UserName", "UserName is already used by others.");
-                return BadRequest(ModelState);
-            }
-            if (!requestDto.AvatarImage.IsTrustedUrl())
-            {
-                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
+            if (steamBindingToken == null)
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId), Errors.Invalid);
+
             var user = new KeylolUser
             {
                 IdCode = requestDto.IdCode,
@@ -92,20 +52,45 @@ namespace Keylol.Controllers.User
             var result = await _userManager.CreateAsync(user, requestDto.Password);
             if (!result.Succeeded)
             {
-                foreach (var error in result.Errors)
+                var error = result.Errors.First();
+                string propertyName;
+                switch (error)
                 {
-                    if (error.Contains("UserName"))
-                        ModelState.AddModelError("vm.UserName", error);
-                    else if (error.Contains("Password"))
-                        ModelState.AddModelError("vm.Password", error);
+                    case Errors.InvalidIdCode:
+                    case Errors.IdCodeUsed:
+                        propertyName = nameof(requestDto.IdCode);
+                        break;
+
+                    case Errors.UserNameInvalidLength:
+                    case Errors.UserNameInvalidCharacter:
+                    case Errors.UserNameUsed:
+                        propertyName = nameof(requestDto.UserName);
+                        break;
+
+                    case Errors.AvatarImageUntrusted:
+                        propertyName = nameof(requestDto.AvatarImage);
+                        break;
+
+                    case Errors.SteamAccountBound:
+                        propertyName = nameof(requestDto.SteamBindingTokenId);
+                        break;
+
+                    case Errors.PasswordAllWhitespace:
+                    case Errors.PasswordTooShort:
+                        propertyName = nameof(requestDto.Password);
+                        break;
+
+                    default:
+                        propertyName = nameof(requestDto.GeetestSeccode);
+                        break;
                 }
-                return BadRequest(ModelState);
+                return this.BadRequest(nameof(requestDto), propertyName, error);
             }
 
             _dbContext.SteamBindingTokens.Remove(steamBindingToken);
             await _dbContext.SaveChangesAsync();
 
-            await _coupon.Update(user.Id, CouponEvent.新注册);
+            await _coupon.Update(user, CouponEvent.新注册);
 
             // 邀请人
             if (requestDto.Inviter != null)
@@ -114,57 +99,16 @@ namespace Keylol.Controllers.User
                 var inviter = await _userManager.FindByIdCodeAsync(inviterIdCode);
                 if (inviter != null)
                 {
-                    await _dbContext.Entry(user).ReloadAsync();
                     user.InviterId = inviter.Id;
                     await _dbContext.SaveChangesAsync();
-                    await _coupon.Update(inviter.Id, CouponEvent.邀请注册, new {UserId = user.Id});
-                    await _coupon.Update(user.Id, CouponEvent.应邀注册, new {InviterId = user.Id});
+                    await _coupon.Update(inviter, CouponEvent.邀请注册, new {UserId = user.Id});
+                    await _coupon.Update(user, CouponEvent.应邀注册, new {InviterId = user.Id});
                 }
             }
 
-            // Auto login
-//            await SignInManager.SignInAsync(user, true, true);
-            var loginLog = new LoginLog
-            {
-                Ip = _owinContext.Request.RemoteIpAddress,
-                UserId = user.Id
-            };
-            _dbContext.LoginLogs.Add(loginLog);
-            await _dbContext.SaveChangesAsync();
-
-            return Created($"user/{user.Id}", new LoginLogDto(loginLog));
+            return Created($"user/{user.Id}", _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1)));
         }
 
-        private static bool IsIdCodeLegit(string idCode)
-        {
-            if (new[]
-            {
-                @"^([A-Z0-9])\1{4}$",
-                @"^0000\d$",
-                @"^\d0000$",
-                @"^TEST.$",
-                @"^.TEST$"
-            }.Any(pattern => Regex.IsMatch(idCode, pattern)))
-                return false;
-
-            if (new[]
-            {
-                "12345",
-                "54321",
-                "ADMIN",
-                "STAFF",
-                "KEYLO",
-                "KYLOL",
-                "KEYLL",
-                "VALVE",
-                "STEAM",
-                "CHINA",
-                "JAPAN"
-            }.Contains(idCode))
-                return false;
-
-            return true;
-        }
 
         /// <summary>
         ///     请求 DTO

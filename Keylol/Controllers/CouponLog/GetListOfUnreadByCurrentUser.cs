@@ -20,7 +20,7 @@ namespace Keylol.Controllers.CouponLog
         {
             var userId = User.Identity.GetUserId();
             var logs =
-                (await _coupon.PopUnreadCouponLogs(userId)).Select((dto, i) => new {Order = i, Log = dto}).ToList();
+                (await _coupon.GetUnreadCouponLogs(userId)).Select((dto, i) => new {Order = i, Log = dto}).ToList();
             var result = new List<CouponLogDto>();
             var first = logs.FirstOrDefault();
             var balance = first?.Log.Balance - first?.Log.Change ?? 0;

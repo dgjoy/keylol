@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.ServiceBase;
@@ -27,17 +28,8 @@ namespace Keylol.Controllers.Article
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> UpdateOne(string id, ArticleCreateOrUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var article = await _dbContext.Articles.Include(a => a.AttachedPoints).SingleOrDefaultAsync(a => a.Id == id);
             if (article == null)
                 return NotFound();
@@ -55,10 +47,8 @@ namespace Keylol.Controllers.Article
             if (article.Type.AllowVote())
             {
                 if (requestDto.VoteForPointId == null)
-                {
-                    ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.Required);
+
                 var voteForPoint = await _dbContext.NormalPoints
                     .Include(p => p.DeveloperPoints)
                     .Include(p => p.PublisherPoints)
@@ -67,15 +57,11 @@ namespace Keylol.Controllers.Article
                     .Include(p => p.TagPoints)
                     .SingleOrDefaultAsync(p => p.Id == requestDto.VoteForPointId);
                 if (voteForPoint == null)
-                {
-                    ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.NonExistent);
+
                 if (voteForPoint.Type != NormalPointType.Game)
-                {
-                    ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.Invalid);
+
                 article.VoteForPointId = voteForPoint.Id;
                 article.Vote = requestDto.Vote > 5 ? 5 : (requestDto.Vote < 1 ? 1 : requestDto.Vote);
 
@@ -102,15 +88,11 @@ namespace Keylol.Controllers.Article
                 article.Cons = string.Empty;
 
                 if (requestDto.AttachedPointsId == null)
-                {
-                    ModelState.AddModelError("vm.AttachedPointsId", "非评价类文章必须手动推送据点");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.AttachedPointsId), Errors.Required);
+
                 if (requestDto.AttachedPointsId.Count > 50)
-                {
-                    ModelState.AddModelError("vm.AttachedPointsId", "推送据点数量太多");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.AttachedPointsId), Errors.TooMany);
+
                 article.AttachedPoints = await _dbContext.NormalPoints
                     .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(requestDto.AttachedPointsId,
                         point => point.Id)).ToListAsync();
@@ -135,10 +117,8 @@ namespace Keylol.Controllers.Article
             if (article.Type == ArticleType.简评)
             {
                 if (requestDto.Content.Length > 99)
-                {
-                    ModelState.AddModelError("vm.Content", "简评内容最多 99 字符");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Content), Errors.TooMany);
+
                 article.UnstyledContent = article.Content;
                 article.ThumbnailImage = string.Empty;
             }

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
+using Helpers = Keylol.ServiceBase.Helpers;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -27,17 +28,8 @@ namespace Keylol.Controllers.NormalPoint
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> CreateOneManually(
-            NormalPointCreateOrUpdateOneRequestDto requestDto)
+            [NotNull] NormalPointCreateOrUpdateOneRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (requestDto.IdCode == null ||
                 !Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
             {
@@ -69,13 +61,13 @@ namespace Keylol.Controllers.NormalPoint
                 return BadRequest(ModelState);
             }
 
-            if (!requestDto.BackgroundImage.IsTrustedUrl())
+            if (!Helpers.IsTrustedUrl(requestDto.BackgroundImage))
             {
                 ModelState.AddModelError("vm.BackgroundImage", "不允许使用可不信图片来源");
                 return BadRequest(ModelState);
             }
 
-            if (!requestDto.AvatarImage.IsTrustedUrl())
+            if (!Helpers.IsTrustedUrl(requestDto.AvatarImage))
             {
                 ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
                 return BadRequest(ModelState);

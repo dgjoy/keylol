@@ -8,7 +8,7 @@ namespace Keylol.ServiceBase
     /// <summary>
     ///     一些常用的方法扩展
     /// </summary>
-    public static class CommonExtensions
+    public static class Extensions
     {
         /// <summary>
         ///     向指定队列发送 JSON 序列化后的对象

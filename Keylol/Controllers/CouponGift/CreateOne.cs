@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 using Newtonsoft.Json;
@@ -22,17 +22,8 @@ namespace Keylol.Controllers.CouponGift
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CouponGiftDto))]
-        public async Task<IHttpActionResult> CreateOne(CouponGiftCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] CouponGiftCreateOneRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError(nameof(requestDto), "Invalid request DTO.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var gift = _dbContext.CouponGifts.Create();
             gift.Name = requestDto.Name;
             gift.Descriptions = JsonConvert.SerializeObject(requestDto.Descriptions);

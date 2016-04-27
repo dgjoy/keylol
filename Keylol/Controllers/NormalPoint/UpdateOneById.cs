@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -46,13 +47,13 @@ namespace Keylol.Controllers.NormalPoint
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!requestDto.BackgroundImage.IsTrustedUrl())
+            if (!Helpers.IsTrustedUrl(requestDto.BackgroundImage))
             {
                 ModelState.AddModelError("vm.BackgroundImage", "不允许使用可不信图片来源");
                 return BadRequest(ModelState);
             }
 
-            if (!requestDto.AvatarImage.IsTrustedUrl())
+            if (!Helpers.IsTrustedUrl(requestDto.AvatarImage))
             {
                 ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
                 return BadRequest(ModelState);

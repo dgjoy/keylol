@@ -26,7 +26,7 @@ namespace Keylol.Controllers.CouponLog
         [Route]
         [HttpGet]
         [ResponseType(typeof (List<CouponLogDto>))]
-        public async Task<HttpResponseMessage> GetListByCurrentUser(int skip = 0, int take = 30)
+        public async Task<IHttpActionResult> GetListByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
             var userId = User.Identity.GetUserId();
@@ -53,7 +53,7 @@ namespace Keylol.Controllers.CouponLog
             var response = Request.CreateResponse(HttpStatusCode.OK, result);
             var totalCount = await _dbContext.CouponLogs.CountAsync(cl => cl.UserId == userId);
             response.Headers.SetTotalCount(totalCount);
-            return response;
+            return ResponseMessage(response);
         }
 
         /// <summary>

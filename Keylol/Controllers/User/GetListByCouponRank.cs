@@ -19,7 +19,7 @@ namespace Keylol.Controllers.User
         /// <param name="take">获取数量，默认 20</param>
         [Route("coupon-rank")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetListByCouponRank(int skip = 0, int take = 20)
+        public async Task<IHttpActionResult> GetListByCouponRank(int skip = 0, int take = 20)
         {
             var userId = User.Identity.GetUserId();
             var topUsers = await _dbContext.Users.OrderByDescending(u => u.Coupon).Take(() => 100).ToListAsync();
@@ -36,7 +36,7 @@ namespace Keylol.Controllers.User
             }
             var response = Request.CreateResponse(HttpStatusCode.OK, result);
             response.Headers.Add("X-My-Rank", myRank.ToString());
-            return response;
+            return ResponseMessage(response);
         }
     }
 }

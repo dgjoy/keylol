@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -34,26 +35,15 @@ namespace Keylol.Controllers.CouponGiftOrder
                 return NotFound();
 
             if (DateTime.Now >= gift.EndTime)
-            {
-                {
-                    ModelState.AddModelError(nameof(giftId), "礼品已经下架，无法兑换");
-                    return BadRequest(ModelState);
-                }
-            }
+                return this.BadRequest(nameof(giftId), Errors.GiftOffTheMarket);
 
             var userId = User.Identity.GetUserId();
             var user = await _userManager.FindByIdAsync(userId);
-            if (user.Coupon - gift.Price < 0)
-            {
-                ModelState.AddModelError("userId", "文券不足，无法兑换");
-                return BadRequest(ModelState);
-            }
+            if (user.Coupon < gift.Price)
+                return this.BadRequest(nameof(giftId), Errors.NotEnoughCoupon);
 
             if (await _dbContext.CouponGiftOrders.Where(o => o.UserId == userId && o.GiftId == giftId).AnyAsync())
-            {
-                ModelState.AddModelError("userId", "已经兑换过这个礼品，无法重复兑换");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(giftId), Errors.GiftOwned);
 
             var order = _dbContext.CouponGiftOrders.Create();
             order.UserId = userId;
@@ -63,16 +53,14 @@ namespace Keylol.Controllers.CouponGiftOrder
             foreach (var field in acceptedFields)
             {
                 if (extra[field.Id] == null)
-                {
-                    ModelState.AddModelError(nameof(extra), "缺失必要的额外输入属性");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(extra), nameof(field.Id), Errors.Required);
+
                 sanitizedExtra[field.Id] = extra[field.Id];
             }
             order.Extra = JsonConvert.SerializeObject(sanitizedExtra);
             _dbContext.CouponGiftOrders.Add(order);
             await _dbContext.SaveChangesAsync();
-            await _coupon.Update(userId, CouponEvent.兑换商品, -gift.Price, new {CouponGiftId = giftId});
+            await _coupon.Update(user, CouponEvent.兑换商品, -gift.Price, new {CouponGiftId = giftId});
             return Created($"coupon-gift-order/{order.Id}", string.Empty);
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Services;
 using Keylol.Utilities;
@@ -24,17 +25,8 @@ namespace Keylol.Controllers.Comment
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权操作这个评论")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> UpdoteOneModeration(string id,
-            CommentUpdateOneModerationRequestDto requestDto)
+            [NotNull] CommentUpdateOneModerationRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("requestDto", "Invalid request DTO.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var comment = await _dbContext.Comments.FindAsync(id);
             if (comment == null)
                 return NotFound();
@@ -61,10 +53,8 @@ namespace Keylol.Controllers.Comment
             if (requestDto.Property == CommentUpdateOneModerationRequestDto.CommentProperty.Archived)
             {
                 if (comment.Archived != ArchivedState.None == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "评论已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+
                 if (operatorStaffClaim == StaffClaim.Operator)
                 {
                     comment.Archived = requestDto.Value ? ArchivedState.Operator : ArchivedState.None;
@@ -79,10 +69,8 @@ namespace Keylol.Controllers.Comment
             else
             {
                 if ((bool) propertyInfo.GetValue(comment) == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "评论已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+
                 propertyInfo.SetValue(comment, requestDto.Value);
             }
             if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
@@ -136,13 +124,9 @@ namespace Keylol.Controllers.Comment
                 _dbContext.Messages.Add(missive);
 
                 // Steam 通知
-                if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.IsOnline())
-                {
-                    var botCoordinator = SteamBotCoordinator.Sessions[missive.Receiver.SteamBot.SessionId];
-                    await
-                        botCoordinator.Client.SendChatMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId,
-                            steamNotityText);
-                }
+
+                if (!string.IsNullOrEmpty(steamNotityText))
+                    await _userManager.SendSteamChatMessageAsync(missive.Receiver, steamNotityText);
             }
             await _dbContext.SaveChangesAsync();
             return Ok();

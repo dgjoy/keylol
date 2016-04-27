@@ -4,6 +4,9 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.ModelBinding;
+using System.Web.Http.Results;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Services;
@@ -12,61 +15,18 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.Utilities
 {
     /// <summary>
-    ///     一些常用扩展方法
+    ///     一些常用对象扩展
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        ///     从 Unix 时间戳创建 DateTime 对象
-        /// </summary>
-        /// <param name="unixTimeStamp">Unix 时间戳</param>
-        /// <returns>创建的 DateTime 对象</returns>
-        public static DateTime DateTimeFromUnixTimeStamp(double unixTimeStamp)
-        {
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
-        /// <summary>
-        ///     转换为 Unix 时间戳形式
+        ///     转换为 Unix 时间戳（秒）形式
         /// </summary>
         /// <param name="dateTime">要转换的 DateTime 对象</param>
-        /// <returns>Unix 时间戳</returns>
-        public static long UnixTimestamp(this DateTime dateTime)
+        /// <returns>Unix 时间戳（秒）</returns>
+        public static long ToTimestamp(this DateTime dateTime)
         {
             return (dateTime.ToUniversalTime().Ticks - 621355968000000000)/10000000;
-        }
-
-        /// <summary>
-        ///     计算一个字符串的“Unicode 码点字节长度”（码点 0 - 0xff 认为是一个字节，0x100 - 0xffff 认为是两个字节，大于 0xffff 认为是三个字节）
-        /// </summary>
-        /// <param name="str">要计算的字符串</param>
-        /// <returns>Unicode Code Point 字节长度</returns>
-        public static int ByteLength(this string str)
-        {
-            var s = 0;
-            for (var i = str.Length - 1; i >= 0; i--)
-            {
-                var code = (int) str[i];
-                if (code <= 0xff) s++;
-                else if (code > 0xff && code <= 0xffff) s += 2;
-                if (code < 0xDC00 || code > 0xDFFF) continue;
-                i--;
-                s++;
-            }
-            return s;
-        }
-
-        /// <summary>
-        ///     检测 URL 是否是可信来源（以 keylol:// 为前缀）
-        /// </summary>
-        /// <param name="url">要检测的 URL</param>
-        /// <param name="allowNullOrEmpty">是否允许 URL 为空</param>
-        /// <returns>可信（allowNullOrEmpty 时 URL 为空也认为可信）返回 true，不可信返回 false</returns>
-        public static bool IsTrustedUrl(this string url, bool allowNullOrEmpty = true)
-        {
-            return (allowNullOrEmpty && string.IsNullOrEmpty(url)) || url.StartsWith("keylol://");
         }
 
         /// <summary>
@@ -89,8 +49,7 @@ namespace Keylol.Utilities
                     foreach (var result in list.Skip(i + 1).AllCombinations(count - 1))
                         yield return new[] {item}.Concat(result);
                 }
-
-                ++i;
+                i++;
             }
         }
 
@@ -129,6 +88,28 @@ namespace Keylol.Utilities
         {
             return bot.Online && bot.SessionId != null &&
                    SteamBotCoordinator.Sessions.ContainsKey(bot.SessionId);
+        }
+
+        /// <summary>
+        /// 为 ModelState 增加指定错误
+        /// </summary>
+        /// <param name="modelState"><see cref="ModelStateDictionary"/> 对象</param>
+        /// <param name="modelError">错误描述，最后一个出现的字符串将作为 errorMessage，其他字符串用 "." 拼接后作为 key</param>
+        public static void AddModelError(this ModelStateDictionary modelState, params string[] modelError)
+        {
+            modelState.AddModelError(string.Join(".", modelError.Take(modelError.Length - 1)), modelError.Last());
+        }
+
+        /// <summary>
+        /// 为 ModelState 增加指定错误并返回 BadRequest
+        /// </summary>
+        /// <param name="controller"><see cref="ApiController"/> 对象</param>
+        /// <param name="modelError">错误描述，最后一个出现的字符串将作为 errorMessage，其他字符串用 "." 拼接后作为 key</param>
+        /// <returns><see cref="IHttpActionResult"/> 对象</returns>
+        public static IHttpActionResult BadRequest(this ApiController controller, params string[] modelError)
+        {
+            controller.ModelState.AddModelError(modelError);
+            return new InvalidModelStateResult(controller.ModelState, controller);
         }
     }
 

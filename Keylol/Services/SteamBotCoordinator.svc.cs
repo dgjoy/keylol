@@ -423,12 +423,7 @@ namespace Keylol.Services
         private async Task<string> AskTulingBot(string question, string userId)
         {
             const string apiKey = "51c3bd1bb6a9d092f8b63aca01262edf";
-            using (var md5 = MD5.Create())
-            {
-                userId = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(userId)))
-                    .Replace("-", "")
-                    .ToLower();
-            }
+            userId = Helpers.Md5(userId);
             JToken result = null;
             try
             {

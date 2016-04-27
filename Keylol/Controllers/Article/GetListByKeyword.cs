@@ -24,13 +24,12 @@ namespace Keylol.Controllers.Article
         [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDto>))]
-        public async Task<HttpResponseMessage> GetListByKeyword(string keyword, bool full = false, int skip = 0,
+        public async Task<IHttpActionResult> GetListByKeyword(string keyword, bool full = false, int skip = 0,
             int take = 5)
         {
             if (take > 50) take = 50;
-
             if (!full)
-                return Request.CreateResponse(HttpStatusCode.OK, await _dbContext.Database.SqlQuery<ArticleDto>(@"SELECT
+                return Ok(await _dbContext.Database.SqlQuery<ArticleDto>(@"SELECT
 	                [t3].[Id],
 	                [t3].[PublishTime],
 	                [t3].[Title],
@@ -125,7 +124,7 @@ namespace Keylol.Controllers.Article
 
             var response = Request.CreateResponse(HttpStatusCode.OK, articles);
             response.Headers.SetTotalCount(articles.Count > 0 ? (articles[0].Count ?? 1) : 0);
-            return response;
+            return ResponseMessage(response);
         }
     }
 }

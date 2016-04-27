@@ -48,7 +48,7 @@ namespace Keylol.Controllers.Comment
         [ResponseType(typeof (List<CommentDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "文章被封存，当前登录用户无权查看评论")]
-        public async Task<HttpResponseMessage> GetListByArticleId(string articleId,
+        public async Task<IHttpActionResult> GetListByArticleId(string articleId,
             OrderByType orderBy = OrderByType.SequenceNumberForAuthor,
             bool desc = false, int skip = 0, int take = 20)
         {
@@ -57,12 +57,12 @@ namespace Keylol.Controllers.Comment
 
             var article = await _dbContext.Articles.FindAsync(articleId);
             if (article == null)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
+                return NotFound();
 
             var staffClaim = string.IsNullOrEmpty(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
             if (article.Archived != ArchivedState.None &&
                 userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
-                return Request.CreateResponse(HttpStatusCode.Unauthorized);
+                return Unauthorized();
 
             var commentsQuery = _dbContext.Comments.AsNoTracking()
                 .Where(comment => comment.ArticleId == articleId);
@@ -112,7 +112,7 @@ namespace Keylol.Controllers.Comment
                 }).ToList());
             var commentCount = await _dbContext.Comments.Where(c => c.ArticleId == articleId).CountAsync();
             response.Headers.SetTotalCount(commentCount);
-            return response;
+            return ResponseMessage(response);
         }
     }
 }

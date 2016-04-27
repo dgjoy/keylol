@@ -30,19 +30,13 @@ namespace Keylol.Controllers.UploadSignature
             if ((string) options["save-key"] != "{filemd5}{.suffix}")
                 return BadRequest();
 
-            if ((int) options["expiration"] > DateTime.Now.UnixTimestamp() + 330)
+            if ((int) options["expiration"] > DateTime.Now.ToTimestamp() + 330)
                 return BadRequest();
 
             var range = ((string) options["content-length-range"]).Split(',').Select(int.Parse).ToList();
             if (range[1] > UpyunProvider.MaxImageSize)
                 return BadRequest();
-
-            byte[] hash;
-            using (var md5 = MD5.Create())
-            {
-                hash = md5.ComputeHash(Encoding.UTF8.GetBytes($"{policy}&{UpyunProvider.FormKey}"));
-            }
-            return Created("upload-signature", BitConverter.ToString(hash).Replace("-", string.Empty).ToLower());
+            return Created("upload-signature", Helpers.Md5($"{policy}&{UpyunProvider.FormKey}"));
         }
     }
 }

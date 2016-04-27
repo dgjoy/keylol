@@ -1,8 +1,10 @@
-using System.Collections.Generic;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Keylol.Models;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 
@@ -11,14 +13,17 @@ namespace Keylol.Identity
     /// <summary>
     ///     ASP.NET Identity UserValidator Keylol implementation
     /// </summary>
-    public class KeylolUserValidator : UserValidator<KeylolUser>
+    public class KeylolUserValidator : IIdentityValidator<KeylolUser>
     {
+        private readonly KeylolUserManager _userManager;
+
         /// <summary>
-        ///     创建 <see cref="KeylolUserValidator" />
+        /// 创建 <see cref="KeylolUserValidator"/>
         /// </summary>
-        /// <param name="manager"><see cref="KeylolUserManager" /> 对象</param>
-        public KeylolUserValidator(KeylolUserManager manager) : base(manager)
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        public KeylolUserValidator(KeylolUserManager userManager)
         {
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -26,34 +31,84 @@ namespace Keylol.Identity
         /// </summary>
         /// <param name="user" />
         /// <returns />
-        public override async Task<IdentityResult> ValidateAsync(KeylolUser user)
+        public async Task<IdentityResult> ValidateAsync(KeylolUser user)
         {
-            var errors = new List<string>();
-            var byteLength = user.UserName.ByteLength();
-            if (byteLength < 3 || byteLength > 16)
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            if (!Regex.IsMatch(user.IdCode, @"^[A-Z0-9]{5}$"))
+                return IdentityResult.Failed(Errors.InvalidIdCode);
+
+            if (user.UserName.Length < 3 || user.UserName.Length > 16)
+                return IdentityResult.Failed(Errors.UserNameInvalidLength);
+
+            if (!Regex.IsMatch(user.UserName, @"^[0-9A-Za-z\u4E00-\u9FCC]+$"))
+                return IdentityResult.Failed(Errors.UserNameInvalidCharacter);
+
+            if (user.Email == string.Empty)
+                user.Email = null;
+            if (!new EmailAddressAttribute().IsValid(user.Email))
+                return IdentityResult.Failed(Errors.InvalidEmail);
+
+            if (user.GamerTag.Length > 40)
+                return IdentityResult.Failed(Errors.GamerTagInvalidLength);
+
+            if (!Helpers.IsTrustedUrl(user.AvatarImage))
+                return IdentityResult.Failed(Errors.AvatarImageUntrusted);
+
+            if (!Helpers.IsTrustedUrl(user.ProfilePoint.BackgroundImage))
+                return IdentityResult.Failed(Errors.BackgroundImageUntrusted);
+
+            var steamIdOwner = await _userManager.FindBySteamIdAsync(user.SteamId);
+            if (steamIdOwner != null && steamIdOwner.Id != user.Id)
+                return IdentityResult.Failed(Errors.SteamAccountBound);
+
+            var idCodeOwner = await _userManager.FindByIdCodeAsync(user.IdCode);
+            if (idCodeOwner == null && IsIdCodeReserved(user.IdCode))
             {
-                errors.Add("UserName should be 3-16 bytes.");
+                return IdentityResult.Failed(Errors.IdCodeUsed);
             }
-            if (!AllowOnlyAlphanumericUserNames && !Regex.IsMatch(user.UserName, @"^[0-9A-Za-z\u4E00-\u9FCC]+$"))
+            if (idCodeOwner != null && idCodeOwner.Id != user.Id)
             {
-                errors.Add("Only digits, letters and Chinese characters are allowed in UserName.");
+                return IdentityResult.Failed(Errors.IdCodeUsed);
             }
-            if (user.Email != null &&
-                !Regex.IsMatch(user.Email, @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$", RegexOptions.IgnoreCase))
-            {
-                errors.Add("Email is invalid.");
-            }
-            if (user.GamerTag.ByteLength() > 40)
-            {
-                errors.Add("GamerTag should not be longer than 40 bytes.");
-            }
-            var result = await base.ValidateAsync(user);
-            if (errors.Any() || !result.Succeeded)
-            {
-                errors.AddRange(result.Errors);
-                return IdentityResult.Failed(errors.ToArray());
-            }
+
+            var userNameOwner = await _userManager.FindByNameAsync(user.UserName);
+            if (userNameOwner != null && userNameOwner.Id != user.Id)
+                return IdentityResult.Failed(Errors.UserNameUsed);
+
             return IdentityResult.Success;
+        }
+
+        private static bool IsIdCodeReserved(string idCode)
+        {
+            if (new[]
+            {
+                @"^([A-Z0-9])\1{4}$",
+                @"^0000\d$",
+                @"^\d0000$",
+                @"^TEST.$",
+                @"^.TEST$"
+            }.Any(pattern => Regex.IsMatch(idCode, pattern)))
+                return true;
+
+            if (new[]
+            {
+                "12345",
+                "54321",
+                "ADMIN",
+                "STAFF",
+                "KEYLO",
+                "KYLOL",
+                "KEYLL",
+                "VALVE",
+                "STEAM",
+                "CHINA",
+                "JAPAN"
+            }.Contains(idCode))
+                return true;
+
+            return false;
         }
     }
 }

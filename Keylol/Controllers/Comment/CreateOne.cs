@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Services;
@@ -26,23 +26,11 @@ namespace Keylol.Controllers.Comment
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CommentDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "指定文章被封存，当前用户无权创建新评论")]
-        public async Task<IHttpActionResult> CreateOne(CommentCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull]CommentCreateOneRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var article = await _dbContext.Articles.FindAsync(requestDto.ArticleId);
             if (article == null)
-            {
-                ModelState.AddModelError("vm.ArticleId", "Article doesn't exsit.");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.ArticleId), Errors.NonExistent);
 
             var userId = User.Identity.GetUserId();
             var staffClaim = await _userManager.GetStaffClaimAsync(userId);
@@ -107,12 +95,8 @@ namespace Keylol.Controllers.Comment
                     continue;
 
                 // Steam 通知
-                if (replyToUser.SteamBot.IsOnline())
-                {
-                    var botCoordinator = SteamBotCoordinator.Sessions[replyToUser.SteamBot.SessionId];
-                    await botCoordinator.Client.SendChatMessage(replyToUser.SteamBotId, replyToUser.SteamId,
-                        $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
-                }
+                await _userManager.SendSteamChatMessageAsync(replyToUser,
+                    $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
             }
             if (!(comment.CommentatorId == article.PrincipalId || article.IgnoreNewComments))
             {
@@ -130,12 +114,8 @@ namespace Keylol.Controllers.Comment
                 if (!steamNotifiedArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
                 {
                     // Steam 通知
-                    if (articleAuthor.SteamBot.IsOnline())
-                    {
-                        var botCoordinator = SteamBotCoordinator.Sessions[articleAuthor.SteamBot.SessionId];
-                        await botCoordinator.Client.SendChatMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
-                            $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
-                    }
+                    await _userManager.SendSteamChatMessageAsync(articleAuthor,
+                        $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
                 }
             }
             await _dbContext.SaveChangesAsync();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Services;
 using Keylol.Utilities;
@@ -24,17 +25,8 @@ namespace Keylol.Controllers.Article
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> UpdoteOneModeration(string id,
-            ArticleUpdateOneModerationRequestDto requestDto)
+            [NotNull] ArticleUpdateOneModerationRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("requestDto", "Invalid request DTO.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var article = await _dbContext.Articles.FindAsync(id);
             if (article == null)
                 return NotFound();
@@ -69,10 +61,8 @@ namespace Keylol.Controllers.Article
             if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived)
             {
                 if (article.Archived != ArchivedState.None == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+
                 if (operatorStaffClaim == StaffClaim.Operator)
                 {
                     article.Archived = requestDto.Value ? ArchivedState.Operator : ArchivedState.None;
@@ -87,10 +77,8 @@ namespace Keylol.Controllers.Article
             else if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight)
             {
                 if (article.SpotlightTime != null == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+
                 if (requestDto.Value)
                     article.SpotlightTime = DateTime.Now;
                 else
@@ -99,10 +87,8 @@ namespace Keylol.Controllers.Article
             else
             {
                 if ((bool) propertyInfo.GetValue(article) == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+
                 propertyInfo.SetValue(article, requestDto.Value);
             }
             if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
@@ -171,12 +157,9 @@ namespace Keylol.Controllers.Article
                 _dbContext.Messages.Add(missive);
 
                 // Steam 通知
-                if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.IsOnline())
-                {
-                    var botCoordinator = SteamBotCoordinator.Sessions[missive.Receiver.SteamBot.SessionId];
-                    await botCoordinator.Client.SendChatMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId,
-                        steamNotityText);
-                }
+                
+                if (!string.IsNullOrEmpty(steamNotityText))
+                    await _userManager.SendSteamChatMessageAsync(missive.Receiver, steamNotityText);
             }
             await _dbContext.SaveChangesAsync();
             return Ok();

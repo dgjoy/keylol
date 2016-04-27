@@ -25,20 +25,8 @@ namespace Keylol.Identity
                 SecurityStampClaimType = KeylolClaimTypes.SecurityStamp
             };
 
-            UserValidator = new KeylolUserValidator(this)
-            {
-                AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = false
-            };
-
-            PasswordValidator = new PasswordValidator
-            {
-                RequireDigit = false,
-                RequireLowercase = false,
-                RequireNonLetterOrDigit = false,
-                RequireUppercase = false,
-                RequiredLength = 6
-            };
+            UserValidator = new KeylolUserValidator(this);
+            PasswordValidator = new KeylolPasswordValidator();
 
             UserLockoutEnabledByDefault = false;
             DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(30);

@@ -43,10 +43,8 @@ namespace Keylol.Controllers.InvitationCode
         {
             if (number > 20000) number = 20000;
             if (!_sourceLookup.ContainsKey(prefix))
-            {
-                ModelState.AddModelError("sourceCode", "邀请码前缀无效");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(prefix), Errors.Invalid);
+
             var source = _sourceLookup[prefix];
 
             var random = new Random();

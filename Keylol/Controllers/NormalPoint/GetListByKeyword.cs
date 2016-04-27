@@ -25,7 +25,7 @@ namespace Keylol.Controllers.NormalPoint
         [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<NormalPointDto>))]
-        public async Task<HttpResponseMessage> GetListByKeyword(string keyword, bool full = false,
+        public async Task<IHttpActionResult> GetListByKeyword(string keyword, bool full = false,
             NormalPointType type = NormalPointType.Unspecified, int skip = 0, int take = 5)
         {
             if (take > 50) take = 50;
@@ -35,7 +35,7 @@ namespace Keylol.Controllers.NormalPoint
             {
                 if (type != NormalPointType.Unspecified)
                     typeFilterSql = @"WHERE [t1].[Type] = {3}";
-                return Request.CreateResponse(HttpStatusCode.OK, (await _dbContext.NormalPoints.SqlQuery(
+                return Ok((await _dbContext.NormalPoints.SqlQuery(
                     @"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
                         SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
 		                    SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([EnglishName], [EnglishAliases]), {0})
@@ -89,7 +89,7 @@ namespace Keylol.Controllers.NormalPoint
 
             var response = Request.CreateResponse(HttpStatusCode.OK, points);
             response.Headers.Add("X-Total-Record-Count", points.Count > 0 ? points[0].Count.ToString() : "0");
-            return response;
+            return ResponseMessage(response);
         }
     }
 }

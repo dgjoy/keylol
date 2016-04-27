@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Keylol.ServiceBase;
 
 namespace Keylol.Provider
 {
@@ -32,7 +33,7 @@ namespace Keylol.Provider
         {
             if (string.IsNullOrEmpty(validate))
                 return false;
-            if (Md5($"{_key}geetest{challenge}") != validate)
+            if (Helpers.Md5($"{_key}geetest{challenge}") != validate)
                 return false;
             var postData = new List<KeyValuePair<string, string>>
             {
@@ -43,7 +44,7 @@ namespace Keylol.Provider
             {
                 var result = await Client.PostAsync("validate.php", new FormUrlEncodedContent(postData));
                 result.EnsureSuccessStatusCode();
-                if (await result.Content.ReadAsStringAsync() != Md5(seccode))
+                if (await result.Content.ReadAsStringAsync() != Helpers.Md5(seccode))
                     return false;
             }
             catch (Exception)
@@ -51,16 +52,6 @@ namespace Keylol.Provider
                 // ignored
             }
             return true;
-        }
-
-        private static string Md5(string text)
-        {
-            using (var md5 = MD5.Create())
-            {
-                return BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(text)))
-                    .Replace("-", string.Empty)
-                    .ToLower();
-            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Keylol.Controllers.RedisCache
     /// </summary>
     [Authorize]
     [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
-    [RoutePrefix("redis")]
+    [RoutePrefix("redis-cache")]
     public partial class RedisCacheController : ApiController
     {
         private readonly RedisProvider _redis;

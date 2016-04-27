@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.ImageGarage", "Keylo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.ServiceBase", "Keylol.ServiceBase\Keylol.ServiceBase.csproj", "{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.Models.DTO", "Keylol.Models.DTO\Keylol.Models.DTO.csproj", "{CC333ECE-41AC-4799-921F-3E597EA7B4E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,12 +79,16 @@ Global
 		{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A50005C-7FAA-48D3-8F36-D48DF882DCDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC333ECE-41AC-4799-921F-3E597EA7B4E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC333ECE-41AC-4799-921F-3E597EA7B4E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC333ECE-41AC-4799-921F-3E597EA7B4E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC333ECE-41AC-4799-921F-3E597EA7B4E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 	EndGlobalSection
 EndGlobal

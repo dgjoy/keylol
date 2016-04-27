@@ -66,19 +66,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ImageGarage.cs">
@@ -106,9 +97,9 @@
     <None Include="Properties\DataSources\Keylol.Models.DTO.ArticleDto.datasource" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Keylol.Models\Keylol.Models.csproj">
-      <Project>{b6c4cdb8-070e-422c-b243-1d488ac1548a}</Project>
-      <Name>Keylol.Models</Name>
+    <ProjectReference Include="..\Keylol.Models.DTO\Keylol.Models.DTO.csproj">
+      <Project>{cc333ece-41ac-4799-921f-3e597ea7b4e9}</Project>
+      <Name>Keylol.Models.DTO</Name>
     </ProjectReference>
     <ProjectReference Include="..\Keylol.ServiceBase\Keylol.ServiceBase.csproj">
       <Project>{0a50005c-7faa-48d3-8f36-d48df882dcdf}</Project>

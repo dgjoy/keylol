@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Provider;
+using Keylol.Utilities;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol.Identity
@@ -13,17 +15,16 @@ namespace Keylol.Identity
     {
         private async Task GrantPasswordCaptcha(OAuthGrantCustomExtensionContext context)
         {
-//            var geetest = Startup.Container.GetInstance<GeetestProvider>();
-//            if (!await geetest.ValidateAsync(context.Parameters["captcha_challenge"],
-//                context.Parameters["captcha_seccode"],
-//                context.Parameters["captcha_validate"]))
-//            {
-//                context.SetError("invalid_captcha");
-//                return;
-//            }
+            var geetest = Startup.Container.GetInstance<GeetestProvider>();
+            if (!await geetest.ValidateAsync(context.Parameters["geetest_challenge"],
+                context.Parameters["geetest_seccode"],
+                context.Parameters["geetest_validate"]))
+            {
+                context.SetError(Errors.InvalidCaptcha);
+                return;
+            }
 
             var userManager = Startup.Container.GetInstance<KeylolUserManager>();
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
 
             var idCode = context.Parameters["id_code"];
             var email = context.Parameters["email"];
@@ -47,29 +48,30 @@ namespace Keylol.Identity
             }
             else
             {
-                context.SetError("no_valid_identity_field");
+                context.SetError(Errors.InvalidIdField);
                 return;
             }
 
             if (user == null)
             {
-                context.SetError("user_nonexistent");
+                context.SetError(Errors.UserNonExistent);
                 return;
             }
 
             if (await userManager.IsLockedOutAsync(user.Id))
             {
-                context.SetError("account_locked_out");
+                context.SetError(Errors.AccountLockedOut);
                 return;
             }
             if (!await userManager.CheckPasswordAsync(user, password))
             {
                 await userManager.AccessFailedAsync(user.Id);
-                context.SetError("invalid_password");
+                context.SetError(Errors.InvalidPassword);
                 return;
             }
             await userManager.ResetAccessFailedCountAsync(user.Id);
 
+            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
             dbContext.LoginLogs.Add(new LoginLog
             {
                 Ip = context.Request.RemoteIpAddress,
@@ -81,7 +83,6 @@ namespace Keylol.Identity
 
         private async Task GrantSteamLoginToken(OAuthGrantCustomExtensionContext context)
         {
-            var userManager = Startup.Container.GetInstance<KeylolUserManager>();
             var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
 
             var steamLoginTokenId = context.Parameters["token_id"];
@@ -89,10 +90,11 @@ namespace Keylol.Identity
 
             if (token?.SteamId == null)
             {
-                context.Rejected();
+                context.SetError("invalid_token");
                 return;
             }
 
+            var userManager = Startup.Container.GetInstance<KeylolUserManager>();
             var user = await userManager.FindBySteamIdAsync(token.SteamId);
             if (user == null)
             {
@@ -105,6 +107,38 @@ namespace Keylol.Identity
                 Ip = context.Request.RemoteIpAddress,
                 UserId = user.Id
             };
+            dbContext.LoginLogs.Add(loginLog);
+            await dbContext.SaveChangesAsync();
+            context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
+        }
+
+        private async Task GrantOneTimeToken(OAuthGrantCustomExtensionContext context)
+        {
+            var tokenProvider = Startup.Container.GetInstance<OneTimeTokenProvider>();
+            var token = context.Parameters["token"];
+            string userId;
+            try
+            {
+                userId = await tokenProvider.Consume<string>(token);
+            }
+            catch (Exception)
+            {
+                context.SetError(Errors.InvalidToken);
+                return;
+            }
+            var userManager = Startup.Container.GetInstance<KeylolUserManager>();
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                context.SetError(Errors.UserNonExistent);
+                return;
+            }
+            var loginLog = new LoginLog
+            {
+                Ip = context.Request.RemoteIpAddress,
+                UserId = user.Id
+            };
+            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
             dbContext.LoginLogs.Add(loginLog);
             await dbContext.SaveChangesAsync();
             context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
@@ -133,6 +167,10 @@ namespace Keylol.Identity
             else if (context.GrantType.Equals("steam_login_token", StringComparison.OrdinalIgnoreCase))
             {
                 await GrantSteamLoginToken(context);
+            }
+            else if (context.GrantType.Equals("one_time_token", StringComparison.OrdinalIgnoreCase))
+            {
+                await GrantOneTimeToken(context);
             }
         }
 

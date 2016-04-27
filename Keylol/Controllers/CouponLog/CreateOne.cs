@@ -22,14 +22,10 @@ namespace Keylol.Controllers.CouponLog
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
         public async Task<IHttpActionResult> CreateOne(string userId, int change, string description)
         {
-            try
-            {
-                await _coupon.Update(userId, CouponEvent.其他, change, description);
-            }
-            catch (ArgumentException)
-            {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
                 return NotFound();
-            }
+            await _coupon.Update(user, CouponEvent.其他, change, description);
             return Ok();
         }
     }

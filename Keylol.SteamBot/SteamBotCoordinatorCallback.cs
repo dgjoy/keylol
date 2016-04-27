@@ -137,9 +137,7 @@ namespace Keylol.SteamBot
                 return null;
             var id = new SteamID();
             id.SetFromSteam3String(steamId);
-            return BitConverter.ToString(botInstance.SteamFriends.GetFriendAvatar(id))
-                .Replace("-", string.Empty)
-                .ToLower();
+            return Helpers.Md5(botInstance.SteamFriends.GetFriendAvatar(id));
         }
 
         public string GetUserProfileName(string botId, string steamId)

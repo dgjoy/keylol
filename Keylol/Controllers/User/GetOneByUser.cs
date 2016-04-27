@@ -57,7 +57,7 @@ namespace Keylol.Controllers.User
                     break;
 
                 case UserIdentityType.Id:
-                    user = await _userManager.FindByIdAsync(id);
+                    user = await _userManager.FindByIdAsync(id == "current" ? User.Identity.GetUserId() : id);
                     break;
 
                 default:
@@ -79,7 +79,7 @@ namespace Keylol.Controllers.User
                     try
                     {
                         await _dbContext.SaveChangesAsync();
-                        await _coupon.Update(user.Id, CouponEvent.每日访问);
+                        await _coupon.Update(user, CouponEvent.每日访问);
                     }
                     catch (DbUpdateConcurrencyException)
                     {

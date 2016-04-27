@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -10,83 +12,49 @@ namespace Keylol.Controllers.User
     public partial class UserController
     {
         /// <summary>
-        ///     修改用户设置
+        ///     修改当前登录用户的设置
         /// </summary>
-        /// <param name="id">用户 ID</param>
         /// <param name="requestDto">用户相关属性</param>
-        [Route("{id}")]
+        [Route("current")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前登录用户无权编辑指定用户")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> UpdateOneById(string id, UserUpdateOneByIdRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOneById([NotNull] UserUpdateOneByIdRequestDto requestDto)
         {
-            if (User.Identity.GetUserId() != id)
-                return Unauthorized();
-
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!requestDto.AvatarImage.IsTrustedUrl())
-            {
-                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
-
-            if (!requestDto.ProfilePointBackgroundImage.IsTrustedUrl())
-            {
-                ModelState.AddModelError("vm.ProfilePointBackgroundImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
-
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
 
             if (requestDto.NewPassword != null || requestDto.LockoutEnabled != null)
             {
                 if (requestDto.Password == null)
-                {
-                    ModelState.AddModelError("vm.Password", "Password cannot be empty.");
-                    return BadRequest(ModelState);
-                }
+                    this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
 
-                if (requestDto.GeetestChallenge == null || requestDto.GeetestSeccode == null ||
-                    requestDto.GeetestValidate == null ||
-                    !await
-                        _geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
-                            requestDto.GeetestValidate))
-                {
-                    ModelState.AddModelError("authCode", "true");
-                    return BadRequest(ModelState);
-                }
+                if (!await _geetest.ValidateAsync(requestDto.GeetestChallenge,
+                    requestDto.GeetestSeccode,
+                    requestDto.GeetestValidate))
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.GeetestSeccode), Errors.Invalid);
 
                 if (requestDto.NewPassword != null)
                 {
                     var resultPassword =
-                        await _userManager.ChangePasswordAsync(id, requestDto.Password, requestDto.NewPassword);
+                        await _userManager.ChangePasswordAsync(user.Id, requestDto.Password, requestDto.NewPassword);
                     if (!resultPassword.Succeeded)
                     {
-                        foreach (var error in resultPassword.Errors)
+                        var error = resultPassword.Errors.First();
+                        switch (error)
                         {
-                            if (error.Contains("Incorrect password"))
-                                ModelState.AddModelError("vm.Password", "Password is not correct.");
-                            else
-                                ModelState.AddModelError("vm.NewPassword", error);
+                            case Errors.PasswordAllWhitespace:
+                            case Errors.PasswordTooShort:
+                                return this.BadRequest(nameof(requestDto), nameof(requestDto.NewPassword), error);
+
+                            default:
+                                return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
                         }
-                        return BadRequest(ModelState);
                     }
                 }
                 else
                 {
                     if (!await _userManager.CheckPasswordAsync(user, requestDto.Password))
-                    {
-                        ModelState.AddModelError("vm.Password", "Password is not correct.");
-                        return BadRequest(ModelState);
-                    }
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
                 }
             }
 
@@ -116,14 +84,31 @@ namespace Keylol.Controllers.User
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                foreach (var error in result.Errors)
+                var error = result.Errors.First();
+                string propertyName;
+                switch (error)
                 {
-                    if (error.Contains("Email"))
-                        ModelState.AddModelError("vm.Email", error);
-                    else if (error.Contains("GamerTag"))
-                        ModelState.AddModelError("vm.GamerTag", error);
+                    case Errors.AvatarImageUntrusted:
+                        propertyName = nameof(requestDto.AvatarImage);
+                        break;
+
+                    case Errors.BackgroundImageUntrusted:
+                        propertyName = nameof(requestDto.ProfilePointBackgroundImage);
+                        break;
+
+                    case Errors.GamerTagInvalidLength:
+                        propertyName = nameof(requestDto.GamerTag);
+                        break;
+
+                    case Errors.InvalidEmail:
+                        propertyName = nameof(requestDto.Email);
+                        break;
+
+                    default:
+                        propertyName = nameof(requestDto.GeetestSeccode);
+                        break;
                 }
-                return BadRequest(ModelState);
+                return this.BadRequest(nameof(requestDto), propertyName, error);
             }
             return Ok();
         }

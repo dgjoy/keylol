@@ -21,11 +21,20 @@ namespace Keylol.Models.DTO
         public dynamic Properties { get; set; }
     }
 
+    /// <summary>
+    /// Steam 机器人延时操作类型
+    /// </summary>
     [DataContract]
     public enum SteamBotDelayedActionType
     {
+        /// <summary>
+        /// 发送聊天消息
+        /// </summary>
         [EnumMember] SendChatMessage,
 
+        /// <summary>
+        /// 移除好友
+        /// </summary>
         [EnumMember] RemoveFriend
     }
 }

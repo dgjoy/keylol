@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Cors;
 using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.ModelBinding;
+using Keylol.Filters;
 using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
+using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
@@ -196,6 +201,9 @@ namespace Keylol
 
             // Statistics
             Container.Register<StatisticsProvider>(owinRequestLifestyle);
+
+            // One-time Token
+            Container.RegisterSingleton<OneTimeTokenProvider>();
         }
 
         private static void UseCors(IAppBuilder app)
@@ -245,22 +253,29 @@ namespace Keylol
             var config = new HttpConfiguration();
             var server = new HttpServer(config);
 
-            config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
+            var jsonSerializerSettings = config.Formatters.JsonFormatter.SerializerSettings;
+            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            jsonSerializerSettings.Converters.Add(new StringEnumConverter());
 
+            config.Services.Replace(typeof (IActionValueBinder), new KeylolActionValueProvider());
+            config.Filters.Add(new ValidateModelAttribute());
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 
             config.EnableSwagger("swagger-hRwp3Pnm/docs/{apiVersion}", c =>
             {
-                c.SingleApiVersion("v1", "Keylol REST API")
+                c.SingleApiVersion("v2", "Keylol API")
+                    .Description("The API specification for Keylol backend.")
                     .Contact(cc => cc.Name("Stackia")
-                        .Email("stackia@keylol.com"));
+                        .Email("stackia@keylol.com")
+                        .Url("http://t.cn/RqWeGJf"));
+
+                c.Schemes(new[] {"https"});
 
                 var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.XML"));
-                c.DescribeAllEnumsAsStrings();
-            })
-                .EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}");
+                c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.Models.DTO.XML"));
+            }).EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}",
+                c => { c.InjectJavaScript(Assembly.GetExecutingAssembly(), "Keylol.Utilities.swagger-ui-extra.js"); });
 
             config.MapHttpAttributeRoutes();
 

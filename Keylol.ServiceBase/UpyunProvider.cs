@@ -47,13 +47,8 @@ namespace Keylol.ServiceBase
             request.Method = method;
             request.ContentLength = contentLength;
             request.Date = DateTime.Now;
-            var signature =
-                $"{method}&/{Bucket}/{path}&{request.Date.ToUniversalTime().ToString("R")}&{contentLength}&{PasswordHash}";
-            using (var md5 = MD5.Create())
-            {
-                signature =
-                    BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(signature))).Replace("-", "").ToLower();
-            }
+            var signature = Helpers.Md5(
+                $"{method}&/{Bucket}/{path}&{request.Date.ToUniversalTime().ToString("R")}&{contentLength}&{PasswordHash}");
             request.Headers[HttpRequestHeader.Authorization] = $"UpYun {Operator}:{signature}";
             request.Timeout = 15000; // 15s
             request.ReadWriteTimeout = 120000; // 120s
@@ -71,11 +66,7 @@ namespace Keylol.ServiceBase
         {
             try
             {
-                string fileHash;
-                using (var md5 = MD5.Create())
-                {
-                    fileHash = BitConverter.ToString(md5.ComputeHash(fileData)).Replace("-", "").ToLower();
-                }
+                var fileHash = Helpers.Md5(fileData);
                 if (string.IsNullOrEmpty(extension))
                     throw new ArgumentException("Need file extension", nameof(extension));
                 var request = CreateRequest(WebRequestMethods.Http.Put, $"{fileHash}.{extension}", fileData.LongLength);

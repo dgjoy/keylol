@@ -22,7 +22,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("list")]
         [HttpGet]
         [ResponseType(typeof (List<NormalPointDto>))]
-        public async Task<HttpResponseMessage> GetListOfAll(int skip = 0, int take = 20)
+        public async Task<IHttpActionResult> GetListOfAll(int skip = 0, int take = 20)
         {
             if (take > 50) take = 50;
             var response = Request.CreateResponse(HttpStatusCode.OK,
@@ -39,7 +39,7 @@ namespace Keylol.Controllers.NormalPoint
                         SubscriberCount = entry.subscriberCount
                     }));
             response.Headers.Add("X-Total-Record-Count", (await _dbContext.NormalPoints.CountAsync()).ToString());
-            return response;
+            return ResponseMessage(response);
         }
     }
 }

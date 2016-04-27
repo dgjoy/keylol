@@ -7,6 +7,7 @@ using System.Web.Http;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.NormalPoint
@@ -64,7 +65,7 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.CoverImage", "游戏据点必须填写封面图片");
                 return false;
             }
-            if (!requestDto.CoverImage.IsTrustedUrl())
+            if (!Helpers.IsTrustedUrl(requestDto.CoverImage))
             {
                 ModelState.AddModelError("vm.CoverImage", "不允许使用可不信图片来源");
                 return false;

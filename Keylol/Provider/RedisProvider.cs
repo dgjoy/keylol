@@ -40,7 +40,7 @@ namespace Keylol.Provider
         public IDatabase GetDatabase(int db = -1) => Connection.GetDatabase(db);
 
         /// <summary>
-        ///     将对象序列化 BSON
+        ///     将对象序列化成 BSON
         /// </summary>
         /// <typeparam name="T">对象类型</typeparam>
         /// <param name="object">要序列化的对象</param>

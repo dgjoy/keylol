@@ -19,6 +19,7 @@ namespace Keylol.Controllers.User
         private readonly IOwinContext _owinContext;
         private readonly StatisticsProvider _statistics;
         private readonly KeylolUserManager _userManager;
+        private readonly OneTimeTokenProvider _oneTimeToken;
 
         /// <summary>
         ///     创建 <see cref="UserController" />
@@ -41,14 +42,17 @@ namespace Keylol.Controllers.User
         /// <param name="userManager">
         ///     <see cref="KeylolUserManager" />
         /// </param>
+        /// <param name="oneTimeToken"><see cref="OneTimeTokenProvider"/></param>
         public UserController(CouponProvider coupon, StatisticsProvider statistics, GeetestProvider geetest,
-            OwinContextProvider owinContextProvider, KeylolDbContext dbContext, KeylolUserManager userManager)
+            OwinContextProvider owinContextProvider, KeylolDbContext dbContext, KeylolUserManager userManager,
+            OneTimeTokenProvider oneTimeToken)
         {
             _coupon = coupon;
             _statistics = statistics;
             _geetest = geetest;
             _dbContext = dbContext;
             _userManager = userManager;
+            _oneTimeToken = oneTimeToken;
             _owinContext = owinContextProvider.Current;
         }
 

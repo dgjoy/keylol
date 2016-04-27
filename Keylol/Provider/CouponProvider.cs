@@ -44,34 +44,37 @@ namespace Keylol.Provider
         /// <summary>
         ///     根据文券事件更新用户的文券数量
         /// </summary>
-        /// <param name="userId">用户 ID</param>
+        /// <param name="user">用户对象</param>
         /// <param name="event">文券事件</param>
         /// <param name="description">文券记录描述，会被序列化成 JSON 存储到数据库</param>
         /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
-        public async Task Update(string userId, CouponEvent @event, object description = null, DateTime? logTime = null)
+        /// <exception cref="ArgumentNullException">user 参数为 null</exception>
+        public async Task Update(KeylolUser user, CouponEvent @event, object description = null,
+            DateTime? logTime = null)
         {
-            await Update(userId, @event, @event.ToCouponChange(), description, logTime);
+            await Update(user, @event, @event.ToCouponChange(), description, logTime);
         }
 
         /// <summary>
         ///     增减用户的文券数量
         /// </summary>
-        /// <param name="userId">用户 ID</param>
+        /// <param name="user">用户对象</param>
         /// <param name="event">文券事件</param>
         /// <param name="change">文券数量变化，正数为增加，负数为减少</param>
         /// <param name="description">文券记录描述</param>
         /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
-        public async Task Update(string userId, CouponEvent @event, int change, object description = null,
+        /// <exception cref="ArgumentNullException">user 参数为 null</exception>
+        public async Task Update(KeylolUser user, CouponEvent @event, int change, object description = null,
             DateTime? logTime = null)
         {
-            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                throw new ArgumentException("指定用户不存在", nameof(userId));
+                throw new ArgumentNullException(nameof(user));
+
             var log = new CouponLog
             {
                 Change = change,
                 Event = @event,
-                UserId = userId,
+                UserId = user.Id,
                 Description = JsonConvert.SerializeObject(description)
             };
             _dbContext.CouponLogs.Add(log);
@@ -92,7 +95,7 @@ namespace Keylol.Provider
                     await e.Entries.Single().ReloadAsync();
                 }
             } while (saveFailed);
-            await _redis.GetDatabase().ListRightPushAsync(UnreadLogsCacheKey(userId),
+            await _redis.GetDatabase().ListRightPushAsync(UnreadLogsCacheKey(user.Id),
                 RedisProvider.Serialize(new CouponLogDto
                 {
                     Change = log.Change,
@@ -118,7 +121,7 @@ namespace Keylol.Provider
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>未读的 CouponLog 列表</returns>
-        public async Task<List<CouponLogDto>> PopUnreadCouponLogs(string userId)
+        public async Task<List<CouponLogDto>> GetUnreadCouponLogs(string userId)
         {
             var redisDb = _redis.GetDatabase();
             var cacheKey = UnreadLogsCacheKey(userId);
