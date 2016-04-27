@@ -23,7 +23,7 @@ namespace Keylol.Controllers.User
         {
             if (take > 50) take = 50;
             var userId = User.Identity.GetUserId();
-            return Ok((await DbContext.Users.AsNoTracking().Where(u => u.Id == userId)
+            return Ok((await _dbContext.Users.AsNoTracking().Where(u => u.Id == userId)
                 .SelectMany(u => u.ProfilePoint.Subscribers)
                 .Select(u => new
                 {

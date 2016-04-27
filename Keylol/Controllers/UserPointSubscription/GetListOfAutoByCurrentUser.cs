@@ -18,7 +18,7 @@ namespace Keylol.Controllers.UserPointSubscription
         public async Task<IHttpActionResult> GetListOfAutoByCurrentUser()
         {
             var userId = User.Identity.GetUserId();
-            var subscriptions = await DbContext.AutoSubscriptions.Include(s => s.NormalPoint)
+            var subscriptions = await _dbContext.AutoSubscriptions.Include(s => s.NormalPoint)
                 .Where(s => s.UserId == userId)
                 .OrderBy(s => s.DisplayOrder)
                 .ToListAsync();

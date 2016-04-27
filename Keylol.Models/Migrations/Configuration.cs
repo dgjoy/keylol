@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity.Migrations;
-using System.Linq;
+﻿using System.Data.Entity.Migrations;
 using Keylol.Models.DAL;
-using Keylol.Models;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.Models.Migrations
 {

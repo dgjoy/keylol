@@ -153,7 +153,7 @@ namespace Keylol.Models.DTO
         public bool? Subscribed { get; set; }
 
         /// <summary>
-        /// 计数，仅用于搜索
+        ///     计数，仅用于搜索
         /// </summary>
         [DataMember]
         public int? Count { get; set; }
@@ -261,5 +261,22 @@ namespace Keylol.Models.DTO
         public int? GameCountAsSeries { get; set; }
 
         #endregion
+    }
+
+    /// <summary>
+    ///     Id 类型
+    /// </summary>
+    [DataContract]
+    public enum NormalPointIdentityType
+    {
+        /// <summary>
+        ///     Id
+        /// </summary>
+        [EnumMember] Id,
+
+        /// <summary>
+        ///     识别码
+        /// </summary>
+        [EnumMember] IdCode
     }
 }

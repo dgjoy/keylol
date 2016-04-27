@@ -4,18 +4,20 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Keylol.Identity;
+using Keylol.Models;
 using Keylol.Services;
 using Microsoft.AspNet.Identity;
 
 namespace Keylol.Utilities
 {
     /// <summary>
-    /// 一些常用扩展方法
+    ///     一些常用扩展方法
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        /// 从 Unix 时间戳创建 DateTime 对象
+        ///     从 Unix 时间戳创建 DateTime 对象
         /// </summary>
         /// <param name="unixTimeStamp">Unix 时间戳</param>
         /// <returns>创建的 DateTime 对象</returns>
@@ -27,7 +29,7 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 转换为 Unix 时间戳形式
+        ///     转换为 Unix 时间戳形式
         /// </summary>
         /// <param name="dateTime">要转换的 DateTime 对象</param>
         /// <returns>Unix 时间戳</returns>
@@ -37,7 +39,7 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 计算一个字符串的“Unicode 码点字节长度”（码点 0 - 0xff 认为是一个字节，0x100 - 0xffff 认为是两个字节，大于 0xffff 认为是三个字节）
+        ///     计算一个字符串的“Unicode 码点字节长度”（码点 0 - 0xff 认为是一个字节，0x100 - 0xffff 认为是两个字节，大于 0xffff 认为是三个字节）
         /// </summary>
         /// <param name="str">要计算的字符串</param>
         /// <returns>Unicode Code Point 字节长度</returns>
@@ -49,17 +51,15 @@ namespace Keylol.Utilities
                 var code = (int) str[i];
                 if (code <= 0xff) s++;
                 else if (code > 0xff && code <= 0xffff) s += 2;
-                if (code >= 0xDC00 && code <= 0xDFFF)
-                {
-                    i--;
-                    s++;
-                }
+                if (code < 0xDC00 || code > 0xDFFF) continue;
+                i--;
+                s++;
             }
             return s;
         }
 
         /// <summary>
-        /// 检测 URL 是否是可信来源（以 keylol:// 为前缀）
+        ///     检测 URL 是否是可信来源（以 keylol:// 为前缀）
         /// </summary>
         /// <param name="url">要检测的 URL</param>
         /// <param name="allowNullOrEmpty">是否允许 URL 为空</param>
@@ -70,7 +70,7 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 从一个集合中取出指定数量元素的所以组合情况
+        ///     从一个集合中取出指定数量元素的所以组合情况
         /// </summary>
         /// <param name="items">集合</param>
         /// <param name="count">取出元素数量</param>
@@ -109,7 +109,7 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 设置 X-Total-Record-Count Header
+        ///     设置 X-Total-Record-Count Header
         /// </summary>
         /// <param name="headers">HttpResponseHeaders 对象</param>
         /// <param name="totalCount">要设置的数值</param>
@@ -121,11 +121,11 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 判断 Steam 机器人是否属于“在线”状态
+        ///     判断 Steam 机器人是否属于“在线”状态
         /// </summary>
         /// <param name="bot">Steam 机器人实体</param>
         /// <returns>是否在线</returns>
-        public static bool IsOnline(this Models.SteamBot bot)
+        public static bool IsOnline(this SteamBot bot)
         {
             return bot.Online && bot.SessionId != null &&
                    SteamBotCoordinator.Sessions.ContainsKey(bot.SessionId);

@@ -39,12 +39,12 @@ namespace Keylol.Controllers.Article
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var article = DbContext.Articles.Create();
+            var article = _dbContext.Articles.Create();
 
             article.Type = requestDto.TypeName.ToEnum<ArticleType>();
             var userId = User.Identity.GetUserId();
             var couponEvent = article.Type == ArticleType.简评 ? CouponEvent.发布简评 : CouponEvent.发布文章;
-            if (!_coupon.CanTriggerEvent(userId, couponEvent))
+            if (!await _coupon.CanTriggerEvent(userId, couponEvent))
                 return Unauthorized();
 
             if (article.Type.AllowVote())
@@ -54,7 +54,7 @@ namespace Keylol.Controllers.Article
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
                     return BadRequest(ModelState);
                 }
-                var voteForPoint = await DbContext.NormalPoints
+                var voteForPoint = await _dbContext.NormalPoints
                     .Include(p => p.DeveloperPoints)
                     .Include(p => p.PublisherPoints)
                     .Include(p => p.SeriesPoints)
@@ -101,7 +101,7 @@ namespace Keylol.Controllers.Article
                     ModelState.AddModelError("vm.AttachedPointsId", "推送据点数量太多");
                     return BadRequest(ModelState);
                 }
-                article.AttachedPoints = await DbContext.NormalPoints
+                article.AttachedPoints = await _dbContext.NormalPoints
                     .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(requestDto.AttachedPointsId,
                         point => point.Id)).ToListAsync();
             }
@@ -138,13 +138,13 @@ namespace Keylol.Controllers.Article
             }
 
             article.PrincipalId = userId;
-            DbContext.Articles.Add(article);
+            _dbContext.Articles.Add(article);
             article.SequenceNumberForAuthor =
-                DbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
+                _dbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
                     .Select(a => a.SequenceNumberForAuthor)
                     .DefaultIfEmpty(0)
                     .Max() + 1;
-            DbContext.SaveChanges();
+            _dbContext.SaveChanges();
             _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
                 ArticleId = article.Id

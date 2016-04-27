@@ -19,10 +19,10 @@ namespace Keylol.ImageGarage
 {
     internal sealed class ImageGarage : KeylolService
     {
+        private readonly IServiceConsumer<IImageGarageCoordinator> _coordinator;
+        private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false}; // 10s
         private readonly ILog _logger;
         private readonly IModel _mqChannel;
-        private readonly IServiceConsumer<IImageGarageCoordinator> _coordinator;
-        private readonly Timer _heartbeatTimer = new Timer(10000) { AutoReset = false }; // 10s
 
         public ImageGarage(ILogProvider logProvider, MqClientProvider mqClientProvider,
             IServiceConsumer<IImageGarageCoordinator> coordinator)

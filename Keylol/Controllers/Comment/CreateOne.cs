@@ -37,7 +37,7 @@ namespace Keylol.Controllers.Comment
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var article = await DbContext.Articles.FindAsync(requestDto.ArticleId);
+            var article = await _dbContext.Articles.FindAsync(requestDto.ArticleId);
             if (article == null)
             {
                 ModelState.AddModelError("vm.ArticleId", "Article doesn't exsit.");
@@ -45,37 +45,37 @@ namespace Keylol.Controllers.Comment
             }
 
             var userId = User.Identity.GetUserId();
-            var staffClaim = await UserManager.GetStaffClaimAsync(userId);
+            var staffClaim = await _userManager.GetStaffClaimAsync(userId);
             if (article.Archived != ArchivedState.None &&
                 userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();
 
-            var replyToComments = await DbContext.Comments.Include(c => c.Commentator.SteamBot)
+            var replyToComments = await _dbContext.Comments.Include(c => c.Commentator.SteamBot)
                 .Where(
                     c =>
                         c.ArticleId == article.Id &&
                         requestDto.ReplyToCommentsSn.Contains(c.SequenceNumberForArticle))
                 .ToListAsync();
 
-            var comment = DbContext.Comments.Create();
-            DbContext.Comments.Add(comment);
+            var comment = _dbContext.Comments.Create();
+            _dbContext.Comments.Add(comment);
             comment.ArticleId = article.Id;
             comment.CommentatorId = userId;
             comment.Content = requestDto.Content;
-            comment.SequenceNumberForArticle = DbContext.Comments.Where(c => c.ArticleId == article.Id)
+            comment.SequenceNumberForArticle = _dbContext.Comments.Where(c => c.ArticleId == article.Id)
                 .Select(c => c.SequenceNumberForArticle)
                 .DefaultIfEmpty(0)
                 .Max() + 1;
-            DbContext.SaveChanges();
+            _dbContext.SaveChanges();
             var commentReplies = replyToComments.Select(c => new CommentReply
             {
                 Comment = c,
                 ReplyId = comment.Id
             }).ToList();
-            DbContext.CommentReplies.AddRange(commentReplies);
-            await DbContext.SaveChangesAsync();
+            _dbContext.CommentReplies.AddRange(commentReplies);
+            await _dbContext.SaveChangesAsync();
 
-            var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
+            var articleAuthor = await _dbContext.Users.Include(u => u.SteamBot)
                 .SingleAsync(u => u.Id == article.PrincipalId);
             var messageNotifiedArticleAuthor = false;
             var steamNotifiedArticleAuthor = false;
@@ -96,12 +96,12 @@ namespace Keylol.Controllers.Comment
                 }
 
                 // 邮政中心
-                var message = DbContext.Messages.Create();
+                var message = _dbContext.Messages.Create();
                 message.Type = MessageType.CommentReply;
                 message.OperatorId = comment.CommentatorId;
                 message.ReceiverId = replyToUser.Id;
                 message.CommentId = comment.Id;
-                DbContext.Messages.Add(message);
+                _dbContext.Messages.Add(message);
 
                 if (!replyToUser.SteamNotifyOnCommentReplied)
                     continue;
@@ -119,12 +119,12 @@ namespace Keylol.Controllers.Comment
                 if (!messageNotifiedArticleAuthor)
                 {
                     // 邮政中心
-                    var message = DbContext.Messages.Create();
+                    var message = _dbContext.Messages.Create();
                     message.Type = MessageType.ArticleComment;
                     message.OperatorId = comment.CommentatorId;
                     message.ReceiverId = articleAuthor.Id;
                     message.CommentId = comment.Id;
-                    DbContext.Messages.Add(message);
+                    _dbContext.Messages.Add(message);
                 }
 
                 if (!steamNotifiedArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
@@ -138,7 +138,7 @@ namespace Keylol.Controllers.Comment
                     }
                 }
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             return Created($"comment/{comment.Id}", new CommentDto(comment, false));
         }

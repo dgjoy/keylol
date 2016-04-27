@@ -18,14 +18,12 @@ namespace Keylol.Models.DTO
             /// <summary>
             ///     普通据点
             /// </summary>
-            [EnumMember]
-            NormalPoint,
+            [EnumMember] NormalPoint,
 
             /// <summary>
             ///     个人据点
             /// </summary>
-            [EnumMember]
-            ProfilePoint
+            [EnumMember] ProfilePoint
         }
 
         /// <summary>

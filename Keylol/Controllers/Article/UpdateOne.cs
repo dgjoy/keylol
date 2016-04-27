@@ -38,12 +38,12 @@ namespace Keylol.Controllers.Article
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var article = await DbContext.Articles.Include(a => a.AttachedPoints).SingleOrDefaultAsync(a => a.Id == id);
+            var article = await _dbContext.Articles.Include(a => a.AttachedPoints).SingleOrDefaultAsync(a => a.Id == id);
             if (article == null)
                 return NotFound();
 
             var editorId = User.Identity.GetUserId();
-            var editorStaffClaim = await UserManager.GetStaffClaimAsync(editorId);
+            var editorStaffClaim = await _userManager.GetStaffClaimAsync(editorId);
             if (article.PrincipalId != editorId && editorStaffClaim != StaffClaim.Operator)
                 return Unauthorized();
 
@@ -59,7 +59,7 @@ namespace Keylol.Controllers.Article
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
                     return BadRequest(ModelState);
                 }
-                var voteForPoint = await DbContext.NormalPoints
+                var voteForPoint = await _dbContext.NormalPoints
                     .Include(p => p.DeveloperPoints)
                     .Include(p => p.PublisherPoints)
                     .Include(p => p.SeriesPoints)
@@ -111,7 +111,7 @@ namespace Keylol.Controllers.Article
                     ModelState.AddModelError("vm.AttachedPointsId", "推送据点数量太多");
                     return BadRequest(ModelState);
                 }
-                article.AttachedPoints = await DbContext.NormalPoints
+                article.AttachedPoints = await _dbContext.NormalPoints
                     .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(requestDto.AttachedPointsId,
                         point => point.Id)).ToListAsync();
             }
@@ -121,7 +121,7 @@ namespace Keylol.Controllers.Article
                 attachedPoint.LastActivityTime = DateTime.Now;
             }
 
-            DbContext.EditLogs.Add(new EditLog
+            _dbContext.EditLogs.Add(new EditLog
             {
                 ArticleId = article.Id,
                 EditorId = editorId,
@@ -155,7 +155,7 @@ namespace Keylol.Controllers.Article
                 }
             }
 
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
                 ArticleId = article.Id

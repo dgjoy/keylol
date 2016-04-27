@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Controllers.User;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
@@ -27,22 +26,22 @@ namespace Keylol.Controllers.Article
         [AllowAnonymous]
         [HttpGet]
         [ResponseType(typeof (List<ArticleDto>))]
-        public async Task<IHttpActionResult> GetListByUser(string userId, UserController.IdType idType,
+        public async Task<IHttpActionResult> GetListByUser(string userId, UserIdentityType idType,
             string articleTypeFilter = null, int source = 1, int beforeSn = int.MaxValue, int take = 30)
         {
-            KeylolUser user;
+            IQueryable<KeylolUser> userQuery;
             switch (idType)
             {
-                case UserController.IdType.Id:
-                    user = await DbContext.Users.AsNoTracking().SingleAsync(u => u.Id == userId);
+                case UserIdentityType.Id:
+                    userQuery = _dbContext.Users.AsNoTracking().Where(u => u.Id == userId);
                     break;
 
-                case UserController.IdType.IdCode:
-                    user = await DbContext.Users.AsNoTracking().SingleAsync(u => u.IdCode == userId);
+                case UserIdentityType.IdCode:
+                    userQuery = _dbContext.Users.AsNoTracking().Where(u => u.IdCode == userId);
                     break;
 
-                case UserController.IdType.UserName:
-                    user = await DbContext.Users.AsNoTracking().SingleAsync(u => u.UserName == userId);
+                case UserIdentityType.UserName:
+                    userQuery = _dbContext.Users.AsNoTracking().Where(u => u.UserName == userId);
                     break;
 
                 default:
@@ -50,7 +49,6 @@ namespace Keylol.Controllers.Article
             }
 
             if (take > 50) take = 50;
-            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == user.Id);
             var publishedQuery = userQuery.SelectMany(u => u.ProfilePoint.Articles)
                 .Where(a => a.SequenceNumber < beforeSn && a.Archived == ArchivedState.None)
                 .Select(a => new

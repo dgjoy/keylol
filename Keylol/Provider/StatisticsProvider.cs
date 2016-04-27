@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Keylol.Models.DAL;
 
 namespace Keylol.Provider
 {
     /// <summary>
-    /// 提供统计指标服务
+    ///     提供统计指标服务
     /// </summary>
     public class StatisticsProvider
     {
@@ -17,10 +14,14 @@ namespace Keylol.Provider
         private readonly RedisProvider _redis;
 
         /// <summary>
-        /// 创建新 <see cref="StatisticsProvider"/>
+        ///     创建新 <see cref="StatisticsProvider" />
         /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="redis"><see cref="RedisProvider"/></param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="redis">
+        ///     <see cref="RedisProvider" />
+        /// </param>
         public StatisticsProvider(KeylolDbContext dbContext, RedisProvider redis)
         {
             _dbContext = dbContext;
@@ -30,7 +31,7 @@ namespace Keylol.Provider
         private static string LikeCountCacheKey(string userId) => $"user-like-count:{userId}";
 
         /// <summary>
-        /// 获取用户获得的总认可数量
+        ///     获取用户获得的总认可数量
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>用户获得的总认可数量</returns>
@@ -63,7 +64,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 自增用户获得的总认可数量
+        ///     自增用户获得的总认可数量
         /// </summary>
         /// <param name="userId">用户 ID</param>
         public async Task IncreaseUserLikeCount(string userId)
@@ -72,7 +73,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 自减用户获得的总认可数量
+        ///     自减用户获得的总认可数量
         /// </summary>
         /// <param name="userId">用户 ID</param>
         public async Task DecreaseUserLikeCount(string userId)

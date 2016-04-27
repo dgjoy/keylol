@@ -30,7 +30,7 @@ namespace Keylol.Controllers.CouponLog
         {
             if (take > 50) take = 50;
             var userId = User.Identity.GetUserId();
-            var couponLogs = await DbContext.CouponLogs.Where(cl => cl.UserId == userId)
+            var couponLogs = await _dbContext.CouponLogs.Where(cl => cl.UserId == userId)
                 .OrderByDescending(cl => cl.CreateTime)
                 .Skip(() => skip)
                 .Take(() => take)
@@ -51,15 +51,17 @@ namespace Keylol.Controllers.CouponLog
                 result.Add(dto);
             }
             var response = Request.CreateResponse(HttpStatusCode.OK, result);
-            var totalCount = await DbContext.CouponLogs.CountAsync(cl => cl.UserId == userId);
+            var totalCount = await _dbContext.CouponLogs.CountAsync(cl => cl.UserId == userId);
             response.Headers.SetTotalCount(totalCount);
             return response;
         }
 
         /// <summary>
-        /// 解析各种类型的 Description
+        ///     解析各种类型的 Description
         /// </summary>
-        /// <param name="dto"><see cref="CouponLogDto"/></param>
+        /// <param name="dto">
+        ///     <see cref="CouponLogDto" />
+        /// </param>
         private async Task ParseDescription(CouponLogDto dto)
         {
             try
@@ -68,7 +70,7 @@ namespace Keylol.Controllers.CouponLog
                     o => JObject.FromObject(o, new JsonSerializer {NullValueHandling = NullValueHandling.Ignore});
                 if (dto.Description.ArticleId != null)
                 {
-                    var article = await DbContext.Articles.FindAsync((string) dto.Description.ArticleId);
+                    var article = await _dbContext.Articles.FindAsync((string) dto.Description.ArticleId);
                     if (article != null)
                     {
                         ((JObject) dto.Description).Remove("ArticleId");
@@ -83,7 +85,7 @@ namespace Keylol.Controllers.CouponLog
                 }
                 if (dto.Description.CommentId != null)
                 {
-                    var comment = await DbContext.Comments.FindAsync((string) dto.Description.CommentId);
+                    var comment = await _dbContext.Comments.FindAsync((string) dto.Description.CommentId);
                     if (comment != null)
                     {
                         ((JObject) dto.Description).Remove("CommentId");
@@ -103,7 +105,7 @@ namespace Keylol.Controllers.CouponLog
                 if (dto.Description.OperatorId != null)
                 {
                     var operatorId = (string) dto.Description.OperatorId;
-                    var user = await DbContext.Users.Where(u => u.Id == operatorId).SingleOrDefaultAsync();
+                    var user = await _userManager.FindByIdAsync(operatorId);
                     if (user != null)
                     {
                         ((JObject) dto.Description).Remove("OperatorId");
@@ -118,7 +120,7 @@ namespace Keylol.Controllers.CouponLog
                 if (dto.Description.UserId != null)
                 {
                     var targetUserId = (string) dto.Description.UserId;
-                    var user = await DbContext.Users.Where(u => u.Id == targetUserId).SingleOrDefaultAsync();
+                    var user = await _userManager.FindByIdAsync(targetUserId);
                     if (user != null)
                     {
                         ((JObject) dto.Description).Remove("UserId");
@@ -133,7 +135,7 @@ namespace Keylol.Controllers.CouponLog
                 if (dto.Description.InviterId != null)
                 {
                     var inviterId = (string) dto.Description.InviterId;
-                    var user = await DbContext.Users.Where(u => u.Id == inviterId).SingleOrDefaultAsync();
+                    var user = await _userManager.FindByIdAsync(inviterId);
                     if (user != null)
                     {
                         ((JObject) dto.Description).Remove("InviterId");
@@ -147,7 +149,7 @@ namespace Keylol.Controllers.CouponLog
                 }
                 if (dto.Description.CouponGiftId != null)
                 {
-                    var gift = await DbContext.CouponGifts.FindAsync((string) dto.Description.CouponGiftId);
+                    var gift = await _dbContext.CouponGifts.FindAsync((string) dto.Description.CouponGiftId);
                     if (gift != null)
                     {
                         ((JObject) dto.Description).Remove("CouponGiftId");

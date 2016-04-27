@@ -38,7 +38,7 @@ namespace Keylol.Models.DTO
         public string Id { get; set; }
 
         /// <summary>
-        /// 序号
+        ///     序号
         /// </summary>
         [DataMember]
         public int? SequenceNumber { get; set; }

@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using System.Web.Http;
+﻿using System.Web.Http;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.Controllers.DatabaseMigration
 {
@@ -11,19 +9,7 @@ namespace Keylol.Controllers.DatabaseMigration
     [Authorize]
     [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
     [RoutePrefix("database-migration")]
-    public class DatabaseMigrationController : KeylolApiController
+    public class DatabaseMigrationController : ApiController
     {
-        [Route]
-        [HttpGet]
-        public async Task<IHttpActionResult> Test()
-        {
-            var record = DbContext.UserGameRecords.Create();
-            record.UserId = User.Identity.GetUserId();
-            record.TotalPlayedTime = 2;
-            record.SteamAppId = 999;
-            DbContext.UserGameRecords.Add(record);
-            await DbContext.SaveChangesAsync();
-            return Ok();
-        }
     }
 }

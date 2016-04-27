@@ -19,7 +19,7 @@ namespace Keylol.Controllers.UserPointSubscription
         public async Task<IHttpActionResult> GetOneByCurrentUserWithPointId(string pointId)
         {
             var userId = User.Identity.GetUserId();
-            return Ok(await DbContext.Users.Where(u => u.Id == userId)
+            return Ok(await _dbContext.Users.Where(u => u.Id == userId)
                 .SelectMany(u => u.SubscribedPoints)
                 .Select(p => p.Id)
                 .ContainsAsync(pointId));

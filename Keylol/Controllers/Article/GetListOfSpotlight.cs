@@ -21,7 +21,7 @@ namespace Keylol.Controllers.Article
         public async Task<IHttpActionResult> GetListOfSpotlight()
         {
             var articleEntries =
-                await DbContext.Articles.AsNoTracking()
+                await _dbContext.Articles.AsNoTracking()
                     .Where(a => a.SpotlightTime >= DbFunctions.AddDays(DateTime.Now, -14))
                     .OrderByDescending(a => a.SpotlightTime).Take(() => 5)
                     .Select(a => new

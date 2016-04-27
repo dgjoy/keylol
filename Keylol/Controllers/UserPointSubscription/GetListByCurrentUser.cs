@@ -24,7 +24,7 @@ namespace Keylol.Controllers.UserPointSubscription
         {
             if (take > 50) take = 50;
             var userId = User.Identity.GetUserId();
-            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
+            var userQuery = _dbContext.Users.AsNoTracking().Where(u => u.Id == userId);
             return Ok((await userQuery.SelectMany(u => u.SubscribedPoints.OfType<Models.NormalPoint>())
                 .Select(p => new
                 {

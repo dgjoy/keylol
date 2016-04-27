@@ -26,7 +26,7 @@ namespace Keylol.Controllers.NormalPoint
         {
             if (take > 50) take = 50;
             var response = Request.CreateResponse(HttpStatusCode.OK,
-                (await DbContext.NormalPoints.OrderBy(p => p.CreateTime)
+                (await _dbContext.NormalPoints.OrderBy(p => p.CreateTime)
                     .Skip(() => skip).Take(() => take)
                     .Select(p => new
                     {
@@ -38,7 +38,7 @@ namespace Keylol.Controllers.NormalPoint
                         ArticleCount = entry.articleCount,
                         SubscriberCount = entry.subscriberCount
                     }));
-            response.Headers.Add("X-Total-Record-Count", (await DbContext.NormalPoints.CountAsync()).ToString());
+            response.Headers.Add("X-Total-Record-Count", (await _dbContext.NormalPoints.CountAsync()).ToString());
             return response;
         }
     }

@@ -24,18 +24,18 @@ namespace Keylol.Controllers.UserPointSubscription
             var userId = User.Identity.GetUserId();
             if (isAutoSubscription)
             {
-                var subscription = await DbContext.AutoSubscriptions
+                var subscription = await _dbContext.AutoSubscriptions
                     .Where(s => s.UserId == userId && s.NormalPointId == pointId)
                     .SingleOrDefaultAsync();
                 if (subscription == null)
                     return NotFound();
-                DbContext.AutoSubscriptions.Remove(subscription);
+                _dbContext.AutoSubscriptions.Remove(subscription);
             }
             else
             {
                 var user =
-                    await DbContext.Users.Include(u => u.SubscribedPoints).SingleOrDefaultAsync(u => u.Id == userId);
-                var point = await DbContext.Points.FindAsync(pointId);
+                    await _dbContext.Users.Include(u => u.SubscribedPoints).SingleOrDefaultAsync(u => u.Id == userId);
+                var point = await _dbContext.Points.FindAsync(pointId);
                 if (point == null)
                     return NotFound();
 
@@ -43,7 +43,7 @@ namespace Keylol.Controllers.UserPointSubscription
                     return NotFound();
                 user.SubscribedPoints.Remove(point);
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

@@ -24,7 +24,7 @@ namespace Keylol.Controllers.InvitationCode
         public async Task<IHttpActionResult> GetListOfUnused(string source = null, int skip = 0, int take = 50)
         {
             if (take > 2000) take = 2000;
-            var query = DbContext.InvitationCodes.Where(c => c.UsedByUser == null);
+            var query = _dbContext.InvitationCodes.Where(c => c.UsedByUser == null);
             if (source != null)
                 query = query.Where(c => c.Source == source);
             return

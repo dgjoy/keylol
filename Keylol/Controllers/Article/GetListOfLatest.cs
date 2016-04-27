@@ -27,7 +27,7 @@ namespace Keylol.Controllers.Article
             int beforeSn = int.MaxValue, int take = 30)
         {
             if (take > 50) take = 50;
-            var articleQuery = DbContext.Articles.AsNoTracking()
+            var articleQuery = _dbContext.Articles.AsNoTracking()
                 .Where(a => a.Archived == ArchivedState.None && a.Rejected == false && a.SequenceNumber < beforeSn);
             if (articleTypeFilter != null)
             {

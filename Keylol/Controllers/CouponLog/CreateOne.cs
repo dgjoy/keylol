@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.Utilities;
@@ -14,7 +11,7 @@ namespace Keylol.Controllers.CouponLog
     public partial class CouponLogController
     {
         /// <summary>
-        /// 人工增加一条文券变动日志，同时更新目标用户文券（文券日志类型为“其他”）
+        ///     人工增加一条文券变动日志，同时更新目标用户文券（文券日志类型为“其他”）
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <param name="change">文券变动量</param>

@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Keylol.Models.DAL;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models
@@ -111,14 +107,6 @@ namespace Keylol.Models
         //        public bool VisionImpairment { get; set; } = false;
         //        public bool HearingImpairment { get; set; } = false;
         //        public bool PhotosensitiveEpilepsy { get; set; } = false;
-
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<KeylolUser> manager)
-        {
-            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
-            // Add custom user claims here
-            return userIdentity;
-        }
 
         #region Steam bot notification options
 

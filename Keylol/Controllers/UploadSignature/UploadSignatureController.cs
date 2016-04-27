@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Keylol.Models.DAL;
 
 namespace Keylol.Controllers.UploadSignature
 {
@@ -7,8 +8,19 @@ namespace Keylol.Controllers.UploadSignature
     /// </summary>
     [Authorize]
     [RoutePrefix("upload-signature")]
-    public partial class UploadSignatureController : KeylolApiController
+    public partial class UploadSignatureController : ApiController
     {
-        private const string FormKey = "LaetquRR2LDCO0SezzqNNeTxjnQ=";
+        private readonly KeylolDbContext _dbContext;
+
+        /// <summary>
+        ///     创建 <see cref="UploadSignatureController" />
+        /// </summary>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        public UploadSignatureController(KeylolDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
     }
 }

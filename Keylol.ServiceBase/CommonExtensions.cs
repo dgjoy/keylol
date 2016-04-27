@@ -6,7 +6,7 @@ using RabbitMQ.Client;
 namespace Keylol.ServiceBase
 {
     /// <summary>
-    /// 一些常用的方法扩展
+    ///     一些常用的方法扩展
     /// </summary>
     public static class CommonExtensions
     {

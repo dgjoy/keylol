@@ -52,25 +52,25 @@ namespace Keylol.Controllers.Message
             switch (filter)
             {
                 case MessageFilter.Like:
-                    query = DbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          m.Type >= 0 && (int) m.Type <= 99 &&
-                                                          m.SequenceNumber < beforeSn);
+                    query = _dbContext.Messages.Where(m => m.ReceiverId == userId &&
+                                                           m.Type >= 0 && (int) m.Type <= 99 &&
+                                                           m.SequenceNumber < beforeSn);
                     break;
 
                 case MessageFilter.Comment:
-                    query = DbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          (int) m.Type >= 100 && (int) m.Type <= 199 &&
-                                                          m.SequenceNumber < beforeSn);
+                    query = _dbContext.Messages.Where(m => m.ReceiverId == userId &&
+                                                           (int) m.Type >= 100 && (int) m.Type <= 199 &&
+                                                           m.SequenceNumber < beforeSn);
                     break;
 
                 case MessageFilter.Missive:
-                    query = DbContext.Messages.Where(m => m.ReceiverId == userId &&
-                                                          (int) m.Type >= 200 && (int) m.Type <= 299 &&
-                                                          m.SequenceNumber < beforeSn);
+                    query = _dbContext.Messages.Where(m => m.ReceiverId == userId &&
+                                                           (int) m.Type >= 200 && (int) m.Type <= 299 &&
+                                                           m.SequenceNumber < beforeSn);
                     break;
 
                 case null:
-                    query = DbContext.Messages.Where(m => m.ReceiverId == userId && m.SequenceNumber < beforeSn);
+                    query = _dbContext.Messages.Where(m => m.ReceiverId == userId && m.SequenceNumber < beforeSn);
                     break;
 
                 default:
@@ -125,7 +125,7 @@ namespace Keylol.Controllers.Message
             {
                 message.Unread = false;
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok(response);
         }
 

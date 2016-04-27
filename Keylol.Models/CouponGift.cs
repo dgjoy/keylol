@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models
 {
@@ -16,7 +12,7 @@ namespace Keylol.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// JSON 数组
+        ///     JSON 数组
         /// </summary>
         [Required]
         public string Descriptions { get; set; } = "[]";
@@ -28,8 +24,8 @@ namespace Keylol.Models
         public string PreviewImage { get; set; }
 
         /// <summary>
-        /// JSON 数组，元素示例：
-        /// { Id: "UID", Title: "蒸汽动力用户编号", Description: "论坛用户码（UID），在资料中可以找到。", InputType: "number" }
+        ///     JSON 数组，元素示例：
+        ///     { Id: "UID", Title: "蒸汽动力用户编号", Description: "论坛用户码（UID），在资料中可以找到。", InputType: "number" }
         /// </summary>
         [Required]
         public string AcceptedFields { get; set; } = "[]";

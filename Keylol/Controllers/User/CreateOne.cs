@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -36,22 +35,21 @@ namespace Keylol.Controllers.User
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var geetest = new Geetest();
             if (
                 !await
-                    geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
+                    _geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
                         requestDto.GeetestValidate))
             {
                 ModelState.AddModelError("authCode", "true");
                 return BadRequest(ModelState);
             }
-            var steamBindingToken = await DbContext.SteamBindingTokens.FindAsync(requestDto.SteamBindingTokenId);
+            var steamBindingToken = await _dbContext.SteamBindingTokens.FindAsync(requestDto.SteamBindingTokenId);
             if (steamBindingToken == null)
             {
                 ModelState.AddModelError("vm.SteamBindingTokenId", "Invalid steam binding token.");
                 return BadRequest(ModelState);
             }
-            if (await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamBindingToken.SteamId) != null)
+            if (await _userManager.FindBySteamIdAsync(steamBindingToken.SteamId) != null)
             {
                 ModelState.AddModelError("vm.SteamBindingTokenId",
                     "Steam account has been binded to another Keylol account.");
@@ -63,13 +61,13 @@ namespace Keylol.Controllers.User
                 return BadRequest(ModelState);
             }
 
-            if (await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == requestDto.IdCode) != null ||
+            if (await _userManager.FindByIdCodeAsync(requestDto.IdCode) != null ||
                 !IsIdCodeLegit(requestDto.IdCode))
             {
                 ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
                 return BadRequest(ModelState);
             }
-            if (await UserManager.FindByNameAsync(requestDto.UserName) != null)
+            if (await _userManager.FindByNameAsync(requestDto.UserName) != null)
             {
                 ModelState.AddModelError("vm.UserName", "UserName is already used by others.");
                 return BadRequest(ModelState);
@@ -83,7 +81,7 @@ namespace Keylol.Controllers.User
             {
                 IdCode = requestDto.IdCode,
                 UserName = requestDto.UserName,
-                RegisterIp = OwinContext.Request.RemoteIpAddress,
+                RegisterIp = _owinContext.Request.RemoteIpAddress,
                 AvatarImage = requestDto.AvatarImage,
                 SteamBindingTime = DateTime.Now,
                 SteamId = steamBindingToken.SteamId,
@@ -91,7 +89,7 @@ namespace Keylol.Controllers.User
                 SteamBotId = steamBindingToken.BotId
             };
 
-            var result = await UserManager.CreateAsync(user, requestDto.Password);
+            var result = await _userManager.CreateAsync(user, requestDto.Password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -104,8 +102,8 @@ namespace Keylol.Controllers.User
                 return BadRequest(ModelState);
             }
 
-            DbContext.SteamBindingTokens.Remove(steamBindingToken);
-            await DbContext.SaveChangesAsync();
+            _dbContext.SteamBindingTokens.Remove(steamBindingToken);
+            await _dbContext.SaveChangesAsync();
 
             await _coupon.Update(user.Id, CouponEvent.新注册);
 
@@ -113,26 +111,26 @@ namespace Keylol.Controllers.User
             if (requestDto.Inviter != null)
             {
                 var inviterIdCode = requestDto.Inviter;
-                var inviter = await DbContext.Users.Where(u => u.IdCode == inviterIdCode).SingleOrDefaultAsync();
+                var inviter = await _userManager.FindByIdCodeAsync(inviterIdCode);
                 if (inviter != null)
                 {
-                    await DbContext.Entry(user).ReloadAsync();
+                    await _dbContext.Entry(user).ReloadAsync();
                     user.InviterId = inviter.Id;
-                    await DbContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
                     await _coupon.Update(inviter.Id, CouponEvent.邀请注册, new {UserId = user.Id});
                     await _coupon.Update(user.Id, CouponEvent.应邀注册, new {InviterId = user.Id});
                 }
             }
 
             // Auto login
-            await SignInManager.SignInAsync(user, true, true);
+//            await SignInManager.SignInAsync(user, true, true);
             var loginLog = new LoginLog
             {
-                Ip = OwinContext.Request.RemoteIpAddress,
+                Ip = _owinContext.Request.RemoteIpAddress,
                 UserId = user.Id
             };
-            DbContext.LoginLogs.Add(loginLog);
-            await DbContext.SaveChangesAsync();
+            _dbContext.LoginLogs.Add(loginLog);
+            await _dbContext.SaveChangesAsync();
 
             return Created($"user/{user.Id}", new LoginLogDto(loginLog));
         }

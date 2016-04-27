@@ -22,26 +22,26 @@ namespace Keylol.Controllers.Login
         [SwaggerResponse(HttpStatusCode.Unauthorized, "指定 SteamLoginToken 无效或未经过授权")]
         public async Task<IHttpActionResult> CreateOneFromSteamLoginToken(string steamLoginTokenId)
         {
-            var token = await DbContext.SteamLoginTokens.FindAsync(steamLoginTokenId);
+            var token = await _dbContext.SteamLoginTokens.FindAsync(steamLoginTokenId);
 
             if (token == null)
                 return Unauthorized();
             if (token.SteamId == null)
                 return Unauthorized();
 
-            var user = await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == token.SteamId);
+            var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.SteamId == token.SteamId);
             if (user == null)
                 return Unauthorized();
 
-            await SignInManager.SignInAsync(user, true, true);
+//            await SignInManager.SignInAsync(user, true, true);
 
             var loginLog = new LoginLog
             {
-                Ip = OwinContext.Request.RemoteIpAddress,
+                Ip = _owinContext.Request.RemoteIpAddress,
                 User = user
             };
-            DbContext.LoginLogs.Add(loginLog);
-            await DbContext.SaveChangesAsync();
+            _dbContext.LoginLogs.Add(loginLog);
+            await _dbContext.SaveChangesAsync();
             return Created($"login/{loginLog.Id}", new LoginLogDto(loginLog));
         }
     }

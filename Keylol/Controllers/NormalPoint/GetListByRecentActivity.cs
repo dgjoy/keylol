@@ -19,7 +19,7 @@ namespace Keylol.Controllers.NormalPoint
         [ResponseType(typeof (List<NormalPointDto>))]
         public async Task<IHttpActionResult> GetListByRecentActivity()
         {
-            return Ok((await DbContext.NormalPoints.AsNoTracking()
+            return Ok((await _dbContext.NormalPoints.AsNoTracking()
                 .OrderByDescending(p => p.LastActivityTime).Take(() => 5)
                 .ToListAsync()).Select(point => new NormalPointDto(point)));
         }

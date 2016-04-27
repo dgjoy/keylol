@@ -22,7 +22,7 @@ namespace Keylol.Models
         public DateTime RedeemTime { get; set; } = DateTime.Now;
 
         /// <summary>
-        /// 用户额外录入的信息，JSON 格式，按照 <see cref="CouponGift"/> AcceptedFields 录入
+        ///     用户额外录入的信息，JSON 格式，按照 <see cref="CouponGift" /> AcceptedFields 录入
         /// </summary>
         [Required]
         public string Extra { get; set; } = "{}";

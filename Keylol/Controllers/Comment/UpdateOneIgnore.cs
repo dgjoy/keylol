@@ -22,7 +22,7 @@ namespace Keylol.Controllers.Comment
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权对该评论进行操作")]
         public async Task<IHttpActionResult> UpdateOneIgnore(string id, bool ignore, IgnoreType type)
         {
-            var comment = await DbContext.Comments.FindAsync(id);
+            var comment = await _dbContext.Comments.FindAsync(id);
             if (comment == null)
                 return NotFound();
 
@@ -43,7 +43,7 @@ namespace Keylol.Controllers.Comment
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

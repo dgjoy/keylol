@@ -1,5 +1,8 @@
 ﻿using System.Web.Http;
+using Keylol.Identity;
+using Keylol.Models.DAL;
 using Keylol.Provider;
+using Microsoft.Owin;
 
 namespace Keylol.Controllers.User
 {
@@ -8,10 +11,14 @@ namespace Keylol.Controllers.User
     /// </summary>
     [Authorize]
     [RoutePrefix("user")]
-    public partial class UserController : KeylolApiController
+    public partial class UserController : ApiController
     {
         private readonly CouponProvider _coupon;
+        private readonly KeylolDbContext _dbContext;
+        private readonly GeetestProvider _geetest;
+        private readonly IOwinContext _owinContext;
         private readonly StatisticsProvider _statistics;
+        private readonly KeylolUserManager _userManager;
 
         /// <summary>
         ///     创建 <see cref="UserController" />
@@ -22,10 +29,27 @@ namespace Keylol.Controllers.User
         /// <param name="statistics">
         ///     <see cref="StatisticsProvider" />
         /// </param>
-        public UserController(CouponProvider coupon, StatisticsProvider statistics)
+        /// <param name="geetest">
+        ///     <see cref="GeetestProvider" />
+        /// </param>
+        /// <param name="owinContextProvider">
+        ///     <see cref="OwinContextProvider" />
+        /// </param>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
+        public UserController(CouponProvider coupon, StatisticsProvider statistics, GeetestProvider geetest,
+            OwinContextProvider owinContextProvider, KeylolDbContext dbContext, KeylolUserManager userManager)
         {
             _coupon = coupon;
             _statistics = statistics;
+            _geetest = geetest;
+            _dbContext = dbContext;
+            _userManager = userManager;
+            _owinContext = owinContextProvider.Current;
         }
 
         //        public IHttpActionResult Login(string returnUrl)
@@ -117,16 +141,16 @@ namespace Keylol.Controllers.User
         //            if (ModelState.IsValid)
         //            {
         //                var user = new KeylolUser {UserName = model.Email, Email = model.Email};
-        //                var result = await UserManager.CreateAsync(user, model.Password);
+        //                var result = await _userManager.CreateAsync(user, model.Password);
         //                if (result.Succeeded)
         //                {
         //                    await SignInManager.SignInAsync(user, false, false);
         //
         //                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
         //                    // Send an email with this link
-        //                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+        //                    // string code = await _userManager.GenerateEmailConfirmationTokenAsync(user.Id);
         //                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-        //                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+        //                    // await _userManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
         //
         //                    return RedirectToAction("Index", "Home");
         //                }
@@ -144,7 +168,7 @@ namespace Keylol.Controllers.User
         //        {
         //            if (userId == null || code == null)
         //                return View("Error");
-        //            var result = await UserManager.ConfirmEmailAsync(userId, code);
+        //            var result = await _userManager.ConfirmEmailAsync(userId, code);
         //            return View(result.Succeeded ? "ConfirmEmail" : "Error");
         //        }
         //
@@ -165,8 +189,8 @@ namespace Keylol.Controllers.User
         //        {
         //            if (ModelState.IsValid)
         //            {
-        //                var user = await UserManager.FindByNameAsync(model.Email);
-        //                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+        //                var user = await _userManager.FindByNameAsync(model.Email);
+        //                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user.Id)))
         //                {
         //                    // Don't reveal that the user does not exist or is not confirmed
         //                    return View("ForgotPasswordConfirmation");
@@ -174,9 +198,9 @@ namespace Keylol.Controllers.User
         //
         //                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
         //                // Send an email with this link
-        //                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+        //                // string code = await _userManager.GeneratePasswordResetTokenAsync(user.Id);
         //                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-        //                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+        //                // await _userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
         //                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
         //            }
         //
@@ -209,13 +233,13 @@ namespace Keylol.Controllers.User
         //        {
         //            if (!ModelState.IsValid)
         //                return View(model);
-        //            var user = await UserManager.FindByNameAsync(model.Email);
+        //            var user = await _userManager.FindByNameAsync(model.Email);
         //            if (user == null)
         //            {
         //                // Don't reveal that the user does not exist
         //                return RedirectToAction("ResetPasswordConfirmation", "Account");
         //            }
-        //            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+        //            var result = await _userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
         //            if (result.Succeeded)
         //                return RedirectToAction("ResetPasswordConfirmation", "Account");
         //            AddErrors(result);
@@ -250,7 +274,7 @@ namespace Keylol.Controllers.User
         //            var userId = await SignInManager.GetVerifiedUserIdAsync();
         //            if (userId == null)
         //                return View("Error");
-        //            var userFactors = await UserManager.GetValidTwoFactorProvidersAsync(userId);
+        //            var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(userId);
         //            var factorOptions =
         //                userFactors.Select(purpose => new SelectListItem {Text = purpose, Value = purpose}).ToList();
         //            return
@@ -321,10 +345,10 @@ namespace Keylol.Controllers.User
         //                if (info == null)
         //                    return View("ExternalLoginFailure");
         //                var user = new KeylolUser {UserName = model.Email, Email = model.Email};
-        //                var result = await UserManager.CreateAsync(user);
+        //                var result = await _userManager.CreateAsync(user);
         //                if (result.Succeeded)
         //                {
-        //                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
+        //                    result = await _userManager.AddLoginAsync(user.Id, info.Login);
         //                    if (result.Succeeded)
         //                    {
         //                        await SignInManager.SignInAsync(user, false, false);

@@ -11,7 +11,7 @@ namespace Keylol.Controllers.CouponLog
     public partial class CouponLogController
     {
         /// <summary>
-        /// 获取当前用户未读的文券变动记录
+        ///     获取当前用户未读的文券变动记录
         /// </summary>
         [Route("unread")]
         [HttpGet]

@@ -7,34 +7,15 @@ using RabbitMQ.Client;
 namespace Keylol.ServiceBase
 {
     /// <summary>
-    /// RabbitMQ Client 提供者
+    ///     RabbitMQ Client 提供者
     /// </summary>
     public class MqClientProvider : IDisposable
     {
         private readonly ILog _logger;
         private bool _disposed;
 
-        #region 预定义名称
-
         /// <summary>
-        /// 延迟消息交换机
-        /// </summary>
-        public static readonly string DelayedMessageExchange = "delayed-message-exchange";
-
-        /// <summary>
-        ///     Image Garage 请求队列
-        /// </summary>
-        public static readonly string ImageGarageRequestQueue = "image-garage-requests";
-
-        /// <summary>
-        /// Steam Bot 延迟操作队列
-        /// </summary>
-        public static readonly string SteamBotDelayedActionQueue = "steam-bot-delayed-actions";
-
-        #endregion
-
-        /// <summary>
-        /// 创建新 MqClientProvider
+        ///     创建新 MqClientProvider
         /// </summary>
         public MqClientProvider(ILogProvider log)
         {
@@ -59,25 +40,13 @@ namespace Keylol.ServiceBase
             }
         }
 
-        private void OnConnectionShutdown(object sender, ShutdownEventArgs shutdownEventArgs)
-        {
-            _logger.Warn(
-                $"RabbitMQ connection shutdown.{(shutdownEventArgs.Cause == null ? string.Empty : $" Reason: {shutdownEventArgs.Cause}")}");
-        }
-
         /// <summary>
-        /// RabbitMQ Client IConnection 对象
+        ///     RabbitMQ Client IConnection 对象
         /// </summary>
         public IConnection Connection { get; }
 
         /// <summary>
-        /// 创建新频道
-        /// </summary>
-        /// <returns>创建的 IModel 对象</returns>
-        public IModel CreateModel() => Connection.CreateModel();
-
-        /// <summary>
-        /// 资源清理
+        ///     资源清理
         /// </summary>
         public void Dispose()
         {
@@ -85,8 +54,20 @@ namespace Keylol.ServiceBase
             GC.SuppressFinalize(this);
         }
 
+        private void OnConnectionShutdown(object sender, ShutdownEventArgs shutdownEventArgs)
+        {
+            _logger.Warn(
+                $"RabbitMQ connection shutdown.{(shutdownEventArgs.Cause == null ? string.Empty : $" Reason: {shutdownEventArgs.Cause}")}");
+        }
+
         /// <summary>
-        /// 资源清理
+        ///     创建新频道
+        /// </summary>
+        /// <returns>创建的 IModel 对象</returns>
+        public IModel CreateModel() => Connection.CreateModel();
+
+        /// <summary>
+        ///     资源清理
         /// </summary>
         /// <param name="disposing">是否清理托管对象</param>
         protected virtual void Dispose(bool disposing)
@@ -100,5 +81,24 @@ namespace Keylol.ServiceBase
             }
             _disposed = true;
         }
+
+        #region 预定义名称
+
+        /// <summary>
+        ///     延迟消息交换机
+        /// </summary>
+        public static readonly string DelayedMessageExchange = "delayed-message-exchange";
+
+        /// <summary>
+        ///     Image Garage 请求队列
+        /// </summary>
+        public static readonly string ImageGarageRequestQueue = "image-garage-requests";
+
+        /// <summary>
+        ///     Steam Bot 延迟操作队列
+        /// </summary>
+        public static readonly string SteamBotDelayedActionQueue = "steam-bot-delayed-actions";
+
+        #endregion
     }
 }

@@ -2,6 +2,8 @@
 using CsQuery;
 using CsQuery.Output;
 using Ganss.XSS;
+using Keylol.Identity;
+using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
 using RabbitMQ.Client;
@@ -13,10 +15,12 @@ namespace Keylol.Controllers.Article
     /// </summary>
     [Authorize]
     [RoutePrefix("article")]
-    public partial class ArticleController : KeylolApiController
+    public partial class ArticleController : ApiController
     {
         private readonly CouponProvider _coupon;
+        private readonly KeylolDbContext _dbContext;
         private readonly IModel _mqChannel;
+        private readonly KeylolUserManager _userManager;
 
         /// <summary>
         ///     创建 <see cref="ArticleController" />
@@ -27,10 +31,19 @@ namespace Keylol.Controllers.Article
         /// <param name="coupon">
         ///     <see cref="CouponProvider" />
         /// </param>
-        public ArticleController(IModel mqChannel, CouponProvider coupon)
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
+        public ArticleController(IModel mqChannel, CouponProvider coupon, KeylolDbContext dbContext,
+            KeylolUserManager userManager)
         {
             _mqChannel = mqChannel;
             _coupon = coupon;
+            _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         private static void SanitizeArticle(Models.Article article, bool extractUnstyledContent)

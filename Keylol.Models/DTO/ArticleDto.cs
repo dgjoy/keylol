@@ -20,26 +20,22 @@ namespace Keylol.Models.DTO
             /// <summary>
             ///     被订阅用户认可
             /// </summary>
-            [EnumMember]
-            Like,
+            [EnumMember] Like,
 
             /// <summary>
             ///     订阅用户发布
             /// </summary>
-            [EnumMember]
-            Publish,
+            [EnumMember] Publish,
 
             /// <summary>
             ///     发布到手动订阅的普通据点中
             /// </summary>
-            [EnumMember]
-            Point,
+            [EnumMember] Point,
 
             /// <summary>
             ///     发布到同步订阅的据点中
             /// </summary>
-            [EnumMember]
-            AutoSubscription
+            [EnumMember] AutoSubscription
         }
 
         /// <summary>
@@ -114,7 +110,7 @@ namespace Keylol.Models.DTO
         public string Content { get; set; }
 
         /// <summary>
-        /// RowVersion
+        ///     RowVersion
         /// </summary>
         [DataMember]
         public byte[] RowVersion { get; set; }
@@ -254,7 +250,7 @@ namespace Keylol.Models.DTO
         #endregion
 
         /// <summary>
-        /// 计数，仅用于搜索
+        ///     计数，仅用于搜索
         /// </summary>
         [DataMember]
         public int? Count { get; set; }

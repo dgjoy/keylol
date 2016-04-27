@@ -13,13 +13,9 @@ namespace Keylol.SteamBot
 {
     public class SteamBot : KeylolService
     {
+        private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false}; // 10s
         private readonly ILog _logger;
         private readonly RetryPolicy _retryPolicy;
-        private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false}; // 10s
-
-        public IServiceConsumer<ISteamBotCoordinator> Coordinator { get; }
-
-        public List<BotInstance> BotInstances { get; set; }
 
         public SteamBot(ILogProvider logProvider, IServiceConsumer<ISteamBotCoordinator> coordinator,
             SteamBotCoordinatorCallback callback, RetryPolicy retryPolicy)
@@ -30,7 +26,7 @@ namespace Keylol.SteamBot
             Coordinator = coordinator;
             _retryPolicy = retryPolicy;
             callback.SteamBot = this;
-            
+
             _heartbeatTimer.Elapsed += (sender, args) =>
             {
                 try
@@ -45,6 +41,10 @@ namespace Keylol.SteamBot
                 _heartbeatTimer.Start();
             };
         }
+
+        public IServiceConsumer<ISteamBotCoordinator> Coordinator { get; }
+
+        public List<BotInstance> BotInstances { get; set; }
 
         protected override async void OnStart(string[] args)
         {

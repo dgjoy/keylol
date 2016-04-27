@@ -14,7 +14,7 @@ namespace Keylol.Controllers.CouponGift
     public partial class CouponGiftController
     {
         /// <summary>
-        /// 创建一个文券礼品
+        ///     创建一个文券礼品
         /// </summary>
         /// <param name="requestDto">请求 DTO</param>
         [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
@@ -33,7 +33,7 @@ namespace Keylol.Controllers.CouponGift
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var gift = DbContext.CouponGifts.Create();
+            var gift = _dbContext.CouponGifts.Create();
             gift.Name = requestDto.Name;
             gift.Descriptions = JsonConvert.SerializeObject(requestDto.Descriptions);
             gift.ThumbnailImage = requestDto.ThumbnailImage;
@@ -41,54 +41,54 @@ namespace Keylol.Controllers.CouponGift
             gift.AcceptedFields = JsonConvert.SerializeObject(requestDto.AcceptedFields);
             gift.Price = requestDto.Price;
             gift.EndTime = requestDto.EndTime;
-            DbContext.CouponGifts.Add(gift);
-            await DbContext.SaveChangesAsync();
+            _dbContext.CouponGifts.Add(gift);
+            await _dbContext.SaveChangesAsync();
             return Created($"coupon-gift/{gift.Id}", new CouponGiftDto(gift));
         }
     }
 
     /// <summary>
-    /// 请求 DTO
+    ///     请求 DTO
     /// </summary>
     public class CouponGiftCreateOneRequestDto
     {
         /// <summary>
-        /// 名称
+        ///     名称
         /// </summary>
         [Required]
         public string Name { get; set; }
 
         /// <summary>
-        /// 描述
+        ///     描述
         /// </summary>
         [Required]
         public List<string> Descriptions { get; set; }
 
         /// <summary>
-        /// 缩略图
+        ///     缩略图
         /// </summary>
         [Required]
         public string ThumbnailImage { get; set; }
 
         /// <summary>
-        /// 预览图片
+        ///     预览图片
         /// </summary>
         [Required]
         public string PreviewImage { get; set; }
 
         /// <summary>
-        /// 接受的用户输入字段
+        ///     接受的用户输入字段
         /// </summary>
         [Required]
         public List<CouponGiftAcceptedFieldDto> AcceptedFields { get; set; }
 
         /// <summary>
-        /// 价格
+        ///     价格
         /// </summary>
         public int Price { get; set; }
 
         /// <summary>
-        /// 下架日期
+        ///     下架日期
         /// </summary>
         public DateTime EndTime { get; set; }
     }
