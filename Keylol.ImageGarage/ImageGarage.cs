@@ -103,8 +103,11 @@ namespace Keylol.ImageGarage
                                             if (extension == null) // 不支持的类型
                                             {
                                                 _logger.Warn($"Unsupported MIME type: {url}");
-                                                img.Attributes["alt"] = $"格式不支持 {url}";
-                                                img.RemoveAttribute("src");
+                                                break;
+                                            }
+                                            if (response.ContentLength > UpyunProvider.MaxImageSize)
+                                            {
+                                                _logger.Warn($"Image (Content-Length) is too large: {url}");
                                                 break;
                                             }
                                             var responseStream = response.GetResponseStream();
@@ -118,6 +121,11 @@ namespace Keylol.ImageGarage
                                             if (fileData.Length <= 0)
                                             {
                                                 _logger.Warn($"Empty response stream: {url}");
+                                                break;
+                                            }
+                                            if (fileData.Length > UpyunProvider.MaxImageSize)
+                                            {
+                                                _logger.Warn($"Image (response stream length) too large: {url}");
                                                 break;
                                             }
                                             var name = await UpyunProvider.UploadFile(fileData, extension);

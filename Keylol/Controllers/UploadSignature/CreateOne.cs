@@ -5,6 +5,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
@@ -33,14 +34,13 @@ namespace Keylol.Controllers.UploadSignature
                 return BadRequest();
 
             var range = ((string) options["content-length-range"]).Split(',').Select(int.Parse).ToList();
-            if (range[1] > 5*1024*1024) // 5 MB
+            if (range[1] > UpyunProvider.MaxImageSize)
                 return BadRequest();
 
             byte[] hash;
             using (var md5 = MD5.Create())
             {
-                var formKey = ConfigurationManager.AppSettings["upyunFormKey"];
-                hash = md5.ComputeHash(Encoding.UTF8.GetBytes($"{policy}&{formKey}"));
+                hash = md5.ComputeHash(Encoding.UTF8.GetBytes($"{policy}&{UpyunProvider.FormKey}"));
             }
             return Created("upload-signature", BitConverter.ToString(hash).Replace("-", string.Empty).ToLower());
         }

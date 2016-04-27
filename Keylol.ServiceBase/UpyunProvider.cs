@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,10 +13,19 @@ namespace Keylol.ServiceBase
     /// </summary>
     public static class UpyunProvider
     {
-        private const string ApiBase = "http://v0.api.upyun.com";
-        private const string Bucket = "keylol";
-        private const string Operator = "stackia";
-        private const string PasswordHash = "9fed63e0ecf16aad31a9c3ccd31b0737";
+        private static readonly string Bucket = ConfigurationManager.AppSettings["upyunBucket"];
+        private static readonly string Operator = ConfigurationManager.AppSettings["upyunOperator"];
+        private static readonly string PasswordHash = ConfigurationManager.AppSettings["upyunPasswordHash"];
+
+        /// <summary>
+        /// 允许的最大图片尺寸（字节）
+        /// </summary>
+        public static int MaxImageSize { get; } = 5*1024*1024; // 5 MB
+
+        /// <summary>
+        /// Upyun Form API Key
+        /// </summary>
+        public static string FormKey { get; } = ConfigurationManager.AppSettings["upyunFormKey"];
 
         /// <summary>
         ///     从又拍云格式的 URL 中提取文件名
@@ -33,7 +43,7 @@ namespace Keylol.ServiceBase
         private static HttpWebRequest CreateRequest(string method, string path, long contentLength)
         {
             path = path.TrimStart('/');
-            var request = WebRequest.CreateHttp($"{ApiBase}/{Bucket}/{path}");
+            var request = WebRequest.CreateHttp($"http://v0.api.upyun.com/{Bucket}/{path}");
             request.Method = method;
             request.ContentLength = contentLength;
             request.Date = DateTime.Now;
