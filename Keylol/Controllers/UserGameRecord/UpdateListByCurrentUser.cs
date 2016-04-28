@@ -67,7 +67,7 @@ namespace Keylol.Controllers.UserGameRecord
                     allGamesHtml = await httpClient.GetStringAsync(
                         $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
                 }
-                if (!string.IsNullOrEmpty(allGamesHtml))
+                if (!string.IsNullOrWhiteSpace(allGamesHtml))
                 {
                     var match = Regex.Match(allGamesHtml, @"<script language=""javascript"">\s*var rgGames = (.*)");
                     if (match.Success)

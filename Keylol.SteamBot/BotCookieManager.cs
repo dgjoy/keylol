@@ -81,7 +81,7 @@ namespace Keylol.SteamBot
                 _checkTimer.Start();
             }
 
-            if (string.IsNullOrEmpty(WebApiUserNonce))
+            if (string.IsNullOrWhiteSpace(WebApiUserNonce))
                 return;
 
             // generate an AES session key

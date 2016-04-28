@@ -61,7 +61,7 @@ namespace Keylol.Controllers.Article
             if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived)
             {
                 if (article.Archived != ArchivedState.None == requestDto.Value)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
 
                 if (operatorStaffClaim == StaffClaim.Operator)
                 {
@@ -77,7 +77,7 @@ namespace Keylol.Controllers.Article
             else if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight)
             {
                 if (article.SpotlightTime != null == requestDto.Value)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
 
                 if (requestDto.Value)
                     article.SpotlightTime = DateTime.Now;
@@ -87,7 +87,7 @@ namespace Keylol.Controllers.Article
             else
             {
                 if ((bool) propertyInfo.GetValue(article) == requestDto.Value)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
 
                 propertyInfo.SetValue(article, requestDto.Value);
             }
@@ -158,7 +158,7 @@ namespace Keylol.Controllers.Article
 
                 // Steam 通知
                 
-                if (!string.IsNullOrEmpty(steamNotityText))
+                if (!string.IsNullOrWhiteSpace(steamNotityText))
                     await _userManager.SendSteamChatMessageAsync(missive.Receiver, steamNotityText);
             }
             await _dbContext.SaveChangesAsync();

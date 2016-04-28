@@ -31,7 +31,7 @@ namespace Keylol.Provider
         /// <returns>是否验证通过</returns>
         public async Task<bool> ValidateAsync(string challenge, string seccode, string validate)
         {
-            if (string.IsNullOrEmpty(validate))
+            if (string.IsNullOrWhiteSpace(validate))
                 return false;
             if (Helpers.Md5($"{_key}geetest{challenge}") != validate)
                 return false;

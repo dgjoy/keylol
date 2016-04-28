@@ -59,7 +59,7 @@ namespace Keylol.Controllers.Comment
             if (article == null)
                 return NotFound();
 
-            var staffClaim = string.IsNullOrEmpty(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
+            var staffClaim = string.IsNullOrWhiteSpace(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
             if (article.Archived != ArchivedState.None &&
                 userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();

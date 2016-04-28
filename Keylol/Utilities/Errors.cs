@@ -25,7 +25,7 @@
         /// <summary>
         /// 表示通常意义上的没有变化（已存在、重复）
         /// </summary>
-        public const string NoChange = "no_change";
+        public const string Duplicate = "duplicate";
 
         /// <summary>
         /// 表示通常意义上的不存在

@@ -67,7 +67,7 @@ namespace Keylol.ServiceBase
             try
             {
                 var fileHash = Helpers.Md5(fileData);
-                if (string.IsNullOrEmpty(extension))
+                if (string.IsNullOrWhiteSpace(extension))
                     throw new ArgumentException("Need file extension", nameof(extension));
                 var request = CreateRequest(WebRequestMethods.Http.Put, $"{fileHash}.{extension}", fileData.LongLength);
                 request.ContentType = contentType;

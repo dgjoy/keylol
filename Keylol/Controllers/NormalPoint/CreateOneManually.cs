@@ -30,48 +30,29 @@ namespace Keylol.Controllers.NormalPoint
         public async Task<IHttpActionResult> CreateOneManually(
             [NotNull] NormalPointCreateOrUpdateOneRequestDto requestDto)
         {
-            if (requestDto.IdCode == null ||
-                !Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
-            {
-                ModelState.AddModelError("vm.IdCode", "识别码只允许使用 5 位数字或大写字母");
-                return BadRequest(ModelState);
-            }
+            if (string.IsNullOrWhiteSpace(requestDto.IdCode))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Required);
+
+            if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Invalid);
 
             if (await _dbContext.NormalPoints.AnyAsync(u => u.IdCode == requestDto.IdCode))
-            {
-                ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Duplicate);
 
-            if (string.IsNullOrEmpty(requestDto.EnglishName))
-            {
-                ModelState.AddModelError("vm.EnglishName", "英文名称不能为空");
-                return BadRequest(ModelState);
-            }
+            if (string.IsNullOrWhiteSpace(requestDto.EnglishName))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.EnglishName), Errors.Required);
 
             if (requestDto.PreferredName == null)
-            {
-                ModelState.AddModelError("vm.PreferredName", "名称语言偏好必填");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.PreferredName), Errors.Required);
 
             if (requestDto.Type == null)
-            {
-                ModelState.AddModelError("vm.PreferredName", "据点类型必填");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.Type), Errors.Required);
 
             if (!Helpers.IsTrustedUrl(requestDto.BackgroundImage))
-            {
-                ModelState.AddModelError("vm.BackgroundImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.BackgroundImage), Errors.Invalid);
 
             if (!Helpers.IsTrustedUrl(requestDto.AvatarImage))
-            {
-                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.AvatarImage), Errors.Invalid);
 
             var normalPoint = _dbContext.NormalPoints.Create();
             normalPoint.IdCode = requestDto.IdCode;
@@ -88,14 +69,11 @@ namespace Keylol.Controllers.NormalPoint
                 requestDto.Type.Value == NormalPointType.Manufacturer)
             {
                 if (requestDto.NameInSteamStore == null)
-                {
-                    ModelState.AddModelError("vm.NameInSteamStore", "商店匹配名必填");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.NameInSteamStore), Errors.Required);
                 var nameStrings =
                     requestDto.NameInSteamStore.Split(';')
                         .Select(n => n.Trim())
-                        .Where(n => !string.IsNullOrEmpty(n));
+                        .Where(n => !string.IsNullOrWhiteSpace(n));
                 var names = new List<SteamStoreName>();
                 foreach (var nameString in nameStrings)
                 {

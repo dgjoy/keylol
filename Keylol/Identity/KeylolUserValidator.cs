@@ -45,7 +45,7 @@ namespace Keylol.Identity
             if (!Regex.IsMatch(user.UserName, @"^[0-9A-Za-z\u4E00-\u9FCC]+$"))
                 return IdentityResult.Failed(Errors.UserNameInvalidCharacter);
 
-            if (user.Email == string.Empty)
+            if (string.IsNullOrWhiteSpace(user.Email))
                 user.Email = null;
             if (!new EmailAddressAttribute().IsValid(user.Email))
                 return IdentityResult.Failed(Errors.InvalidEmail);

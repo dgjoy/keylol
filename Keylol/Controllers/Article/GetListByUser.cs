@@ -119,7 +119,7 @@ namespace Keylol.Controllers.Article
                     TypeName = entry.type.ToString(),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
-                if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                if (string.IsNullOrWhiteSpace(entry.article.ThumbnailImage))
                 {
                     articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }

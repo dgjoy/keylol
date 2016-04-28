@@ -136,7 +136,7 @@ namespace Keylol.Controllers.Article
                     Author = new UserDto(entry.author),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
-                if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                if (string.IsNullOrWhiteSpace(entry.article.ThumbnailImage))
                 {
                     articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }

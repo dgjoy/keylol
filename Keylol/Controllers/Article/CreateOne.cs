@@ -105,7 +105,7 @@ namespace Keylol.Controllers.Article
             }
             else
             {
-                if (string.IsNullOrEmpty(requestDto.Summary))
+                if (string.IsNullOrWhiteSpace(requestDto.Summary))
                 {
                     SanitizeArticle(article, true);
                 }

@@ -51,7 +51,7 @@ namespace Keylol.Controllers.NormalPoint
             }
             else if (gamePoint != null)
             {
-                return this.BadRequest(nameof(appId), Errors.NoChange);
+                return this.BadRequest(nameof(appId), Errors.Duplicate);
             }
             else
             {
@@ -89,7 +89,7 @@ namespace Keylol.Controllers.NormalPoint
                     gamePoint.PreferredName = PreferredNameType.English;
                     gamePoint.Type = NormalPointType.Game;
                 }
-                if (string.IsNullOrEmpty(gamePoint.BackgroundImage))
+                if (string.IsNullOrWhiteSpace(gamePoint.BackgroundImage))
                 {
                     var backgroundResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head,
                         $"http://steamcdn-a.akamaihd.net/steam/apps/{appId}/page_bg_generated.jpg"));
@@ -109,7 +109,7 @@ namespace Keylol.Controllers.NormalPoint
                         }
                     }
                 }
-                if (string.IsNullOrEmpty(gamePoint.CoverImage))
+                if (string.IsNullOrWhiteSpace(gamePoint.CoverImage))
                     gamePoint.CoverImage = $"keylol://steam/app-capsules/{appId}";
                 gamePoint.Description = dom[".game_description_snippet"].Text().Trim();
                 var genreNames = new List<string>();

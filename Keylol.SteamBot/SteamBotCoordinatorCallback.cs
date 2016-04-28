@@ -102,7 +102,7 @@ namespace Keylol.SteamBot
         public void SendChatMessage(string botId, string steamId, string message, bool logMessage)
         {
             var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
-            if (botInstance == null || string.IsNullOrEmpty(message))
+            if (botInstance == null || string.IsNullOrWhiteSpace(message))
                 return;
             var id = new SteamID();
             id.SetFromSteam3String(steamId);
@@ -116,7 +116,7 @@ namespace Keylol.SteamBot
 
         public void BroadcastMessage(string message)
         {
-            if (SteamBot.BotInstances == null || string.IsNullOrEmpty(message))
+            if (SteamBot.BotInstances == null || string.IsNullOrWhiteSpace(message))
                 return;
             _logger.Info($"Broadcasting chat message: {message}");
             foreach (var botInstance in SteamBot.BotInstances)

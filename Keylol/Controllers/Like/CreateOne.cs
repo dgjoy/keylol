@@ -40,7 +40,7 @@ namespace Keylol.Controllers.Like
                     var existLike = await _dbContext.ArticleLikes.FirstOrDefaultAsync(
                         l => l.ArticleId == createOneDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.NoChange);
+                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.Duplicate);
                     var article = await _dbContext.Articles.FindAsync(createOneDto.TargetId);
                     if (article == null)
                         return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.NonExistent);
@@ -94,7 +94,7 @@ namespace Keylol.Controllers.Like
                     var existLike = await _dbContext.CommentLikes.FirstOrDefaultAsync(
                         l => l.CommentId == createOneDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.NoChange);
+                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.Duplicate);
                     var comment =
                         await
                             _dbContext.Comments.Include(c => c.Article)

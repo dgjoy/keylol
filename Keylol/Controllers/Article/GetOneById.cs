@@ -43,7 +43,7 @@ namespace Keylol.Controllers.Article
             if (articleEntry == null)
                 return NotFound();
 
-            var staffClaim = string.IsNullOrEmpty(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
+            var staffClaim = string.IsNullOrWhiteSpace(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
             if (articleEntry.article.Archived != ArchivedState.None &&
                 userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
                 return Unauthorized();

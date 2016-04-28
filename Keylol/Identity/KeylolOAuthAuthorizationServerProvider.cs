@@ -31,17 +31,17 @@ namespace Keylol.Identity
             var userName = context.Parameters["user_name"];
             var password = context.Parameters["password"];
             KeylolUser user;
-            if (!string.IsNullOrEmpty(idCode))
+            if (!string.IsNullOrWhiteSpace(idCode))
             {
                 // 识别码登录
                 user = await userManager.FindByIdCodeAsync(idCode);
             }
-            else if (!string.IsNullOrEmpty(email))
+            else if (!string.IsNullOrWhiteSpace(email))
             {
                 // 邮箱登录
                 user = await userManager.FindByEmailAsync(email);
             }
-            else if (!string.IsNullOrEmpty(userName))
+            else if (!string.IsNullOrWhiteSpace(userName))
             {
                 // 用户名登录
                 user = await userManager.FindByNameAsync(userName);

@@ -65,14 +65,14 @@ namespace Keylol.Controllers.Article
             foreach (var img in dom["img"])
             {
                 var url = string.Empty;
-                if (string.IsNullOrEmpty(img.Attributes["src"]))
+                if (string.IsNullOrWhiteSpace(img.Attributes["src"]))
                 {
                     img.Remove();
                 }
                 else
                 {
                     var fileName = UpyunProvider.ExtractFileName(img.Attributes["src"]);
-                    if (string.IsNullOrEmpty(fileName))
+                    if (string.IsNullOrWhiteSpace(fileName))
                     {
                         url = img.Attributes["src"];
                     }
@@ -83,7 +83,7 @@ namespace Keylol.Controllers.Article
                         img.RemoveAttribute("src");
                     }
                 }
-                if (string.IsNullOrEmpty(article.ThumbnailImage))
+                if (string.IsNullOrWhiteSpace(article.ThumbnailImage))
                     article.ThumbnailImage = url;
             }
             article.Content = dom.Render();

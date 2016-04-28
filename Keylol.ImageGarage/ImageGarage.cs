@@ -75,7 +75,7 @@ namespace Keylol.ImageGarage
                         foreach (var img in dom["img"])
                         {
                             string url;
-                            if (string.IsNullOrEmpty(img.Attributes["src"]))
+                            if (string.IsNullOrWhiteSpace(img.Attributes["src"]))
                             {
                                 url = img.Attributes["article-image-src"];
                             }
@@ -129,7 +129,7 @@ namespace Keylol.ImageGarage
                                                 break;
                                             }
                                             var name = await UpyunProvider.UploadFile(fileData, extension);
-                                            if (string.IsNullOrEmpty(name))
+                                            if (string.IsNullOrWhiteSpace(name))
                                             {
                                                 _logger.Warn($"Upload failed: {url}");
                                                 break;
@@ -146,7 +146,7 @@ namespace Keylol.ImageGarage
                                     _logger.Warn($"Download failed: {url}", e);
                                 }
                             }
-                            if (string.IsNullOrEmpty(article.ThumbnailImage))
+                            if (string.IsNullOrWhiteSpace(article.ThumbnailImage))
                                 article.ThumbnailImage = url;
                         }
                         article.Content = dom.Render();
@@ -180,7 +180,7 @@ namespace Keylol.ImageGarage
 
         private static string MimeTypeToFileExtension(string mimeType)
         {
-            if (string.IsNullOrEmpty(mimeType)) return null;
+            if (string.IsNullOrWhiteSpace(mimeType)) return null;
             var map = new Dictionary<string, string>
             {
                 {"image/bmp", "bmp"},

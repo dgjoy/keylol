@@ -70,7 +70,7 @@ namespace Keylol.ServiceBase
             if (Environment.UserInteractive) // 作为控制台应用启动
             {
                 Console.Title =
-                    $"Service Console: {(string.IsNullOrEmpty(service.ServiceName) ? "(unnamed)" : service.ServiceName)}";
+                    $"Service Console: {(string.IsNullOrWhiteSpace(service.ServiceName) ? "(unnamed)" : service.ServiceName)}";
                 Console.WriteLine("Running in console mode. Press Ctrl-Q to stop.");
                 service.OnStart(args);
                 while (true)

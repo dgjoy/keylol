@@ -87,7 +87,7 @@ namespace Keylol.Controllers.User
                 }
             }
 
-            var visitorStaffClaim = string.IsNullOrEmpty(visitorId)
+            var visitorStaffClaim = string.IsNullOrWhiteSpace(visitorId)
                 ? null
                 : await _userManager.GetStaffClaimAsync(visitorId);
 

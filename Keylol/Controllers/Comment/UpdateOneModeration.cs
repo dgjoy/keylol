@@ -53,7 +53,7 @@ namespace Keylol.Controllers.Comment
             if (requestDto.Property == CommentUpdateOneModerationRequestDto.CommentProperty.Archived)
             {
                 if (comment.Archived != ArchivedState.None == requestDto.Value)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
 
                 if (operatorStaffClaim == StaffClaim.Operator)
                 {
@@ -69,7 +69,7 @@ namespace Keylol.Controllers.Comment
             else
             {
                 if ((bool) propertyInfo.GetValue(comment) == requestDto.Value)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.NoChange);
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
 
                 propertyInfo.SetValue(comment, requestDto.Value);
             }
@@ -125,7 +125,7 @@ namespace Keylol.Controllers.Comment
 
                 // Steam 通知
 
-                if (!string.IsNullOrEmpty(steamNotityText))
+                if (!string.IsNullOrWhiteSpace(steamNotityText))
                     await _userManager.SendSteamChatMessageAsync(missive.Receiver, steamNotityText);
             }
             await _dbContext.SaveChangesAsync();
