@@ -81,21 +81,24 @@ namespace Keylol.Controllers.NormalPoint
                     Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
                     var dom = CQ.Create(await response.Content.ReadAsStringAsync());
                     var navTexts = dom[".game_title_area .blockbg a"];
-                    if (!navTexts.Any() || navTexts[0].InnerText != "All Games")
+                    if (!navTexts.Any() ||
+                        (navTexts[0].InnerText != "All Games" && navTexts[0].InnerText != "All Hardware"))
                     {
-                        ModelState.AddModelError("appId", "不是游戏");
+                        ModelState.AddModelError("appId", "暂不支持开设该类型应用的据点");
                         return BadRequest(ModelState);
                     }
                     if (dom[".game_area_dlc_bubble"].Any())
                     {
-                        ModelState.AddModelError("appId", "不能是 DLC");
+                        ModelState.AddModelError("appId", "不可以为 DLC 单独开设据点");
                         return BadRequest(ModelState);
                     }
                     if (!fillExisted)
                     {
                         gamePoint.SteamAppId = appId;
                         gamePoint.PreferredName = PreferredNameType.English;
-                        gamePoint.Type = NormalPointType.Game;
+                        gamePoint.Type = navTexts[0].InnerText == "All Games"
+                            ? NormalPointType.Game
+                            : NormalPointType.Hardware;
                     }
                     if (string.IsNullOrEmpty(gamePoint.BackgroundImage))
                     {
@@ -158,6 +161,7 @@ namespace Keylol.Controllers.NormalPoint
                                 break;
 
                             case "Developer:":
+                            case "Manufacturer:":
                                 developerNames.AddRange(values);
                                 break;
 

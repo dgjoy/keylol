@@ -26,7 +26,7 @@ namespace Keylol.Controllers.NormalPoint
         {
             var point = await DbContext.NormalPoints
                 .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
-            if (point == null || point.Type != NormalPointType.Game)
+            if (point == null || (point.Type != NormalPointType.Game && point.Type != NormalPointType.Hardware))
                 return NotFound();
 
             return Ok(point.DeveloperPoints

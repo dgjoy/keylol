@@ -66,7 +66,7 @@ namespace Keylol.Controllers.Article
                     ModelState.AddModelError("vm.VoteForPointId", "Invalid point for vote.");
                     return BadRequest(ModelState);
                 }
-                if (voteForPoint.Type != NormalPointType.Game)
+                if (voteForPoint.Type != NormalPointType.Game && voteForPoint.Type != NormalPointType.Hardware)
                 {
                     ModelState.AddModelError("vm.VoteForPointId", "Point for vote is not a game point.");
                     return BadRequest(ModelState);

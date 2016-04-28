@@ -90,6 +90,7 @@ namespace Keylol.Controllers.NormalPoint
                 switch (point.Type)
                 {
                     case NormalPointType.Game:
+                    case NormalPointType.Hardware:
                         pointDto.SteamAppId = point.SteamAppId;
                         pointDto.DisplayAliases = point.DisplayAliases;
                         pointDto.ReleaseDate = point.ReleaseDate;
@@ -121,7 +122,7 @@ namespace Keylol.Controllers.NormalPoint
 
             if (coverDescription)
             {
-                if (point.Type == NormalPointType.Game)
+                if (point.Type == NormalPointType.Game || point.Type == NormalPointType.Hardware)
                     pointDto.CoverImage = point.CoverImage;
                 pointDto.Description = point.Description;
             }

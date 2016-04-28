@@ -115,7 +115,7 @@ namespace Keylol.Controllers.NormalPoint
                 }
                 normalPoint.SteamStoreNames = names;
             }
-            if (normalPoint.Type == NormalPointType.Game &&
+            if ((normalPoint.Type == NormalPointType.Game || normalPoint.Type == NormalPointType.Hardware) &&
                 !await PopulateGamePointAttributes(normalPoint, requestDto, StaffClaim.Operator))
             {
                 return BadRequest(ModelState);

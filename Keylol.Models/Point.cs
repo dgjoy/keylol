@@ -11,7 +11,8 @@ namespace Keylol.Models
         Genre,
         Manufacturer,
         Platform,
-        Unspecified
+        Unspecified,
+        Hardware
     }
 
     public enum PreferredNameType

@@ -22,7 +22,7 @@ namespace Keylol.ImageGarage
         private readonly ILog _logger;
         private readonly IModel _mqChannel;
         private readonly IServiceConsumer<IImageGarageCoordinator> _coordinator;
-        private readonly Timer _heartbeatTimer = new Timer(10000) { AutoReset = false }; // 10s
+        private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false}; // 10s
 
         public ImageGarage(ILogProvider logProvider, MqClientProvider mqClientProvider,
             IServiceConsumer<IImageGarageCoordinator> coordinator)
@@ -107,6 +107,11 @@ namespace Keylol.ImageGarage
                                                 img.RemoveAttribute("src");
                                                 break;
                                             }
+                                            if (response.ContentLength > 5*1024*1024)
+                                            {
+                                                _logger.Warn($"Image (Content-Length) is too large: {url}");
+                                                break;
+                                            }
                                             var responseStream = response.GetResponseStream();
                                             if (responseStream == null)
                                             {
@@ -118,6 +123,11 @@ namespace Keylol.ImageGarage
                                             if (fileData.Length <= 0)
                                             {
                                                 _logger.Warn($"Empty response stream: {url}");
+                                                break;
+                                            }
+                                            if (fileData.Length > 5*1024*1024)
+                                            {
+                                                _logger.Warn($"Image (response stream length) is too large: {url}");
                                                 break;
                                             }
                                             var name = await UpyunProvider.UploadFile(fileData, extension);
