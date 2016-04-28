@@ -90,7 +90,7 @@ namespace Keylol.Identity
 
             if (token?.SteamId == null)
             {
-                context.SetError("invalid_token");
+                context.SetError(Errors.InvalidToken);
                 return;
             }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 

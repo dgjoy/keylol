@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
 using System.Web.Http.Results;
 using Keylol.Identity;
 using Keylol.Models;
@@ -91,16 +90,6 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 为 ModelState 增加指定错误
-        /// </summary>
-        /// <param name="modelState"><see cref="ModelStateDictionary"/> 对象</param>
-        /// <param name="modelError">错误描述，最后一个出现的字符串将作为 errorMessage，其他字符串用 "." 拼接后作为 key</param>
-        public static void AddModelError(this ModelStateDictionary modelState, params string[] modelError)
-        {
-            modelState.AddModelError(string.Join(".", modelError.Take(modelError.Length - 1)), modelError.Last());
-        }
-
-        /// <summary>
         /// 为 ModelState 增加指定错误并返回 BadRequest
         /// </summary>
         /// <param name="controller"><see cref="ApiController"/> 对象</param>
@@ -108,7 +97,8 @@ namespace Keylol.Utilities
         /// <returns><see cref="IHttpActionResult"/> 对象</returns>
         public static IHttpActionResult BadRequest(this ApiController controller, params string[] modelError)
         {
-            controller.ModelState.AddModelError(modelError);
+            controller.ModelState.AddModelError(string.Join(".", modelError.Take(modelError.Length - 1)),
+                modelError.Last());
             return new InvalidModelStateResult(controller.ModelState, controller);
         }
     }
