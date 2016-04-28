@@ -99,7 +99,7 @@ namespace Keylol.Controllers.NormalPoint
                 ? requestDto.Description.Substring(0, 256)
                 : requestDto.Description;
 
-            if (normalPoint.Type == NormalPointType.Game &&
+            if ((normalPoint.Type == NormalPointType.Game || normalPoint.Type == NormalPointType.Hardware) &&
                 !await PopulateGamePointAttributes(normalPoint, requestDto, editorStaffClaim, true))
             {
                 return BadRequest(ModelState);

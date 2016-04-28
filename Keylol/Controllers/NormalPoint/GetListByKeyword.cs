@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 
 namespace Keylol.Controllers.NormalPoint
@@ -18,7 +19,7 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="keyword">关键字</param>
         /// <param name="full">是否获取完整的据点信息，包括读者文章数，订阅状态等，默认 false</param>
-        /// <param name="type">是否只获取指定类型的据点，默认 "Unspecified"，表示不过滤类型</param>
+        /// <param name="typeFilter">据点类型过滤器，用逗号分个多个类型的名字，null 表示全部类型，默认 null</param>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 5</param>
         [Route("keyword/{keyword}")]
@@ -26,15 +27,19 @@ namespace Keylol.Controllers.NormalPoint
         [HttpGet]
         [ResponseType(typeof (List<NormalPointDto>))]
         public async Task<IHttpActionResult> GetListByKeyword(string keyword, bool full = false,
-            NormalPointType type = NormalPointType.Unspecified, int skip = 0, int take = 5)
+            string typeFilter = null, int skip = 0, int take = 5)
         {
             if (take > 50) take = 50;
             var typeFilterSql = string.Empty;
+            if (!string.IsNullOrWhiteSpace(typeFilter))
+            {
+                var inTypes = string.Join(", ",
+                    typeFilter.Split(',').Select(s => (int) s.Trim().ToEnum<NormalPointType>()));
+                typeFilterSql = $"WHERE [t1].[Type] IN ({inTypes})";
+            }
 
             if (!full)
             {
-                if (type != NormalPointType.Unspecified)
-                    typeFilterSql = @"WHERE [t1].[Type] = {3}";
                 return Ok((await _dbContext.NormalPoints.SqlQuery(
                     @"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
                         SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
@@ -45,12 +50,10 @@ namespace Keylol.Controllers.NormalPoint
                     ) AS [t3] ON [t1].[Id] = [t3].[KEY] " + typeFilterSql + @"
                     ORDER BY [t3].[RANK] DESC
                     OFFSET ({1}) ROWS FETCH NEXT ({2}) ROWS ONLY",
-                    $"\"{keyword}\" OR \"{keyword}*\"", skip, take, (int) type).AsNoTracking().ToListAsync()).Select(
+                    $"\"{keyword}\" OR \"{keyword}*\"", skip, take).AsNoTracking().ToListAsync()).Select(
                         point => new NormalPointDto(point)));
             }
 
-            if (type != NormalPointType.Unspecified)
-                typeFilterSql = @"WHERE [t1].[Type] = {4}";
             var points = await _dbContext.Database.SqlQuery<NormalPointDto>(@"SELECT
                 [t4].[Count],
                 [t4].[Id],
@@ -85,7 +88,7 @@ namespace Keylol.Controllers.NormalPoint
                     AS [t3] ON [t1].[Id] = [t3].[KEY] " + typeFilterSql + @"
                     ORDER BY [t3].[RANK] DESC
                     OFFSET({2}) ROWS FETCH NEXT({3}) ROWS ONLY) AS [t4]",
-                $"\"{keyword}\" OR \"{keyword}*\"", User.Identity.GetUserId(), skip, take, (int) type).ToListAsync();
+                $"\"{keyword}\" OR \"{keyword}*\"", User.Identity.GetUserId(), skip, take).ToListAsync();
 
             var response = Request.CreateResponse(HttpStatusCode.OK, points);
             response.Headers.Add("X-Total-Record-Count", points.Count > 0 ? points[0].Count.ToString() : "0");

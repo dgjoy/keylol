@@ -125,7 +125,7 @@ namespace Keylol.ImageGarage
                                             }
                                             if (fileData.Length > UpyunProvider.MaxImageSize)
                                             {
-                                                _logger.Warn($"Image (response stream length) too large: {url}");
+                                                _logger.Warn($"Image (response stream length) is too large: {url}");
                                                 break;
                                             }
                                             var name = await UpyunProvider.UploadFile(fileData, extension);

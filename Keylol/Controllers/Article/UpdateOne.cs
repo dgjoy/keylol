@@ -59,9 +59,9 @@ namespace Keylol.Controllers.Article
                 if (voteForPoint == null)
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.NonExistent);
 
-                if (voteForPoint.Type != NormalPointType.Game)
+                if (voteForPoint.Type != NormalPointType.Game && voteForPoint.Type != NormalPointType.Hardware)
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.Invalid);
-
+                
                 article.VoteForPointId = voteForPoint.Id;
                 article.Vote = requestDto.Vote > 5 ? 5 : (requestDto.Vote < 1 ? 1 : requestDto.Vote);
 

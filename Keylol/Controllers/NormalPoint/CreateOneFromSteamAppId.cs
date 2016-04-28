@@ -75,9 +75,10 @@ namespace Keylol.Controllers.NormalPoint
                 Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
                 var dom = CQ.Create(await response.Content.ReadAsStringAsync());
                 var navTexts = dom[".game_title_area .blockbg a"];
-                if (!navTexts.Any() || navTexts[0].InnerText != "All Games")
+                if (!navTexts.Any() ||
+                    (navTexts[0].InnerText != "All Games" && navTexts[0].InnerText != "All Hardware"))
                 {
-                    return this.BadRequest(nameof(appId), Errors.SteamAppNotGame);
+                    return this.BadRequest(nameof(appId), Errors.SteamAppNotSupported);
                 }
                 if (dom[".game_area_dlc_bubble"].Any())
                 {
@@ -87,7 +88,9 @@ namespace Keylol.Controllers.NormalPoint
                 {
                     gamePoint.SteamAppId = appId;
                     gamePoint.PreferredName = PreferredNameType.English;
-                    gamePoint.Type = NormalPointType.Game;
+                    gamePoint.Type = navTexts[0].InnerText != "All Games"
+                        ? NormalPointType.Game
+                        : NormalPointType.Hardware;
                 }
                 if (string.IsNullOrWhiteSpace(gamePoint.BackgroundImage))
                 {
@@ -150,6 +153,7 @@ namespace Keylol.Controllers.NormalPoint
                             break;
 
                         case "Developer:":
+                        case "Manufacturer:":
                             developerNames.AddRange(values);
                             break;
 
