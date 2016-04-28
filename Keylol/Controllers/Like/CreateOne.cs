@@ -17,14 +17,14 @@ namespace Keylol.Controllers.Like
         /// <summary>
         ///     创建一个认可
         /// </summary>
-        /// <param name="createOneDto">认可相关属性</param>
+        /// <param name="requestDto">认可相关属性</param>
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof (int))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前登录用户无权创建认可（文章或评论被封存，或者用户文券不足）")]
-        public async Task<IHttpActionResult> CreateOne([NotNull] LikeCreateOneDto createOneDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] LikeCreateOneRequestDto requestDto)
         {
             var operatorId = User.Identity.GetUserId();
             var @operator = await _userManager.FindByIdAsync(operatorId);
@@ -33,23 +33,23 @@ namespace Keylol.Controllers.Like
 
             Models.Like like;
             var free = false;
-            switch (createOneDto.Type)
+            switch (requestDto.Type)
             {
                 case LikeType.ArticleLike:
                 {
                     var existLike = await _dbContext.ArticleLikes.FirstOrDefaultAsync(
-                        l => l.ArticleId == createOneDto.TargetId && l.OperatorId == operatorId);
+                        l => l.ArticleId == requestDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.Duplicate);
-                    var article = await _dbContext.Articles.FindAsync(createOneDto.TargetId);
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetId), Errors.Duplicate);
+                    var article = await _dbContext.Articles.FindAsync(requestDto.TargetId);
                     if (article == null)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.NonExistent);
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetId), Errors.NonExistent);
                     if (article.PrincipalId == operatorId)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.Invalid);
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetId), Errors.Invalid);
                     if (article.Archived != ArchivedState.None)
                         return Unauthorized();
                     var articleLike = _dbContext.ArticleLikes.Create();
-                    articleLike.ArticleId = createOneDto.TargetId;
+                    articleLike.ArticleId = requestDto.TargetId;
                     like = articleLike;
                     if (!article.IgnoreNewLikes)
                     {
@@ -92,21 +92,21 @@ namespace Keylol.Controllers.Like
                 case LikeType.CommentLike:
                 {
                     var existLike = await _dbContext.CommentLikes.FirstOrDefaultAsync(
-                        l => l.CommentId == createOneDto.TargetId && l.OperatorId == operatorId);
+                        l => l.CommentId == requestDto.TargetId && l.OperatorId == operatorId);
                     if (existLike != null)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.Duplicate);
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetId), Errors.Duplicate);
                     var comment =
                         await
                             _dbContext.Comments.Include(c => c.Article)
-                                .SingleOrDefaultAsync(c => c.Id == createOneDto.TargetId);
+                                .SingleOrDefaultAsync(c => c.Id == requestDto.TargetId);
                     if (comment == null)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.NonExistent);
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetId), Errors.NonExistent);
                     if (comment.CommentatorId == operatorId)
-                        return this.BadRequest(nameof(createOneDto), nameof(createOneDto.TargetId), Errors.Invalid);
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetId), Errors.Invalid);
                     if (comment.Archived != ArchivedState.None || comment.Article.Archived != ArchivedState.None)
                         return Unauthorized();
                     var commentLike = _dbContext.CommentLikes.Create();
-                    commentLike.CommentId = createOneDto.TargetId;
+                    commentLike.CommentId = requestDto.TargetId;
                     like = commentLike;
                     if (!comment.IgnoreNewLikes)
                     {
@@ -158,7 +158,7 @@ namespace Keylol.Controllers.Like
         /// <summary>
         ///     请求 DTO
         /// </summary>
-        public class LikeCreateOneDto
+        public class LikeCreateOneRequestDto
         {
             /// <summary>
             ///     认可目标 Id

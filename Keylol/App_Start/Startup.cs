@@ -273,7 +273,9 @@ namespace Keylol
 
                 var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.XML"));
-                c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.Models.DTO.XML"));
+                var dtoXml = Path.Combine(baseDirectory, "bin", "Keylol.Models.DTO.XML");
+                if (File.Exists(dtoXml))
+                    c.IncludeXmlComments(dtoXml);
             }).EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}",
                 c => { c.InjectJavaScript(Assembly.GetExecutingAssembly(), "Keylol.Utilities.swagger-ui-extra.js"); });
 
