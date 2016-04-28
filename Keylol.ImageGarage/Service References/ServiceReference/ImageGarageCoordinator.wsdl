@@ -49,6 +49,12 @@
       <xsd:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
+  <wsdl:message name="IImageGarageCoordinator_Ping_InputMessage">
+    <wsdl:part name="parameters" element="tns:Ping" />
+  </wsdl:message>
+  <wsdl:message name="IImageGarageCoordinator_Ping_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PingResponse" />
+  </wsdl:message>
   <wsdl:message name="IImageGarageCoordinator_FindArticle_InputMessage">
     <wsdl:part name="parameters" element="tns:FindArticle" />
   </wsdl:message>
@@ -62,6 +68,10 @@
     <wsdl:part name="parameters" element="tns:UpdateArticleResponse" />
   </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="IImageGarageCoordinator">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Ping">
+      <wsdl:input wsaw:Action="http://tempuri.org/IImageGarageCoordinator/Ping" message="tns:IImageGarageCoordinator_Ping_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IImageGarageCoordinator/PingResponse" message="tns:IImageGarageCoordinator_Ping_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="FindArticle">
       <wsdl:input wsaw:Action="http://tempuri.org/IImageGarageCoordinator/FindArticle" message="tns:IImageGarageCoordinator_FindArticle_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IImageGarageCoordinator/FindArticleResponse" message="tns:IImageGarageCoordinator_FindArticle_OutputMessage" />
@@ -74,6 +84,15 @@
   <wsdl:binding name="NetHttpBinding_IImageGarageCoordinator" type="tns:IImageGarageCoordinator">
     <wsp:PolicyReference URI="#NetHttpBinding_IImageGarageCoordinator_policy" />
     <soap12:binding transport="http://schemas.microsoft.com/soap/websocket" />
+    <wsdl:operation name="Ping">
+      <soap12:operation soapAction="http://tempuri.org/IImageGarageCoordinator/Ping" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="FindArticle">
       <soap12:operation soapAction="http://tempuri.org/IImageGarageCoordinator/FindArticle" style="document" />
       <wsdl:input>

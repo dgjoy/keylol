@@ -55,8 +55,9 @@ namespace Keylol.ServiceBase
         /// </summary>
         /// <param name="fileData">文件的二进制数据</param>
         /// <param name="extension">文件扩展名</param>
+        /// <param name="contentType">文件 MIME 类型，留空自动根据后缀识别</param>
         /// <returns>上传成功返回文件名，失败返回 null</returns>
-        public static async Task<string> UploadFile(byte[] fileData, string extension)
+        public static async Task<string> UploadFile(byte[] fileData, string extension, string contentType = null)
         {
             try
             {
@@ -65,14 +66,18 @@ namespace Keylol.ServiceBase
                 {
                     fileHash = BitConverter.ToString(md5.ComputeHash(fileData)).Replace("-", "").ToLower();
                 }
-                var request = CreateRequest(WebRequestMethods.Http.Put, $"{fileHash}{extension}", fileData.LongLength);
+                if (string.IsNullOrEmpty(extension))
+                    throw new ArgumentException("Need file extension", nameof(extension));
+                var request = CreateRequest(WebRequestMethods.Http.Put, $"{fileHash}.{extension}", fileData.LongLength);
+                request.ContentType = contentType;
+                request.Headers["Content-MD5"] = fileHash;
                 using (var requestStream = request.GetRequestStream())
                 {
                     await requestStream.WriteAsync(fileData, 0, fileData.Length);
                 }
                 using (var response = (HttpWebResponse) await request.GetResponseAsync())
                 {
-                    return response.StatusCode == HttpStatusCode.OK ? $"{fileHash}{extension}" : null;
+                    return response.StatusCode == HttpStatusCode.OK ? $"{fileHash}.{extension}" : null;
                 }
             }
             catch (WebException)

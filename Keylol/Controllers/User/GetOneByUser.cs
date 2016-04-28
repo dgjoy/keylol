@@ -35,7 +35,12 @@ namespace Keylol.Controllers.User
             /// <summary>
             ///     用户名
             /// </summary>
-            UserName
+            UserName,
+
+            /// <summary>
+            /// Steam ID
+            /// </summary>
+            SteamId
         }
 
         /// <summary>

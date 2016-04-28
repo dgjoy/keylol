@@ -12,6 +12,12 @@ namespace Keylol.Services.Contracts
     public interface ISteamBotCoordinator
     {
         /// <summary>
+        /// 心跳测试
+        /// </summary>
+        [OperationContract]
+        void Ping();
+
+        /// <summary>
         /// 请求分配机器人，协作器在计算好机器人数量后将通过 RequestReallocateBots 回调通知客户端
         /// </summary>
         [OperationContract(IsOneWay = true)]
@@ -24,13 +30,6 @@ namespace Keylol.Services.Contracts
         /// <returns>分配给客户端的机器人列表</returns>
         [OperationContract]
         List<SteamBotDto> AllocateBots(int count);
-
-        /// <summary>
-        /// 撤销对指定机器人的会话分配
-        /// </summary>
-        /// <param name="botId">机器人 ID</param>
-        [OperationContract]
-        Task DeallocateBot(string botId);
 
         /// <summary>
         /// 更新指定用户的属性
@@ -51,12 +50,13 @@ namespace Keylol.Services.Contracts
         Task UpdateBot(string id, int? friendCount = null, bool? online = null, string steamId = null);
 
         /// <summary>
-        /// 判断指定 Steam 账户是不是其乐用户
+        /// 判断指定 Steam 账户是不是其乐用户并且匹配指定机器人
         /// </summary>
         /// <param name="steamId">Steam ID</param>
-        /// <returns><c>true</c> 表示是其乐用户，<c>false</c> 表示不是</returns>
+        /// <param name="botId">机器人 ID</param>
+        /// <returns><c>true</c> 表示是其乐用户并于目标机器人匹配，<c>false</c> 表示不是</returns>
         [OperationContract]
-        Task<bool> IsKeylolUser(string steamId);
+        Task<bool> IsKeylolUser(string steamId, string botId);
 
         /// <summary>
         /// 当机器人接收到用户好友请求时，通过此方法通知协调器

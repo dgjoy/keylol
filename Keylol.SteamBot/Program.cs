@@ -11,7 +11,7 @@ namespace Keylol.SteamBot
 {
     public static class Program
     {
-        public static readonly Container Container = new Container();
+        public static Container Container { get; } = new Container();
 
         public static void Main(string[] args)
         {

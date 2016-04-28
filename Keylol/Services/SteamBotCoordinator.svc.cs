@@ -9,6 +9,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Web;
 using Keylol.Hubs;
 using Keylol.Models.DAL;
@@ -39,6 +40,12 @@ namespace Keylol.Services
         /// </summary>
         public static ConcurrentDictionary<string, SteamBotCoordinator> Sessions { get; } =
             new ConcurrentDictionary<string, SteamBotCoordinator>();
+
+        /// <summary>
+        /// 暂时关闭自动回复的机器人列表，Key 为机器人 ID，Value 为对应的计时 Timer
+        /// </summary>
+        public static ConcurrentDictionary<string, Timer> AutoChatDisabledBots { get; } =
+            new ConcurrentDictionary<string, Timer>();
 
         /// <summary>
         /// 当前会话 ID
@@ -110,6 +117,13 @@ namespace Keylol.Services
         }
 
         /// <summary>
+        /// 心跳测试
+        /// </summary>
+        public void Ping()
+        {
+        }
+
+        /// <summary>
         /// 重新计算每个客户端应该分配的机器人数量并通知客户端
         /// </summary>
         /// <param name="newSession">新 Session，在分配机器人时会最后分配</param>
@@ -159,28 +173,11 @@ namespace Keylol.Services
                         .ToList();
                     foreach (var bot in bots)
                     {
-                        bot.Online = false;
                         bot.SessionId = SessionId;
                     }
                     dbContext.SaveChanges();
                     return bots.Select(bot => new SteamBotDto(bot, true)).ToList();
                 }
-        }
-
-        /// <summary>
-        /// 撤销对指定机器人的会话分配，如果这个机器人的会话 ID 不是当前会话的话，则不进行任何操作
-        /// </summary>
-        /// <param name="botId">机器人 ID</param>
-        public async Task DeallocateBot(string botId)
-        {
-            using (var dbContext = new KeylolDbContext())
-            {
-                var bot = await dbContext.SteamBots.FindAsync(botId);
-                if (bot.SessionId != SessionId) return;
-                bot.Online = false;
-                bot.SessionId = null;
-                await dbContext.SaveChangesAsync();
-            }
         }
 
         /// <summary>
@@ -226,15 +223,16 @@ namespace Keylol.Services
         }
 
         /// <summary>
-        /// 判断指定 Steam 账户是不是其乐用户
+        /// 判断指定 Steam 账户是不是其乐用户并且匹配指定机器人
         /// </summary>
         /// <param name="steamId">Steam ID</param>
-        /// <returns><c>true</c> 表示是其乐用户，<c>false</c> 表示不是</returns>
-        public async Task<bool> IsKeylolUser(string steamId)
+        /// <param name="botId">机器人 ID</param>
+        /// <returns><c>true</c> 表示是其乐用户并于目标机器人匹配，<c>false</c> 表示不是</returns>
+        public async Task<bool> IsKeylolUser(string steamId, string botId)
         {
             using (var dbContext = new KeylolDbContext())
             {
-                return await dbContext.Users.AnyAsync(u => u.SteamId == steamId);
+                return await dbContext.Users.AnyAsync(u => u.SteamId == steamId && u.SteamBotId == botId);
             }
         }
 
@@ -270,7 +268,7 @@ namespace Keylol.Services
                                 Message = "抱歉，你的会话因超时被强制结束，机器人已将你从好友列表中暂时移除。若要加入其乐，请重新按照网页指示注册账号。",
                                 SteamId = userSteamId
                             }
-                        }, 60000);
+                        }, 300000);
                 }
                 else
                 {
@@ -391,7 +389,11 @@ namespace Keylol.Services
                     }
                     else
                     {
-                        await Client.SendChatMessage(botId, senderSteamId, await AskTulingBot(message, user.Id), true);
+                        if (!AutoChatDisabledBots.ContainsKey(botId))
+                        {
+                            await Client.SendChatMessage(botId, senderSteamId, await AskTulingBot(message, user.Id),
+                                true);
+                        }
                     }
                 }
             }

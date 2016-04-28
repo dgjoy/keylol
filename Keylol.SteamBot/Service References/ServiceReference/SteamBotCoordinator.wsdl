@@ -57,12 +57,6 @@
   <wsdl:message name="ISteamBotCoordinator_AllocateBots_OutputMessage">
     <wsdl:part name="parameters" element="tns:AllocateBotsResponse" />
   </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_DeallocateBot_InputMessage">
-    <wsdl:part name="parameters" element="tns:DeallocateBot" />
-  </wsdl:message>
-  <wsdl:message name="ISteamBotCoordinator_DeallocateBot_OutputMessage">
-    <wsdl:part name="parameters" element="tns:DeallocateBotResponse" />
-  </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_UpdateUser_InputMessage">
     <wsdl:part name="parameters" element="tns:UpdateUser" />
   </wsdl:message>
@@ -89,6 +83,12 @@
   </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_OnBotNewChatMessage_InputMessage">
     <wsdl:part name="parameters" element="tns:OnBotNewChatMessage" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_Ping_InputMessage">
+    <wsdl:part name="parameters" element="tns:Ping" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_Ping_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PingResponse" />
   </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_GetAllocatedBots_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:GetAllocatedBots" />
@@ -152,10 +152,6 @@
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/AllocateBots" message="tns:ISteamBotCoordinator_AllocateBots_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/AllocateBotsResponse" message="tns:ISteamBotCoordinator_AllocateBots_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="DeallocateBot">
-      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/DeallocateBot" message="tns:ISteamBotCoordinator_DeallocateBot_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/DeallocateBotResponse" message="tns:ISteamBotCoordinator_DeallocateBot_OutputMessage" />
-    </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateUser">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/UpdateUser" message="tns:ISteamBotCoordinator_UpdateUser_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/UpdateUserResponse" message="tns:ISteamBotCoordinator_UpdateUser_OutputMessage" />
@@ -176,6 +172,10 @@
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="OnBotNewChatMessage">
       <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewChatMessage" message="tns:ISteamBotCoordinator_OnBotNewChatMessage_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Ping">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISteamBotCoordinator/Ping" message="tns:ISteamBotCoordinator_Ping_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/PingResponse" message="tns:ISteamBotCoordinator_Ping_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetAllocatedBots">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/GetAllocatedBots" message="tns:ISteamBotCoordinator_GetAllocatedBots_OutputCallbackMessage" />
@@ -238,15 +238,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="DeallocateBot">
-      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/DeallocateBot" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="UpdateUser">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/UpdateUser" style="document" />
       <wsdl:input>
@@ -291,6 +282,15 @@
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/Ping" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetAllocatedBots">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/GetAllocatedBots" style="document" />

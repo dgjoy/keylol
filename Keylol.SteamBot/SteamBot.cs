@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Timers;
 using ChannelAdam.ServiceModel;
 using Keylol.ServiceBase;
 using Keylol.SteamBot.ServiceReference;
@@ -14,6 +15,7 @@ namespace Keylol.SteamBot
     {
         private readonly ILog _logger;
         private readonly RetryPolicy _retryPolicy;
+        private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false}; // 10s
 
         public IServiceConsumer<ISteamBotCoordinator> Coordinator { get; }
 
@@ -28,6 +30,20 @@ namespace Keylol.SteamBot
             Coordinator = coordinator;
             _retryPolicy = retryPolicy;
             callback.SteamBot = this;
+            
+            _heartbeatTimer.Elapsed += (sender, args) =>
+            {
+                try
+                {
+                    Coordinator.Operations.Ping();
+                }
+                catch (Exception e)
+                {
+                    _logger.Warn("Ping failed.", e);
+                    Coordinator.Close();
+                }
+                _heartbeatTimer.Start();
+            };
         }
 
         protected override async void OnStart(string[] args)
@@ -45,6 +61,7 @@ namespace Keylol.SteamBot
             try
             {
                 Coordinator.Operations.RequestBots();
+                _heartbeatTimer.Start();
             }
             catch (Exception e)
             {
@@ -55,6 +72,7 @@ namespace Keylol.SteamBot
 
         protected override void OnStop()
         {
+            _heartbeatTimer.Stop();
             if (BotInstances != null)
                 foreach (var botInstance in BotInstances)
                 {

@@ -27,7 +27,6 @@ namespace Keylol.SteamBot
         private readonly SteamUser _steamUser;
 
         private bool _disposed;
-        private bool _deallocated; // 是否已被撤销分配
         private bool _loginPending; // 是否处于登录过程中
         private bool _callbackPumpStarted; // 回调泵是否已启用
         private IModel _mqChannel;
@@ -68,12 +67,13 @@ namespace Keylol.SteamBot
         /// <summary>
         /// 启动机器人实例
         /// </summary>
-        public void Start()
+        /// <param name="startWait">是否等待三秒后再启动，默认 <c>false</c></param>
+        public void Start(bool startWait = false)
         {
-            if (_deallocated)
+            if (_disposed)
             {
-                _logger.Fatal($"#{SequenceNumber} Try to restart deallocated bot.");
-                throw new InvalidOperationException("Try to restart deallocated bot.");
+                _logger.Fatal($"#{SequenceNumber} Try to restart disposed bot.");
+                throw new InvalidOperationException("Try to restart disposed bot.");
             }
 
             if (!_callbackPumpStarted)
@@ -81,13 +81,20 @@ namespace Keylol.SteamBot
                 _callbackPumpStarted = true;
                 Task.Run(() =>
                 {
-                    _logger.Info($"#{SequenceNumber} Bot started.");
+                    _logger.Info($"#{SequenceNumber} Listening callbacks...");
                     while (!_disposed)
                     {
-                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(100));
+                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(10));
                     }
-                    _logger.Info($"#{SequenceNumber} Bot stopped.");
+                    _logger.Info($"#{SequenceNumber} Stopped listening callbacks.");
                 });
+            }
+
+            _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, null, false, null));
+            if (startWait)
+            {
+                _logger.Info($"#{SequenceNumber} Starting in 3 seconds...");
+                Thread.Sleep(TimeSpan.FromSeconds(3));
             }
 
             var sfhPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", $"{LogOnDetails.Username}.sfh");
@@ -120,36 +127,22 @@ namespace Keylol.SteamBot
         public void Restart()
         {
             Stop();
-            _logger.Info($"#{SequenceNumber} Stopped, restarting in 3 seconds...");
-            Thread.Sleep(TimeSpan.FromSeconds(3));
-            Start();
+            Start(true);
         }
 
         /// <summary>
         /// 停止机器人实例
         /// </summary>
-        /// <param name="deallocate">是否通知协作器撤销分配此机器人，撤销分配后该实例将不可重新启动</param>
-        public void Stop(bool deallocate = false)
+        public void Stop()
         {
             if (_loginPending)
             {
                 LoginSemaphore.Release();
                 _loginPending = false;
             }
-            if (deallocate)
-            {
-                try
-                {
-                    _coordinator.Operations.DeallocateBot(Id);
-                }
-                catch (Exception e)
-                {
-                    _logger.Fatal($"#{SequenceNumber} Failed to tell coordinator to deallocate this bot.", e);
-                }
-                _deallocated = true;
-            }
             _mqChannel?.Close();
             SteamClient.Disconnect();
+            _logger.Info($"#{SequenceNumber} Stopped.");
         }
 
         private void OnDelayedActionReceived(object sender, BasicDeliverEventArgs basicDeliverEventArgs)
@@ -193,7 +186,7 @@ namespace Keylol.SteamBot
                                 if (!skip && (bool) actionDto.Properties.OnlyIfNotKeylolUser)
                                 {
                                     var result = _coordinator.Consume(
-                                        coordinator => coordinator.IsKeylolUser(steamId.Render(true)));
+                                        coordinator => coordinator.IsKeylolUser(steamId.Render(true), Id));
                                     if (!result.HasNoException || result.Value)
                                     {
                                         skip = true;
@@ -440,7 +433,7 @@ namespace Keylol.SteamBot
             if (disposing)
             {
                 CookieManager.Dispose();
-                Stop(true);
+                Stop();
             }
             _disposed = true;
         }

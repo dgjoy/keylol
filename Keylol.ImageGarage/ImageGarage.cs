@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
+using System.Timers;
 using ChannelAdam.ServiceModel;
 using CsQuery;
 using CsQuery.Output;
@@ -20,6 +22,7 @@ namespace Keylol.ImageGarage
         private readonly ILog _logger;
         private readonly IModel _mqChannel;
         private readonly IServiceConsumer<IImageGarageCoordinator> _coordinator;
+        private readonly Timer _heartbeatTimer = new Timer(10000) { AutoReset = false }; // 10s
 
         public ImageGarage(ILogProvider logProvider, MqClientProvider mqClientProvider,
             IServiceConsumer<IImageGarageCoordinator> coordinator)
@@ -30,6 +33,20 @@ namespace Keylol.ImageGarage
             _mqChannel = mqClientProvider.CreateModel();
             _coordinator = coordinator;
             Config.HtmlEncoder = new HtmlEncoderMinimum();
+
+            _heartbeatTimer.Elapsed += (sender, args) =>
+            {
+                try
+                {
+                    _coordinator.Operations.Ping();
+                }
+                catch (Exception e)
+                {
+                    _logger.Warn("Ping failed.", e);
+                    _coordinator.Close();
+                }
+                _heartbeatTimer.Start();
+            };
         }
 
         protected override void OnStart(string[] args)
@@ -82,16 +99,33 @@ namespace Keylol.ImageGarage
                                     {
                                         do
                                         {
+                                            var extension = MimeTypeToFileExtension(response.ContentType?.Split(';')[0]);
+                                            if (extension == null) // 不支持的类型
+                                            {
+                                                _logger.Warn($"Unsupported MIME type: {url}");
+                                                img.Attributes["alt"] = $"格式不支持 {url}";
+                                                img.RemoveAttribute("src");
+                                                break;
+                                            }
                                             var responseStream = response.GetResponseStream();
-                                            if (responseStream == null) break;
+                                            if (responseStream == null)
+                                            {
+                                                _logger.Warn($"Null response stream: {url}");
+                                                break;
+                                            }
                                             await responseStream.CopyToAsync(ms);
                                             var fileData = ms.ToArray();
-                                            if (fileData.Length <= 0) break;
-                                            var uri = new Uri(url);
-                                            var extension = Path.GetExtension(uri.AbsolutePath);
-                                            if (string.IsNullOrEmpty(extension)) break;
+                                            if (fileData.Length <= 0)
+                                            {
+                                                _logger.Warn($"Empty response stream: {url}");
+                                                break;
+                                            }
                                             var name = await UpyunProvider.UploadFile(fileData, extension);
-                                            if (string.IsNullOrEmpty(name)) break;
+                                            if (string.IsNullOrEmpty(name))
+                                            {
+                                                _logger.Warn($"Upload failed: {url}");
+                                                break;
+                                            }
                                             downloadCount++;
                                             url = $"keylol://{name}";
                                             img.Attributes["article-image-src"] = url;
@@ -99,12 +133,9 @@ namespace Keylol.ImageGarage
                                         } while (false);
                                     }
                                 }
-                                catch (WebException e)
+                                catch (Exception e)
                                 {
                                     _logger.Warn($"Download failed: {url}", e);
-                                }
-                                catch (UriFormatException)
-                                {
                                 }
                             }
                             if (string.IsNullOrEmpty(article.ThumbnailImage))
@@ -134,8 +165,25 @@ namespace Keylol.ImageGarage
 
         protected override void OnStop()
         {
+            _heartbeatTimer.Stop();
             _mqChannel.Close();
             base.OnStop();
+        }
+
+        private static string MimeTypeToFileExtension(string mimeType)
+        {
+            if (string.IsNullOrEmpty(mimeType)) return null;
+            var map = new Dictionary<string, string>
+            {
+                {"image/bmp", "bmp"},
+                {"image/gif", "gif"},
+                {"image/x-icon", "ico"},
+                {"image/jpeg", "jpg"},
+                {"image/png", "png"},
+                {"image/svg+xml", "svg"},
+                {"image/webp", "webp"}
+            };
+            return map.ContainsKey(mimeType) ? map[mimeType] : null;
         }
     }
 }

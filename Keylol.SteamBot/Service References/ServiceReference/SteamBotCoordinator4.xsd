@@ -21,18 +21,6 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="DeallocateBot">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="DeallocateBotResponse">
-    <xs:complexType>
-      <xs:sequence />
-    </xs:complexType>
-  </xs:element>
   <xs:element name="UpdateUser">
     <xs:complexType>
       <xs:sequence>
@@ -65,6 +53,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="steamId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -98,6 +87,16 @@
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
       </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Ping">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PingResponse">
+    <xs:complexType>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="GetAllocatedBots">
