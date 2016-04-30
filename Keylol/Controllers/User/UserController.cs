@@ -3,6 +3,7 @@ using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Microsoft.Owin;
+using SimpleInjector.Integration.Owin;
 
 namespace Keylol.Controllers.User
 {

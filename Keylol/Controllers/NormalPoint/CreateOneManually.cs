@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Filters;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;

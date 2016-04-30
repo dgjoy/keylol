@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Filters;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 using Newtonsoft.Json;

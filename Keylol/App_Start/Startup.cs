@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-using System.Web.ModelBinding;
 using Keylol.Filters;
-using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
-using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Diagnostics;
@@ -32,6 +27,7 @@ using SimpleInjector;
 using SimpleInjector.Integration.WebApi;
 using Swashbuckle.Application;
 using WebApiThrottle;
+using SimpleInjector.Integration.Owin;
 
 namespace Keylol
 {
@@ -86,25 +82,9 @@ namespace Keylol
 
             // CORS
             UseCors(app);
-
-            // 为 Per OWIN Request 生命期做准备
-            app.Use(async (context, next) =>
-            {
-                CallContext.LogicalSetData("IOwinContext", context);
-                var perOwinInstances = new Dictionary<object, object>();
-                context.Set("PerOwinInstances", perOwinInstances);
-                try
-                {
-                    await next.Invoke();
-                }
-                finally
-                {
-                    foreach (var instance in perOwinInstances.Values)
-                    {
-                        (instance as IDisposable)?.Dispose();
-                    }
-                }
-            });
+            
+            // Simple Injector OWIN Request Lifestyle
+            app.UseOwinRequestLifestyle();
 
             // OAuth 认证服务器
             app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
@@ -133,34 +113,6 @@ namespace Keylol
 
         private static void RegisterServices()
         {
-            // 创建 OWIN Request 范围的生命期
-            var owinRequestLifestyle = Lifestyle.CreateCustom("Per OWIN Request",
-                creator =>
-                {
-                    var key = new object();
-                    return () =>
-                    {
-                        if (Container.IsVerifying)
-                            return creator();
-                        var owinContext = Container.GetInstance<OwinContextProvider>().Current;
-                        if (owinContext == null)
-                            throw new Exception("Cannot find OWIN context.");
-                        var instances = owinContext.Get<Dictionary<object, object>>("PerOwinInstances");
-                        if (instances == null)
-                            throw new Exception("Cannot find \"PerOwinInstances\" in OWIN environment.");
-                        lock (key)
-                        {
-                            object instance;
-                            if (!instances.TryGetValue(key, out instance))
-                            {
-                                instance = creator();
-                                instances[key] = instance;
-                            }
-                            return instance;
-                        }
-                    };
-                });
-
             // log4net
             Container.RegisterConditional(typeof (ILogProvider),
                 c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (Startup)),
@@ -171,7 +123,7 @@ namespace Keylol
             Container.RegisterSingleton<MqClientProvider>();
 
             // RabbitMQ IModel
-            Container.Register(() => Container.GetInstance<MqClientProvider>().CreateModel(), owinRequestLifestyle);
+            Container.RegisterPerOwinRequest(() => Container.GetInstance<MqClientProvider>().CreateModel());
 
             // StackExchange.Redis
             Container.RegisterSingleton<RedisProvider>();
@@ -183,7 +135,7 @@ namespace Keylol
             Container.RegisterSingleton<OwinContextProvider>();
 
             // Keylol DbContext
-            Container.Register(() =>
+            Container.RegisterPerOwinRequest(() =>
             {
                 var context = new KeylolDbContext();
 #if DEBUG
@@ -191,16 +143,16 @@ namespace Keylol
                     (sender, s) => { GlobalHost.ConnectionManager.GetHubContext<DebugInfoHub>().Clients.All.Write(s); };
 #endif
                 return context;
-            }, owinRequestLifestyle);
+            });
 
             // Keylol User Manager
-            Container.Register<KeylolUserManager>(owinRequestLifestyle);
+            Container.RegisterPerOwinRequest<KeylolUserManager>();
 
             // Coupon
-            Container.Register<CouponProvider>(owinRequestLifestyle);
+            Container.RegisterPerOwinRequest<CouponProvider>();
 
             // Statistics
-            Container.Register<StatisticsProvider>(owinRequestLifestyle);
+            Container.RegisterPerOwinRequest<StatisticsProvider>();
 
             // One-time Token
             Container.RegisterSingleton<OneTimeTokenProvider>();
