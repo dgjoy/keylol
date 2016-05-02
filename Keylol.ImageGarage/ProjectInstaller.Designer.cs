@@ -39,6 +39,7 @@
             // 
             // serviceInstaller
             // 
+            this.serviceInstaller.DelayedAutoStart = true;
             this.serviceInstaller.Description = "Provide image utilities for Keylol.com.";
             this.serviceInstaller.DisplayName = "Keylol Image Garage";
             this.serviceInstaller.ServiceName = "Keylol.ImageGarage";

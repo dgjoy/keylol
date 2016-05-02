@@ -22,6 +22,7 @@
       <xs:enumeration value="Manufacturer" />
       <xs:enumeration value="Platform" />
       <xs:enumeration value="Unspecified" />
+      <xs:enumeration value="Hardware" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="NormalPointType" nillable="true" type="tns:NormalPointType" />

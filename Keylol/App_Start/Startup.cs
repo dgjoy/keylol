@@ -113,6 +113,8 @@ namespace Keylol
 
         private static void RegisterServices()
         {
+            Container.Options.DefaultScopedLifestyle = new OwinRequestLifestyle();
+
             // log4net
             Container.RegisterConditional(typeof (ILogProvider),
                 c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (Startup)),
