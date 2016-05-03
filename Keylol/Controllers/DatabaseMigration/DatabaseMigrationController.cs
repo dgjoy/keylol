@@ -9,7 +9,7 @@ namespace Keylol.Controllers.DatabaseMigration
     /// <summary>
     ///     数据库迁移 Controller，迁移方法必须要保证幂等性
     /// </summary>
-    [Authorize(Roles = KeylolRoles.Operator)]
+    [Authorize(Users = "Stackia")]
     [RoutePrefix("database-migration")]
     public class DatabaseMigrationController : ApiController
     {

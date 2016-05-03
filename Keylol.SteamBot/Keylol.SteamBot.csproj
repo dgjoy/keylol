@@ -71,7 +71,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ChannelAdam.Wcf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=947cb12151510e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\ChannelAdam.Wcf.2.0.0\lib\net45\ChannelAdam.Wcf.dll</HintPath>
+      <HintPath>..\packages\ChannelAdam.Wcf.2.1.0\lib\net45\ChannelAdam.Wcf.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
