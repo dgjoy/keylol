@@ -1,65 +1,45 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
-using Keylol.Models;
-using Keylol.Models.DAL;
-using Keylol.Models.DTO;
+using Keylol.Provider;
 using Microsoft.AspNet.SignalR;
 
 namespace Keylol.Hubs
 {
-    public interface ISteamLoginHubClient
-    {
-        void NotifyCodeReceived();
-    }
-
+    /// <summary>
+    /// 提供通过 Steam 登录服务
+    /// </summary>
     public class SteamLoginHub : Hub<ISteamLoginHubClient>
     {
-        private readonly KeylolDbContext _dbContext = new KeylolDbContext();
-
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Called when the connection connects to this hub instance.
+        /// </summary>
+        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /></returns>
+        public override async Task OnConnected()
         {
-            if (disposing)
-            {
-                _dbContext.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        public override async Task OnDisconnected(bool stopCalled)
-        {
-            var tokens =
-                await
-                    _dbContext.SteamLoginTokens.Where(t => t.BrowserConnectionId == Context.ConnectionId).ToListAsync();
-            foreach (var token in tokens)
-            {
-                _dbContext.SteamLoginTokens.Remove(token);
-            }
-            await _dbContext.SaveChangesAsync();
-            await base.OnDisconnected(stopCalled);
-        }
-
-        public async Task<SteamLoginTokenDto> CreateToken()
-        {
-            string code;
+            var oneTimeTokenProvider = Startup.Container.GetInstance<OneTimeTokenProvider>();
             var random = new Random();
-            do
-            {
-                code = random.Next(0, 10000).ToString("D4");
-            } while (await _dbContext.SteamLoginTokens.AnyAsync(t => t.Code == code));
-            var token = new SteamLoginToken
-            {
-                Code = code,
-                BrowserConnectionId = Context.ConnectionId
-            };
-            _dbContext.SteamLoginTokens.Add(token);
-            await _dbContext.SaveChangesAsync();
-            return new SteamLoginTokenDto
-            {
-                Id = token.Id,
-                Code = token.Code
-            };
+            var code = await oneTimeTokenProvider.Generate(Context.ConnectionId,
+                TimeSpan.FromMinutes(10), OneTimeTokenPurpose.SteamLogin,
+                () => Task.FromResult(random.Next(0, 10000).ToString("D4")));
+            Clients.Caller.OnCode(code);
         }
+    }
+
+    /// <summary>
+    /// <see cref="SteamLoginHub"/> Client
+    /// </summary>
+    public interface ISteamLoginHubClient
+    {
+        /// <summary>
+        /// 通知新的登录验证码
+        /// </summary>
+        /// <param name="code">登录验证码</param>
+        void OnCode(string code);
+
+        /// <summary>
+        /// 通知新的登录用 One-time Token
+        /// </summary>
+        /// <param name="token">登录用 One-time Token</param>
+        void OnLoginOneTimeToken(string token);
     }
 }

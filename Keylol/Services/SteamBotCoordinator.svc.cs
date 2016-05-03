@@ -13,6 +13,7 @@ using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
+using Keylol.Provider;
 using Keylol.ServiceBase;
 using Keylol.Services.Contracts;
 using Microsoft.AspNet.SignalR;
@@ -301,20 +302,21 @@ namespace Keylol.Services
                     if (match.Success)
                     {
                         var code = match.Groups[1].Value;
-                        var token = await dbContext.SteamLoginTokens.SingleOrDefaultAsync(t => t.Code == code);
-                        if (token == null)
+                        var oneTimeTokenProvider = Startup.Container.GetInstance<OneTimeTokenProvider>();
+                        try
+                        {
+                            var connectionId =
+                                await oneTimeTokenProvider.Consume<string>(code, OneTimeTokenPurpose.SteamLogin);
+                            var loginToken = await oneTimeTokenProvider.Generate(user.Id, TimeSpan.FromMinutes(1),
+                                OneTimeTokenPurpose.UserLogin);
+                            GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
+                                .Clients.Client(connectionId).OnLoginOneTimeToken(loginToken);
+                            await Client.SendChatMessage(botId, senderSteamId, "欢迎回来，你已成功登录其乐社区。");
+                        }
+                        catch (Exception)
                         {
                             await Client.SendChatMessage(botId, senderSteamId,
                                 "你的输入无法被识别，请确认登录验证码的长度和格式。如果需要帮助，请与其乐职员取得联系。");
-                        }
-                        else
-                        {
-                            token.SteamId = senderSteamId;
-                            await dbContext.SaveChangesAsync();
-                            GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
-                                .Clients.Client(token.BrowserConnectionId)?
-                                .NotifyCodeReceived();
-                            await Client.SendChatMessage(botId, senderSteamId, "欢迎回来，你已成功登录其乐社区。");
                         }
                     }
                     else

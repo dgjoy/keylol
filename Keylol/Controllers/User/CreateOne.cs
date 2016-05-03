@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -107,7 +108,8 @@ namespace Keylol.Controllers.User
                 }
             }
 
-            return Created($"user/{user.Id}", _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1)));
+            return Created($"user/{user.Id}",
+                _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1), OneTimeTokenPurpose.UserLogin));
         }
 
 

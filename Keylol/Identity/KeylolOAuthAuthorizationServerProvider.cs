@@ -83,37 +83,6 @@ namespace Keylol.Identity
             context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
         }
 
-        private async Task GrantSteamLoginToken(OAuthGrantCustomExtensionContext context)
-        {
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
-
-            var steamLoginTokenId = context.Parameters["token_id"];
-            var token = await dbContext.SteamLoginTokens.FindAsync(steamLoginTokenId);
-
-            if (token?.SteamId == null)
-            {
-                context.SetError(Errors.InvalidToken);
-                return;
-            }
-
-            var userManager = Startup.Container.GetInstance<KeylolUserManager>();
-            var user = await userManager.FindBySteamIdAsync(token.SteamId);
-            if (user == null)
-            {
-                context.Rejected();
-                return;
-            }
-
-            var loginLog = new LoginLog
-            {
-                Ip = context.Request.RemoteIpAddress,
-                UserId = user.Id
-            };
-            dbContext.LoginLogs.Add(loginLog);
-            await dbContext.SaveChangesAsync();
-            context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
-        }
-
         private async Task GrantOneTimeToken(OAuthGrantCustomExtensionContext context)
         {
             var tokenProvider = Startup.Container.GetInstance<OneTimeTokenProvider>();
@@ -121,7 +90,7 @@ namespace Keylol.Identity
             string userId;
             try
             {
-                userId = await tokenProvider.Consume<string>(token);
+                userId = await tokenProvider.Consume<string>(token, OneTimeTokenPurpose.UserLogin);
             }
             catch (Exception)
             {
@@ -165,10 +134,6 @@ namespace Keylol.Identity
             if (context.GrantType.Equals("password_captcha", StringComparison.OrdinalIgnoreCase))
             {
                 await GrantPasswordCaptcha(context);
-            }
-            else if (context.GrantType.Equals("steam_login_token", StringComparison.OrdinalIgnoreCase))
-            {
-                await GrantSteamLoginToken(context);
             }
             else if (context.GrantType.Equals("one_time_token", StringComparison.OrdinalIgnoreCase))
             {

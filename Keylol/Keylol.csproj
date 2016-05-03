@@ -71,6 +71,10 @@
       <HintPath>..\packages\JetBrains.Annotations.10.1.4\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -311,12 +315,13 @@
     <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Controllers\UserPointSubscription\UserPointSubscriptionController.cs" />
-    <Compile Include="Hubs\DebugInfoHub.cs" />
+    <Compile Include="Hubs\LogHub.cs" />
     <Compile Include="Hubs\SteamLoginHub.cs" />
     <Compile Include="Hubs\SteamBindingHub.cs" />
     <Compile Include="Identity\KeylolOAuthAuthorizationServerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Utilities\LogHubAppender.cs" />
     <Compile Include="Utilities\NotNullHttpParameterBinding.cs" />
     <Compile Include="Utilities\PredicateBuilder.cs" />
   </ItemGroup>

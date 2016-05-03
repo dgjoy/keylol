@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol.Identity
@@ -13,8 +14,18 @@ namespace Keylol.Identity
         /// </summary>
         public KeylolOAuthBearerAuthenticationProvider()
         {
+            OnRequestToken = context =>
+            {
+                if (string.IsNullOrWhiteSpace(context.Token))
+                {
+                    context.Token = context.Request.Query["bearer_token"];
+                }
+                return Task.FromResult(0);
+            };
+
             OnValidateIdentity = async context =>
             {
+                if (!context.IsValidated) return;
                 var userManager = Startup.Container.GetInstance<KeylolUserManager>();
                 if (userManager.SupportsUserSecurityStamp)
                 {

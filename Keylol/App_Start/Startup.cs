@@ -15,6 +15,9 @@ using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
+using log4net;
+using log4net.Core;
+using log4net.Repository.Hierarchy;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
@@ -91,7 +94,7 @@ namespace Keylol
             // OAuth 认证服务器
             app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(7),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(30),
                 AuthenticationMode = AuthenticationMode.Passive,
                 TokenEndpointPath = new PathString("/oauth/token"),
                 AuthorizeEndpointPath = new PathString("/oauth/authorization"),
@@ -118,6 +121,7 @@ namespace Keylol
             Container.Options.DefaultScopedLifestyle = new OwinRequestLifestyle();
 
             // log4net
+            SetupLogger();
             Container.RegisterConditional(typeof(ILogProvider),
                 c => typeof(LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof(Startup)),
                 Lifestyle.Singleton,
@@ -143,8 +147,12 @@ namespace Keylol
             {
                 var context = new KeylolDbContext();
 #if DEBUG
-                context.WriteLog +=
-                    (sender, s) => { GlobalHost.ConnectionManager.GetHubContext<DebugInfoHub>().Clients.All.Write(s); };
+                context.WriteLog += (sender, s) =>
+                {
+                    GlobalHost.ConnectionManager
+                        .GetHubContext<LogHub, ILogHubClient>()
+                        .Clients.All.OnWrite(s);
+                };
 #endif
                 return context;
             });
@@ -244,6 +252,16 @@ namespace Keylol
             config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(Container);
 
             app.UseWebApi(server);
+        }
+
+        private static void SetupLogger()
+        {
+            var hierarchy = (Hierarchy)LogManager.GetRepository();
+            var appender = new LogHubAppender();
+            appender.ActivateOptions();
+            hierarchy.Root.AddAppender(appender);
+            hierarchy.Root.Level = Level.All;
+            hierarchy.Configured = true;
         }
     }
 }
