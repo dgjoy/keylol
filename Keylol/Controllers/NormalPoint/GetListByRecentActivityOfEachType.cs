@@ -17,7 +17,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("active-of-each-type")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (Dictionary<NormalPointType, List<NormalPointDto>>))]
+        [ResponseType(typeof(Dictionary<NormalPointType, List<NormalPointDto>>))]
         public async Task<IHttpActionResult> GetListByRecentActivityOfEachType()
         {
             return Ok(new Dictionary<NormalPointType, List<NormalPointDto>>

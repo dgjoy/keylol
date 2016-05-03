@@ -30,7 +30,7 @@ namespace Keylol.Utilities
                     valueSelector.Body,
                     Expression.Constant(
                         value,
-                        typeof (TValue)))
+                        typeof(TValue)))
                 );
             var body = equals.Aggregate(Expression.Or);
             return Expression.Lambda<Func<TElement, bool>>(body, p);

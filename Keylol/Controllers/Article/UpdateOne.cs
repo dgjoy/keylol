@@ -29,7 +29,8 @@ namespace Keylol.Controllers.Article
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOne(string id,
+            [NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
         {
             var article = await _dbContext.Articles.Include(a => a.AttachedPoints).SingleOrDefaultAsync(a => a.Id == id);
             if (article == null)
@@ -61,7 +62,7 @@ namespace Keylol.Controllers.Article
 
                 if (voteForPoint.Type != NormalPointType.Game && voteForPoint.Type != NormalPointType.Hardware)
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.Invalid);
-                
+
                 article.VoteForPointId = voteForPoint.Id;
                 article.Vote = requestDto.Vote > 5 ? 5 : (requestDto.Vote < 1 ? 1 : requestDto.Vote);
 

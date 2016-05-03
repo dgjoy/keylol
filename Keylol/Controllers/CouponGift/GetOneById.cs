@@ -18,7 +18,7 @@ namespace Keylol.Controllers.CouponGift
         /// <param name="id">礼品 ID</param>
         [Route("{id}")]
         [HttpGet]
-        [ResponseType(typeof (CouponGiftDto))]
+        [ResponseType(typeof(CouponGiftDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定礼品不存在")]
         public async Task<IHttpActionResult> GetOneById(string id)
         {

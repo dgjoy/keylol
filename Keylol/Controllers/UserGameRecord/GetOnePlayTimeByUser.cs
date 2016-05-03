@@ -21,7 +21,7 @@ namespace Keylol.Controllers.UserGameRecord
         [Route("{id}/{steamAppId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (double))]
+        [ResponseType(typeof(double))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户没有该游戏的在档记录")]
         public async Task<IHttpActionResult> GetOnePlayTimeByUser(string id, int steamAppId,
             UserIdentityType idType = UserIdentityType.Id)

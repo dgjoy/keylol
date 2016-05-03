@@ -19,7 +19,7 @@ namespace Keylol.Controllers.UploadSignature
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (string))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(string))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "请求 Policy 无效")]
         public IHttpActionResult CreateOne(string policy)
         {

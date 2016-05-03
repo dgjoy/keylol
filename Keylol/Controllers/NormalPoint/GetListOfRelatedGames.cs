@@ -58,7 +58,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}/games")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDto>))]
+        [ResponseType(typeof(List<NormalPointDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是厂商或类型据点")]
         public async Task<IHttpActionResult> GetListOfRelatedGames(string id, PointRelationship relationship,
             bool stats = false, NormalPointIdentityType idType = NormalPointIdentityType.Id, int skip = 0, int take = 9)

@@ -23,10 +23,10 @@ namespace Keylol.Controllers.Comment
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CommentDto))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(CommentDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "指定文章被封存，当前用户无权创建新评论")]
-        public async Task<IHttpActionResult> CreateOne([NotNull]CommentCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] CommentCreateOneRequestDto requestDto)
         {
             var article = await _dbContext.Articles.FindAsync(requestDto.ArticleId);
             if (article == null)

@@ -57,7 +57,7 @@ namespace Keylol.Utilities
         public static TEnum ToEnum<TEnum>(this string text) where TEnum : struct
         {
             TEnum result;
-            if (Enum.TryParse(text, out result) && Enum.IsDefined(typeof (TEnum), result))
+            if (Enum.TryParse(text, out result) && Enum.IsDefined(typeof(TEnum), result))
                 return result;
             return default(TEnum);
         }
@@ -86,11 +86,11 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        /// 为 ModelState 增加指定错误并返回 BadRequest
+        ///     为 ModelState 增加指定错误并返回 BadRequest
         /// </summary>
-        /// <param name="controller"><see cref="ApiController"/> 对象</param>
+        /// <param name="controller"><see cref="ApiController" /> 对象</param>
         /// <param name="modelError">错误描述，最后一个出现的字符串将作为 errorMessage，其他字符串用 "." 拼接后作为 key</param>
-        /// <returns><see cref="IHttpActionResult"/> 对象</returns>
+        /// <returns><see cref="IHttpActionResult" /> 对象</returns>
         public static IHttpActionResult BadRequest(this ApiController controller, params string[] modelError)
         {
             controller.ModelState.AddModelError(string.Join(".", modelError.Take(modelError.Length - 1)),

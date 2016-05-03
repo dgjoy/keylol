@@ -15,7 +15,7 @@ namespace Keylol.Controllers.UserPointSubscription
         /// <param name="pointId">据点 ID 或者用户 ID</param>
         [Route]
         [HttpGet]
-        [ResponseType(typeof (bool))]
+        [ResponseType(typeof(bool))]
         public async Task<IHttpActionResult> GetOneByCurrentUserWithPointId(string pointId)
         {
             var userId = User.Identity.GetUserId();

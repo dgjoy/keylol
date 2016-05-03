@@ -14,7 +14,7 @@ namespace Keylol.Controllers.DatabaseMigration
     public class DatabaseMigrationController : ApiController
     {
         /// <summary>
-        /// 执行迁移
+        ///     执行迁移
         /// </summary>
         [Route("go")]
         [HttpPost]

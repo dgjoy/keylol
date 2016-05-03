@@ -22,7 +22,7 @@ namespace Keylol.Controllers.Article
         [Route("latest")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListOfLatest(bool titleOnly = true, string articleTypeFilter = null,
             int beforeSn = int.MaxValue, int take = 30)
         {

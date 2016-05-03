@@ -10,12 +10,12 @@ using SimpleInjector.Integration.Wcf;
 namespace Keylol
 {
     /// <summary>
-    /// ASP.NET 生命周期控制
+    ///     ASP.NET 生命周期控制
     /// </summary>
     public class Global : HttpApplication
     {
         /// <summary>
-        /// 当应用启动时调用
+        ///     当应用启动时调用
         /// </summary>
         protected void Application_Start(object sender, EventArgs e)
         {
@@ -24,8 +24,8 @@ namespace Keylol
             container.Options.DefaultScopedLifestyle = new WcfOperationLifestyle();
 
             // log4net
-            container.RegisterConditional(typeof (ILogProvider),
-                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (Startup)),
+            container.RegisterConditional(typeof(ILogProvider),
+                c => typeof(LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof(Startup)),
                 Lifestyle.Singleton,
                 c => true);
 

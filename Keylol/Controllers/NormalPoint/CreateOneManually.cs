@@ -10,9 +10,9 @@ using JetBrains.Annotations;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
-using Helpers = Keylol.ServiceBase.Helpers;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -26,7 +26,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDto))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(NormalPointDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> CreateOneManually(
             [NotNull] NormalPointCreateOrUpdateOneRequestDto requestDto)

@@ -28,7 +28,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (NormalPointDto))]
+        [ResponseType(typeof(NormalPointDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
         public async Task<IHttpActionResult> GetOneById(string id, bool stats = false, bool votes = false,
             bool subscribed = false, bool related = false, bool coverDescription = false,

@@ -16,7 +16,7 @@ namespace Keylol.Controllers.UserPointSubscription
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (string))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(string))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点或用户不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "尝试订阅自己，操作无效")]
         [SwaggerResponse(HttpStatusCode.Conflict, "用户已经订阅过该据点或用户")]

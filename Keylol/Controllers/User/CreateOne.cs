@@ -23,7 +23,7 @@ namespace Keylol.Controllers.User
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDto))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(LoginLogDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> CreateOne([NotNull] UserCreateOneRequestDto requestDto)
         {

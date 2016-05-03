@@ -23,7 +23,7 @@ namespace Keylol.Controllers.Article
         [Route("keyword/{keyword}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByKeyword(string keyword, bool full = false, int skip = 0,
             int take = 5)
         {

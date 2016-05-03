@@ -25,7 +25,7 @@ namespace Keylol.Controllers.Article
         [Route("user/{userId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByUser(string userId, UserIdentityType idType,
             string articleTypeFilter = null, int source = 1, int beforeSn = int.MaxValue, int take = 30)
         {

@@ -12,10 +12,10 @@ using CsQuery.ExtensionMethods.Internal;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
-using Helpers = Keylol.ServiceBase.Helpers;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -29,7 +29,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("from-app-id")]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (NormalPointDto))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(NormalPointDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "使用了 fillExisted 参数但是身份不是管理员")]
         [SwaggerResponse(HttpStatusCode.NotFound, "使用了 fillExisted 参数但是拥有指定 App ID 的据点不存在")]

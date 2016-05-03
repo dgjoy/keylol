@@ -22,6 +22,6 @@ namespace Keylol.ServiceBase
         /// <summary>
         ///     由 LogManager.GetLogger 方法获取的 Logger
         /// </summary>
-        public ILog Logger { get; } = LogManager.GetLogger(typeof (T));
+        public ILog Logger { get; } = LogManager.GetLogger(typeof(T));
     }
 }

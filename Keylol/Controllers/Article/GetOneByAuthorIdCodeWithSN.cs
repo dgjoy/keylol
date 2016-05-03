@@ -22,7 +22,7 @@ namespace Keylol.Controllers.Article
         [Route("{authorIdCode}/{sequenceNumberForAuthor}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (ArticleDto))]
+        [ResponseType(typeof(ArticleDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "文章被封存，当前登录用户无权查看")]
         public async Task<IHttpActionResult> GetOneByAuthorIdCodeWithSn(string authorIdCode, int sequenceNumberForAuthor)
@@ -45,7 +45,7 @@ namespace Keylol.Controllers.Article
                         .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
-            
+
             if (articleEntry.article.Archived != ArchivedState.None &&
                 userId != articleEntry.article.PrincipalId && !User.IsInRole(KeylolRoles.Operator))
                 return Unauthorized();

@@ -21,7 +21,7 @@ namespace Keylol.Controllers.NormalPoint
         [Authorize(Roles = KeylolRoles.Operator)]
         [Route("list")]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDto>))]
+        [ResponseType(typeof(List<NormalPointDto>))]
         public async Task<IHttpActionResult> GetListOfAll(int skip = 0, int take = 20)
         {
             if (take > 50) take = 50;

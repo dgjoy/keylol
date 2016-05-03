@@ -46,7 +46,7 @@ namespace Keylol.Controllers.Comment
         [Route]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<CommentDto>))]
+        [ResponseType(typeof(List<CommentDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "文章被封存，当前登录用户无权查看评论")]
         public async Task<IHttpActionResult> GetListByArticleId(string articleId,

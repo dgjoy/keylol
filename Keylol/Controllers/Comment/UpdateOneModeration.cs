@@ -47,9 +47,9 @@ namespace Keylol.Controllers.Comment
                 }
             }
 
-            if (!Enum.IsDefined(typeof (CommentUpdateOneModerationRequestDto.CommentProperty), requestDto.Property))
+            if (!Enum.IsDefined(typeof(CommentUpdateOneModerationRequestDto.CommentProperty), requestDto.Property))
                 throw new ArgumentOutOfRangeException(nameof(requestDto.Property));
-            var propertyInfo = typeof (Models.Comment).GetProperty(requestDto.Property.ToString());
+            var propertyInfo = typeof(Models.Comment).GetProperty(requestDto.Property.ToString());
             if (requestDto.Property == CommentUpdateOneModerationRequestDto.CommentProperty.Archived)
             {
                 if (comment.Archived != ArchivedState.None == requestDto.Value)

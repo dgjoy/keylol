@@ -5,16 +5,18 @@ using Keylol.ServiceBase;
 namespace Keylol.Provider
 {
     /// <summary>
-    /// 提供 One-time Token 服务
+    ///     提供 One-time Token 服务
     /// </summary>
     public class OneTimeTokenProvider
     {
         private readonly RedisProvider _redis;
 
         /// <summary>
-        /// 创建 <see cref="OneTimeTokenProvider"/>
+        ///     创建 <see cref="OneTimeTokenProvider" />
         /// </summary>
-        /// <param name="redis"><see cref="RedisProvider"/></param>
+        /// <param name="redis">
+        ///     <see cref="RedisProvider" />
+        /// </param>
         public OneTimeTokenProvider(RedisProvider redis)
         {
             _redis = redis;
@@ -23,7 +25,7 @@ namespace Keylol.Provider
         private static string CacheKey(string token) => $"one-time-token:{token}";
 
         /// <summary>
-        /// 生成一个 One-time Token
+        ///     生成一个 One-time Token
         /// </summary>
         /// <param name="payload">该 Token 对应的负载，可以在之后 Consume 时取出</param>
         /// <param name="expiry">Token 有效期</param>
@@ -39,7 +41,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 消耗一个 One-time Token，并使其失效
+        ///     消耗一个 One-time Token，并使其失效
         /// </summary>
         /// <param name="token">Token</param>
         /// <param name="payloadIsArray">负载是否是数组类型</param>

@@ -35,8 +35,8 @@ namespace Keylol.ServiceBase
             // 公用服务注册点
 
             // log4net
-            container.RegisterConditional(typeof (ILogProvider),
-                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (KeylolService)),
+            container.RegisterConditional(typeof(ILogProvider),
+                c => typeof(LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof(KeylolService)),
                 Lifestyle.Singleton,
                 c => true);
 

@@ -91,7 +91,7 @@ namespace Keylol.Identity
         }
 
         /// <summary>
-        /// 获取指定用户的 Steam ID
+        ///     获取指定用户的 Steam ID
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>用户的 Steam ID 3</returns>

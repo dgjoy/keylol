@@ -5,12 +5,12 @@ using System.Text;
 namespace Keylol.ServiceBase
 {
     /// <summary>
-    /// 一些常用的帮助方法
+    ///     一些常用的帮助方法
     /// </summary>
     public static class Helpers
     {
         /// <summary>
-        /// 计算一段字符串的 MD5 值，使用 UTF-8 编码
+        ///     计算一段字符串的 MD5 值，使用 UTF-8 编码
         /// </summary>
         /// <param name="text">要计算的字符串</param>
         /// <returns>字符串的 MD5，用小写字母表示</returns>
@@ -20,7 +20,7 @@ namespace Keylol.ServiceBase
         }
 
         /// <summary>
-        /// 计算字节数据的 MD5 值
+        ///     计算字节数据的 MD5 值
         /// </summary>
         /// <param name="data">要计算的数据</param>
         /// <returns>数据的 MD5，用小写字母表示</returns>

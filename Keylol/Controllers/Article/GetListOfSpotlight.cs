@@ -17,7 +17,7 @@ namespace Keylol.Controllers.Article
         [Route("spotlight")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListOfSpotlight()
         {
             var articleEntries =

@@ -38,7 +38,7 @@ namespace Keylol.Controllers.User
         [Route("{id}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (UserDto))]
+        [ResponseType(typeof(UserDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "尝试获取无权获取的属性")]
         public async Task<IHttpActionResult> GetOneByUser(string id,

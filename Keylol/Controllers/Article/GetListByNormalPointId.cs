@@ -24,7 +24,7 @@ namespace Keylol.Controllers.Article
         [Route("point/{normalPointId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByNormalPointId(string normalPointId,
             NormalPointIdentityType idType, string articleTypeFilter = null, int beforeSn = int.MaxValue,
             int take = 30)

@@ -16,12 +16,12 @@ namespace Keylol.ServiceBase
         private static readonly string PasswordHash = ConfigurationManager.AppSettings["upyunPasswordHash"];
 
         /// <summary>
-        /// 允许的最大图片尺寸（字节）
+        ///     允许的最大图片尺寸（字节）
         /// </summary>
         public static int MaxImageSize { get; } = 5*1024*1024; // 5 MB
 
         /// <summary>
-        /// Upyun Form API Key
+        ///     Upyun Form API Key
         /// </summary>
         public static string FormKey { get; } = ConfigurationManager.AppSettings["upyunFormKey"];
 

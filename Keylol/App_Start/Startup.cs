@@ -26,10 +26,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Owin;
 using SimpleInjector;
+using SimpleInjector.Integration.Owin;
 using SimpleInjector.Integration.WebApi;
 using Swashbuckle.Application;
 using WebApiThrottle;
-using SimpleInjector.Integration.Owin;
 
 namespace Keylol
 {
@@ -76,7 +76,7 @@ namespace Keylol
             app.UseErrorPage(ErrorPageOptions.ShowAll);
 
             // 访问频率限制
-            app.Use(typeof (ThrottlingMiddleware),
+            app.Use(typeof(ThrottlingMiddleware),
                 ThrottlePolicy.FromStore(new PolicyConfigurationProvider()),
                 new PolicyMemoryCacheRepository(),
                 new MemoryCacheRepository(),
@@ -84,7 +84,7 @@ namespace Keylol
 
             // CORS
             UseCors(app);
-            
+
             // Simple Injector OWIN Request Lifestyle
             app.UseOwinRequestLifestyle();
 
@@ -118,8 +118,8 @@ namespace Keylol
             Container.Options.DefaultScopedLifestyle = new OwinRequestLifestyle();
 
             // log4net
-            Container.RegisterConditional(typeof (ILogProvider),
-                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (Startup)),
+            Container.RegisterConditional(typeof(ILogProvider),
+                c => typeof(LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof(Startup)),
                 Lifestyle.Singleton,
                 c => true);
 
@@ -216,7 +216,7 @@ namespace Keylol
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             jsonSerializerSettings.Converters.Add(new StringEnumConverter());
 
-            config.Services.Replace(typeof (IActionValueBinder), new KeylolActionValueProvider());
+            config.Services.Replace(typeof(IActionValueBinder), new KeylolActionValueProvider());
             config.Filters.Add(new ValidateModelAttribute());
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 

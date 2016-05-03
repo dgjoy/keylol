@@ -16,7 +16,7 @@ namespace Keylol.Controllers.Favorite
         /// </summary>
         [Route]
         [HttpGet]
-        [ResponseType(typeof (List<FavoriteDto>))]
+        [ResponseType(typeof(List<FavoriteDto>))]
         public async Task<IHttpActionResult> GetListByCurrentUser()
         {
             var userId = User.Identity.GetUserId();

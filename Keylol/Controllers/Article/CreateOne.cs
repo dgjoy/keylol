@@ -25,7 +25,7 @@ namespace Keylol.Controllers.Article
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (ArticleDto))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(ArticleDto))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "用户文券不足")]
         public async Task<IHttpActionResult> CreateOne([NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)

@@ -19,7 +19,7 @@ namespace Keylol.Controllers.UserPointSubscription
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
         [HttpGet]
-        [ResponseType(typeof (List<SubscribedPointDto>))]
+        [ResponseType(typeof(List<SubscribedPointDto>))]
         public async Task<IHttpActionResult> GetListByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;

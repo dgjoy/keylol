@@ -18,9 +18,11 @@ namespace Keylol.Identity
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
-        /// 创建 <see cref="KeylolUserValidator"/>
+        ///     创建 <see cref="KeylolUserValidator" />
         /// </summary>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
         public KeylolUserValidator(KeylolUserManager userManager)
         {
             _userManager = userManager;

@@ -42,7 +42,7 @@ namespace Keylol.Controllers.Message
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route]
         [HttpGet]
-        [ResponseType(typeof (MessageGetListByCurrentUserResponseDto))]
+        [ResponseType(typeof(MessageGetListByCurrentUserResponseDto))]
         public async Task<IHttpActionResult> GetListByCurrentUser(MessageFilter? filter = null,
             int beforeSn = int.MaxValue, int take = 30)
         {

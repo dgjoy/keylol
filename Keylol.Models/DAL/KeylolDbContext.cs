@@ -165,26 +165,26 @@ namespace Keylol.Models.DAL
             } while (true);
         }
 
-//        }
-//            return result;
-//
-//                result.ValidationErrors.Remove(error);
-//            foreach (var error in falseErrors.ToArray())
-//
-//                });
-//                    return false;
-//                        return !property.IsModified;
-//                    if (property != null)
-//                    var property = member as DbPropertyEntry;
-//                    var member = entityEntry.Member(error.PropertyName);
-//                {
-//                .Where(error =>
-//            var falseErrors = result.ValidationErrors
-//            var result = base.ValidateEntity(entityEntry, items);
-//        {
-//            IDictionary<object, object> items)
-//        protected override DbEntityValidationResult ValidateEntity(DbEntityEntry entityEntry,
-
         // Ignore validation error on unmodified properties
+//        protected override DbEntityValidationResult ValidateEntity(DbEntityEntry entityEntry,
+//            IDictionary<object, object> items)
+//        {
+//            var result = base.ValidateEntity(entityEntry, items);
+//            var falseErrors = result.ValidationErrors
+//                .Where(error =>
+//                {
+//                    var member = entityEntry.Member(error.PropertyName);
+//                    var property = member as DbPropertyEntry;
+//                    if (property != null)
+//                        return !property.IsModified;
+//                    return false;
+//                });
+//
+//            foreach (var error in falseErrors.ToArray())
+//                result.ValidationErrors.Remove(error);
+//
+//            return result;
+
+//        }
     }
 }

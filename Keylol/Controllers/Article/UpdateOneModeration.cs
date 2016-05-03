@@ -55,9 +55,9 @@ namespace Keylol.Controllers.Article
                 }
             }
 
-            if (!Enum.IsDefined(typeof (ArticleUpdateOneModerationRequestDto.ArticleProperty), requestDto.Property))
+            if (!Enum.IsDefined(typeof(ArticleUpdateOneModerationRequestDto.ArticleProperty), requestDto.Property))
                 throw new ArgumentOutOfRangeException(nameof(requestDto.Property));
-            var propertyInfo = typeof (Models.Article).GetProperty(requestDto.Property.ToString());
+            var propertyInfo = typeof(Models.Article).GetProperty(requestDto.Property.ToString());
             if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived)
             {
                 if (article.Archived != ArchivedState.None == requestDto.Value)
@@ -157,7 +157,7 @@ namespace Keylol.Controllers.Article
                 _dbContext.Messages.Add(missive);
 
                 // Steam 通知
-                
+
                 if (!string.IsNullOrWhiteSpace(steamNotityText))
                     await _userManager.SendSteamChatMessageAsync(missive.Receiver, steamNotityText);
             }

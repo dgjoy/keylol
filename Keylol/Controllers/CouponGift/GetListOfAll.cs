@@ -16,7 +16,7 @@ namespace Keylol.Controllers.CouponGift
         /// </summary>
         [Route]
         [HttpGet]
-        [ResponseType(typeof (List<CouponGiftDto>))]
+        [ResponseType(typeof(List<CouponGiftDto>))]
         public async Task<IHttpActionResult> GetListOfAll()
         {
             return Ok((await _dbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)

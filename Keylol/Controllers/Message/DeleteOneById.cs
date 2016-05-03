@@ -24,7 +24,8 @@ namespace Keylol.Controllers.Message
             var message = await _dbContext.Messages.FindAsync(id);
             if (message == null)
                 return NotFound();
-            if (!User.IsInRole(KeylolRoles.Operator) && (message.Type.IsMissiveMessage() || message.ReceiverId != userId))
+            if (!User.IsInRole(KeylolRoles.Operator) &&
+                (message.Type.IsMissiveMessage() || message.ReceiverId != userId))
                 return Unauthorized();
             _dbContext.Messages.Remove(message);
             await _dbContext.SaveChangesAsync();

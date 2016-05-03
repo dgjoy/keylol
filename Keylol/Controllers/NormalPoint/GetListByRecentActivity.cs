@@ -16,7 +16,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("active")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDto>))]
+        [ResponseType(typeof(List<NormalPointDto>))]
         public async Task<IHttpActionResult> GetListByRecentActivity()
         {
             return Ok((await _dbContext.NormalPoints.AsNoTracking()

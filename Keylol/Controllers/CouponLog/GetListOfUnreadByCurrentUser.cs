@@ -15,7 +15,7 @@ namespace Keylol.Controllers.CouponLog
         /// </summary>
         [Route("unread")]
         [HttpGet]
-        [ResponseType(typeof (List<CouponLogDto>))]
+        [ResponseType(typeof(List<CouponLogDto>))]
         public async Task<IHttpActionResult> GetListOfUnreadByCurrentUser()
         {
             var userId = User.Identity.GetUserId();

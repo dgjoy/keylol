@@ -6,15 +6,15 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.Identity
 {
     /// <summary>
-    /// ASP.NET Identity PasswordValidator Keylol implementation
+    ///     ASP.NET Identity PasswordValidator Keylol implementation
     /// </summary>
     public class KeylolPasswordValidator : IIdentityValidator<string>
     {
         /// <summary>
-        /// Validate the password
+        ///     Validate the password
         /// </summary>
-        /// <param name="password"/>
-        /// <returns/>
+        /// <param name="password" />
+        /// <returns />
         public Task<IdentityResult> ValidateAsync(string password)
         {
             if (password == null)

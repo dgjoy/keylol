@@ -25,7 +25,7 @@ namespace Keylol.Controllers.NormalPoint
         [Route("keyword/{keyword}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDto>))]
+        [ResponseType(typeof(List<NormalPointDto>))]
         public async Task<IHttpActionResult> GetListByKeyword(string keyword, bool full = false,
             string typeFilter = null, int skip = 0, int take = 5)
         {

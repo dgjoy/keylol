@@ -21,7 +21,7 @@ namespace Keylol.Controllers.Like
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (int))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(int))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前登录用户无权创建认可（文章或评论被封存，或者用户文券不足）")]
         public async Task<IHttpActionResult> CreateOne([NotNull] LikeCreateOneRequestDto requestDto)

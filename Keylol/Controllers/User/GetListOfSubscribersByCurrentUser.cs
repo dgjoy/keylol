@@ -18,7 +18,7 @@ namespace Keylol.Controllers.User
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
         [HttpGet]
-        [ResponseType(typeof (List<UserDto>))]
+        [ResponseType(typeof(List<UserDto>))]
         public async Task<IHttpActionResult> GetListOfSubscribersByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;

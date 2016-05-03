@@ -22,7 +22,7 @@ namespace Keylol.Controllers.Article
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("subscription")]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
             int shortReviewFilter = 1, int beforeSn = int.MaxValue, int take = 30)
         {

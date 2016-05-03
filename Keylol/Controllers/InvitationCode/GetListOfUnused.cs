@@ -20,7 +20,7 @@ namespace Keylol.Controllers.InvitationCode
         [Authorize(Roles = KeylolRoles.Operator)]
         [Route]
         [HttpGet]
-        [ResponseType(typeof (List<InvitationCodeDto>))]
+        [ResponseType(typeof(List<InvitationCodeDto>))]
         public async Task<IHttpActionResult> GetListOfUnused(string source = null, int skip = 0, int take = 50)
         {
             if (take > 2000) take = 2000;

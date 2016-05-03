@@ -22,7 +22,7 @@ namespace Keylol.Controllers.CouponGift
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (CouponGiftDto))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(CouponGiftDto))]
         public async Task<IHttpActionResult> CreateOne([NotNull] CouponGiftCreateOneRequestDto requestDto)
         {
             var gift = _dbContext.CouponGifts.Create();

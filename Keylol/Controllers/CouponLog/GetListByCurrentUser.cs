@@ -25,7 +25,7 @@ namespace Keylol.Controllers.CouponLog
         /// <param name="take">获取数量，默认 30，最大 50</param>
         [Route]
         [HttpGet]
-        [ResponseType(typeof (List<CouponLogDto>))]
+        [ResponseType(typeof(List<CouponLogDto>))]
         public async Task<IHttpActionResult> GetListByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;

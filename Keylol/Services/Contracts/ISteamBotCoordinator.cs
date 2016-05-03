@@ -8,7 +8,7 @@ namespace Keylol.Services.Contracts
     /// <summary>
     ///     SteamBot 协作器
     /// </summary>
-    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof (ISteamBotCoordinatorCallback))]
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ISteamBotCoordinatorCallback))]
     public interface ISteamBotCoordinator
     {
         /// <summary>
