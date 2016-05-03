@@ -6,9 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Filters;
+using Keylol.Identity;
 using Keylol.Models.DTO;
-using Keylol.Utilities;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -19,7 +18,7 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 20</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route("list")]
         [HttpGet]
         [ResponseType(typeof (List<NormalPointDto>))]

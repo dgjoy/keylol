@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.ServiceModel;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
@@ -17,7 +15,6 @@ using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 using Keylol.ServiceBase;
 using Keylol.Services.Contracts;
-using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling;
 using Newtonsoft.Json.Linq;
@@ -163,7 +160,9 @@ namespace Keylol.Services
         {
             using (var dbContext = new KeylolDbContext())
             {
-                return await dbContext.Users.AnyAsync(u => u.SteamId == steamId && u.SteamBotId == botId);
+                var userManager = new KeylolUserManager(dbContext);
+                var user = await userManager.FindBySteamIdAsync(steamId);
+                return user != null && user.SteamBotId == botId;
             }
         }
 
@@ -206,13 +205,11 @@ namespace Keylol.Services
                 {
                     // 现有会员添加机器人为好友
                     var bot = await dbContext.SteamBots.FindAsync(botId);
-                    if (bot != null && bot.FriendCount < bot.FriendUpperLimit &&
-                        await userManager.GetStatusClaimAsync(user.Id) == StatusClaim.Probationer)
+                    if (user.SteamBotId == null && bot != null && bot.FriendCount < bot.FriendUpperLimit)
                     {
                         // 用户此前删除了机器人好友，重新设定当前机器人为绑定的机器人
                         user.SteamBotId = botId;
                         await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
-                        await userManager.RemoveStatusClaimAsync(user.Id);
                         await Task.Delay(TimeSpan.FromSeconds(3));
                         await Client.SendChatMessage(botId, userSteamId,
                             "你已成功与其乐机器人再次绑定，请务必不要将其乐机器人从好友列表中移除。");
@@ -251,8 +248,9 @@ namespace Keylol.Services
                 }
                 else if (user.SteamBotId == botId)
                 {
-                    // 会员与自己的机器人不再为好友时，设置为暂准状态
-                    await userManager.SetStatusClaimAsync(user.Id, StatusClaim.Probationer);
+                    // 会员与自己的机器人不再为好友时，解除绑定
+                    user.SteamBotId = null;
+                    await dbContext.SaveChangesAsync();
                 }
             }
         }

@@ -22,7 +22,7 @@ namespace Keylol.Hubs
     public class SteamBindingHub : Hub<ISteamBindingHubClient>
     {
         private readonly KeylolDbContext _dbContext = new KeylolDbContext();
-        private static int _botSkip = 0;
+        private static int _botSkip;
 
         protected override void Dispose(bool disposing)
         {

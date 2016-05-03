@@ -357,6 +357,10 @@
     <Compile Include="Migrations\201604141521195_UserGameRecordIdentity.Designer.cs">
       <DependentUpon>201604141521195_UserGameRecordIdentity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605030857355_SteamIdToLogin.cs" />
+    <Compile Include="Migrations\201605030857355_SteamIdToLogin.Designer.cs">
+      <DependentUpon>201605030857355_SteamIdToLogin.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -583,6 +587,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604141521195_UserGameRecordIdentity.resx">
       <DependentUpon>201604141521195_UserGameRecordIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605030857355_SteamIdToLogin.resx">
+      <DependentUpon>201605030857355_SteamIdToLogin.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

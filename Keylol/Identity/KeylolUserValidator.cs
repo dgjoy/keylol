@@ -59,10 +59,6 @@ namespace Keylol.Identity
             if (!Helpers.IsTrustedUrl(user.ProfilePoint.BackgroundImage))
                 return IdentityResult.Failed(Errors.BackgroundImageUntrusted);
 
-            var steamIdOwner = await _userManager.FindBySteamIdAsync(user.SteamId);
-            if (steamIdOwner != null && steamIdOwner.Id != user.Id)
-                return IdentityResult.Failed(Errors.SteamAccountBound);
-
             var idCodeOwner = await _userManager.FindByIdCodeAsync(user.IdCode);
             if (idCodeOwner == null && IsIdCodeReserved(user.IdCode))
             {

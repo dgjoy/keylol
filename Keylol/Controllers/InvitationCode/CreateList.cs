@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Filters;
+using Keylol.Identity;
 using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
@@ -34,7 +34,7 @@ namespace Keylol.Controllers.InvitationCode
         /// </summary>
         /// <param name="prefix">邀请码前缀</param>
         /// <param name="number">生成数量，最大 20000，默认 1</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]

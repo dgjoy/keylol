@@ -1,10 +1,8 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Filters;
+using Keylol.Identity;
 using Keylol.Models;
-using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.CouponLog
@@ -17,7 +15,7 @@ namespace Keylol.Controllers.CouponLog
         /// <param name="userId">用户 ID</param>
         /// <param name="change">文券变动量</param>
         /// <param name="description">变动描述</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route]
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]

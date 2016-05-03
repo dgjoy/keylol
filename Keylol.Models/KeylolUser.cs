@@ -38,10 +38,6 @@ namespace Keylol.Models
 
         public override bool LockoutEnabled { get; set; } = true;
 
-        [Index]
-        [MaxLength(64)]
-        public string SteamId { get; set; }
-
         [Required(AllowEmptyStrings = true)]
         [MaxLength(64)]
         public string SteamProfileName { get; set; } = string.Empty;

@@ -6,10 +6,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.NormalPoint
@@ -46,8 +46,8 @@ namespace Keylol.Controllers.NormalPoint
             if (!Helpers.IsTrustedUrl(requestDto.AvatarImage))
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.AvatarImage), Errors.Invalid);
 
-            var editorStaffClaim = await _userManager.GetStaffClaimAsync(User.Identity.GetUserId());
-            if (editorStaffClaim == StaffClaim.Operator)
+            var isKeylolOperator = User.IsInRole(KeylolRoles.Operator);
+            if (isKeylolOperator)
             {
                 if (string.IsNullOrWhiteSpace(requestDto.EnglishName))
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.EnglishName), Errors.Required);
@@ -100,7 +100,7 @@ namespace Keylol.Controllers.NormalPoint
                 : requestDto.Description;
 
             if ((normalPoint.Type == NormalPointType.Game || normalPoint.Type == NormalPointType.Hardware) &&
-                !await PopulateGamePointAttributes(normalPoint, requestDto, editorStaffClaim, true))
+                !await PopulateGamePointAttributes(normalPoint, requestDto, isKeylolOperator, true))
             {
                 return BadRequest(ModelState);
             }

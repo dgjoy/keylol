@@ -4,8 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
-using Keylol.Services;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -32,9 +32,9 @@ namespace Keylol.Controllers.Comment
                 return NotFound();
 
             var operatorId = User.Identity.GetUserId();
-            var operatorStaffClaim = await _userManager.GetStaffClaimAsync(operatorId);
+            var isKeylolOperator = User.IsInRole(KeylolRoles.Operator);
 
-            if (operatorStaffClaim != StaffClaim.Operator)
+            if (!isKeylolOperator)
             {
                 switch (requestDto.Property)
                 {
@@ -55,7 +55,7 @@ namespace Keylol.Controllers.Comment
                 if (comment.Archived != ArchivedState.None == requestDto.Value)
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
 
-                if (operatorStaffClaim == StaffClaim.Operator)
+                if (isKeylolOperator)
                 {
                     comment.Archived = requestDto.Value ? ArchivedState.Operator : ArchivedState.None;
                 }
@@ -73,7 +73,7 @@ namespace Keylol.Controllers.Comment
 
                 propertyInfo.SetValue(comment, requestDto.Value);
             }
-            if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
+            if (isKeylolOperator && (requestDto.NotifyAuthor ?? false))
             {
                 var missive = _dbContext.Messages.Create();
                 missive.OperatorId = operatorId;

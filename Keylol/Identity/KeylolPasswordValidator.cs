@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using Keylol.Models;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 

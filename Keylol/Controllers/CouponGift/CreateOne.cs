@@ -4,7 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
-using Keylol.Filters;
+using Keylol.Identity;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 using Newtonsoft.Json;
@@ -18,7 +18,7 @@ namespace Keylol.Controllers.CouponGift
         ///     创建一个文券礼品
         /// </summary>
         /// <param name="requestDto">请求 DTO</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]

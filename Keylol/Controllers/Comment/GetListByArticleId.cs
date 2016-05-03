@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
@@ -59,9 +60,9 @@ namespace Keylol.Controllers.Comment
             if (article == null)
                 return NotFound();
 
-            var staffClaim = string.IsNullOrWhiteSpace(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
+            var isKeylolOperator = User.IsInRole(KeylolRoles.Operator);
             if (article.Archived != ArchivedState.None &&
-                userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
+                userId != article.PrincipalId && !isKeylolOperator)
                 return Unauthorized();
 
             var commentsQuery = _dbContext.Comments.AsNoTracking()
@@ -96,7 +97,7 @@ namespace Keylol.Controllers.Comment
                 commentEntries.Select(entry =>
                 {
                     if (entry.comment.Archived != ArchivedState.None &&
-                        userId != entry.comment.CommentatorId && staffClaim != StaffClaim.Operator)
+                        userId != entry.comment.CommentatorId && !isKeylolOperator)
                         return new CommentDto
                         {
                             SequenceNumberForArticle = entry.comment.SequenceNumberForArticle

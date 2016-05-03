@@ -253,7 +253,6 @@
     <Compile Include="Controllers\RedisCache\DeleteListByKeyPattern.cs" />
     <Compile Include="Controllers\RedisCache\GetOneByKey.cs" />
     <Compile Include="Controllers\RedisCache\RedisCacheController.cs" />
-    <Compile Include="Controllers\SteamBot\CheckSync.cs" />
     <Compile Include="Controllers\SteamBot\SendMessage.cs" />
     <Compile Include="Controllers\SteamBot\UpdatePlayingGame.cs" />
     <Compile Include="Controllers\SteamBot\SteamBotController.cs" />
@@ -277,7 +276,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Identity\KeylolClaimTypes.cs" />
+    <Compile Include="Identity\KeylolLoginProviders.cs" />
     <Compile Include="Identity\KeylolPasswordValidator.cs" />
+    <Compile Include="Identity\KeylolRoleManager.cs" />
+    <Compile Include="Identity\KeylolRoles.cs" />
     <Compile Include="Identity\KeylolUserManager.cs" />
     <Compile Include="Identity\KeylolUserValidator.cs" />
     <Compile Include="Identity\MessageServices\KeylolSmsService.cs" />
@@ -297,7 +299,6 @@
     </Compile>
     <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="Utilities\ActionValueProvider.cs" />
-    <Compile Include="Filters\ClaimsAuthorizeAttribute.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="Utilities\DataAnnotationAttributes.cs" />
     <Compile Include="Utilities\Errors.cs" />

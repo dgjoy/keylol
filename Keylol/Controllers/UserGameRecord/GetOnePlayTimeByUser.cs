@@ -39,6 +39,8 @@ namespace Keylol.Controllers.UserGameRecord
                 case UserIdentityType.IdCode:
                 {
                     var user = await _userManager.FindByIdCodeAsync(id);
+                    if (user == null)
+                        return NotFound();
                     userId = user.Id;
                     break;
                 }

@@ -9,11 +9,13 @@ using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Keylol.Filters;
+using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Diagnostics;
@@ -149,6 +151,9 @@ namespace Keylol
 
             // Keylol User Manager
             Container.RegisterPerOwinRequest<KeylolUserManager>();
+
+            // Keylol Role Manager
+            Container.RegisterPerOwinRequest<KeylolRoleManager>();
 
             // Coupon
             Container.RegisterPerOwinRequest<CouponProvider>();

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.ServiceBase;
 using Keylol.Utilities;
+using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.User
@@ -37,6 +37,10 @@ namespace Keylol.Controllers.User
             if (steamBindingToken == null)
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId), Errors.Invalid);
 
+            if (await _userManager.FindBySteamIdAsync(steamBindingToken.SteamId) != null)
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId),
+                    Errors.SteamAccountBound);
+
             var user = new KeylolUser
             {
                 IdCode = requestDto.IdCode,
@@ -44,7 +48,6 @@ namespace Keylol.Controllers.User
                 RegisterIp = _owinContext.Request.RemoteIpAddress,
                 AvatarImage = requestDto.AvatarImage,
                 SteamBindingTime = DateTime.Now,
-                SteamId = steamBindingToken.SteamId,
                 SteamProfileName = requestDto.SteamProfileName,
                 SteamBotId = steamBindingToken.BotId
             };
@@ -71,10 +74,6 @@ namespace Keylol.Controllers.User
                         propertyName = nameof(requestDto.AvatarImage);
                         break;
 
-                    case Errors.SteamAccountBound:
-                        propertyName = nameof(requestDto.SteamBindingTokenId);
-                        break;
-
                     case Errors.PasswordAllWhitespace:
                     case Errors.PasswordTooShort:
                         propertyName = nameof(requestDto.Password);
@@ -87,6 +86,8 @@ namespace Keylol.Controllers.User
                 return this.BadRequest(nameof(requestDto), propertyName, error);
             }
 
+            await _userManager.AddLoginAsync(user.Id,
+                new UserLoginInfo(KeylolLoginProviders.Steam, steamBindingToken.SteamId));
             _dbContext.SteamBindingTokens.Remove(steamBindingToken);
             await _dbContext.SaveChangesAsync();
 

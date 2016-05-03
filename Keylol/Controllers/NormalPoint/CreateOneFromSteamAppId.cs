@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using CsQuery;
 using CsQuery.ExtensionMethods.Internal;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
 using Helpers = Keylol.ServiceBase.Helpers;
@@ -40,7 +40,7 @@ namespace Keylol.Controllers.NormalPoint
             var gamePoint = await _dbContext.NormalPoints.Where(p => p.SteamAppId == appId).SingleOrDefaultAsync();
             if (fillExisted)
             {
-                if (await _userManager.GetStaffClaimAsync(User.Identity.GetUserId()) != StaffClaim.Operator)
+                if (!User.IsInRole(KeylolRoles.Operator))
                 {
                     return Unauthorized();
                 }

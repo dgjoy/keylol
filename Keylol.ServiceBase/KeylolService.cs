@@ -107,36 +107,33 @@ namespace Keylol.ServiceBase
 
             if (Environment.UserInteractive)
             {
-                var ansiColorTerminalAppender = new AnsiColorTerminalAppender
+                var coloredConsoleAppender = new ColoredConsoleAppender
                 {
                     Layout = patternLayout
                 };
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Debug,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.Green,
-                    Attributes = AnsiColorTerminalAppender.AnsiAttributes.Bright
+                    ForeColor = ColoredConsoleAppender.Colors.Green
                 });
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Info,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.White
+                    ForeColor = ColoredConsoleAppender.Colors.White
                 });
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Warn,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.Yellow,
-                    Attributes = AnsiColorTerminalAppender.AnsiAttributes.Bright
+                    ForeColor = ColoredConsoleAppender.Colors.Yellow
                 });
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Error,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.White,
-                    BackColor = AnsiColorTerminalAppender.AnsiColor.Red,
-                    Attributes = AnsiColorTerminalAppender.AnsiAttributes.Bright
+                    ForeColor = ColoredConsoleAppender.Colors.White,
+                    BackColor = ColoredConsoleAppender.Colors.Red
                 });
-                ansiColorTerminalAppender.ActivateOptions();
-                hierarchy.Root.AddAppender(ansiColorTerminalAppender);
+                coloredConsoleAppender.ActivateOptions();
+                hierarchy.Root.AddAppender(coloredConsoleAppender);
             }
             else
             {

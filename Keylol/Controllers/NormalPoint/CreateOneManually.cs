@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
-using Keylol.Filters;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
@@ -22,7 +22,7 @@ namespace Keylol.Controllers.NormalPoint
         ///     创建一个据点
         /// </summary>
         /// <param name="requestDto">据点相关属性</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
@@ -87,7 +87,7 @@ namespace Keylol.Controllers.NormalPoint
                 normalPoint.SteamStoreNames = names;
             }
             if ((normalPoint.Type == NormalPointType.Game || normalPoint.Type == NormalPointType.Hardware) &&
-                !await PopulateGamePointAttributes(normalPoint, requestDto, StaffClaim.Operator))
+                !await PopulateGamePointAttributes(normalPoint, requestDto, User.IsInRole(KeylolRoles.Operator)))
             {
                 return BadRequest(ModelState);
             }

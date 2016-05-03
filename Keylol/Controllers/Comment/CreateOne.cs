@@ -5,9 +5,9 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Services;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -33,9 +33,8 @@ namespace Keylol.Controllers.Comment
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.ArticleId), Errors.NonExistent);
 
             var userId = User.Identity.GetUserId();
-            var staffClaim = await _userManager.GetStaffClaimAsync(userId);
             if (article.Archived != ArchivedState.None &&
-                userId != article.PrincipalId && staffClaim != StaffClaim.Operator)
+                userId != article.PrincipalId && !User.IsInRole(KeylolRoles.Operator))
                 return Unauthorized();
 
             var replyToComments = await _dbContext.Comments.Include(c => c.Commentator.SteamBot)

@@ -1,16 +1,13 @@
 ﻿using System.Web.Http;
-using Keylol.Filters;
 using Keylol.Identity;
 using Keylol.Models.DAL;
-using Keylol.Utilities;
 
 namespace Keylol.Controllers.SteamBot
 {
     /// <summary>
     ///     Steam 机器人 Controller
     /// </summary>
-    [Authorize]
-    [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+    [Authorize(Roles = KeylolRoles.Operator)]
     [RoutePrefix("steam-bot")]
     public partial class SteamBotController : ApiController
     {

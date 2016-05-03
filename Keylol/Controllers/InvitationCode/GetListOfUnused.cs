@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Filters;
+using Keylol.Identity;
 using Keylol.Models.DTO;
-using Keylol.Utilities;
 
 namespace Keylol.Controllers.InvitationCode
 {
@@ -18,7 +17,7 @@ namespace Keylol.Controllers.InvitationCode
         /// <param name="source">邀请码来源，不填表示获取所有来源的邀请码，默认 null</param>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，默认 50，最大 2000</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route]
         [HttpGet]
         [ResponseType(typeof (List<InvitationCodeDto>))]

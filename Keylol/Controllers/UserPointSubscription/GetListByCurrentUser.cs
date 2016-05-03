@@ -40,7 +40,7 @@ namespace Keylol.Controllers.UserPointSubscription
                         user = p.User,
                         userProfilePoint = p.User.ProfilePoint,
                         point = (Models.NormalPoint) null,
-                        articleCount = p.Articles.Count(),
+                        articleCount = p.Articles.Count,
                         subscriberCount = p.Subscribers.Count
                     }))
                 .OrderBy(e => e.articleCount)

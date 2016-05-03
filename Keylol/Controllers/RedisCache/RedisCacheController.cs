@@ -1,15 +1,13 @@
 ﻿using System.Web.Http;
-using Keylol.Filters;
+using Keylol.Identity;
 using Keylol.Provider;
-using Keylol.Utilities;
 
 namespace Keylol.Controllers.RedisCache
 {
     /// <summary>
     ///     Redis 缓存 Controller
     /// </summary>
-    [Authorize]
-    [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+    [Authorize(Roles = KeylolRoles.Operator)]
     [RoutePrefix("redis-cache")]
     public partial class RedisCacheController : ApiController
     {

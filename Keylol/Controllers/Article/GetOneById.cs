@@ -4,9 +4,9 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -42,10 +42,9 @@ namespace Keylol.Controllers.Article
                 .SingleOrDefaultAsync();
             if (articleEntry == null)
                 return NotFound();
-
-            var staffClaim = string.IsNullOrWhiteSpace(userId) ? null : await _userManager.GetStaffClaimAsync(userId);
+            
             if (articleEntry.article.Archived != ArchivedState.None &&
-                userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
+                userId != articleEntry.article.PrincipalId && !User.IsInRole(KeylolRoles.Operator))
                 return Unauthorized();
 
             var articleDto = new ArticleDto(articleEntry.article, true)

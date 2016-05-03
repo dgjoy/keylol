@@ -3,8 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Filters;
-using Keylol.Utilities;
+using Keylol.Identity;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -23,8 +22,8 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="sourceIdCode">原据点识别码，在据点合并之后将被删除</param>
         /// <param name="targetIdCode">合并到的目标据点识别码</param>
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route("{sourceIdCode}/merge/{targetIdCode}")]
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteOneMerge(string sourceIdCode, string targetIdCode)
         {

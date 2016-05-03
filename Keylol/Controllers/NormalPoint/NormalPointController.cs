@@ -20,7 +20,6 @@ namespace Keylol.Controllers.NormalPoint
     public partial class NormalPointController : ApiController
     {
         private readonly KeylolDbContext _dbContext;
-        private readonly KeylolUserManager _userManager;
 
         /// <summary>
         ///     创建 <see cref="NormalPointController" />
@@ -34,7 +33,6 @@ namespace Keylol.Controllers.NormalPoint
         public NormalPointController(KeylolDbContext dbContext, KeylolUserManager userManager)
         {
             _dbContext = dbContext;
-            _userManager = userManager;
         }
 
         private static string GetPreferredName(Models.NormalPoint point)
@@ -53,7 +51,7 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint,
-            NormalPointCreateOrUpdateOneRequestDto requestDto, string editorStaffClaim, bool keepSteamAppId = false)
+            NormalPointCreateOrUpdateOneRequestDto requestDto, bool isKeylolOperator, bool keepSteamAppId = false)
         {
             if (requestDto.DisplayAliases == null)
             {
@@ -105,7 +103,7 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.SeriesPointsId", "游戏据点必须填写系列据点");
                 return false;
             }
-            if (editorStaffClaim == StaffClaim.Operator)
+            if (isKeylolOperator)
             {
                 if (!keepSteamAppId)
                 {

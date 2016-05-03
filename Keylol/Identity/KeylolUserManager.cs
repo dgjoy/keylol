@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Keylol.Identity.MessageServices;
 using Keylol.Models;
 using Keylol.Models.DAL;
@@ -15,7 +16,13 @@ namespace Keylol.Identity
     /// </summary>
     public class KeylolUserManager : UserManager<KeylolUser>
     {
-        private KeylolUserManager(IUserStore<KeylolUser> store) : base(store)
+        /// <summary>
+        ///     创建 <see cref="KeylolUserManager" />
+        /// </summary>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        public KeylolUserManager(KeylolDbContext dbContext) : base(new UserStore<KeylolUser>(dbContext))
         {
             ClaimsIdentityFactory = new ClaimsIdentityFactory<KeylolUser>
             {
@@ -35,16 +42,6 @@ namespace Keylol.Identity
             SteamChatMessageService = new KeylolSteamChatMessageService();
             EmailService = new KeylolEmailService();
             SmsService = new KeylolSmsService();
-        }
-
-        /// <summary>
-        ///     创建 <see cref="KeylolUserManager" />
-        /// </summary>
-        /// <param name="dbContext">
-        ///     <see cref="KeylolDbContext" />
-        /// </param>
-        public KeylolUserManager(KeylolDbContext dbContext) : this(new UserStore<KeylolUser>(dbContext))
-        {
         }
 
         /// <summary>
@@ -69,6 +66,7 @@ namespace Keylol.Identity
         /// </summary>
         /// <param name="idCode">识别码</param>
         /// <returns>查询到的用户对象，或者 null 表示没有查到</returns>
+        [ItemCanBeNull]
         public async Task<KeylolUser> FindByIdCodeAsync(string idCode)
         {
             if (!SupportsQueryableUsers)
@@ -83,13 +81,25 @@ namespace Keylol.Identity
         /// </summary>
         /// <param name="steamId">Steam ID 3</param>
         /// <returns>查询到的用户对象，或者 null 表示没有查到</returns>
+        /// <exception cref="ArgumentNullException">steamId 为 null</exception>
+        [ItemCanBeNull]
         public async Task<KeylolUser> FindBySteamIdAsync(string steamId)
         {
-            if (!SupportsQueryableUsers)
-                throw new NotSupportedException();
             if (steamId == null)
                 throw new ArgumentNullException(nameof(steamId));
-            return await Users.Where(u => u.SteamId == steamId).FirstOrDefaultAsync();
+            return await FindAsync(new UserLoginInfo(KeylolLoginProviders.Steam, steamId));
+        }
+
+        /// <summary>
+        /// 获取指定用户的 Steam ID
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <returns>用户的 Steam ID 3</returns>
+        public async Task<string> GetSteamIdAsync(string userId)
+        {
+            return (await GetLoginsAsync(userId))
+                .FirstOrDefault(l => l.LoginProvider == KeylolLoginProviders.Steam)?
+                .ProviderKey;
         }
 
         /// <summary>
@@ -103,11 +113,11 @@ namespace Keylol.Identity
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
-            if (SteamChatMessageService != null)
+            if (user.SteamBotId != null && SteamChatMessageService != null)
             {
                 var msg = new IdentityMessage
                 {
-                    Destination = user.SteamId,
+                    Destination = await GetSteamIdAsync(user.Id),
                     Subject = $"{user.SteamBotId},{tempSilence}",
                     Body = message
                 };

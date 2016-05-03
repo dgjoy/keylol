@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.ServiceBase;
@@ -35,8 +36,7 @@ namespace Keylol.Controllers.Article
                 return NotFound();
 
             var editorId = User.Identity.GetUserId();
-            var editorStaffClaim = await _userManager.GetStaffClaimAsync(editorId);
-            if (article.PrincipalId != editorId && editorStaffClaim != StaffClaim.Operator)
+            if (article.PrincipalId != editorId && !User.IsInRole(KeylolRoles.Operator))
                 return Unauthorized();
 
             var newArticleType = requestDto.TypeName.ToEnum<ArticleType>();

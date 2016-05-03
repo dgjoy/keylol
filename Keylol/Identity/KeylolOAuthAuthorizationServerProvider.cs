@@ -15,6 +15,7 @@ namespace Keylol.Identity
     {
         private async Task GrantPasswordCaptcha(OAuthGrantCustomExtensionContext context)
         {
+#if !DEBUG
             var geetest = Startup.Container.GetInstance<GeetestProvider>();
             if (!await geetest.ValidateAsync(context.Parameters["geetest_challenge"],
                 context.Parameters["geetest_seccode"],
@@ -23,6 +24,7 @@ namespace Keylol.Identity
                 context.SetError(Errors.InvalidCaptcha);
                 return;
             }
+#endif
 
             var userManager = Startup.Container.GetInstance<KeylolUserManager>();
 

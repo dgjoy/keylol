@@ -1,5 +1,5 @@
-﻿using System.Runtime.Serialization;
-using SteamKit2;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Keylol.Models.DTO
 {
@@ -9,8 +9,6 @@ namespace Keylol.Models.DTO
     [DataContract]
     public class UserDto
     {
-        private readonly KeylolUser _user;
-
         /// <summary>
         ///     创建空 DTO，需要手动填充
         /// </summary>
@@ -21,34 +19,13 @@ namespace Keylol.Models.DTO
         /// <summary>
         ///     创建 DTO 并自动填充部分数据
         /// </summary>
-        /// <param name="user"><see cref="KeylolUser" /> 对象</param>
-        /// <param name="includeSteam">是否包含 Steam 相关信息（玩家昵称、Steam ID）</param>
-        /// <param name="includeSecurity">是否包含安全相关信息（Email、登录保护）</param>
-        public UserDto(KeylolUser user, bool includeSteam = false, bool includeSecurity = false)
+        public UserDto(KeylolUser user)
         {
-            _user = user;
             Id = user.Id;
             IdCode = user.IdCode;
             UserName = user.UserName;
             GamerTag = user.GamerTag;
-
-            // Ignore ProfilePointBackgroundImage
-
             AvatarImage = user.AvatarImage;
-
-            if (includeSteam)
-                IncludeSteam();
-
-            if (includeSecurity)
-                IncludeSecurity();
-
-            // Ignore claims
-
-            // Ignore SteamBot
-
-            // Ignore stats
-
-            // Ignore subscribed
         }
 
         /// <summary>
@@ -118,16 +95,10 @@ namespace Keylol.Models.DTO
         public string SteamProfileName { get; set; }
 
         /// <summary>
-        ///     暂准身份
+        ///     身份
         /// </summary>
         [DataMember]
-        public string StatusClaim { get; set; }
-
-        /// <summary>
-        ///     职员身份
-        /// </summary>
-        [DataMember]
-        public string StaffClaim { get; set; }
+        public List<string> Roles { get; set; }
 
         /// <summary>
         ///     相关 Steam 机器人
@@ -224,31 +195,6 @@ namespace Keylol.Models.DTO
         /// </summary>
         [DataMember]
         public double? AutoSubscribeDaySpan { get; set; }
-
-        /// <summary>
-        ///     填充安全相关信息
-        /// </summary>
-        /// <returns>DTO 自身</returns>
-        public UserDto IncludeSecurity()
-        {
-            LockoutEnabled = _user.LockoutEnabled;
-            Email = _user.Email;
-            return this;
-        }
-
-        /// <summary>
-        ///     填充 Steam 相关信息
-        /// </summary>
-        /// <returns>DTO 自身</returns>
-        public UserDto IncludeSteam()
-        {
-            SteamId = _user.SteamId;
-            var steamId = new SteamID();
-            steamId.SetFromSteam3String(SteamId);
-            SteamId64 = steamId.ConvertToUInt64().ToString();
-            SteamProfileName = _user.SteamProfileName;
-            return this;
-        }
     }
 
     /// <summary>

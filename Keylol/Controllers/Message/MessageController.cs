@@ -12,7 +12,6 @@ namespace Keylol.Controllers.Message
     public partial class MessageController : ApiController
     {
         private readonly KeylolDbContext _dbContext;
-        private readonly KeylolUserManager _userManager;
 
         /// <summary>
         ///     创建 <see cref="MessageController" />
@@ -26,7 +25,6 @@ namespace Keylol.Controllers.Message
         public MessageController(KeylolDbContext dbContext, KeylolUserManager userManager)
         {
             _dbContext = dbContext;
-            _userManager = userManager;
         }
     }
 }

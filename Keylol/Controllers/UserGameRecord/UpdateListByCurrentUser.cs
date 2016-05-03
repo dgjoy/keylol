@@ -53,9 +53,9 @@ namespace Keylol.Controllers.UserGameRecord
             try
             {
                 var steamId = new SteamID();
-                steamId.SetFromSteam3String(user.SteamId);
+                steamId.SetFromSteam3String(await _userManager.GetSteamIdAsync(user.Id));
                 string allGamesHtml;
-                if (user.SteamBot.IsOnline())
+                if (user.SteamBotId != null && user.SteamBot.IsOnline())
                 {
                     var botCoordinator = SteamBotCoordinator.Sessions[user.SteamBot.SessionId];
                     allGamesHtml = await botCoordinator.Client.Curl(user.SteamBotId,

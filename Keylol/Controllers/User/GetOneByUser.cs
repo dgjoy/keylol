@@ -6,10 +6,13 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Security;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
+using SteamKit2;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.User
@@ -21,7 +24,6 @@ namespace Keylol.Controllers.User
         /// </summary>
         /// <param name="id">用户 ID</param>
         /// <param name="profilePointBackgroundImage">是否包含用户据点背景图片，默认 false</param>
-        /// <param name="claims">是否包含用户权限级别，默认 false</param>
         /// <param name="security">是否包含用户安全信息（Email、登录保护等），用户只能获取自己的安全信息（除非是运维职员），默认 false</param>
         /// <param name="steam">是否包含用户 Steam 信息，用户只能获取自己的 Steam 信息（除非是运维职员），默认 false</param>
         /// <param name="steamBot">是否包含用户所属 Steam 机器人（用户只能获取自己的机器人（除非是运维职员），默认 false</param>
@@ -39,11 +41,19 @@ namespace Keylol.Controllers.User
         [ResponseType(typeof (UserDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "尝试获取无权获取的属性")]
-        public async Task<IHttpActionResult> GetOneByUser(string id, bool profilePointBackgroundImage = false,
-            bool claims = false, bool security = false, bool steam = false,
-            bool steamBot = false, bool subscribeCount = false, bool stats = false,
-            bool subscribed = false, bool moreOptions = false, bool commentLike = false, bool coupon = false,
-            bool reviewStats = false, UserIdentityType idType = UserIdentityType.Id)
+        public async Task<IHttpActionResult> GetOneByUser(string id,
+            bool profilePointBackgroundImage = false,
+            bool security = false,
+            bool steam = false,
+            bool steamBot = false,
+            bool subscribeCount = false,
+            bool stats = false,
+            bool subscribed = false,
+            bool moreOptions = false,
+            bool commentLike = false,
+            bool coupon = false,
+            bool reviewStats = false,
+            UserIdentityType idType = UserIdentityType.Id)
         {
             KeylolUser user;
             switch (idType)
@@ -87,11 +97,7 @@ namespace Keylol.Controllers.User
                 }
             }
 
-            var visitorStaffClaim = string.IsNullOrWhiteSpace(visitorId)
-                ? null
-                : await _userManager.GetStaffClaimAsync(visitorId);
-
-            var getSelf = visitorId == user.Id || visitorStaffClaim == StaffClaim.Operator;
+            var getSelf = visitorId == user.Id || User.IsInRole(KeylolRoles.Operator);
 
             var userDto = new UserDto(user);
 
@@ -108,34 +114,36 @@ namespace Keylol.Controllers.User
             if (profilePointBackgroundImage)
                 userDto.ProfilePointBackgroundImage = user.ProfilePoint.BackgroundImage;
 
-            if (claims)
-            {
-                userDto.StatusClaim = await _userManager.GetStatusClaimAsync(user.Id);
-                userDto.StaffClaim = await _userManager.GetStaffClaimAsync(user.Id);
-            }
+            userDto.Roles = ((RolePrincipal) User).GetRoles().ToList();
 
             if (security)
             {
                 if (!getSelf)
                     return Unauthorized();
-                userDto.IncludeSecurity();
+                userDto.LockoutEnabled = user.LockoutEnabled;
+                userDto.Email = user.Email;
             }
 
             if (steam)
             {
                 if (!getSelf)
                     return Unauthorized();
-                userDto.IncludeSteam();
+                userDto.SteamId = await _userManager.GetSteamIdAsync(user.Id);
+                var steamId = new SteamID();
+                steamId.SetFromSteam3String(userDto.SteamId);
+                userDto.SteamId64 = steamId.Render(true);
+                userDto.SteamProfileName = user.SteamProfileName;
             }
 
             if (steamBot)
             {
                 if (!getSelf)
                     return Unauthorized();
-                userDto.SteamBot = new SteamBotDto(user.SteamBot)
-                {
-                    Online = user.SteamBot.IsOnline()
-                };
+                if (user.SteamBotId != null)
+                    userDto.SteamBot = new SteamBotDto(user.SteamBot)
+                    {
+                        Online = user.SteamBot.IsOnline()
+                    };
             }
 
             if (coupon)
