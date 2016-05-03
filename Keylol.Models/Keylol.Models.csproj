@@ -361,6 +361,10 @@
     <Compile Include="Migrations\201605030857355_SteamIdToLogin.Designer.cs">
       <DependentUpon>201605030857355_SteamIdToLogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605031702356_RemoveSteamLoginToken.cs" />
+    <Compile Include="Migrations\201605031702356_RemoveSteamLoginToken.Designer.cs">
+      <DependentUpon>201605031702356_RemoveSteamLoginToken.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -368,7 +372,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamBindingToken.cs" />
     <Compile Include="SteamBot.cs" />
-    <Compile Include="SteamLoginToken.cs" />
     <Compile Include="UserGameRecord.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -590,6 +593,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605030857355_SteamIdToLogin.resx">
       <DependentUpon>201605030857355_SteamIdToLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605031702356_RemoveSteamLoginToken.resx">
+      <DependentUpon>201605031702356_RemoveSteamLoginToken.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

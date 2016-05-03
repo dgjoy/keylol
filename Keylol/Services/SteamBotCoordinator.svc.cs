@@ -186,7 +186,7 @@ namespace Keylol.Services
                         .Clients.Clients(await dbContext.SteamBindingTokens.Where(t => t.BotId == botId)
                             .Select(t => t.BrowserConnectionId)
                             .ToListAsync())?
-                        .NotifySteamFriendAdded();
+                        .OnFriend();
                     await Task.Delay(TimeSpan.FromSeconds(3));
                     await Client.SendChatMessage(botId, userSteamId,
                         "欢迎使用当前 Steam 账号加入其乐，请输入你在网页上获取的 8 位绑定验证码。");
@@ -286,7 +286,7 @@ namespace Keylol.Services
                         await dbContext.SaveChangesAsync();
                         GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
                             .Clients.Client(token.BrowserConnectionId)?
-                            .NotifyCodeReceived(await Client.GetUserProfileName(botId, senderSteamId),
+                            .OnBind(await Client.GetUserProfileName(botId, senderSteamId),
                                 await Client.GetUserAvatarHash(botId, senderSteamId));
                         await Client.SendChatMessage(botId, senderSteamId,
                             "绑定成功，欢迎加入其乐！今后你可以向机器人发送对话快速登录社区，请勿将机器人从好友列表移除。");

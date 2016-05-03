@@ -83,12 +83,6 @@ namespace Keylol.Models.DTO
         public string SteamId { get; set; }
 
         /// <summary>
-        ///     Steam ID 64
-        /// </summary>
-        [DataMember]
-        public string SteamId64 { get; set; }
-
-        /// <summary>
         ///     Steam 玩家昵称
         /// </summary>
         [DataMember]

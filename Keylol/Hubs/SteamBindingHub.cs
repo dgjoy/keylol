@@ -18,7 +18,57 @@ namespace Keylol.Hubs
     /// </summary>
     public class SteamBindingHub : Hub<ISteamBindingHubClient>
     {
-        private static int _botSkip;
+        private static int _nextBot;
+
+        /// <summary>
+        /// Called when the connection connects to this hub instance.
+        /// </summary>
+        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /></returns>
+        public override async Task OnConnected()
+        {
+            using (var dbContext = new KeylolDbContext())
+            {
+                var sessions = SteamBotCoordinator.Sessions.Keys;
+                var bots = await dbContext.SteamBots.Where(b =>
+                    b.Online && sessions.Contains(b.SessionId)
+                    && b.SteamId != null && b.FriendCount < b.FriendUpperLimit && b.Enabled)
+                    .OrderBy(b => b.SequenceNumber)
+                    .ToListAsync();
+
+                SteamBot bot = null;
+                if (bots.Count != 0)
+                {
+                    if (_nextBot >= bots.Count)
+                        _nextBot = 0;
+                    bot = bots[_nextBot];
+                    _nextBot++;
+                }
+
+                var random = new Random();
+                string code;
+                do
+                {
+                    var sb = new StringBuilder();
+                    for (var i = 0; i < 4; i++)
+                    {
+                        sb.Append((char) random.Next('A', 'Z'));
+                    }
+                    sb.Append(random.Next(0, 10000).ToString("D4"));
+                    code = sb.ToString();
+                } while (dbContext.SteamBindingTokens.Any(t => t.Code == code));
+
+                var token = new SteamBindingToken
+                {
+                    Code = code,
+                    BrowserConnectionId = Context.ConnectionId,
+                    BotId = bot?.Id
+                };
+                dbContext.SteamBindingTokens.Add(token);
+                await dbContext.SaveChangesAsync();
+
+                Clients.Caller.OnCode(token.Id, code, bot?.SteamId);
+            }
+        }
 
         /// <summary>
         /// Called when a connection disconnects from this hub gracefully or due to a timeout.
@@ -34,10 +84,9 @@ namespace Keylol.Hubs
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var tokens =
-                    await dbContext.SteamBindingTokens
-                        .Where(t => t.BrowserConnectionId == Context.ConnectionId)
-                        .ToListAsync();
+                var tokens = await dbContext.SteamBindingTokens
+                    .Where(t => t.BrowserConnectionId == Context.ConnectionId)
+                    .ToListAsync();
                 foreach (var token in tokens)
                 {
                     if (token.SteamId != null)
@@ -51,64 +100,6 @@ namespace Keylol.Hubs
                     dbContext.SteamBindingTokens.Remove(token);
                 }
                 await dbContext.SaveChangesAsync();
-                await base.OnDisconnected(stopCalled);
-            }
-        }
-
-        /// <summary>
-        /// 创建一个新的 Steam Binding Token
-        /// </summary>
-        /// <returns></returns>
-        public async Task<SteamBindingTokenDto> CreateToken()
-        {
-            using (var dbContext = new KeylolDbContext())
-            {
-                var sessions = SteamBotCoordinator.Sessions.Keys;
-                var bot = await dbContext.SteamBots.Where(b =>
-                    b.Online && sessions.Contains(b.SessionId)
-                    && b.SteamId != null && b.FriendCount < b.FriendUpperLimit && b.Enabled)
-                    .OrderBy(b => b.SequenceNumber)
-                    .Skip(() => _botSkip)
-                    .FirstOrDefaultAsync();
-                if (_botSkip >= await dbContext.SteamBots.CountAsync() - 1)
-                    _botSkip = 0;
-                else
-                    _botSkip++;
-                if (bot == null)
-                    return null;
-
-                var random = new Random();
-                string code;
-                do
-                {
-                    var sb = new StringBuilder();
-                    for (var i = 0; i < 4; i++)
-                    {
-                        sb.Append((char) random.Next('A', 'Z'));
-                    }
-                    for (var i = 0; i < 4; i++)
-                    {
-                        sb.Append(random.Next(0, 10));
-                    }
-                    code = sb.ToString();
-                } while (await dbContext.SteamBindingTokens.AnyAsync(t => t.Code == code));
-
-                var token = new SteamBindingToken
-                {
-                    Code = code,
-                    BrowserConnectionId = Context.ConnectionId
-                };
-                dbContext.SteamBindingTokens.Add(token);
-                await dbContext.SaveChangesAsync();
-
-                var steamId = new SteamID();
-                steamId.SetFromSteam3String(bot.SteamId);
-                return new SteamBindingTokenDto
-                {
-                    Id = token.Id,
-                    Code = token.Code,
-                    BotSteamId64 = steamId.ConvertToUInt64().ToString()
-                };
             }
         }
     }
@@ -119,15 +110,23 @@ namespace Keylol.Hubs
     public interface ISteamBindingHubClient
     {
         /// <summary>
+        /// 通知新的绑定验证码
+        /// </summary>
+        /// <param name="tokenId">Steam Binding Token ID</param>
+        /// <param name="code">绑定验证码</param>
+        /// <param name="botSteamId">机器人 Steam ID</param>
+        void OnCode(string tokenId, string code, string botSteamId);
+
+        /// <summary>
         /// 通知已经接受了好友请求
         /// </summary>
-        void NotifySteamFriendAdded();
+        void OnFriend();
 
         /// <summary>
         /// 通知已经成功收到了绑定验证码
         /// </summary>
         /// <param name="steamProfileName">Steam 资料昵称</param>
         /// <param name="steamAvatarHash">Steam 头像 Hash</param>
-        void NotifyCodeReceived(string steamProfileName, string steamAvatarHash);
+        void OnBind(string steamProfileName, string steamAvatarHash);
     }
 }

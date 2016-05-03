@@ -80,7 +80,6 @@
     <Compile Include="SteamBotDelayedActionDto.cs" />
     <Compile Include="SteamBotDto.cs" />
     <Compile Include="SteamBotUpdateRequestDto.cs" />
-    <Compile Include="SteamLoginTokenDto.cs" />
     <Compile Include="SubscribedPointDto.cs" />
     <Compile Include="UserDto.cs" />
   </ItemGroup>

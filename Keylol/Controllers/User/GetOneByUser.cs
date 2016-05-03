@@ -129,9 +129,6 @@ namespace Keylol.Controllers.User
                 if (!getSelf)
                     return Unauthorized();
                 userDto.SteamId = await _userManager.GetSteamIdAsync(user.Id);
-                var steamId = new SteamID();
-                steamId.SetFromSteam3String(userDto.SteamId);
-                userDto.SteamId64 = steamId.Render(true);
                 userDto.SteamProfileName = user.SteamProfileName;
             }
 

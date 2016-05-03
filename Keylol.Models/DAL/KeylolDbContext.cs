@@ -34,7 +34,6 @@ namespace Keylol.Models.DAL
         public DbSet<LoginLog> LoginLogs { get; set; }
         public DbSet<EditLog> EditLogs { get; set; }
         public DbSet<SteamBindingToken> SteamBindingTokens { get; set; }
-        public DbSet<SteamLoginToken> SteamLoginTokens { get; set; }
         public DbSet<SteamBot> SteamBots { get; set; }
         public DbSet<InvitationCode> InvitationCodes { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
