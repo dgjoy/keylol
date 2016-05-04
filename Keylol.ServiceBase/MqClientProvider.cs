@@ -97,7 +97,13 @@ namespace Keylol.ServiceBase
         /// <summary>
         ///     Steam Bot 延迟操作队列
         /// </summary>
-        public static readonly string SteamBotDelayedActionQueue = "steam-bot-delayed-actions";
+        public static string SteamBotDelayedActionQueue(string botId) => $"steam-bot-delayed-actions.{botId}";
+
+        /// <summary>
+        ///     可靠通知队列
+        /// </summary>
+        public static string ReliableNotificationQueue(string userId, string hubName)
+            => $"reliable-notifications.{hubName}.{userId}";
 
         #endregion
     }

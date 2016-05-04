@@ -279,6 +279,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\ReliableHub.cs" />
     <Compile Include="Identity\KeylolClaimTypes.cs" />
     <Compile Include="Identity\KeylolLoginProviders.cs" />
     <Compile Include="Identity\KeylolPasswordValidator.cs" />
@@ -290,6 +291,7 @@
     <Compile Include="Identity\KeylolOAuthBearerAuthenticationProvider.cs" />
     <Compile Include="Identity\MessageServices\KeylolSteamChatMessageService.cs" />
     <Compile Include="Provider\CouponProvider.cs" />
+    <Compile Include="Provider\NotificationProvider.cs" />
     <Compile Include="Provider\OneTimeTokenProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Provider\StatisticsProvider.cs" />
@@ -321,6 +323,7 @@
     <Compile Include="Identity\KeylolOAuthAuthorizationServerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Utilities\KeylolUserIdProvider.cs" />
     <Compile Include="Utilities\LogHubAppender.cs" />
     <Compile Include="Utilities\NotNullHttpParameterBinding.cs" />
     <Compile Include="Utilities\PredicateBuilder.cs" />

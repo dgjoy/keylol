@@ -9,7 +9,6 @@ using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Keylol.Filters;
-using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
@@ -108,6 +107,7 @@ namespace Keylol
             app.UseStageMarker(PipelineStage.Authenticate);
 
             // SignalR
+            GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => new KeylolUserIdProvider());
             app.MapSignalR();
 
             // ASP.NET Web API
@@ -146,14 +146,7 @@ namespace Keylol
             Container.RegisterPerOwinRequest(() =>
             {
                 var context = new KeylolDbContext();
-#if DEBUG
-                context.WriteLog += (sender, s) =>
-                {
-                    GlobalHost.ConnectionManager
-                        .GetHubContext<LogHub, ILogHubClient>()
-                        .Clients.All.OnWrite(s);
-                };
-#endif
+//                context.WriteLog += (sender, s) => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
                 return context;
             });
 
@@ -256,7 +249,7 @@ namespace Keylol
 
         private static void SetupLogger()
         {
-            var hierarchy = (Hierarchy)LogManager.GetRepository();
+            var hierarchy = (Hierarchy) LogManager.GetRepository();
             var appender = new LogHubAppender();
             appender.ActivateOptions();
             hierarchy.Root.AddAppender(appender);

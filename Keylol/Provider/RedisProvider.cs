@@ -21,9 +21,7 @@ namespace Keylol.Provider
             ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redisConnection"] ??
                                           "localhost,abortConnect=false,allowAdmin=true");
 
-        /// <summary>
-        ///     资源清理
-        /// </summary>
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {

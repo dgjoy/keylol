@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -136,7 +137,8 @@ namespace Keylol.SteamBot
                 return null;
             var id = new SteamID();
             id.SetFromSteam3String(steamId);
-            return Helpers.Md5(botInstance.SteamFriends.GetFriendAvatar(id));
+            return BitConverter.ToString(botInstance.SteamFriends.GetFriendAvatar(id))
+                .Replace("-", string.Empty).ToLower();
         }
 
         public string GetUserProfileName(string botId, string steamId)

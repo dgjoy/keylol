@@ -7,7 +7,7 @@ namespace Keylol.Hubs
     /// 提供实时日志输出服务
     /// </summary>
     [Authorize(Roles = KeylolRoles.Operator)]
-    public class LogHub : Hub<ILogHubClient>
+    public class LogHub : ReliableHub<ILogHubClient>
     {
     }
 

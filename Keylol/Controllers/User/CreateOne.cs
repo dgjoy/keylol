@@ -108,8 +108,8 @@ namespace Keylol.Controllers.User
                 }
             }
 
-            return Created($"user/{user.Id}",
-                _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1), OneTimeTokenPurpose.UserLogin));
+            return Created($"user/{user.Id}", await _oneTimeToken.Generate(user.Id,
+                TimeSpan.FromMinutes(1), OneTimeTokenPurpose.UserLogin));
         }
 
 

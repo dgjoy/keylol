@@ -16,7 +16,6 @@ using Keylol.Models.DTO;
 using Keylol.Provider;
 using Keylol.ServiceBase;
 using Keylol.Services.Contracts;
-using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
@@ -182,16 +181,18 @@ namespace Keylol.Services
                 if (user == null)
                 {
                     // 非会员，在注册时绑定机器人
-                    GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
-                        .Clients.Clients(await dbContext.SteamBindingTokens.Where(t => t.BotId == botId)
+                    NotificationProvider.Hub<SteamBindingHub, ISteamBindingHubClient>()
+                        .Clients(await dbContext.SteamBindingTokens.Where(t => t.BotId == botId)
                             .Select(t => t.BrowserConnectionId)
                             .ToListAsync())?
                         .OnFriend();
                     await Task.Delay(TimeSpan.FromSeconds(3));
                     await Client.SendChatMessage(botId, userSteamId,
                         "欢迎使用当前 Steam 账号加入其乐，请输入你在网页上获取的 8 位绑定验证码。");
+                    var queueName = MqClientProvider.SteamBotDelayedActionQueue(botId);
+                    _mqChannel.QueueDeclare(queueName, true, false, false, null);
                     _mqChannel.SendMessage(MqClientProvider.DelayedMessageExchange,
-                        $"{MqClientProvider.SteamBotDelayedActionQueue}.{botId}", new SteamBotDelayedActionDto
+                        queueName, new SteamBotDelayedActionDto
                         {
                             Type = SteamBotDelayedActionType.RemoveFriend,
                             Properties = new
@@ -284,8 +285,8 @@ namespace Keylol.Services
                         token.BotId = botId;
                         token.SteamId = senderSteamId;
                         await dbContext.SaveChangesAsync();
-                        GlobalHost.ConnectionManager.GetHubContext<SteamBindingHub, ISteamBindingHubClient>()
-                            .Clients.Client(token.BrowserConnectionId)?
+                        NotificationProvider.Hub<SteamBindingHub, ISteamBindingHubClient>()
+                            .Client(token.BrowserConnectionId)?
                             .OnBind(await Client.GetUserProfileName(botId, senderSteamId),
                                 await Client.GetUserAvatarHash(botId, senderSteamId));
                         await Client.SendChatMessage(botId, senderSteamId,
@@ -309,8 +310,8 @@ namespace Keylol.Services
                                 await oneTimeTokenProvider.Consume<string>(code, OneTimeTokenPurpose.SteamLogin);
                             var loginToken = await oneTimeTokenProvider.Generate(user.Id, TimeSpan.FromMinutes(1),
                                 OneTimeTokenPurpose.UserLogin);
-                            GlobalHost.ConnectionManager.GetHubContext<SteamLoginHub, ISteamLoginHubClient>()
-                                .Clients.Client(connectionId).OnLoginOneTimeToken(loginToken);
+                            NotificationProvider.Hub<SteamLoginHub, ISteamLoginHubClient>()
+                                .Client(connectionId).OnLoginOneTimeToken(loginToken);
                             await Client.SendChatMessage(botId, senderSteamId, "欢迎回来，你已成功登录其乐社区。");
                         }
                         catch (Exception)

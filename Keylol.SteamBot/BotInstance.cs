@@ -122,7 +122,7 @@ namespace Keylol.SteamBot
 
             _mqChannel = _mqClientProvider.CreateModel();
             _mqChannel.BasicQos(0, 5, false);
-            var queueName = $"{MqClientProvider.SteamBotDelayedActionQueue}.{Id}";
+            var queueName = MqClientProvider.SteamBotDelayedActionQueue(Id);
             _mqChannel.QueueDeclare(queueName, true, false, false, null);
             _mqChannel.QueueBind(queueName, MqClientProvider.DelayedMessageExchange, queueName);
             var consumer = new EventingBasicConsumer(_mqChannel);

@@ -70,6 +70,8 @@ namespace Keylol.Controllers.User
                     break;
 
                 case UserIdentityType.Id:
+                    if (id == "current" && string.IsNullOrWhiteSpace(visitorId))
+                        return Unauthorized();
                     user = await _userManager.FindByIdAsync(id == "current" ? visitorId : id);
                     break;
 

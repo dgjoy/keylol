@@ -75,6 +75,7 @@
     <Compile Include="InvitationCodeDto.cs" />
     <Compile Include="LogDto.cs" />
     <Compile Include="NormalPointDto.cs" />
+    <Compile Include="ReliableNotificationDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamBindingTokenDto.cs" />
     <Compile Include="SteamBotDelayedActionDto.cs" />

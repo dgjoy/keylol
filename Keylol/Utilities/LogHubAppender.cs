@@ -1,7 +1,7 @@
 ﻿using Keylol.Hubs;
+using Keylol.Provider;
 using log4net.Appender;
 using log4net.Core;
-using Microsoft.AspNet.SignalR;
 
 namespace Keylol.Utilities
 {
@@ -30,9 +30,8 @@ namespace Keylol.Utilities
         /// </remarks>
         protected override void Append(LoggingEvent loggingEvent)
         {
-            GlobalHost.ConnectionManager
-                .GetHubContext<LogHub, ILogHubClient>()
-                .Clients.All.OnWrite(
+            NotificationProvider.Hub<LogHub, ILogHubClient>()
+                .All.OnWrite(
                     $"[{loggingEvent.Level}] {loggingEvent.TimeStamp} {loggingEvent.LoggerName} - {loggingEvent.RenderedMessage}");
         }
     }
