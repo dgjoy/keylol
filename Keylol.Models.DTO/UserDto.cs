@@ -92,7 +92,7 @@ namespace Keylol.Models.DTO
         ///     身份
         /// </summary>
         [DataMember]
-        public List<string> Roles { get; set; }
+        public IList<string> Roles { get; set; }
 
         /// <summary>
         ///     相关 Steam 机器人

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -56,6 +57,8 @@ namespace Keylol.Controllers.User
             UserIdentityType idType = UserIdentityType.Id)
         {
             KeylolUser user;
+            var visitorId = User.Identity.GetUserId();
+
             switch (idType)
             {
                 case UserIdentityType.UserName:
@@ -67,7 +70,7 @@ namespace Keylol.Controllers.User
                     break;
 
                 case UserIdentityType.Id:
-                    user = await _userManager.FindByIdAsync(id == "current" ? User.Identity.GetUserId() : id);
+                    user = await _userManager.FindByIdAsync(id == "current" ? visitorId : id);
                     break;
 
                 default:
@@ -76,8 +79,6 @@ namespace Keylol.Controllers.User
 
             if (user == null)
                 return NotFound();
-
-            var visitorId = User.Identity.GetUserId();
 
             if (user.Id == visitorId)
             {
@@ -114,7 +115,7 @@ namespace Keylol.Controllers.User
             if (profilePointBackgroundImage)
                 userDto.ProfilePointBackgroundImage = user.ProfilePoint.BackgroundImage;
 
-            userDto.Roles = ((RolePrincipal) User).GetRoles().ToList();
+            userDto.Roles = await _userManager.GetRolesAsync(user.Id);
 
             if (security)
             {
