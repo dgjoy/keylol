@@ -146,7 +146,7 @@ namespace Keylol
             Container.RegisterPerOwinRequest(() =>
             {
                 var context = new KeylolDbContext();
-//                context.WriteLog += (sender, s) => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
+//                context.Database.Log = s => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
                 return context;
             });
 

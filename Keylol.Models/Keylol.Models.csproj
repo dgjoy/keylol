@@ -67,6 +67,14 @@
     <Compile Include="Migrations\201605081121274_ModelRefactor3.Designer.cs">
       <DependentUpon>201605081121274_ModelRefactor3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605081356166_RenameNormalPointToPoint.cs" />
+    <Compile Include="Migrations\201605081356166_RenameNormalPointToPoint.Designer.cs">
+      <DependentUpon>201605081356166_RenameNormalPointToPoint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605081401217_PointRelationship.cs" />
+    <Compile Include="Migrations\201605081401217_PointRelationship.Designer.cs">
+      <DependentUpon>201605081401217_PointRelationship.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -624,6 +632,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605081121274_ModelRefactor3.resx">
       <DependentUpon>201605081121274_ModelRefactor3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605081356166_RenameNormalPointToPoint.resx">
+      <DependentUpon>201605081356166_RenameNormalPointToPoint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605081401217_PointRelationship.resx">
+      <DependentUpon>201605081401217_PointRelationship.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

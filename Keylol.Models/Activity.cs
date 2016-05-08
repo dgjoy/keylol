@@ -44,7 +44,7 @@ namespace Keylol.Models
 
         public string TargetPointId { get; set; }
 
-        public virtual NormalPoint TargetPoint { get; set; }
+        public virtual Point TargetPoint { get; set; }
 
         /// <summary>
         /// 只有在收稿据点为游戏、硬件类型时填写

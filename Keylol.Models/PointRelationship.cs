@@ -24,12 +24,12 @@ namespace Keylol.Models
         [Required]
         public string SourcePointId { get; set; }
 
-        public NormalPoint SourcePoint { get; set; }
+        public Point SourcePoint { get; set; }
 
         [Required]
         public string TargetPointId { get; set; }
 
-        public NormalPoint TargetPoint { get; set; }
+        public Point TargetPoint { get; set; }
     }
 
     public enum PointRelationshipType
@@ -38,9 +38,9 @@ namespace Keylol.Models
         Publisher,
         Manufacturer,
         Genre,
+        Series,
         Tag,
         MajorPlatform,
-        MinorPlatform,
-        Series,
+        MinorPlatform
     }
 }
