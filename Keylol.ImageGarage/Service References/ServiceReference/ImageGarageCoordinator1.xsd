@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models" />
   <xs:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
@@ -28,7 +28,7 @@
       <xs:element minOccurs="0" name="Spotlight" nillable="true" type="xs:boolean" />
       <xs:element minOccurs="0" name="Summary" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ThumbnailImage" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="TimelineReason" nillable="true" type="tns:ArticleDto.TimelineReasonType" />
+      <xs:element minOccurs="0" name="ArticleTimelineReason" nillable="true" type="tns:ArticleDto.ArticleTimelineReasonType" />
       <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
       <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Keylol.Models" minOccurs="0" name="Type" nillable="true" type="q4:ArticleType" />
       <xs:element minOccurs="0" name="TypeName" nillable="true" type="xs:string" />
@@ -139,7 +139,7 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfUserDto" nillable="true" type="tns:ArrayOfUserDto" />
-  <xs:simpleType name="ArticleDto.TimelineReasonType">
+  <xs:simpleType name="ArticleDto.ArticleTimelineReasonType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Like" />
       <xs:enumeration value="Publish" />
@@ -147,5 +147,5 @@
       <xs:enumeration value="AutoSubscription" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:element name="ArticleDto.TimelineReasonType" nillable="true" type="tns:ArticleDto.TimelineReasonType" />
+  <xs:element name="ArticleDto.ArticleTimelineReasonType" nillable="true" type="tns:ArticleDto.ArticleTimelineReason" />
 </xs:schema>

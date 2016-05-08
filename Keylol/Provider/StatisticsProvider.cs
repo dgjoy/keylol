@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Models;
 using Keylol.Models.DAL;
 
 namespace Keylol.Provider
@@ -43,9 +45,34 @@ namespace Keylol.Provider
             if (cachedResult.HasValue)
                 return (int) cachedResult;
 
-            var articleLikeCount = await _dbContext.ArticleLikes.CountAsync(l => l.Article.PrincipalId == userId);
-            var commentLikeCount = await _dbContext.CommentLikes.CountAsync(l => l.Comment.CommentatorId == userId);
-            var likeCount = articleLikeCount + commentLikeCount;
+            var articleLikeCount = await (from article in _dbContext.Articles
+                join like in _dbContext.Likes on article.Id equals like.TargetId
+                where like.TargetType == LikeTargetType.Article && article.AuthorId == userId
+                select article
+                ).CountAsync();
+            var articleCommentLikeCount = await (from comment in _dbContext.ArticleComments
+                join like in _dbContext.Likes on comment.Id equals like.TargetId
+                where like.TargetType == LikeTargetType.ArticleComment && comment.CommentatorId == userId
+                select comment
+                ).CountAsync();
+            var activityLikeCount = await (from activity in _dbContext.Activities
+                join like in _dbContext.Likes on activity.Id equals like.TargetId
+                where like.TargetType == LikeTargetType.Activity && activity.AuthorId == userId
+                select activity
+                ).CountAsync();
+            var activityCommentLikeCount = await (from comment in _dbContext.ActivityComments
+                join like in _dbContext.Likes on comment.Id equals like.TargetId
+                where like.TargetType == LikeTargetType.ActivityComment && comment.CommentatorId == userId
+                select comment
+                ).CountAsync();
+            var conferenceEntryLikeCount = await (from entry in _dbContext.ConferenceEntries
+                join like in _dbContext.Likes on entry.Id equals like.TargetId
+                where like.TargetType == LikeTargetType.ConferenceEntry && entry.AuthorId == userId
+                select entry
+                ).CountAsync();
+
+            var likeCount = articleLikeCount + articleCommentLikeCount + activityLikeCount +
+                            activityCommentLikeCount + conferenceEntryLikeCount;
             await redisDb.StringSetAsync(cacheKey, likeCount, TimeSpan.FromDays(30));
             return likeCount;
         }

@@ -28,7 +28,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 获取指定 SignalR Hub
+        /// 获取指定 SignalR Hub Connection Context
         /// </summary>
         /// <typeparam name="THub">Hub 类型</typeparam>
         /// <typeparam name="TClient">Hub Client 类型</typeparam>

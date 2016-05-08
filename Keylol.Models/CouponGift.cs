@@ -8,6 +8,10 @@ namespace Keylol.Models
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int Sid { get; set; }
+
         [Required]
         public string Name { get; set; }
 

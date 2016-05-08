@@ -10,7 +10,7 @@ namespace Keylol.Models
 
         [Index(IsUnique = true, IsClustered = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int SequenceNumber { get; set; }
+        public int Sid { get; set; }
 
         [Required]
         public string UserId { get; set; }

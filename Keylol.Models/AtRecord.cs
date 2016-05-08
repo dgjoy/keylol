@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Keylol.Models
 {
-    public class Like
+    public class AtRecord
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -12,23 +16,18 @@ namespace Keylol.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Sid { get; set; }
 
-        [Index]
-        public DateTime Time { get; set; } = DateTime.Now;
+        public AtRecordEntryType EntryType { get; set; }
 
         [Required]
-        public string OperatorId { get; set; }
+        public string EntryId { get; set; }
 
-        public virtual KeylolUser Operator { get; set; }
-
-        public LikeTargetType TargetType { get; set; }
-
-        [Index]
         [Required]
-        [MaxLength(128)]
-        public string TargetId { get; set; }
+        public string UserId { get; set; }
+
+        public virtual KeylolUser User { get; set; }
     }
 
-    public enum LikeTargetType
+    public enum AtRecordEntryType
     {
         Article,
         ArticleComment,

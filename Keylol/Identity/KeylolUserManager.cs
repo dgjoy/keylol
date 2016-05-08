@@ -35,7 +35,7 @@ namespace Keylol.Identity
             UserValidator = new KeylolUserValidator(this);
             PasswordValidator = new KeylolPasswordValidator();
 
-            UserLockoutEnabledByDefault = false;
+            UserLockoutEnabledByDefault = true;
             DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(30);
             MaxFailedAccessAttemptsBeforeLockout = 10;
 
@@ -48,18 +48,6 @@ namespace Keylol.Identity
         ///     Used to send Steam chat message
         /// </summary>
         public IIdentityMessageService SteamChatMessageService { get; set; }
-
-        /// <summary>
-        ///     Create a user with the given password
-        /// </summary>
-        /// <param name="user" />
-        /// <param name="password" />
-        /// <returns />
-        public override Task<IdentityResult> CreateAsync(KeylolUser user, string password)
-        {
-            user.ProfilePoint = new ProfilePoint();
-            return base.CreateAsync(user, password);
-        }
 
         /// <summary>
         ///     根据识别码查询用户

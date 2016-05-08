@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Keylol.Models
 {
-    public class Like
+    public class Subscription
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -12,15 +16,14 @@ namespace Keylol.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Sid { get; set; }
 
-        [Index]
         public DateTime Time { get; set; } = DateTime.Now;
 
         [Required]
-        public string OperatorId { get; set; }
+        public string SubscriberId { get; set; }
 
-        public virtual KeylolUser Operator { get; set; }
+        public KeylolUser Subscriber { get; set; }
 
-        public LikeTargetType TargetType { get; set; }
+        public SubscriptionTargetType TargetType { get; set; }
 
         [Index]
         [Required]
@@ -28,12 +31,10 @@ namespace Keylol.Models
         public string TargetId { get; set; }
     }
 
-    public enum LikeTargetType
+    public enum SubscriptionTargetType
     {
-        Article,
-        ArticleComment,
-        Activity,
-        ActivityComment,
-        ConferenceEntry
+        Point,
+        User,
+        Conference
     }
 }

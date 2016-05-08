@@ -55,14 +55,27 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoSubscription.cs" />
-    <Compile Include="Comment.cs" />
-    <Compile Include="CommentReply.cs" />
+    <Compile Include="Activity.cs" />
+    <Compile Include="ActivityComment.cs" />
+    <Compile Include="ArticleComment.cs" />
+    <Compile Include="AtRecord.cs" />
+    <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
+    <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
+      <DependentUpon>201605080759295_ModelRefactor2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605081121274_ModelRefactor3.cs" />
+    <Compile Include="Migrations\201605081121274_ModelRefactor3.Designer.cs">
+      <DependentUpon>201605081121274_ModelRefactor3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PointRelationship.cs" />
+    <Compile Include="Reply.cs" />
+    <Compile Include="Conference.cs" />
+    <Compile Include="ConferenceEntry.cs" />
     <Compile Include="CouponGift.cs" />
     <Compile Include="CouponGiftOrder.cs" />
     <Compile Include="CouponLog.cs" />
     <Compile Include="Article.cs" />
-    <Compile Include="Favorite.cs" />
+    <Compile Include="Feed.cs" />
     <Compile Include="InvitationCode.cs" />
     <Compile Include="DAL\KeylolDbContext.cs" />
     <Compile Include="KeylolUser.cs" />
@@ -365,6 +378,10 @@
     <Compile Include="Migrations\201605031702356_RemoveSteamLoginToken.Designer.cs">
       <DependentUpon>201605031702356_RemoveSteamLoginToken.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605070706346_ModelRefactor1.cs" />
+    <Compile Include="Migrations\201605070706346_ModelRefactor1.Designer.cs">
+      <DependentUpon>201605070706346_ModelRefactor1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
@@ -372,6 +389,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamBindingToken.cs" />
     <Compile Include="SteamBot.cs" />
+    <Compile Include="Subscription.cs" />
     <Compile Include="UserGameRecord.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -449,6 +467,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601121436133_PointNameInStore.resx">
       <DependentUpon>201601121436133_PointNameInStore.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601121721257_PointFieldLength.resx">
       <DependentUpon>201601121721257_PointFieldLength.cs</DependentUpon>
@@ -596,6 +615,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605031702356_RemoveSteamLoginToken.resx">
       <DependentUpon>201605031702356_RemoveSteamLoginToken.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605070706346_ModelRefactor1.resx">
+      <DependentUpon>201605070706346_ModelRefactor1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605080759295_ModelRefactor2.resx">
+      <DependentUpon>201605080759295_ModelRefactor2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605081121274_ModelRefactor3.resx">
+      <DependentUpon>201605081121274_ModelRefactor3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

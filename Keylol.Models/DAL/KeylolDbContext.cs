@@ -20,30 +20,30 @@ namespace Keylol.Models.DAL
         {
             Database.Log = s => WriteLog?.Invoke(this, s);
         }
-
-        public DbSet<Point> Points { get; set; }
+        
         public DbSet<NormalPoint> NormalPoints { get; set; }
-        public DbSet<ProfilePoint> ProfilePoints { get; set; }
         public DbSet<Article> Articles { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<CommentReply> CommentReplies { get; set; }
+        public DbSet<ArticleComment> ArticleComments { get; set; }
+        public DbSet<Reply> CommentReplies { get; set; }
         public DbSet<Like> Likes { get; set; }
-        public DbSet<ArticleLike> ArticleLikes { get; set; }
-        public DbSet<CommentLike> CommentLikes { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<LoginLog> LoginLogs { get; set; }
         public DbSet<EditLog> EditLogs { get; set; }
         public DbSet<SteamBindingToken> SteamBindingTokens { get; set; }
         public DbSet<SteamBot> SteamBots { get; set; }
         public DbSet<InvitationCode> InvitationCodes { get; set; }
-        public DbSet<Favorite> Favorites { get; set; }
-        public DbSet<AutoSubscription> AutoSubscriptions { get; set; }
         public DbSet<UserGameRecord> UserGameRecords { get; set; }
         public DbSet<SteamStoreName> SteamStoreNames { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<CouponLog> CouponLogs { get; set; }
         public DbSet<CouponGift> CouponGifts { get; set; }
         public DbSet<CouponGiftOrder> CouponGiftOrders { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<ActivityComment> ActivityComments { get; set; }
+        public DbSet<AtRecord> AtRecords { get; set; }
+        public DbSet<Conference> Conferences { get; set; }
+        public DbSet<ConferenceEntry> ConferenceEntries { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
 
         /// <summary>
         ///     当需要写入日志时
@@ -53,8 +53,7 @@ namespace Keylol.Models.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Remove cascade delete conventions because we only use soft delete in this website
+            
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
@@ -63,28 +62,7 @@ namespace Keylol.Models.DAL
             modelBuilder.Entity<IdentityUserClaim>().ToTable("UserClaims");
             modelBuilder.Entity<IdentityUserRole>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
-
-            modelBuilder.Entity<ProfilePoint>().Map(t => t.MapInheritedProperties().ToTable("ProfilePoints"));
-            modelBuilder.Entity<NormalPoint>().Map(t => t.MapInheritedProperties().ToTable("NormalPoints"));
-
-            modelBuilder.Entity<KeylolUser>()
-                .HasMany(user => user.SubscribedPoints)
-                .WithMany(point => point.Subscribers)
-                .Map(t => t.ToTable("UserPointSubscriptions"));
-            modelBuilder.Entity<NormalPoint>()
-                .HasMany(point => point.Staffs)
-                .WithMany(user => user.ManagedPoints)
-                .Map(t => t.ToTable("PointStaffs"));
-            modelBuilder.Entity<Article>()
-                .HasMany(article => article.AttachedPoints)
-                .WithMany(point => point.Articles)
-                .Map(t => t.ToTable("ArticlePointPushes"));
-            modelBuilder.Entity<Comment>()
-                .HasMany(comment => comment.CommentRepliesAsComment)
-                .WithRequired(reply => reply.Comment);
-            modelBuilder.Entity<Comment>()
-                .HasMany(comment => comment.CommentRepliesAsReply)
-                .WithRequired(reply => reply.Reply);
+            
             modelBuilder.Entity<InvitationCode>()
                 .HasOptional(c => c.UsedByUser)
                 .WithOptionalDependent(c => c.InvitationCode);

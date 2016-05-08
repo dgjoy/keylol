@@ -11,52 +11,6 @@ namespace Keylol.Models.DTO
     public class NormalPointDto
     {
         /// <summary>
-        ///     创建空 DTO，需要手动填充
-        /// </summary>
-        public NormalPointDto()
-        {
-        }
-
-        /// <summary>
-        ///     创建 DTO 并自动填充部分数据
-        /// </summary>
-        /// <param name="point"><see cref="NormalPoint" /> 对象</param>
-        /// <param name="nameOnly">是否仅包含名字</param>
-        /// <param name="includeAliases">是否包含中英文索引</param>
-        public NormalPointDto(NormalPoint point, bool nameOnly = false, bool includeAliases = false)
-        {
-            Id = point.Id;
-            PreferredName = point.PreferredName;
-            IdCode = point.IdCode;
-            if (nameOnly)
-            {
-                switch (point.PreferredName)
-                {
-                    case PreferredNameType.Chinese:
-                        ChineseName = point.ChineseName;
-                        break;
-                    case PreferredNameType.English:
-                        EnglishName = point.EnglishName;
-                        break;
-                }
-            }
-            else
-            {
-                ChineseName = point.ChineseName;
-                EnglishName = point.EnglishName;
-                AvatarImage = point.AvatarImage;
-                BackgroundImage = point.BackgroundImage;
-                Type = point.Type;
-
-                if (includeAliases)
-                {
-                    EnglishAliases = point.EnglishAliases;
-                    ChineseAliases = point.ChineseAliases;
-                }
-            }
-        }
-
-        /// <summary>
         ///     Id
         /// </summary>
         [DataMember]
@@ -78,7 +32,7 @@ namespace Keylol.Models.DTO
         ///     类型
         /// </summary>
         [DataMember]
-        public NormalPointType? Type { get; set; }
+        public PointType? Type { get; set; }
 
         /// <summary>
         ///     识别码
@@ -109,12 +63,6 @@ namespace Keylol.Models.DTO
         /// </summary>
         [DataMember]
         public string ChineseAliases { get; set; }
-
-        /// <summary>
-        ///     主显名称偏好
-        /// </summary>
-        [DataMember]
-        public PreferredNameType? PreferredName { get; set; }
 
         /// <summary>
         ///     描述

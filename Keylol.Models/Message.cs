@@ -8,6 +8,10 @@ namespace Keylol.Models
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int Sid { get; set; }
+
         [Index]
         public DateTime CreateTime { get; set; } = DateTime.Now;
 
@@ -24,21 +28,17 @@ namespace Keylol.Models
         [Index]
         public bool Unread { get; set; } = true;
 
+        [Index]
+        public MessageType Type { get; set; }
+
         public string ArticleId { get; set; }
         public virtual Article Article { get; set; }
 
         public string CommentId { get; set; }
-        public virtual Comment Comment { get; set; }
+        public virtual ArticleComment Comment { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         public string Reasons { get; set; } = string.Empty;
-
-        [Index]
-        public MessageType Type { get; set; }
-
-        [Index(IsUnique = true, IsClustered = true)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int SequenceNumber { get; set; }
     }
 
     /// <summary>

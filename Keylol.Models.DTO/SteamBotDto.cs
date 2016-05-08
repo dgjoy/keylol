@@ -10,28 +10,6 @@ namespace Keylol.Models.DTO
     public class SteamBotDto
     {
         /// <summary>
-        ///     创建 DTO 并自动填充部分数据
-        /// </summary>
-        /// <param name="bot"><see cref="SteamBot" /> 对象</param>
-        /// <param name="includeCredentials">是否包含认证凭据（Steam 用户名、Steam 密码）</param>
-        public SteamBotDto(SteamBot bot, bool includeCredentials = false)
-        {
-            Id = bot.Id;
-            SequenceNumber = bot.SequenceNumber;
-
-            if (includeCredentials)
-            {
-                SteamUserName = bot.SteamUserName;
-                SteamPassword = bot.SteamPassword;
-            }
-
-            SteamId = bot.SteamId;
-            var steamId = new SteamID();
-            steamId.SetFromSteam3String(SteamId);
-            SteamId64 = steamId.ConvertToUInt64().ToString();
-        }
-
-        /// <summary>
         ///     Id
         /// </summary>
         [DataMember]

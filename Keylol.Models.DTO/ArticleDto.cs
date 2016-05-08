@@ -12,80 +12,6 @@ namespace Keylol.Models.DTO
     public class ArticleDto
     {
         /// <summary>
-        ///     时间轴原因
-        /// </summary>
-        [DataContract]
-        public enum TimelineReasonType
-        {
-            /// <summary>
-            ///     被订阅用户认可
-            /// </summary>
-            [EnumMember] Like,
-
-            /// <summary>
-            ///     订阅用户发布
-            /// </summary>
-            [EnumMember] Publish,
-
-            /// <summary>
-            ///     发布到手动订阅的普通据点中
-            /// </summary>
-            [EnumMember] Point,
-
-            /// <summary>
-            ///     发布到同步订阅的据点中
-            /// </summary>
-            [EnumMember] AutoSubscription
-        }
-
-        /// <summary>
-        ///     创建空 DTO，需要手动填充
-        /// </summary>
-        public ArticleDto()
-        {
-        }
-
-        /// <summary>
-        ///     创建 DTO 并自动填充部分数据
-        /// </summary>
-        /// <param name="article"><see cref="Article" /> 对象</param>
-        /// <param name="includeContent">是否包含文章内容</param>
-        /// <param name="truncateContentTo">文章内容截取长度，0 表示不截取</param>
-        /// <param name="includeThumbnailImage">是否包含缩略图</param>
-        /// <param name="includeProsCons">是否包含优缺点</param>
-        /// <param name="includeSummary">是否包含概要</param>
-        public ArticleDto(Article article, bool includeContent = false, int truncateContentTo = 0,
-            bool includeThumbnailImage = false, bool includeProsCons = false, bool includeSummary = false)
-        {
-            Id = article.Id;
-            PublishTime = article.PublishTime;
-            Title = article.Title;
-            if (includeContent)
-            {
-                Content = truncateContentTo > 0 ? article.UnstyledContent : article.Content;
-                TruncateContent(truncateContentTo);
-            }
-            if (includeThumbnailImage)
-            {
-                ThumbnailImage = article.ThumbnailImage;
-            }
-            Vote = article.Vote;
-            SequenceNumberForAuthor = article.SequenceNumberForAuthor;
-            SequenceNumber = article.SequenceNumber;
-            if (includeProsCons)
-            {
-                Pros = JsonConvert.DeserializeObject<List<string>>(article.Pros);
-                Cons = JsonConvert.DeserializeObject<List<string>>(article.Cons);
-            }
-            if (includeSummary)
-            {
-                Summary = article.UnstyledContent;
-                if (Summary.Length > 200)
-                    Summary = Summary.Substring(0, 200);
-            }
-        }
-
-        /// <summary>
         ///     Id
         /// </summary>
         [DataMember]
@@ -152,12 +78,6 @@ namespace Keylol.Models.DTO
         public string TypeName { get; set; }
 
         /// <summary>
-        ///     类型
-        /// </summary>
-        [DataMember]
-        public ArticleType? Type { get; set; }
-
-        /// <summary>
         ///     认可数量
         /// </summary>
         [DataMember]
@@ -179,7 +99,7 @@ namespace Keylol.Models.DTO
         ///     出现在时间轴的原因
         /// </summary>
         [DataMember]
-        public TimelineReasonType? TimelineReason { get; set; }
+        public ArticleTimelineReason? ArticleTimelineReason { get; set; }
 
         /// <summary>
         ///     收到了这些用户的认可
@@ -293,7 +213,6 @@ namespace Keylol.Models.DTO
         public ArticleDto FlattenVoteForPoint()
         {
             VoteForPointId = VoteForPoint.Id;
-            VoteForPointPreferredName = VoteForPoint.PreferredName;
             VoteForPointIdCode = VoteForPoint.IdCode;
             VoteForPointChineseName = VoteForPoint.ChineseName;
             VoteForPointEnglishName = VoteForPoint.EnglishName;
@@ -309,13 +228,11 @@ namespace Keylol.Models.DTO
             VoteForPoint = new NormalPointDto
             {
                 Id = VoteForPointId,
-                PreferredName = VoteForPointPreferredName ?? PreferredNameType.English,
                 IdCode = VoteForPointIdCode,
                 ChineseName = VoteForPointChineseName,
                 EnglishName = VoteForPointEnglishName
             };
             VoteForPointId = null;
-            VoteForPointPreferredName = null;
             VoteForPointIdCode = null;
             VoteForPointChineseName = VoteForPoint.ChineseName;
             VoteForPointEnglishName = VoteForPoint.EnglishName;
@@ -370,12 +287,6 @@ namespace Keylol.Models.DTO
         public string VoteForPointId { get; set; }
 
         /// <summary>
-        ///     评价据点主显名称偏好
-        /// </summary>
-        [DataMember]
-        public PreferredNameType? VoteForPointPreferredName { get; set; }
-
-        /// <summary>
         ///     评价据点识别码
         /// </summary>
         [DataMember]
@@ -394,5 +305,36 @@ namespace Keylol.Models.DTO
         public string VoteForPointEnglishName { get; set; }
 
         #endregion
+    }
+
+    /// <summary>
+    ///     时间轴原因
+    /// </summary>
+    [DataContract]
+    public enum ArticleTimelineReason
+    {
+        /// <summary>
+        ///     被订阅用户认可
+        /// </summary>
+        [EnumMember]
+        Like,
+
+        /// <summary>
+        ///     订阅用户发布
+        /// </summary>
+        [EnumMember]
+        Publish,
+
+        /// <summary>
+        ///     发布到手动订阅的普通据点中
+        /// </summary>
+        [EnumMember]
+        Point,
+
+        /// <summary>
+        ///     发布到同步订阅的据点中
+        /// </summary>
+        [EnumMember]
+        AutoSubscription
     }
 }

@@ -5,39 +5,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
-    public enum NormalPointType
-    {
-        Game,
-        Genre,
-        Manufacturer,
-        Platform,
-        Unspecified,
-        Hardware
-    }
-
-    public enum PreferredNameType
-    {
-        Chinese,
-        English
-    }
-
-    public abstract class Point
+    [Table("Points")]
+    public class NormalPoint
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int Sid { get; set; }
+
+        [Index]
+        public PointType Type { get; set; }
+
+        public DateTime CreateTime { get; set; } = DateTime.Now;
+
+        [Index]
+        public DateTime LastActivityTime { get; set; } = DateTime.Now;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
         public string BackgroundImage { get; set; } = string.Empty;
-
-        public virtual ICollection<KeylolUser> Subscribers { get; set; }
-
-        public virtual ICollection<Favorite> FavoritedBy { get; set; }
-    }
-
-    public class NormalPoint : Point
-    {
-        [Index]
-        public NormalPointType Type { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
@@ -48,19 +35,17 @@ namespace Keylol.Models
         [StringLength(5, MinimumLength = 5)]
         public string IdCode { get; set; }
 
-        [Required(AllowEmptyStrings = true)]
-        [MaxLength(150)]
-        public string ChineseName { get; set; } = string.Empty;
-
         [Required]
         [MaxLength(150)]
         public string EnglishName { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(150)]
-        public string NameInSteamStore { get; set; } = string.Empty;
+        public string ChineseName { get; set; } = string.Empty;
 
-        public PreferredNameType PreferredName { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(150)]
+        public string NameInSteamStore { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
@@ -75,31 +60,6 @@ namespace Keylol.Models
         public string Description { get; set; } = string.Empty;
 
         public virtual ICollection<SteamStoreName> SteamStoreNames { get; set; }
-
-        public virtual ICollection<NormalPoint> DeveloperForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> PublisherForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> GenreForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> TagForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> MajorPlatformForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> MinorPlatformForPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> SeriesForPoints { get; set; }
-
-        public DateTime CreateTime { get; set; } = DateTime.Now;
-
-        [Index]
-        public DateTime LastActivityTime { get; set; } = DateTime.Now;
-
-        public virtual ICollection<KeylolUser> Staffs { get; set; }
-
-        public virtual ICollection<Article> Articles { get; set; }
-
-        public virtual ICollection<Article> VoteByArticles { get; set; }
 
         #region Game Point Only
 
@@ -132,15 +92,28 @@ namespace Keylol.Models
         public virtual ICollection<NormalPoint> SeriesPoints { get; set; }
 
         #endregion
+
+        public virtual ICollection<NormalPoint> DeveloperForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> PublisherForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> GenreForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> TagForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> MajorPlatformForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> MinorPlatformForPoints { get; set; }
+
+        public virtual ICollection<NormalPoint> SeriesForPoints { get; set; }
     }
 
-    public class ProfilePoint : Point
+    public enum PointType
     {
-        [Required]
-        public virtual KeylolUser User { get; set; }
-
-        public string UserId => Id;
-
-        public ICollection<Article> Articles { get; set; }
+        Game,
+        Category,
+        Vendor,
+        Platform,
+        Hardware
     }
 }

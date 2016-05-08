@@ -10,25 +10,6 @@ namespace Keylol.Models.DTO
     public class UserDto
     {
         /// <summary>
-        ///     创建空 DTO，需要手动填充
-        /// </summary>
-        public UserDto()
-        {
-        }
-
-        /// <summary>
-        ///     创建 DTO 并自动填充部分数据
-        /// </summary>
-        public UserDto(KeylolUser user)
-        {
-            Id = user.Id;
-            IdCode = user.IdCode;
-            UserName = user.UserName;
-            GamerTag = user.GamerTag;
-            AvatarImage = user.AvatarImage;
-        }
-
-        /// <summary>
         ///     Id
         /// </summary>
         [DataMember]

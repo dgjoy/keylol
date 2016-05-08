@@ -10,32 +10,6 @@ namespace Keylol.Models.DTO
     public class CommentDto
     {
         /// <summary>
-        ///     创建空 DTO，需要手动填充
-        /// </summary>
-        public CommentDto()
-        {
-        }
-
-        /// <summary>
-        ///     创建 DTO 并自动填充部分数据
-        /// </summary>
-        /// <param name="comment"><see cref="Comment" /> 对象</param>
-        /// <param name="includeContent">是否包含评论内容</param>
-        /// <param name="truncateContentTo">评论内容截取长度，0 表示不截取</param>
-        public CommentDto(Comment comment, bool includeContent = true, int truncateContentTo = 0)
-        {
-            Id = comment.Id;
-            if (includeContent)
-            {
-                Content = truncateContentTo > 0 && truncateContentTo < comment.Content.Length
-                    ? comment.Content.Substring(0, truncateContentTo)
-                    : comment.Content;
-            }
-            PublishTime = comment.PublishTime;
-            SequenceNumberForArticle = comment.SequenceNumberForArticle;
-        }
-
-        /// <summary>
         ///     Id
         /// </summary>
         [DataMember]

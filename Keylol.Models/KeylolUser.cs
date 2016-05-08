@@ -6,16 +6,15 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models
 {
-    public enum LanguageConversionMode
-    {
-        ForceSimplifiedChinese,
-        ForceTraditionalChinese,
-        SimplifiedChineseWithContentUnmodified,
-        TraditionalChineseWithContentUnmodified
-    }
-
     public class KeylolUser : IdentityUser
     {
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int Sid { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         [Required]
         [Index(IsUnique = true)]
         [StringLength(5, MinimumLength = 5)]
@@ -33,10 +32,12 @@ namespace Keylol.Models
         public string GamerTag { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
-        [MaxLength(64)]
+        [MaxLength(256)]
         public string AvatarImage { get; set; } = string.Empty;
 
-        public override bool LockoutEnabled { get; set; } = true;
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string BackgroundImage { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(64)]
@@ -48,62 +49,24 @@ namespace Keylol.Models
 
         public bool LastGameUpdateSucceed { get; set; } = false;
 
-        public bool AutoSubscribeEnabled { get; set; } = true;
-
-        public int AutoSubscribeDaySpan { get; set; } = 7;
+        public PreferredPointName PreferredPointName { get; set; } = PreferredPointName.Chinese;
 
         [Index]
         public int Coupon { get; set; } = 0;
-
-        public virtual ProfilePoint ProfilePoint { get; set; }
-
-        public string ProfilePointId => Id;
-
-        public virtual ICollection<Point> SubscribedPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> ManagedPoints { get; set; }
-
-        public virtual ICollection<Comment> Comments { get; set; }
-
-        public virtual ICollection<Like> Likes { get; set; }
-
-        public virtual ICollection<LoginLog> LoginLogs { get; set; }
-
-        public virtual ICollection<EditLog> EditLogs { get; set; }
-
+        
         public string SteamBotId { get; set; }
 
         public virtual SteamBot SteamBot { get; set; }
 
         public virtual InvitationCode InvitationCode { get; set; }
 
-        public virtual ICollection<Favorite> Favorites { get; set; }
-
         public string InviterId { get; set; }
         public virtual KeylolUser Inviter { get; set; }
-
-        public virtual ICollection<KeylolUser> InvitedUsers { get; set; }
 
         public DateTime LastDailyRewardTime { get; set; } = DateTime.Now;
 
         public int FreeLike { get; set; } = 5;
-
-        [Index(IsUnique = true, IsClustered = true)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int SequenceNumber { get; set; }
-
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
-
-        //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
-        //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
-
-        // Accessibility demand
-        //        public bool ColorVisionDeficiency { get; set; } = false;
-        //        public bool VisionImpairment { get; set; } = false;
-        //        public bool HearingImpairment { get; set; } = false;
-        //        public bool PhotosensitiveEpilepsy { get; set; } = false;
-
+        
         #region Steam bot notification options
 
         public bool SteamNotifyOnArticleReplied { get; set; } = true;
@@ -115,5 +78,11 @@ namespace Keylol.Models
         public bool SteamNotifyOnCommentLiked { get; set; } = true;
 
         #endregion
+    }
+
+    public enum PreferredPointName
+    {
+        Chinese,
+        English
     }
 }

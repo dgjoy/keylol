@@ -31,7 +31,7 @@ namespace Keylol.Hubs
                 var bots = await dbContext.SteamBots.Where(b =>
                     b.Online && sessions.Contains(b.SessionId)
                     && b.SteamId != null && b.FriendCount < b.FriendUpperLimit && b.Enabled)
-                    .OrderBy(b => b.SequenceNumber)
+                    .OrderBy(b => b.Sid)
                     .ToListAsync();
 
                 SteamBot bot = null;

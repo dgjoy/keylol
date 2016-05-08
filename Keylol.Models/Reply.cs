@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
-    public class Like
+    public class Reply
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -12,27 +12,28 @@ namespace Keylol.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Sid { get; set; }
 
-        [Index]
-        public DateTime Time { get; set; } = DateTime.Now;
+        public ReplyEntryType EntryType { get; set; }
 
+        /// <summary>
+        ///     被回复的对象
+        /// </summary>
         [Required]
-        public string OperatorId { get; set; }
-
-        public virtual KeylolUser Operator { get; set; }
-
-        public LikeTargetType TargetType { get; set; }
-
         [Index]
-        [Required]
         [MaxLength(128)]
-        public string TargetId { get; set; }
+        public string EntryId { get; set; }
+
+        /// <summary>
+        ///     新回复的对象
+        /// </summary>
+        [Required]
+        [Index]
+        [MaxLength(128)]
+        public string ReplyId { get; set; }
     }
 
-    public enum LikeTargetType
+    public enum ReplyEntryType
     {
-        Article,
         ArticleComment,
-        Activity,
         ActivityComment,
         ConferenceEntry
     }

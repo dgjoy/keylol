@@ -12,30 +12,6 @@ namespace Keylol.Models.DTO
     public class CouponGiftDto
     {
         /// <summary>
-        ///     创建空 DTO，需要手动填充
-        /// </summary>
-        public CouponGiftDto()
-        {
-        }
-
-        /// <summary>
-        ///     创建 DTO 并自动填充部分数据
-        /// </summary>
-        /// <param name="gift"><see cref="CouponGift" /> 对象</param>
-        public CouponGiftDto(CouponGift gift)
-        {
-            Id = gift.Id;
-            Name = gift.Name;
-            Descriptions = JsonConvert.DeserializeObject<List<string>>(gift.Descriptions);
-            ThumbnailImage = gift.ThumbnailImage;
-            PreviewImage = gift.PreviewImage;
-            AcceptedFields = JsonConvert.DeserializeObject<List<CouponGiftAcceptedFieldDto>>(gift.AcceptedFields);
-            Price = gift.Price;
-            CreateTime = gift.CreateTime;
-            EndTime = gift.EndTime;
-        }
-
-        /// <summary>
         ///     Id
         /// </summary>
         [DataMember]

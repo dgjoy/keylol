@@ -10,18 +10,6 @@ namespace Keylol.Models.DTO
     public class LoginLogDto
     {
         /// <summary>
-        ///     创建 DTO 并自动填充部分数据
-        /// </summary>
-        /// <param name="log"><see cref="LoginLog" /> 对象</param>
-        public LoginLogDto(LoginLog log)
-        {
-            Id = log.Id;
-            Time = log.Time;
-            Ip = log.Ip;
-            UserId = log.UserId;
-        }
-
-        /// <summary>
         ///     Id
         /// </summary>
         [DataMember]

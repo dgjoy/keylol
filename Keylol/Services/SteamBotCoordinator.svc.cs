@@ -103,7 +103,13 @@ namespace Keylol.Services
                         bot.SessionId = SessionId;
                     }
                     dbContext.SaveChanges();
-                    return bots.Select(bot => new SteamBotDto(bot, true)).ToList();
+                    return bots.Select(bot => new SteamBotDto
+                    {
+                        Id = bot.Id,
+                        SequenceNumber = bot.Sid,
+                        SteamUserName = bot.SteamUserName,
+                        SteamPassword = bot.SteamPassword
+                    }).ToList();
                 }
         }
 
