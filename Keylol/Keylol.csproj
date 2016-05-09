@@ -235,6 +235,12 @@
     </Compile>
     <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
+    <Compile Include="States\Root.cs" />
+    <Compile Include="StateTreeManager\AppBuilderExtensions.cs" />
+    <Compile Include="StateTreeManager\AuthorizeAttribute.cs" />
+    <Compile Include="StateTreeManager\Exceptions.cs" />
+    <Compile Include="StateTreeManager\StateTreeHelper.cs" />
+    <Compile Include="StateTreeManager\StateTreeManagerMiddleware.cs" />
     <Compile Include="Utilities\DataAnnotationAttributes.cs" />
     <Compile Include="Utilities\Errors.cs" />
     <Compile Include="Utilities\Extensions.cs" />

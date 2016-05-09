@@ -13,6 +13,7 @@ using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.ServiceBase;
+using Keylol.StateTreeManager;
 using Keylol.Utilities;
 using log4net;
 using log4net.Core;
@@ -105,6 +106,9 @@ namespace Keylol
             });
 
             app.UseStageMarker(PipelineStage.Authenticate);
+
+            // State Tree Manager
+            app.UseStateTreeManager();
 
             // SignalR
             GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => new KeylolUserIdProvider());
