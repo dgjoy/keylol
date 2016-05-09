@@ -18,7 +18,7 @@ namespace Keylol.Identity
             {
                 if (string.IsNullOrWhiteSpace(context.Token))
                 {
-                    context.Token = context.Request.Query["bearer_token"];
+                    context.Token = context.Request.Query["access_token"];
                 }
                 return Task.FromResult(0);
             };

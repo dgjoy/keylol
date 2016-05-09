@@ -216,8 +216,7 @@ namespace Keylol
             var jsonSerializerSettings = config.Formatters.JsonFormatter.SerializerSettings;
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             jsonSerializerSettings.Converters.Add(new StringEnumConverter());
-
-            config.Services.Replace(typeof(IActionValueBinder), new KeylolActionValueProvider());
+            
             config.Filters.Add(new ValidateModelAttribute());
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 

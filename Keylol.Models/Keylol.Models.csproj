@@ -59,6 +59,7 @@
     <Compile Include="ActivityComment.cs" />
     <Compile Include="ArticleComment.cs" />
     <Compile Include="AtRecord.cs" />
+    <Compile Include="FeedStream.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
       <DependentUpon>201605080759295_ModelRefactor2.cs</DependentUpon>
@@ -74,6 +75,10 @@
     <Compile Include="Migrations\201605081401217_PointRelationship.cs" />
     <Compile Include="Migrations\201605081401217_PointRelationship.Designer.cs">
       <DependentUpon>201605081401217_PointRelationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605090821461_Feed.cs" />
+    <Compile Include="Migrations\201605090821461_Feed.Designer.cs">
+      <DependentUpon>201605090821461_Feed.cs</DependentUpon>
     </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
@@ -638,6 +643,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605081401217_PointRelationship.resx">
       <DependentUpon>201605081401217_PointRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605090821461_Feed.resx">
+      <DependentUpon>201605090821461_Feed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

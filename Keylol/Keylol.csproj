@@ -204,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
+    <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -233,7 +234,6 @@
       <DependentUpon>SteamBotCoordinator.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\Validators\ClientValidator.cs" />
-    <Compile Include="Utilities\ActionValueProvider.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="Utilities\DataAnnotationAttributes.cs" />
     <Compile Include="Utilities\Errors.cs" />
@@ -247,7 +247,6 @@
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Utilities\KeylolUserIdProvider.cs" />
     <Compile Include="Utilities\LogHubAppender.cs" />
-    <Compile Include="Utilities\NotNullHttpParameterBinding.cs" />
     <Compile Include="Utilities\PredicateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -44,6 +44,7 @@ namespace Keylol.Models.DAL
         public DbSet<ConferenceEntry> ConferenceEntries { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<PointRelationship> PointRelationships { get; set; }
+        public DbSet<Feed> Feeds { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
