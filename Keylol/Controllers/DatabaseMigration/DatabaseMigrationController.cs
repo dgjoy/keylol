@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
 using Keylol.Identity;
+using Keylol.Models;
 using Keylol.Models.DAL;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Newtonsoft.Json;
 
 namespace Keylol.Controllers.DatabaseMigration
 {
@@ -15,6 +17,30 @@ namespace Keylol.Controllers.DatabaseMigration
     [RoutePrefix("database-migration")]
     public class DatabaseMigrationController : ApiController
     {
+        [Route("new-slideshow-entry")]
+        [HttpPost]
+        public async Task<IHttpActionResult> NewSlideshowEntry(string title, string subtitle, string summary,
+            string minorTitle, string minorSubtitle, string link)
+        {
+            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            dbContext.Feeds.Add(new Feed
+            {
+                StreamName = SlideshowStream.Name,
+                Entry = string.Empty,
+                Properties = JsonConvert.SerializeObject(new SlideshowStream.FeedProperties
+                {
+                    Title = title,
+                    Subtitle = subtitle,
+                    Summary = summary,
+                    MinorTitle = minorTitle,
+                    MinorSubtitle = minorSubtitle,
+                    Link = link
+                })
+            });
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
         /// <summary>
         ///     执行迁移
         /// </summary>

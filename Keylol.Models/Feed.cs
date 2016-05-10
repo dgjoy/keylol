@@ -17,7 +17,7 @@ namespace Keylol.Models
         [MaxLength(128)]
         public string StreamName { get; set; }
 
-        public DateTime Time { get; set; }
+        public DateTime Time { get; set; } = DateTime.Now;
 
         public FeedEntryType EntryType { get; set; }
 
@@ -25,7 +25,7 @@ namespace Keylol.Models
         [Required(AllowEmptyStrings = true)]
         [MaxLength(400)]
         public string Entry { get; set; }
-        
+
         /// <summary>
         /// JSON 字符串，无 Properties 的 Stream 可以为空，有 Properties 的 Stream 不能为空（但可以为 "[]"）
         /// </summary>
@@ -35,6 +35,7 @@ namespace Keylol.Models
 
     public enum FeedEntryType
     {
+        Nothing,
         ArticleId,
         ActivityId,
         ConferenceId,

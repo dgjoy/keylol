@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using System.Security.Principal;
 using System.Threading.Tasks;
-using System.Web;
 using SimpleInjector.Integration.Owin;
 
 namespace Keylol.StateTreeManager
@@ -35,5 +33,31 @@ namespace Keylol.StateTreeManager
             }
             return true;
         }
+
+        /// <summary>
+        /// 从容器获取一个 Service 实例
+        /// </summary>
+        /// <typeparam name="T">Service 类型</typeparam>
+        /// <returns>Service 实例</returns>
+        public static T GetService<T>() where T : class
+        {
+            return Startup.Container.GetInstance<T>();
+        }
+
+        /// <summary>
+        /// 从容器获取一个 Service 实例
+        /// </summary>
+        /// <param name="serviceType">Service 类型</param>
+        /// <returns>Service 实例</returns>
+        public static object GetService(Type serviceType)
+        {
+            return Startup.Container.GetInstance(serviceType);
+        }
+
+        /// <summary>
+        /// 获取当前登录的用户
+        /// </summary>
+        /// <returns>当前用户 Principal</returns>
+        public static IPrincipal CurrentUser() => GetService<OwinContextProvider>().Current.Request.User;
     }
 }

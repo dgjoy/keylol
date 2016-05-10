@@ -235,6 +235,9 @@
     </Compile>
     <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
+    <Compile Include="States\CurrentUser.cs" />
+    <Compile Include="States\DiscoveryPage\DiscoveryPage.cs" />
+    <Compile Include="States\DiscoveryPage\SlideshowEntry.cs" />
     <Compile Include="States\Root.cs" />
     <Compile Include="StateTreeManager\AppBuilderExtensions.cs" />
     <Compile Include="StateTreeManager\AuthorizeAttribute.cs" />

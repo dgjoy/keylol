@@ -18,6 +18,7 @@ namespace Keylol.Models
             public string Summary { get; set; }
             public string MinorTitle { get; set; }
             public string MinorSubtitle { get; set; }
+            public string Link { get; set; }
         }
     }
 

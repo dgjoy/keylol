@@ -49,10 +49,10 @@ namespace Keylol.Provider
         /// <param name="description">文券记录描述，会被序列化成 JSON 存储到数据库</param>
         /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
         /// <exception cref="ArgumentNullException">user 参数为 null</exception>
-        public async Task Update(KeylolUser user, CouponEvent @event, object description = null,
+        public async Task UpdateAsync(KeylolUser user, CouponEvent @event, object description = null,
             DateTime? logTime = null)
         {
-            await Update(user, @event, @event.ToCouponChange(), description, logTime);
+            await UpdateAsync(user, @event, @event.ToCouponChange(), description, logTime);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Keylol.Provider
         /// <param name="description">文券记录描述</param>
         /// <param name="logTime">文券日志记录时间，如果为 null 则使用当前时间</param>
         /// <exception cref="ArgumentNullException">user 参数为 null</exception>
-        public async Task Update(KeylolUser user, CouponEvent @event, int change, object description = null,
+        public async Task UpdateAsync(KeylolUser user, CouponEvent @event, int change, object description = null,
             DateTime? logTime = null)
         {
             if (user == null)
@@ -110,7 +110,7 @@ namespace Keylol.Provider
         /// <param name="userId">用户 ID</param>
         /// <param name="event">文券事件</param>
         /// <returns>可以触发指定事件返回 true，不能则返回 false</returns>
-        public async Task<bool> CanTriggerEvent(string userId, CouponEvent @event)
+        public async Task<bool> CanTriggerEventAsync(string userId, CouponEvent @event)
         {
             var user = await _userManager.FindByIdAsync(userId);
             return user.Coupon + @event.ToCouponChange() >= 0;
@@ -121,7 +121,7 @@ namespace Keylol.Provider
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>未读的 CouponLog 列表</returns>
-        public async Task<List<CouponLogDto>> GetUnreadCouponLogs(string userId)
+        public async Task<List<CouponLogDto>> GetUnreadCouponLogsAsync(string userId)
         {
             var redisDb = _redis.GetDatabase();
             var cacheKey = UnreadLogsCacheKey(userId);

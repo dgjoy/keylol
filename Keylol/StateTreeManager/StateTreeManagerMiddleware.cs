@@ -40,6 +40,7 @@ namespace Keylol.StateTreeManager
             try
             {
                 var result = await ProcessTreePath(treePathString, context);
+                context.Response.ContentType = "application/json";
                 await
                     context.Response.WriteAsync(result.GetType().IsPrimitive || result is string || result is decimal
                         ? result.ToString()
@@ -51,6 +52,7 @@ namespace Keylol.StateTreeManager
             }
             catch (NotAuthorizedException)
             {
+                context.Response.ContentType = "text/plain";
                 context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 await context.Response.WriteAsync("Unauthorized operation.");
             }
@@ -60,6 +62,7 @@ namespace Keylol.StateTreeManager
         {
             var treePath = treePathString.HasValue ? treePathString.Value.Substring(1) : string.Empty;
             if (!string.IsNullOrWhiteSpace(treePath) && !treePath.EndsWith("/")) treePath = $"{treePath}/";
+
             var inLocator = false;
             var currentPropertyName = string.Empty;
             var currentType = _root;
@@ -70,6 +73,7 @@ namespace Keylol.StateTreeManager
             var locators = new Dictionary<string, string>();
             var currentHasLocator = false;
             var authorized = true;
+
             Func<Type, Task<PropertyInfo>> commitNextProperty = async nowType =>
             {
                 var nextPropertyName = nextPropertyNameBuilder.ToString();
@@ -92,6 +96,8 @@ namespace Keylol.StateTreeManager
                 }
                 return nextProperty;
             };
+
+            // Parse tree path
             foreach (var c in treePath)
             {
                 switch (c)
@@ -162,11 +168,14 @@ namespace Keylol.StateTreeManager
                         break;
                 }
             }
+
             if (inLocator || nextPropertyHasLocator ||
                 nextPropertyNameBuilder.Length > 0 || nextPropertyLocatorBuilder.Length > 0)
                 throw new MalformedTreePathException();
+
             if (!authorized)
                 throw new NotAuthorizedException();
+
             object result = null;
             if (previousType != null)
             {
@@ -200,15 +209,15 @@ namespace Keylol.StateTreeManager
             {
                 if (parameter.GetCustomAttribute<InjectedAttribute>() != null)
                 {
-                    arguments.Add(Startup.Container.GetInstance(parameter.ParameterType));
+                    arguments.Add(StateTreeHelper.GetService(parameter.ParameterType));
                 }
                 else
                 {
                     var value = query[parameter.Name];
                     if (value != null)
-                        arguments.Add(Convert.ChangeType(value, parameter.ParameterType));
+                        arguments.Add(CastType(value, parameter.ParameterType));
                     else if (locators.ContainsKey(parameter.Name))
-                        arguments.Add(Convert.ChangeType(locators[parameter.Name], parameter.ParameterType));
+                        arguments.Add(CastType(locators[parameter.Name], parameter.ParameterType));
                     else
                         arguments.Add(Type.Missing);
                 }
@@ -219,6 +228,11 @@ namespace Keylol.StateTreeManager
                 return await task;
             }
             return getMethod.Invoke(null, arguments.ToArray());
+        }
+
+        private static object CastType(string value, Type type)
+        {
+            return type.IsEnum ? Enum.Parse(type, value, true) : Convert.ChangeType(value, type);
         }
     }
 }
