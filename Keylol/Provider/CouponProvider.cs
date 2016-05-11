@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
-using Keylol.Models.DTO;
 using Newtonsoft.Json;
 
 namespace Keylol.Provider
@@ -17,7 +15,6 @@ namespace Keylol.Provider
     public class CouponProvider
     {
         private readonly KeylolDbContext _dbContext;
-        private readonly RedisProvider _redis;
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
@@ -26,20 +23,14 @@ namespace Keylol.Provider
         /// <param name="dbContext">
         ///     <see cref="KeylolDbContext" />
         /// </param>
-        /// <param name="redis">
-        ///     <see cref="RedisProvider" />
-        /// </param>
         /// <param name="userManager">
         ///     <see cref="KeylolUserManager" />
         /// </param>
-        public CouponProvider(KeylolDbContext dbContext, RedisProvider redis, KeylolUserManager userManager)
+        public CouponProvider(KeylolDbContext dbContext, KeylolUserManager userManager)
         {
             _dbContext = dbContext;
-            _redis = redis;
             _userManager = userManager;
         }
-
-        private static string UnreadLogsCacheKey(string userId) => $"user-unread-coupon-logs:{userId}";
 
         /// <summary>
         ///     根据文券事件更新用户的文券数量
@@ -95,13 +86,6 @@ namespace Keylol.Provider
                     await e.Entries.Single().ReloadAsync();
                 }
             } while (saveFailed);
-            await _redis.GetDatabase().ListRightPushAsync(UnreadLogsCacheKey(user.Id),
-                RedisProvider.Serialize(new CouponLogDto
-                {
-                    Change = log.Change,
-                    Event = log.Event,
-                    Balance = log.Balance
-                }));
         }
 
         /// <summary>
@@ -114,22 +98,6 @@ namespace Keylol.Provider
         {
             var user = await _userManager.FindByIdAsync(userId);
             return user.Coupon + @event.ToCouponChange() >= 0;
-        }
-
-        /// <summary>
-        ///     取出用户未读的文券变动记录（取出之后将从未读记录中清空）
-        /// </summary>
-        /// <param name="userId">用户 ID</param>
-        /// <returns>未读的 CouponLog 列表</returns>
-        public async Task<List<CouponLogDto>> GetUnreadCouponLogsAsync(string userId)
-        {
-            var redisDb = _redis.GetDatabase();
-            var cacheKey = UnreadLogsCacheKey(userId);
-            var logs = (await redisDb.ListRangeAsync(cacheKey))
-                .Select(v => RedisProvider.Deserialize<CouponLogDto>(v))
-                .ToList();
-            await redisDb.KeyDeleteAsync(cacheKey);
-            return logs;
         }
     }
 

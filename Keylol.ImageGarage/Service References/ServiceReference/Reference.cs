@@ -9,79 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace Keylol.ImageGarage.ServiceReference {
-    using System.Runtime.Serialization;
     
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ArchivedState", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models")]
-    public enum ArchivedState : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        None = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        User = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Operator = 2,
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PreferredNameType", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models")]
-    public enum PreferredNameType : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Chinese = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        English = 1,
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="NormalPointType", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models")]
-    public enum NormalPointType : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Game = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Genre = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Manufacturer = 2,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Platform = 3,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Unspecified = 4,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Hardware = 5,
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ArticleType", Namespace="http://schemas.datacontract.org/2004/07/Keylol.Models")]
-    public enum ArticleType : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        简评 = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        评 = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        研 = 2,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        谈 = 3,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        讯 = 4,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        档 = 5,
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IImageGarageCoordinator", SessionMode=System.ServiceModel.SessionMode.Required)]

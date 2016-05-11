@@ -1,4 +1,6 @@
-﻿namespace Keylol.States
+﻿using Keylol.Models;
+
+namespace Keylol.States
 {
     /// <summary>
     /// 当前登录的用户
@@ -34,5 +36,10 @@
         /// 草稿数
         /// </summary>
         public int DraftCount { get; set; }
+
+        /// <summary>
+        /// 据点主显名称偏好
+        /// </summary>
+        public PreferredPointName PreferredPointName { get; set; }
     }
 }

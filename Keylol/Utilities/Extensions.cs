@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Results;
 using Keylol.Models;
@@ -97,5 +98,151 @@ namespace Keylol.Utilities
                 modelError.Last());
             return new InvalidModelStateResult(controller.ModelState, controller);
         }
+
+        /// <summary>
+        /// 转换命名风格
+        /// </summary>
+        /// <param name="text">要转换的文本</param>
+        /// <param name="sourceCase">原始格式</param>
+        /// <param name="targetCase">目标格式</param>
+        /// <returns></returns>
+        public static string ToCase(this string text, NameConventionCase sourceCase, NameConventionCase targetCase)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+            var breakpoints = new List<int> {0};
+            for (var i = 1; i < text.Length; i++)
+            {
+                if (char.IsSurrogate(text[i]))
+                    continue;
+                switch (sourceCase)
+                {
+                    case NameConventionCase.PascalCase:
+                    case NameConventionCase.CamelCase:
+                        if (char.IsUpper(text[i]) && (char.IsLower(text[i - 1]) ||
+                                                      (i != text.Length - 1 && char.IsLower(text[i + 1]))))
+                            breakpoints.Add(i);
+                        break;
+
+                    case NameConventionCase.DashedCase:
+                        if (text[i - 1] == '-')
+                            breakpoints.Add(i);
+                        break;
+
+                    case NameConventionCase.SnakeCase:
+                        if (text[i - 1] == '_')
+                            breakpoints.Add(i);
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(sourceCase), sourceCase, null);
+                }
+            }
+            breakpoints.Add(text.Length);
+
+            var finalBreakpoints = new List<int>(breakpoints.Count) {0};
+            int minGap;
+            string replaceChar = null;
+            switch (sourceCase)
+            {
+                case NameConventionCase.PascalCase:
+                    minGap = 1;
+                    break;
+
+                case NameConventionCase.CamelCase:
+                    minGap = 1;
+                    break;
+
+                case NameConventionCase.DashedCase:
+                    minGap = 2;
+                    replaceChar = "-";
+                    break;
+
+                case NameConventionCase.SnakeCase:
+                    minGap = 2;
+                    replaceChar = "_";
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(targetCase), targetCase, null);
+            }
+            for (var i = 1; i < breakpoints.Count - 1; i++)
+            {
+                if (breakpoints[i] - breakpoints[i - 1] <= minGap && (breakpoints[i + 1] - breakpoints[i] <= minGap))
+                    continue;
+                finalBreakpoints.Add(breakpoints[i]);
+            }
+            finalBreakpoints.Add(text.Length);
+
+            var resultBuilder = new StringBuilder(text.Length);
+            for (var i = 0; i < finalBreakpoints.Count - 1; i++)
+            {
+                var word = text.Substring(finalBreakpoints[i], finalBreakpoints[i + 1] - finalBreakpoints[i]);
+                word = replaceChar == null ? word : word.Replace(replaceChar, string.Empty);
+                if (string.IsNullOrEmpty(word))
+                    continue;
+                switch (targetCase)
+                {
+                    case NameConventionCase.PascalCase:
+                        resultBuilder.Append(char.ToUpper(word[0]));
+                        resultBuilder.Append(word.Substring(1).ToLower());
+                        break;
+
+                    case NameConventionCase.CamelCase:
+                        if (i == 0)
+                        {
+                            resultBuilder.Append(word.ToLower());
+                        }
+                        else
+                        {
+                            resultBuilder.Append(char.ToUpper(word[0]));
+                            resultBuilder.Append(word.Substring(1).ToLower());
+                        }
+                        break;
+
+                    case NameConventionCase.DashedCase:
+                        resultBuilder.Append(word.ToLower());
+                        if (i < finalBreakpoints.Count - 2)
+                            resultBuilder.Append('-');
+                        break;
+
+                    case NameConventionCase.SnakeCase:
+                        resultBuilder.Append(word.ToLower());
+                        if (i < finalBreakpoints.Count - 2)
+                            resultBuilder.Append('_');
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(targetCase), targetCase, null);
+                }
+            }
+            return resultBuilder.ToString();
+        }
+    }
+
+    /// <summary>
+    /// 常见命名约定格式
+    /// </summary>
+    public enum NameConventionCase
+    {
+        /// <summary>
+        /// PascalCase
+        /// </summary>
+        PascalCase,
+
+        /// <summary>
+        /// camelCase
+        /// </summary>
+        CamelCase,
+
+        /// <summary>
+        /// dashed-case
+        /// </summary>
+        DashedCase,
+
+        /// <summary>
+        /// snake_case
+        /// </summary>
+        SnakeCase
     }
 }

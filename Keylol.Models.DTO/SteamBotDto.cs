@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using SteamKit2;
 
 namespace Keylol.Models.DTO
 {

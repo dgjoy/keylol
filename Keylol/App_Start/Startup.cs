@@ -164,7 +164,7 @@ namespace Keylol
             Container.RegisterPerOwinRequest<CouponProvider>();
 
             // Statistics
-            Container.RegisterPerOwinRequest<StatisticsProvider>();
+            Container.RegisterPerOwinRequest<CachedDataProvider>();
 
             // One-time Token
             Container.RegisterSingleton<OneTimeTokenProvider>();

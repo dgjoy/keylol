@@ -13,6 +13,11 @@ namespace Keylol.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Sid { get; set; }
 
+        [Required]
+        [Index(IsUnique = true)]
+        [StringLength(5, MinimumLength = 5)]
+        public string IdCode { get; set; }
+
         [Index]
         public PointType Type { get; set; }
 
@@ -20,19 +25,6 @@ namespace Keylol.Models
 
         [Index]
         public DateTime LastActivityTime { get; set; } = DateTime.Now;
-
-        [Required(AllowEmptyStrings = true)]
-        [MaxLength(256)]
-        public string BackgroundImage { get; set; } = string.Empty;
-
-        [Required(AllowEmptyStrings = true)]
-        [MaxLength(256)]
-        public string AvatarImage { get; set; } = string.Empty;
-
-        [Required]
-        [Index(IsUnique = true)]
-        [StringLength(5, MinimumLength = 5)]
-        public string IdCode { get; set; }
 
         [Required]
         [MaxLength(150)]
@@ -43,16 +35,24 @@ namespace Keylol.Models
         public string ChineseName { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
-        [MaxLength(150)]
-        public string NameInSteamStore { get; set; } = string.Empty;
-
-        [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
         public string EnglishAliases { get; set; } = string.Empty; // Comma separated list
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
         public string ChineseAliases { get; set; } = string.Empty; // Comma separated list
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string AvatarImage { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string HeaderImage { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string InboxHeaderImage { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(10000)]
@@ -62,8 +62,71 @@ namespace Keylol.Models
 
         #region 游戏、硬件据点属性
 
+        #region 商店信息
+
         [Index]
-        public int SteamAppId { get; set; }
+        public int? SteamAppId { get; set; }
+
+        public double? SteamPrice { get; set; }
+
+        public double? SteamDiscount { get; set; }
+
+        public int? SonkwoProductId { get; set; }
+
+        public double? SonkwoPrice { get; set; }
+
+        public double? SonkwoDiscount { get; set; }
+
+        public string UplayLink { get; set; }
+
+        public double? UplayPrice { get; set; }
+
+        public string XboxLink { get; set; }
+
+        public double? XboxPrice { get; set; }
+
+        public string PlayStationLink { get; set; }
+
+        public double? PlayStationPrice { get; set; }
+
+        #endregion
+
+        #region 特性属性
+
+        [Index]
+        public bool MultiPlayer { get; set; }
+
+        [Index]
+        public bool SinglePlayer { get; set; }
+
+        [Index]
+        public bool Coop { get; set; }
+
+        [Index]
+        public bool CaptionsAvailable { get; set; }
+
+        [Index]
+        public bool CommentaryAvailable { get; set; }
+
+        [Index]
+        public bool IncludeLevelEditor { get; set; }
+
+        [Index]
+        public bool Achievements { get; set; }
+
+        [Index]
+        public bool Cloud { get; set; }
+
+        [Index]
+        public bool LocalCoop { get; set; }
+
+        [Index]
+        public bool SteamTradingCards { get; set; }
+
+        [Index]
+        public bool SteamWorkshop { get; set; }
+
+        #endregion
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
@@ -74,8 +137,26 @@ namespace Keylol.Models
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
-        public string CoverImage { get; set; } = string.Empty;
-        
+        public string CapsuleImage { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string MediaHeaderImage { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        public string Media { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        public string ChineseAvailability { get; set; } = string.Empty;
+
+        #endregion
+
+        #region 平台据点
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string EmblemImage { get; set; } = string.Empty;
+
         #endregion
     }
 

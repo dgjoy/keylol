@@ -40,7 +40,7 @@ namespace Keylol.Models
         Genre,
         Series,
         Tag,
-        MajorPlatform,
-        MinorPlatform
+        Platform,
+        Reseller
     }
 }

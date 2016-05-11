@@ -25,14 +25,17 @@ namespace Keylol.States
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="coupon"><see cref="CouponProvider"/></param>
-        /// <returns></returns>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns>完整状态树</returns>
         public static async Task<Root> Get(Page page, [Injected] KeylolUserManager userManager,
-            [Injected] KeylolDbContext dbContext, [Injected] CouponProvider coupon)
+            [Injected] KeylolDbContext dbContext, [Injected] CouponProvider coupon,
+            [Injected] CachedDataProvider cachedData)
         {
             var root = new Root();
+            var currentUserId = StateTreeHelper.CurrentUser().Identity.GetUserId();
             if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
             {
-                var user = await userManager.FindByIdAsync(StateTreeHelper.CurrentUser().Identity.GetUserId());
+                var user = await userManager.FindByIdAsync(currentUserId);
 
                 // 每日访问奖励
                 if (DateTime.Now.Date > user.LastDailyRewardTime.Date)
@@ -56,7 +59,8 @@ namespace Keylol.States
                     AvatarImage = user.AvatarImage,
                     MessageCount = await dbContext.Messages.CountAsync(m => m.ReceiverId == user.Id && m.Unread),
                     Coupon = user.Coupon,
-                    DraftCount = 0
+                    DraftCount = 0, // TODO
+                    PreferredPointName = user.PreferredPointName
                 };
             }
 
@@ -79,9 +83,56 @@ namespace Keylol.States
                                 Summary = e.Summary,
                                 MinorTitle = e.MinorTitle,
                                 MinorSubtitle = e.MinorSubtitle,
+                                BackgroundImage = e.BackgroundImage,
                                 Link = e.Link
                             })
-                            .ToList()
+                            .ToList(),
+                        SpotlightPoints = (await Task.WhenAll((await (from feed in dbContext.Feeds
+                            where feed.StreamName == SpotlightPointStream.Name
+                            orderby feed.Id descending
+                            join point in dbContext.Points on feed.Entry equals point.Id
+                            select new
+                            {
+                                point.Id,
+                                point.IdCode,
+                                point.AvatarImage,
+                                point.EnglishName,
+                                point.ChineseName,
+                                point.SteamAppId,
+                                point.SteamPrice,
+                                point.SteamDiscount,
+                                point.SonkwoProductId,
+                                point.SonkwoPrice,
+                                point.SonkwoDiscount,
+                                point.UplayLink,
+                                point.UplayPrice,
+                                point.XboxLink,
+                                point.XboxPrice,
+                                point.PlayStationPrice,
+                                point.PlayStationLink
+                            }).Take(30).ToListAsync())
+                            .Select(async p => new DiscoveryPage.SpotlightPoint
+                            {
+                                IdCode = p.IdCode,
+                                AvatarImage = p.AvatarImage,
+                                EnglishName = p.EnglishName,
+                                ChineseName = p.ChineseName,
+                                AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
+                                SteamAppId = p.SteamAppId,
+                                SteamPrice = p.SteamPrice,
+                                SteamDiscount = p.SteamDiscount,
+                                SonkwoProductId = p.SonkwoProductId,
+                                SonkwoPrice = p.SonkwoPrice,
+                                SonkwoDiscount = p.SonkwoDiscount,
+                                UplayLink = p.UplayLink,
+                                UplayPrice = p.UplayPrice,
+                                XboxLink = p.XboxLink,
+                                XboxPrice = p.XboxPrice,
+                                PlayStationLink = p.PlayStationLink,
+                                PlayStationPrice = p.PlayStationPrice,
+                                Subscribed = await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
+                                    SubscriptionTargetType.Point)
+                            }))).ToList()
                     };
                     break;
                 }

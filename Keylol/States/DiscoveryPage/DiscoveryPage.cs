@@ -11,5 +11,10 @@ namespace Keylol.States.DiscoveryPage
         /// Slideshow Entries
         /// </summary>
         public List<SlideshowEntry> SlideshowEntries { get; set; }
+
+        /// <summary>
+        /// Spotlight Points
+        /// </summary>
+        public List<SpotlightPoint> SpotlightPoints { get; set; }
     }
 }

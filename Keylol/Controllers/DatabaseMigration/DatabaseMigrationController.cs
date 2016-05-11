@@ -20,7 +20,7 @@ namespace Keylol.Controllers.DatabaseMigration
         [Route("new-slideshow-entry")]
         [HttpPost]
         public async Task<IHttpActionResult> NewSlideshowEntry(string title, string subtitle, string summary,
-            string minorTitle, string minorSubtitle, string link)
+            string minorTitle, string minorSubtitle, string backgroundImage, string link)
         {
             var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
             dbContext.Feeds.Add(new Feed
@@ -34,8 +34,25 @@ namespace Keylol.Controllers.DatabaseMigration
                     Summary = summary,
                     MinorTitle = minorTitle,
                     MinorSubtitle = minorSubtitle,
+                    BackgroundImage = backgroundImage,
                     Link = link
                 })
+            });
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [Route("new-spotlight-point")]
+        [HttpPost]
+        public async Task<IHttpActionResult> NewSpotlightPoint(string pointId)
+        {
+            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            dbContext.Feeds.Add(new Feed
+            {
+                StreamName = SpotlightPointStream.Name,
+                EntryType = FeedEntryType.PointId,
+                Entry = pointId,
+                Properties = string.Empty
             });
             await dbContext.SaveChangesAsync();
             return Ok();

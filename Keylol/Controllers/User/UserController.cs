@@ -19,7 +19,7 @@ namespace Keylol.Controllers.User
         private readonly GeetestProvider _geetest;
         private readonly OneTimeTokenProvider _oneTimeToken;
         private readonly IOwinContext _owinContext;
-        private readonly StatisticsProvider _statistics;
+        private readonly CachedDataProvider _cachedData;
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
@@ -28,8 +28,8 @@ namespace Keylol.Controllers.User
         /// <param name="coupon">
         ///     <see cref="CouponProvider" />
         /// </param>
-        /// <param name="statistics">
-        ///     <see cref="StatisticsProvider" />
+        /// <param name="cachedData">
+        ///     <see cref="CachedDataProvider" />
         /// </param>
         /// <param name="geetest">
         ///     <see cref="GeetestProvider" />
@@ -46,12 +46,12 @@ namespace Keylol.Controllers.User
         /// <param name="oneTimeToken">
         ///     <see cref="OneTimeTokenProvider" />
         /// </param>
-        public UserController(CouponProvider coupon, StatisticsProvider statistics, GeetestProvider geetest,
+        public UserController(CouponProvider coupon, CachedDataProvider cachedData, GeetestProvider geetest,
             OwinContextProvider owinContextProvider, KeylolDbContext dbContext, KeylolUserManager userManager,
             OneTimeTokenProvider oneTimeToken)
         {
             _coupon = coupon;
-            _statistics = statistics;
+            _cachedData = cachedData;
             _geetest = geetest;
             _dbContext = dbContext;
             _userManager = userManager;

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Keylol.Models
+﻿namespace Keylol.Models
 {
     public static class SlideshowStream
     {
         public static string Name => "slideshow";
-        public static int Capacity => 100;
+        public static int Capacity => 30;
 
         public class FeedProperties
         {
@@ -18,19 +12,26 @@ namespace Keylol.Models
             public string Summary { get; set; }
             public string MinorTitle { get; set; }
             public string MinorSubtitle { get; set; }
+            public string BackgroundImage { get; set; }
             public string Link { get; set; }
         }
     }
 
-    public class UserTimelineStream
+    public static class SpotlightPointStream
     {
-        public string Name(string userId) => $"u-{userId}";
+        public static string Name => "spotlight-point";
+        public static int Capacity => 150;
+    }
+
+    public static class UserTimelineStream
+    {
+        public static string Name(string userId) => $"u-{userId}";
         public static int Capacity => 500;
     }
 
-    public class PointTimelineStream
+    public static class PointTimelineStream
     {
-        public string Name(string userId) => $"p-{userId}";
+        public static string Name(string userId) => $"p-{userId}";
         public static int Capacity => 500;
     }
 }

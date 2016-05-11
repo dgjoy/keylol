@@ -36,6 +36,11 @@ namespace Keylol.States.DiscoveryPage
         public string MinorSubtitle { get; set; }
 
         /// <summary>
+        /// 背景图片
+        /// </summary>
+        public string BackgroundImage { get; set; }
+
+        /// <summary>
         /// 目标链接
         /// </summary>
         public string Link { get; set; }

@@ -64,7 +64,7 @@ namespace Keylol.Models.DAL
                 .WithOptionalDependent(c => c.InvitationCode);
             modelBuilder.Entity<Point>()
                 .HasMany(p => p.SteamStoreNames)
-                .WithMany(n => n.NormalPoints)
+                .WithMany(n => n.Points)
                 .Map(t => t.ToTable("PointStoreNameMappings"));
         }
 

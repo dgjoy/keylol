@@ -80,6 +80,18 @@
     <Compile Include="Migrations\201605090821461_Feed.Designer.cs">
       <DependentUpon>201605090821461_Feed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605110631333_RemoveMajorMinorPlatformRelationship.cs" />
+    <Compile Include="Migrations\201605110631333_RemoveMajorMinorPlatformRelationship.Designer.cs">
+      <DependentUpon>201605110631333_RemoveMajorMinorPlatformRelationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605110849460_MorePointProperties1.cs" />
+    <Compile Include="Migrations\201605110849460_MorePointProperties1.Designer.cs">
+      <DependentUpon>201605110849460_MorePointProperties1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605110944526_PointAttributes.cs" />
+    <Compile Include="Migrations\201605110944526_PointAttributes.Designer.cs">
+      <DependentUpon>201605110944526_PointAttributes.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -646,6 +658,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605090821461_Feed.resx">
       <DependentUpon>201605090821461_Feed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605110631333_RemoveMajorMinorPlatformRelationship.resx">
+      <DependentUpon>201605110631333_RemoveMajorMinorPlatformRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605110849460_MorePointProperties1.resx">
+      <DependentUpon>201605110849460_MorePointProperties1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605110944526_PointAttributes.resx">
+      <DependentUpon>201605110944526_PointAttributes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -67,22 +67,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleDto.cs" />
-    <Compile Include="CommentDto.cs" />
-    <Compile Include="CouponGiftDto.cs" />
-    <Compile Include="CouponLogDto.cs" />
-    <Compile Include="FavoriteDto.cs" />
     <Compile Include="ImageGarageRequestDto.cs" />
-    <Compile Include="InvitationCodeDto.cs" />
-    <Compile Include="LogDto.cs" />
-    <Compile Include="NormalPointDto.cs" />
+    <Compile Include="PointRatingDto.cs" />
     <Compile Include="ReliableNotificationDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SteamBindingTokenDto.cs" />
     <Compile Include="SteamBotDelayedActionDto.cs" />
     <Compile Include="SteamBotDto.cs" />
-    <Compile Include="SteamBotUpdateRequestDto.cs" />
-    <Compile Include="SubscribedPointDto.cs" />
-    <Compile Include="UserDto.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Keylol.Models\Keylol.Models.csproj">
