@@ -223,11 +223,17 @@
     <Compile Include="Identity\MessageServices\KeylolSmsService.cs" />
     <Compile Include="Identity\KeylolOAuthBearerAuthenticationProvider.cs" />
     <Compile Include="Identity\MessageServices\KeylolSteamChatMessageService.cs" />
+    <Compile Include="Provider\CachedDataProvider\ArticleCommentOperations.cs" />
+    <Compile Include="Provider\CachedDataProvider\FeedOperations.cs" />
+    <Compile Include="Provider\CachedDataProvider\LikeOperations.cs" />
+    <Compile Include="Provider\CachedDataProvider\PointOperations.cs" />
+    <Compile Include="Provider\CachedDataProvider\SubscriptionOperations.cs" />
+    <Compile Include="Provider\CachedDataProvider\UserOperations.cs" />
     <Compile Include="Provider\CouponProvider.cs" />
     <Compile Include="Provider\NotificationProvider.cs" />
     <Compile Include="Provider\OneTimeTokenProvider.cs" />
     <Compile Include="Provider\RedisProvider.cs" />
-    <Compile Include="Provider\CachedDataProvider.cs" />
+    <Compile Include="Provider\CachedDataProvider\CachedDataProvider.cs" />
     <Compile Include="Services\Contracts\IImageGarageCoordinator.cs" />
     <Compile Include="Services\Contracts\ISteamBotCoordinator.cs" />
     <Compile Include="Services\ImageGarageCoordinator.svc.cs">
@@ -240,6 +246,8 @@
     <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="States\CurrentUser.cs" />
     <Compile Include="States\DiscoveryPage\DiscoveryPage.cs" />
+    <Compile Include="States\DiscoveryPage\LatestArticle.cs" />
+    <Compile Include="States\DiscoveryPage\OnSalePoint.cs" />
     <Compile Include="States\DiscoveryPage\SlideshowEntry.cs" />
     <Compile Include="States\DiscoveryPage\SpotlightArticle.cs" />
     <Compile Include="States\DiscoveryPage\SpotlightConference.cs" />

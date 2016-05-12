@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.States.DiscoveryPage
 {
     /// <summary>
-    /// Spotlight Article List
+    /// 精选文章列表
     /// </summary>
     public class SpotlightArticleList : List<SpotlightArticle>
     {
-        private SpotlightArticleList([NotNull] IEnumerable<SpotlightArticle> collection) : base(collection)
+        private SpotlightArticleList(int capacity) : base(capacity)
         {
         }
 
@@ -24,17 +24,20 @@ namespace Keylol.States.DiscoveryPage
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="spotlightArticleCategory">文章分类</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="SpotlightArticleList"/></returns>
         public static async Task<SpotlightArticleList> CreateAsync(string currentUserId,
-            SpotlightArticleStream.ArticleCategory spotlightArticleCategory, KeylolDbContext dbContext)
+            SpotlightArticleStream.ArticleCategory spotlightArticleCategory, KeylolDbContext dbContext,
+            CachedDataProvider cachedData)
         {
             var streamName = SpotlightArticleStream.Name(spotlightArticleCategory);
-            return new SpotlightArticleList((await (from feed in dbContext.Feeds
+            var queryResult = await (from feed in dbContext.Feeds
                 where feed.StreamName == streamName
                 join article in dbContext.Articles on feed.Entry equals article.Id
                 orderby feed.Id descending
                 select new
                 {
+                    article.AuthorId,
                     AuthorIdCode = article.Author.IdCode,
                     AuthorAvatarImage = article.Author.AvatarImage,
                     AuthorUserName = article.Author.UserName,
@@ -46,16 +49,20 @@ namespace Keylol.States.DiscoveryPage
                     PointIdCode = article.TargetPoint.IdCode,
                     PointAvatarImage = article.TargetPoint.AvatarImage,
                     PointChineseName = article.TargetPoint.ChineseName,
-                    PointEnglishName = article.TargetPoint.EnglishName
+                    PointEnglishName = article.TargetPoint.EnglishName,
+                    PointSteamAppId = article.TargetPoint.SteamAppId
                 })
                 .Take(4)
-                .ToListAsync())
-                .Select(a => new SpotlightArticle
+                .ToListAsync();
+            var result = new SpotlightArticleList(queryResult.Count);
+            foreach (var a in queryResult)
+            {
+                result.Add(new SpotlightArticle
                 {
                     AuthorIdCode = a.AuthorIdCode,
                     AuthorAvatarImage = a.AuthorAvatarImage,
                     AuthorUserName = a.AuthorUserName,
-                    AuthorIsFriend = true, // TODO
+                    AuthorIsFriend = await cachedData.Users.IsFriend(currentUserId, a.AuthorId),
                     PublishTime = a.PublishTime,
                     SidForAuthor = a.SidForAuthor,
                     Title = a.Title,
@@ -65,13 +72,18 @@ namespace Keylol.States.DiscoveryPage
                     PointAvatarImage = a.PointAvatarImage,
                     PointChineseName = a.PointChineseName,
                     PointEnglishName = a.PointEnglishName,
-                    PointInLibrary = a.PointIdCode == null ? (bool?) null : true // TODO
-                }));
+                    PointInLibrary =
+                        a.PointSteamAppId == null
+                            ? (bool?) null
+                            : await cachedData.Users.IsSteamAppInLibrary(currentUserId, a.PointSteamAppId.Value)
+                });
+            }
+            return result;
         }
     }
 
     /// <summary>
-    /// Spotlight Article
+    /// 精选文章
     /// </summary>
     public class SpotlightArticle
     {
@@ -101,7 +113,7 @@ namespace Keylol.States.DiscoveryPage
         public DateTime PublishTime { get; set; }
 
         /// <summary>
-        /// 文章在作者名下的序号
+        /// 作者名下序号
         /// </summary>
         public int SidForAuthor { get; set; }
 

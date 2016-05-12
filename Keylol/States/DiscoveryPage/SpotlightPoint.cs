@@ -2,10 +2,10 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.States.DiscoveryPage
 {
@@ -14,7 +14,7 @@ namespace Keylol.States.DiscoveryPage
     /// </summary>
     public class SpotlightPointList : List<SpotlightPoint>
     {
-        private SpotlightPointList([NotNull] IEnumerable<SpotlightPoint> collection) : base(collection)
+        private SpotlightPointList(int capacity) : base(capacity)
         {
         }
 
@@ -28,7 +28,7 @@ namespace Keylol.States.DiscoveryPage
         public static async Task<SpotlightPointList> CreateAsync(string currentUserId, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            return new SpotlightPointList(await Task.WhenAll((await (from feed in dbContext.Feeds
+            var queryResult = await (from feed in dbContext.Feeds
                 where feed.StreamName == SpotlightPointStream.Name
                 join point in dbContext.Points on feed.Entry equals point.Id
                 orderby feed.Id descending
@@ -41,18 +41,21 @@ namespace Keylol.States.DiscoveryPage
                     point.ChineseName,
                     point.SteamAppId,
                     point.SteamPrice,
-                    point.SteamDiscount,
+                    point.SteamDiscountedPrice,
                     point.SonkwoProductId,
                     point.SonkwoPrice,
-                    point.SonkwoDiscount,
+                    point.SonkwoDiscountedPrice,
                     point.UplayLink,
                     point.UplayPrice,
                     point.XboxLink,
                     point.XboxPrice,
                     point.PlayStationPrice,
                     point.PlayStationLink
-                }).Take(30).ToListAsync())
-                .Select(async p => new SpotlightPoint
+                }).Take(30).ToListAsync();
+            var result = new SpotlightPointList(queryResult.Count);
+            foreach (var p in queryResult)
+            {
+                result.Add(new SpotlightPoint
                 {
                     IdCode = p.IdCode,
                     AvatarImage = p.AvatarImage,
@@ -61,10 +64,10 @@ namespace Keylol.States.DiscoveryPage
                     AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
                     SteamAppId = p.SteamAppId,
                     SteamPrice = p.SteamPrice,
-                    SteamDiscount = p.SteamDiscount,
+                    SteamDiscountedPrice = p.SteamDiscountedPrice,
                     SonkwoProductId = p.SonkwoProductId,
                     SonkwoPrice = p.SonkwoPrice,
-                    SonkwoDiscount = p.SonkwoDiscount,
+                    SonkwoDiscountedPrice = p.SonkwoDiscountedPrice,
                     UplayLink = p.UplayLink,
                     UplayPrice = p.UplayPrice,
                     XboxLink = p.XboxLink,
@@ -73,7 +76,9 @@ namespace Keylol.States.DiscoveryPage
                     PlayStationPrice = p.PlayStationPrice,
                     Subscribed = await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
                         SubscriptionTargetType.Point)
-                })));
+                });
+            }
+            return result;
         }
     }
 
@@ -118,9 +123,9 @@ namespace Keylol.States.DiscoveryPage
         public double? SteamPrice { get; set; }
 
         /// <summary>
-        /// Steam 打折力度
+        /// Steam 折后价格
         /// </summary>
-        public double? SteamDiscount { get; set; }
+        public double? SteamDiscountedPrice { get; set; }
 
         /// <summary>
         /// 杉果 Product ID
@@ -133,9 +138,9 @@ namespace Keylol.States.DiscoveryPage
         public double? SonkwoPrice { get; set; }
 
         /// <summary>
-        /// 杉果打折力度
+        /// 杉果折后价格
         /// </summary>
-        public double? SonkwoDiscount { get; set; }
+        public double? SonkwoDiscountedPrice { get; set; }
 
         /// <summary>
         /// Uplay 链接

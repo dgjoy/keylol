@@ -5,6 +5,7 @@ using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
 using Keylol.ServiceBase.TransientFaultHandling;
 using Keylol.Utilities;
@@ -76,7 +77,9 @@ namespace Keylol
             Container.RegisterPerOwinRequest(() =>
             {
                 var context = new KeylolDbContext();
-                context.Database.Log = s => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
+#if DEBUG
+//                context.Database.Log = s => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
+#endif
                 return context;
             });
 

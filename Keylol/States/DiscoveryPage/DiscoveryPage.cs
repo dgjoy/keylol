@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
-using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.States.DiscoveryPage
 {
@@ -26,43 +27,77 @@ namespace Keylol.States.DiscoveryPage
                 SlideshowEntries = await SlideshowEntryList.CreateAsync(dbContext),
                 SpotlightPoints = await SpotlightPointList.CreateAsync(currentUserId, dbContext, cachedData),
                 SpotlightReviews = await SpotlightArticleList.CreateAsync(currentUserId,
-                    SpotlightArticleStream.ArticleCategory.Review, dbContext),
+                    SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData),
                 SpotlightConferences = await SpotlightConferenceList.CreateAsync(dbContext),
                 SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId,
-                    SpotlightArticleStream.ArticleCategory.Study, dbContext),
+                    SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData),
+                SalesTodayHeaderImage = await (from feed in dbContext.Feeds
+                    where feed.StreamName == OnSalePointStream.Name
+                    join point in dbContext.Points on feed.Entry equals point.Id
+                    orderby feed.Id descending
+                    select point.HeaderImage).FirstOrDefaultAsync(),
+                SalesTodayPageCount = await OnSalePointList.PageCountAsync(dbContext),
+                SalesToday = await OnSalePointList.CreateAsync(currentUserId, 1, dbContext, cachedData),
                 SpotlightStories = await SpotlightArticleList.CreateAsync(currentUserId,
-                    SpotlightArticleStream.ArticleCategory.Story, dbContext)
+                    SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData),
+                LatestArticlePageCount = await LatestArticleList.PageCountAsync(dbContext),
+                LatestArticles = await LatestArticleList.CreateAsync(1, dbContext, cachedData)
             };
         }
 
         /// <summary>
-        /// Slideshow Entries
+        /// 滑动展柜
         /// </summary>
         public SlideshowEntryList SlideshowEntries { get; set; }
 
         /// <summary>
-        /// Spotlight Points
+        /// 精选据点
         /// </summary>
         public SpotlightPointList SpotlightPoints { get; set; }
 
         /// <summary>
-        /// Spotlight Reviews
+        /// 精选评测
         /// </summary>
         public SpotlightArticleList SpotlightReviews { get; set; }
 
         /// <summary>
-        /// Spotlight Conferences
+        /// 精选专题
         /// </summary>
         public SpotlightConferenceList SpotlightConferences { get; set; }
 
         /// <summary>
-        /// Spotlight Studies
+        /// 精选研究
         /// </summary>
         public SpotlightArticleList SpotlightStudies { get; set; }
 
         /// <summary>
-        /// Spotlight Stories
+        /// 是日优惠头部图
+        /// </summary>
+        public string SalesTodayHeaderImage { get; set; }
+
+        /// <summary>
+        /// 是日优惠总数
+        /// </summary>
+        public int SalesTodayPageCount { get; set; }
+
+        /// <summary>
+        /// 是日优惠
+        /// </summary>
+        public OnSalePointList SalesToday { get; set; }
+
+        /// <summary>
+        /// 精选谈论
         /// </summary>
         public SpotlightArticleList SpotlightStories { get; set; }
+
+        /// <summary>
+        /// 最新文章总数
+        /// </summary>
+        public int LatestArticlePageCount { get; set; }
+
+        /// <summary>
+        /// 最新文章
+        /// </summary>
+        public LatestArticleList LatestArticles { get; set; }
     }
 }

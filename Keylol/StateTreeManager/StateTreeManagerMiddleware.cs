@@ -67,7 +67,7 @@ namespace Keylol.StateTreeManager
             if (!string.IsNullOrWhiteSpace(treePath) && !treePath.EndsWith("/")) treePath = $"{treePath}/";
 
             var inLocator = false;
-            var currentPropertyName = string.Empty;
+            var currentPropertyName = "[Root]";
             var currentType = _root;
             Type previousType = null;
             var nextPropertyNameBuilder = new StringBuilder();
@@ -82,6 +82,8 @@ namespace Keylol.StateTreeManager
                 var nextPropertyName = nextPropertyNameBuilder.ToString()
                     .ToCase(NameConventionCase.DashedCase, NameConventionCase.PascalCase);
                 nextPropertyNameBuilder.Clear();
+                if (string.IsNullOrWhiteSpace(nextPropertyName))
+                    return null;
                 var nextProperty = nowType.GetProperty(nextPropertyName, BindingFlags.Instance | BindingFlags.Public);
                 if (nextProperty == null)
                     throw new InvalidPropertyException(nextPropertyName);
@@ -119,6 +121,8 @@ namespace Keylol.StateTreeManager
                         else
                         {
                             var nextProperty = await commitNextProperty(currentType);
+                            if (nextProperty == null)
+                                throw new MalformedTreePathException();
                             previousType = currentType;
                             currentType = nextProperty.PropertyType;
                             currentPropertyName = nextProperty.Name;
@@ -133,6 +137,8 @@ namespace Keylol.StateTreeManager
                         inLocator = true;
                         nextPropertyHasLocator = true;
                         var nextProperty = await commitNextProperty(currentType);
+                        if (nextProperty == null)
+                            break;
                         previousType = currentType;
                         currentType = nextProperty.PropertyType;
                         currentPropertyName = nextProperty.Name;
@@ -202,7 +208,7 @@ namespace Keylol.StateTreeManager
         }
 
         private async Task<object> InvokeGetMethodAsync(MethodInfo getMethod, IReadableStringCollection query,
-            Dictionary<string, string> locators)
+            IReadOnlyDictionary<string, string> locators)
         {
             if (getMethod == null)
                 throw new ArgumentNullException(nameof(getMethod));

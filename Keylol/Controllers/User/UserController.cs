@@ -2,6 +2,7 @@
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 using Microsoft.Owin;
 using SimpleInjector.Integration.Owin;
 

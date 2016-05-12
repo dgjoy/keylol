@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Keylol.Models;
-using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.Owin.Security.OAuth;
@@ -72,14 +71,6 @@ namespace Keylol.Identity
                 return;
             }
             await userManager.ResetAccessFailedCountAsync(user.Id);
-
-            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
-            dbContext.LoginLogs.Add(new LoginLog
-            {
-                Ip = context.Request.RemoteIpAddress,
-                UserId = user.Id
-            });
-            await dbContext.SaveChangesAsync();
             context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
         }
 
@@ -104,14 +95,6 @@ namespace Keylol.Identity
                 context.SetError(Errors.UserNonExistent);
                 return;
             }
-            var loginLog = new LoginLog
-            {
-                Ip = context.Request.RemoteIpAddress,
-                UserId = user.Id
-            };
-            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
-            dbContext.LoginLogs.Add(loginLog);
-            await dbContext.SaveChangesAsync();
             context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
         }
 

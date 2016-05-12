@@ -96,6 +96,10 @@
     <Compile Include="Migrations\201605121029076_RenameThumbnailImage.Designer.cs">
       <DependentUpon>201605121029076_RenameThumbnailImage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605121721303_DiscountedPrice.cs" />
+    <Compile Include="Migrations\201605121721303_DiscountedPrice.Designer.cs">
+      <DependentUpon>201605121721303_DiscountedPrice.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -109,7 +113,6 @@
     <Compile Include="DAL\KeylolDbContext.cs" />
     <Compile Include="KeylolUser.cs" />
     <Compile Include="Like.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Migrations\201510111634394_Initial.cs" />
     <Compile Include="Migrations\201510111634394_Initial.Designer.cs">
@@ -674,6 +677,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605121029076_RenameThumbnailImage.resx">
       <DependentUpon>201605121029076_RenameThumbnailImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605121721303_DiscountedPrice.resx">
+      <DependentUpon>201605121721303_DiscountedPrice.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

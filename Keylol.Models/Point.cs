@@ -69,13 +69,13 @@ namespace Keylol.Models
 
         public double? SteamPrice { get; set; }
 
-        public double? SteamDiscount { get; set; }
+        public double? SteamDiscountedPrice { get; set; }
 
         public int? SonkwoProductId { get; set; }
 
         public double? SonkwoPrice { get; set; }
 
-        public double? SonkwoDiscount { get; set; }
+        public double? SonkwoDiscountedPrice { get; set; }
 
         public string UplayLink { get; set; }
 

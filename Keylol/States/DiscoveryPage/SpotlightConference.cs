@@ -5,7 +5,7 @@ using Keylol.Models.DAL;
 namespace Keylol.States.DiscoveryPage
 {
     /// <summary>
-    /// Spotlight Conference List
+    /// 精选专题列表
     /// </summary>
     public class SpotlightConferenceList : List<SpotlightConference>
     {
@@ -21,7 +21,7 @@ namespace Keylol.States.DiscoveryPage
     }
 
     /// <summary>
-    /// Spotlight Conference
+    /// 精选专题
     /// </summary>
     public class SpotlightConference
     {

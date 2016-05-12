@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -217,6 +218,25 @@ namespace Keylol.Utilities
                 }
             }
             return resultBuilder.ToString();
+        }
+
+        /// <summary>
+        /// 获取指定分页的记录
+        /// </summary>
+        /// <param name="source">查询源</param>
+        /// <param name="page">分页页码</param>
+        /// <param name="recordsPerPage">每页记录数</param>
+        /// <typeparam name="TSource">记录类型</typeparam>
+        public static IQueryable<TSource> TakePage<TSource>(this IQueryable<TSource> source, int page,
+            int recordsPerPage)
+        {
+            if (page <= 0)
+                throw new ArgumentException("Page must be greater than zero.", nameof(page));
+            if (recordsPerPage <= 0)
+                throw new ArgumentException("Records per page must be greater than zero.", nameof(page));
+
+            var skip = recordsPerPage*(page - 1);
+            return source.Skip(() => skip).Take(() => recordsPerPage);
         }
     }
 

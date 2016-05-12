@@ -25,9 +25,6 @@ namespace Keylol.Models.DAL
         public DbSet<ArticleComment> ArticleComments { get; set; }
         public DbSet<Reply> Replies { get; set; }
         public DbSet<Like> Likes { get; set; }
-        public DbSet<Log> Logs { get; set; }
-        public DbSet<LoginLog> LoginLogs { get; set; }
-        public DbSet<EditLog> EditLogs { get; set; }
         public DbSet<SteamBindingToken> SteamBindingTokens { get; set; }
         public DbSet<SteamBot> SteamBots { get; set; }
         public DbSet<InvitationCode> InvitationCodes { get; set; }

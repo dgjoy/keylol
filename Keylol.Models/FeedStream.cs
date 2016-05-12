@@ -64,4 +64,9 @@ namespace Keylol.Models
             Story
         }
     }
+
+    public static class OnSalePointStream
+    {
+        public static string Name => "on-sale-point";
+    }
 }

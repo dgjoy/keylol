@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Keylol.States.DiscoveryPage
 {
     /// <summary>
-    /// Slideshow Entry List
+    /// 滑动展柜内容列表
     /// </summary>
     public class SlideshowEntryList : List<SlideshowEntry>
     {
@@ -46,7 +46,7 @@ namespace Keylol.States.DiscoveryPage
     }
 
     /// <summary>
-    /// Slideshow Entry
+    /// 滑动展柜内容
     /// </summary>
     public class SlideshowEntry
     {
