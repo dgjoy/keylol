@@ -36,112 +36,24 @@ namespace Keylol.States
             if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
             {
                 var user = await userManager.FindByIdAsync(currentUserId);
-
-                // 每日访问奖励
-                if (DateTime.Now.Date > user.LastDailyRewardTime.Date)
-                {
-                    user.LastDailyRewardTime = DateTime.Now;
-                    user.FreeLike = 5; // 免费认可重置
-                    try
-                    {
-                        await dbContext.SaveChangesAsync();
-                        await coupon.UpdateAsync(user, CouponEvent.每日访问);
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                    }
-                }
-
-                root.CurrentUser = new CurrentUser
-                {
-                    UserName = user.UserName,
-                    IdCode = user.IdCode,
-                    AvatarImage = user.AvatarImage,
-                    MessageCount = await dbContext.Messages.CountAsync(m => m.ReceiverId == user.Id && m.Unread),
-                    Coupon = user.Coupon,
-                    DraftCount = 0, // TODO
-                    PreferredPointName = user.PreferredPointName
-                };
+                root.CurrentUser = await CurrentUser.CreateAsync(user, userManager, dbContext, coupon);
             }
 
             switch (page)
             {
                 case Page.Discovery:
-                {
-                    root.DiscoveryPage = new DiscoveryPage.DiscoveryPage
-                    {
-                        SlideshowEntries = (await dbContext.Feeds.Where(f => f.StreamName == SlideshowStream.Name)
-                            .OrderByDescending(f => f.Id)
-                            .Take(4)
-                            .Select(f => f.Properties)
-                            .ToListAsync())
-                            .Select(JsonConvert.DeserializeObject<SlideshowStream.FeedProperties>)
-                            .Select(e => new DiscoveryPage.SlideshowEntry
-                            {
-                                Title = e.Title,
-                                Subtitle = e.Subtitle,
-                                Summary = e.Summary,
-                                MinorTitle = e.MinorTitle,
-                                MinorSubtitle = e.MinorSubtitle,
-                                BackgroundImage = e.BackgroundImage,
-                                Link = e.Link
-                            })
-                            .ToList(),
-                        SpotlightPoints = (await Task.WhenAll((await (from feed in dbContext.Feeds
-                            where feed.StreamName == SpotlightPointStream.Name
-                            orderby feed.Id descending
-                            join point in dbContext.Points on feed.Entry equals point.Id
-                            select new
-                            {
-                                point.Id,
-                                point.IdCode,
-                                point.AvatarImage,
-                                point.EnglishName,
-                                point.ChineseName,
-                                point.SteamAppId,
-                                point.SteamPrice,
-                                point.SteamDiscount,
-                                point.SonkwoProductId,
-                                point.SonkwoPrice,
-                                point.SonkwoDiscount,
-                                point.UplayLink,
-                                point.UplayPrice,
-                                point.XboxLink,
-                                point.XboxPrice,
-                                point.PlayStationPrice,
-                                point.PlayStationLink
-                            }).Take(30).ToListAsync())
-                            .Select(async p => new DiscoveryPage.SpotlightPoint
-                            {
-                                IdCode = p.IdCode,
-                                AvatarImage = p.AvatarImage,
-                                EnglishName = p.EnglishName,
-                                ChineseName = p.ChineseName,
-                                AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
-                                SteamAppId = p.SteamAppId,
-                                SteamPrice = p.SteamPrice,
-                                SteamDiscount = p.SteamDiscount,
-                                SonkwoProductId = p.SonkwoProductId,
-                                SonkwoPrice = p.SonkwoPrice,
-                                SonkwoDiscount = p.SonkwoDiscount,
-                                UplayLink = p.UplayLink,
-                                UplayPrice = p.UplayPrice,
-                                XboxLink = p.XboxLink,
-                                XboxPrice = p.XboxPrice,
-                                PlayStationLink = p.PlayStationLink,
-                                PlayStationPrice = p.PlayStationPrice,
-                                Subscribed = await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
-                                    SubscriptionTargetType.Point)
-                            }))).ToList()
-                    };
+                    root.DiscoveryPage =
+                        await States.DiscoveryPage.DiscoveryPage.CreateAsync(currentUserId, dbContext, cachedData);
                     break;
-                }
 
                 case Page.Points:
                     break;
 
                 case Page.Timeline:
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(page), page, null);
             }
 
             return root;

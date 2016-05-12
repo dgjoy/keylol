@@ -32,14 +32,16 @@ namespace Keylol.Services
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IModel _mqChannel;
         private readonly RetryPolicy _retryPolicy;
+        private readonly OneTimeTokenProvider _oneTimeToken;
 
         /// <summary>
         ///     创建 <see cref="SteamBotCoordinator" />
         /// </summary>
-        public SteamBotCoordinator(RetryPolicy retryPolicy, IModel mqChannel)
+        public SteamBotCoordinator(RetryPolicy retryPolicy, MqClientProvider mqClient, OneTimeTokenProvider oneTimeToken)
         {
             _retryPolicy = retryPolicy;
-            _mqChannel = mqChannel;
+            _mqChannel = mqClient.CreateModel();
+            _oneTimeToken = oneTimeToken;
 
             Sessions[SessionId] = this;
             OperationContext.Current.InstanceContext.Closing += OnSessionEnd;
@@ -309,12 +311,10 @@ namespace Keylol.Services
                     if (match.Success)
                     {
                         var code = match.Groups[1].Value;
-                        var oneTimeTokenProvider = Startup.Container.GetInstance<OneTimeTokenProvider>();
                         try
                         {
-                            var connectionId =
-                                await oneTimeTokenProvider.Consume<string>(code, OneTimeTokenPurpose.SteamLogin);
-                            var loginToken = await oneTimeTokenProvider.Generate(user.Id, TimeSpan.FromMinutes(1),
+                            var connectionId = await _oneTimeToken.Consume<string>(code, OneTimeTokenPurpose.SteamLogin);
+                            var loginToken = await _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1),
                                 OneTimeTokenPurpose.UserLogin);
                             NotificationProvider.Hub<SteamLoginHub, ISteamLoginHubClient>()
                                 .Client(connectionId).OnLoginOneTimeToken(loginToken);

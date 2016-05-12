@@ -1,4 +1,11 @@
-﻿using Keylol.Models;
+﻿using System;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Threading.Tasks;
+using Keylol.Identity;
+using Keylol.Models;
+using Keylol.Models.DAL;
+using Keylol.Provider;
 
 namespace Keylol.States
 {
@@ -7,6 +14,44 @@ namespace Keylol.States
     /// </summary>
     public class CurrentUser
     {
+        /// <summary>
+        /// 创建 <see cref="CurrentUser"/>
+        /// </summary>
+        /// <param name="user">用户对象</param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="dbContext"></param>
+        /// <param name="coupon"></param>
+        /// <returns><see cref="CurrentUser"/></returns>
+        public static async Task<CurrentUser> CreateAsync(KeylolUser user, KeylolUserManager userManager,
+            KeylolDbContext dbContext, CouponProvider coupon)
+        {
+            // 每日访问奖励
+            if (DateTime.Now.Date > user.LastDailyRewardTime.Date)
+            {
+                user.LastDailyRewardTime = DateTime.Now;
+                user.FreeLike = 5; // 免费认可重置
+                try
+                {
+                    await dbContext.SaveChangesAsync();
+                    await coupon.UpdateAsync(user, CouponEvent.每日访问);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                }
+            }
+
+            return new CurrentUser
+            {
+                UserName = user.UserName,
+                IdCode = user.IdCode,
+                AvatarImage = user.AvatarImage,
+                MessageCount = await dbContext.Messages.CountAsync(m => m.ReceiverId == user.Id && m.Unread),
+                Coupon = user.Coupon,
+                DraftCount = 0, // TODO
+                PreferredPointName = user.PreferredPointName
+            };
+        }
+
         /// <summary>
         /// 用户名（昵称）
         /// </summary>

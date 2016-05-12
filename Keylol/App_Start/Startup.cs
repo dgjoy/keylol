@@ -7,17 +7,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Cors;
 using System.Web.Http;
-using System.Web.Http.Controllers;
 using Keylol.Filters;
 using Keylol.Identity;
-using Keylol.Models.DAL;
-using Keylol.Provider;
-using Keylol.ServiceBase;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
-using log4net;
-using log4net.Core;
-using log4net.Repository.Hierarchy;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
@@ -28,9 +21,7 @@ using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Owin;
-using SimpleInjector;
 using SimpleInjector.Integration.Owin;
-using SimpleInjector.Integration.WebApi;
 using Swashbuckle.Application;
 using WebApiThrottle;
 
@@ -42,20 +33,10 @@ namespace Keylol
     public class Startup
     {
         /// <summary>
-        ///     全局 IoC 容器
-        /// </summary>
-        public static Container Container { get; set; } = new Container();
-
-        /// <summary>
         ///     OWIN 启动配置
         /// </summary>
         public void Configuration(IAppBuilder app)
         {
-            // 注册常用服务
-            RegisterServices();
-
-            // 启用 OWIN 中间件
-
             // 请求计时
             app.Use(async (context, next) =>
             {
@@ -116,59 +97,8 @@ namespace Keylol
 
             // ASP.NET Web API
             UseWebApi(app);
-
-            Container.Verify();
         }
 
-        private static void RegisterServices()
-        {
-            Container.Options.DefaultScopedLifestyle = new OwinRequestLifestyle();
-
-            // log4net
-            SetupLogger();
-            Container.RegisterConditional(typeof(ILogProvider),
-                c => typeof(LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof(Startup)),
-                Lifestyle.Singleton,
-                c => true);
-
-            // RabbitMQ IConnection
-            Container.RegisterSingleton<MqClientProvider>();
-
-            // RabbitMQ IModel
-            Container.RegisterPerOwinRequest(() => Container.GetInstance<MqClientProvider>().CreateModel());
-
-            // StackExchange.Redis
-            Container.RegisterSingleton<RedisProvider>();
-
-            // Geetest
-            Container.RegisterSingleton<GeetestProvider>();
-
-            // OWIN Context Provider
-            Container.RegisterSingleton<OwinContextProvider>();
-
-            // Keylol DbContext
-            Container.RegisterPerOwinRequest(() =>
-            {
-                var context = new KeylolDbContext();
-//                context.Database.Log = s => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
-                return context;
-            });
-
-            // Keylol User Manager
-            Container.RegisterPerOwinRequest<KeylolUserManager>();
-
-            // Keylol Role Manager
-            Container.RegisterPerOwinRequest<KeylolRoleManager>();
-
-            // Coupon
-            Container.RegisterPerOwinRequest<CouponProvider>();
-
-            // Statistics
-            Container.RegisterPerOwinRequest<CachedDataProvider>();
-
-            // One-time Token
-            Container.RegisterSingleton<OneTimeTokenProvider>();
-        }
 
         private static void UseCors(IAppBuilder app)
         {
@@ -214,13 +144,12 @@ namespace Keylol
 
         private static void UseWebApi(IAppBuilder app)
         {
-            var config = new HttpConfiguration();
-            var server = new HttpServer(config);
+            var config = Global.Container.GetInstance<HttpConfiguration>();
 
             var jsonSerializerSettings = config.Formatters.JsonFormatter.SerializerSettings;
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             jsonSerializerSettings.Converters.Add(new StringEnumConverter());
-            
+
             config.Filters.Add(new ValidateModelAttribute());
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 
@@ -244,20 +173,7 @@ namespace Keylol
 
             config.MapHttpAttributeRoutes();
 
-            Container.RegisterWebApiControllers(config);
-            config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(Container);
-
-            app.UseWebApi(server);
-        }
-
-        private static void SetupLogger()
-        {
-            var hierarchy = (Hierarchy) LogManager.GetRepository();
-            var appender = new LogHubAppender();
-            appender.ActivateOptions();
-            hierarchy.Root.AddAppender(appender);
-            hierarchy.Root.Level = Level.All;
-            hierarchy.Configured = true;
+            app.UseWebApi(new HttpServer(config));
         }
     }
 }

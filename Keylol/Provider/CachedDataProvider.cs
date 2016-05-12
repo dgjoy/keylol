@@ -87,7 +87,10 @@ namespace Keylol.Provider
                 var redisDb = _redis.GetDatabase();
                 var cachedResult = await redisDb.StringGetAsync(cacheKey);
                 if (cachedResult.HasValue)
+                {
+                    await redisDb.KeyExpireAsync(cacheKey, DefaultTtl);
                     return (int) cachedResult;
+                }
 
                 var articleLikeCount = await (from article in _dbContext.Articles
                     join like in _dbContext.Likes on article.Id equals like.TargetId
@@ -133,7 +136,10 @@ namespace Keylol.Provider
                 var redisDb = _redis.GetDatabase();
                 var cachedResult = await redisDb.StringGetAsync(cacheKey);
                 if (cachedResult.HasValue)
+                {
+                    await redisDb.KeyExpireAsync(cacheKey, DefaultTtl);
                     return (int) cachedResult;
+                }
 
                 var likeCount =
                     await _dbContext.Likes.CountAsync(l => l.TargetId == targetId && l.TargetType == targetType);
@@ -371,7 +377,10 @@ namespace Keylol.Provider
                 var redisDb = _redis.GetDatabase();
                 var cacheResult = await redisDb.StringGetAsync(cacheKey);
                 if (cacheResult.HasValue)
+                {
+                    await redisDb.KeyExpireAsync(cacheKey, DefaultTtl);
                     return (int) cacheResult;
+                }
 
                 var subscriberCount = await _dbContext.Subscriptions
                     .CountAsync(s => s.TargetId == targetId && s.TargetType == targetType);
@@ -478,7 +487,10 @@ namespace Keylol.Provider
                 var redisDb = _redis.GetDatabase();
                 var cacheResult = await redisDb.StringGetAsync(cacheKey);
                 if (cacheResult.HasValue)
+                {
+                    await redisDb.KeyExpireAsync(cacheKey, DefaultTtl);
                     return RedisProvider.Deserialize<PointRatingsDto>(cacheResult);
+                }
 
                 var rating = new PointRatingsDto
                 {

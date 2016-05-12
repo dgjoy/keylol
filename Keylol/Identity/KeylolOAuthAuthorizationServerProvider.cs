@@ -26,7 +26,7 @@ namespace Keylol.Identity
             }
 #endif
 
-            var userManager = Startup.Container.GetInstance<KeylolUserManager>();
+            var userManager = Global.Container.GetInstance<KeylolUserManager>();
 
             var idCode = context.Parameters["id_code"];
             var email = context.Parameters["email"];
@@ -73,7 +73,7 @@ namespace Keylol.Identity
             }
             await userManager.ResetAccessFailedCountAsync(user.Id);
 
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
             dbContext.LoginLogs.Add(new LoginLog
             {
                 Ip = context.Request.RemoteIpAddress,
@@ -85,7 +85,7 @@ namespace Keylol.Identity
 
         private async Task GrantOneTimeToken(OAuthGrantCustomExtensionContext context)
         {
-            var tokenProvider = Startup.Container.GetInstance<OneTimeTokenProvider>();
+            var tokenProvider = Global.Container.GetInstance<OneTimeTokenProvider>();
             var token = context.Parameters["token"];
             string userId;
             try
@@ -97,7 +97,7 @@ namespace Keylol.Identity
                 context.SetError(Errors.InvalidToken);
                 return;
             }
-            var userManager = Startup.Container.GetInstance<KeylolUserManager>();
+            var userManager = Global.Container.GetInstance<KeylolUserManager>();
             var user = await userManager.FindByIdAsync(userId);
             if (user == null)
             {
@@ -109,7 +109,7 @@ namespace Keylol.Identity
                 Ip = context.Request.RemoteIpAddress,
                 UserId = user.Id
             };
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
             dbContext.LoginLogs.Add(loginLog);
             await dbContext.SaveChangesAsync();
             context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));

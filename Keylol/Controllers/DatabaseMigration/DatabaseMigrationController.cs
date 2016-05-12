@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Http;
-using JetBrains.Annotations;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
@@ -22,7 +20,7 @@ namespace Keylol.Controllers.DatabaseMigration
         public async Task<IHttpActionResult> NewSlideshowEntry(string title, string subtitle, string summary,
             string minorTitle, string minorSubtitle, string backgroundImage, string link)
         {
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
             dbContext.Feeds.Add(new Feed
             {
                 StreamName = SlideshowStream.Name,
@@ -46,12 +44,29 @@ namespace Keylol.Controllers.DatabaseMigration
         [HttpPost]
         public async Task<IHttpActionResult> NewSpotlightPoint(string pointId)
         {
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
             dbContext.Feeds.Add(new Feed
             {
                 StreamName = SpotlightPointStream.Name,
                 EntryType = FeedEntryType.PointId,
                 Entry = pointId,
+                Properties = string.Empty
+            });
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [Route("new-spotlight-article")]
+        [HttpPost]
+        public async Task<IHttpActionResult> NewSpotlightArticle(string articleId,
+            SpotlightArticleStream.ArticleCategory articleCategory)
+        {
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
+            dbContext.Feeds.Add(new Feed
+            {
+                StreamName = SpotlightArticleStream.Name(articleCategory),
+                EntryType = FeedEntryType.ArticleId,
+                Entry = articleId,
                 Properties = string.Empty
             });
             await dbContext.SaveChangesAsync();
@@ -65,7 +80,7 @@ namespace Keylol.Controllers.DatabaseMigration
         [HttpPost]
         public async Task<IHttpActionResult> Migrate()
         {
-            var roleManager = Startup.Container.GetInstance<KeylolRoleManager>();
+            var roleManager = Global.Container.GetInstance<KeylolRoleManager>();
             await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Operator));
             await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Moderator));
             await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Developer));
@@ -73,12 +88,12 @@ namespace Keylol.Controllers.DatabaseMigration
             await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Manufacturer));
             await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Staff));
 
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
             var operators = await dbContext.Database
                 .SqlQuery<string>("SELECT UserId FROM dbo.UserClaims WHERE ClaimType = 'staff'")
                 .ToListAsync();
 
-            var userManager = Startup.Container.GetInstance<KeylolUserManager>();
+            var userManager = Global.Container.GetInstance<KeylolUserManager>();
             foreach (var @operator in operators)
             {
                 await userManager.AddToRoleAsync(@operator, KeylolRoles.Operator);

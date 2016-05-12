@@ -70,7 +70,7 @@ namespace Keylol.ImageGarage
                             return;
                         }
                         var dom = CQ.Create(article.Content);
-                        article.ThumbnailImage = string.Empty;
+                        article.CoverImage = string.Empty;
                         var downloadCount = 0;
                         foreach (var img in dom["img"])
                         {
@@ -146,11 +146,11 @@ namespace Keylol.ImageGarage
                                     _logger.Warn($"Download failed: {url}", e);
                                 }
                             }
-                            if (string.IsNullOrWhiteSpace(article.ThumbnailImage))
-                                article.ThumbnailImage = url;
+                            if (string.IsNullOrWhiteSpace(article.CoverImage))
+                                article.CoverImage = url;
                         }
                         article.Content = dom.Render();
-                        _coordinator.Operations.UpdateArticle(article.Id, article.Content, article.ThumbnailImage,
+                        _coordinator.Operations.UpdateArticle(article.Id, article.Content, article.CoverImage,
                             article.RowVersion);
                         _mqChannel.BasicAck(eventArgs.DeliveryTag, false);
                         _logger.Info(

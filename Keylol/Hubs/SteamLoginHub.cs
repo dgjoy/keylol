@@ -16,7 +16,7 @@ namespace Keylol.Hubs
         /// <returns>A <see cref="T:System.Threading.Tasks.Task" /></returns>
         public override async Task OnConnected()
         {
-            var oneTimeTokenProvider = Startup.Container.GetInstance<OneTimeTokenProvider>();
+            var oneTimeTokenProvider = Global.Container.GetInstance<OneTimeTokenProvider>();
             var random = new Random();
             var code = await oneTimeTokenProvider.Generate(Context.ConnectionId,
                 TimeSpan.FromMinutes(10), OneTimeTokenPurpose.SteamLogin,

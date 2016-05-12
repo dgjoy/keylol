@@ -49,9 +49,9 @@ namespace Keylol.Services
         /// </summary>
         /// <param name="id">文章 ID</param>
         /// <param name="content">新的内容</param>
-        /// <param name="thumbnailImage">新的缩略图</param>
+        /// <param name="coverImage">新的封面图</param>
         /// <param name="rowVersion">参考 RowVersion</param>
-        public async Task UpdateArticle(string id, string content = null, string thumbnailImage = null,
+        public async Task UpdateArticle(string id, string content = null, string coverImage = null,
             byte[] rowVersion = null)
         {
             using (var dbContext = new KeylolDbContext())
@@ -63,8 +63,8 @@ namespace Keylol.Services
                     throw new FaultException("检测到文章已被编辑过，更新失败");
                 if (content != null)
                     article.Content = content;
-                if (thumbnailImage != null)
-                    article.ThumbnailImage = thumbnailImage;
+                if (coverImage != null)
+                    article.CoverImage = coverImage;
                 await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
             }
         }

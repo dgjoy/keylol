@@ -5,9 +5,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Keylol.States;
+using Keylol.Utilities;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Keylol.StateTreeManager
 {
@@ -47,6 +49,7 @@ namespace Keylol.StateTreeManager
                         : JsonConvert.SerializeObject(result, new JsonSerializerSettings
                         {
                             Converters = new List<JsonConverter> {new StringEnumConverter()},
+                            ContractResolver = new CamelCasePropertyNamesContractResolver(),
                             NullValueHandling = NullValueHandling.Ignore
                         }));
             }
@@ -76,7 +79,8 @@ namespace Keylol.StateTreeManager
 
             Func<Type, Task<PropertyInfo>> commitNextProperty = async nowType =>
             {
-                var nextPropertyName = nextPropertyNameBuilder.ToString();
+                var nextPropertyName = nextPropertyNameBuilder.ToString()
+                    .ToCase(NameConventionCase.DashedCase, NameConventionCase.PascalCase);
                 nextPropertyNameBuilder.Clear();
                 var nextProperty = nowType.GetProperty(nextPropertyName, BindingFlags.Instance | BindingFlags.Public);
                 if (nextProperty == null)
@@ -209,7 +213,7 @@ namespace Keylol.StateTreeManager
             {
                 if (parameter.GetCustomAttribute<InjectedAttribute>() != null)
                 {
-                    arguments.Add(StateTreeHelper.GetService(parameter.ParameterType));
+                    arguments.Add(Global.Container.GetInstance(parameter.ParameterType));
                 }
                 else
                 {

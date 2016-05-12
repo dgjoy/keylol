@@ -92,6 +92,10 @@
     <Compile Include="Migrations\201605110944526_PointAttributes.Designer.cs">
       <DependentUpon>201605110944526_PointAttributes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605121029076_RenameThumbnailImage.cs" />
+    <Compile Include="Migrations\201605121029076_RenameThumbnailImage.Designer.cs">
+      <DependentUpon>201605121029076_RenameThumbnailImage.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -667,6 +671,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605110944526_PointAttributes.resx">
       <DependentUpon>201605110944526_PointAttributes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605121029076_RenameThumbnailImage.resx">
+      <DependentUpon>201605121029076_RenameThumbnailImage.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

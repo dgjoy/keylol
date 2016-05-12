@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
-using Keylol.Provider;
 using Keylol.Services;
 using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;

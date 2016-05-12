@@ -36,6 +36,6 @@ namespace Keylol.Models.DTO
         ///     缩略图
         /// </summary>
         [DataMember]
-        public string ThumbnailImage { get; set; }
+        public string CoverImage { get; set; }
     }
 }

@@ -30,9 +30,9 @@ namespace Keylol.Hubs
         /// </summary>
         public override async Task OnConnected()
         {
-            var mqChannel = Startup.Container.GetInstance<MqClientProvider>().CreateModel();
+            var mqChannel = Global.Container.GetInstance<MqClientProvider>().CreateModel();
             MqChannels[Context.ConnectionId] = mqChannel;
-            var logger = Startup.Container.GetInstance<LogProvider<ReliableHub<TClient>>>().Logger;
+            var logger = Global.Container.GetInstance<LogProvider<ReliableHub<TClient>>>().Logger;
             var userId = Context.User.Identity.GetUserId();
             var queueName = MqClientProvider.ReliableNotificationQueue(userId, GetType().Name);
             mqChannel.QueueDeclare(queueName, true, false, false, null);

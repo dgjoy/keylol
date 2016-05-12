@@ -39,8 +39,8 @@ namespace Keylol.Models
         public string Content { get; set; }
 
         [Required(AllowEmptyStrings = true)]
-        [MaxLength(1024)]
-        public string ThumbnailImage { get; set; } = string.Empty;
+        [MaxLength(256)]
+        public string CoverImage { get; set; } = string.Empty;
 
         public bool DismissLikeMessage { get; set; } = false;
 

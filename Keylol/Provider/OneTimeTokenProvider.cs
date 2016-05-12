@@ -90,5 +90,10 @@ namespace Keylol.Provider
         /// 通过 Steam 登录
         /// </summary>
         public const string SteamLogin = "steam-login";
+
+        /// <summary>
+        /// 绑定 Steam 账户
+        /// </summary>
+        public const string SteamBinding = "steam-binding";
     }
 }

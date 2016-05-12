@@ -26,7 +26,7 @@ namespace Keylol.Identity
             OnValidateIdentity = async context =>
             {
                 if (!context.IsValidated) return;
-                var userManager = Startup.Container.GetInstance<KeylolUserManager>();
+                var userManager = Global.Container.GetInstance<KeylolUserManager>();
                 if (userManager.SupportsUserSecurityStamp)
                 {
                     // 检查 Security Stamp

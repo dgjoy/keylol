@@ -31,9 +31,9 @@ namespace Keylol.Services.Contracts
         /// </summary>
         /// <param name="id">文章 ID</param>
         /// <param name="content">新的内容</param>
-        /// <param name="thumbnailImage">新的缩略图</param>
+        /// <param name="coverImage">新的封面图</param>
         /// <param name="rowVersion">参考 RowVersion</param>
         [OperationContract]
-        Task UpdateArticle(string id, string content, string thumbnailImage, byte[] rowVersion);
+        Task UpdateArticle(string id, string content, string coverImage, byte[] rowVersion);
     }
 }

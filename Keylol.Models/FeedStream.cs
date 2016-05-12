@@ -1,9 +1,10 @@
-﻿namespace Keylol.Models
+﻿using System;
+
+namespace Keylol.Models
 {
     public static class SlideshowStream
     {
         public static string Name => "slideshow";
-        public static int Capacity => 30;
 
         public class FeedProperties
         {
@@ -20,18 +21,47 @@
     public static class SpotlightPointStream
     {
         public static string Name => "spotlight-point";
-        public static int Capacity => 150;
     }
 
-    public static class UserTimelineStream
+    public static class SpotlightArticleStream
     {
-        public static string Name(string userId) => $"u-{userId}";
-        public static int Capacity => 500;
-    }
+        public static string Name(ArticleCategory category)
+        {
+            switch (category)
+            {
+                case ArticleCategory.Review:
+                    return "spotlight-review";
 
-    public static class PointTimelineStream
-    {
-        public static string Name(string userId) => $"p-{userId}";
-        public static int Capacity => 500;
+                case ArticleCategory.Study:
+                    return "spotlight-study";
+
+                case ArticleCategory.Story:
+                    return "spotlight-story";
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(category), category, null);
+            }
+        }
+
+        /// <summary>
+        /// Spotlight Article 可选分类
+        /// </summary>
+        public enum ArticleCategory
+        {
+            /// <summary>
+            /// 评
+            /// </summary>
+            Review,
+
+            /// <summary>
+            /// 研
+            /// </summary>
+            Study,
+
+            /// <summary>
+            /// 谈
+            /// </summary>
+            Story
+        }
     }
 }

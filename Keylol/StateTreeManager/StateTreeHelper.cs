@@ -20,7 +20,7 @@ namespace Keylol.StateTreeManager
         /// <exception cref="ArgumentException">无法获取 <paramref name="propertyName"/> 指定的属性</exception>
         public static async Task<bool> CanAccessAsync<T>(string propertyName)
         {
-            var owinContext = Startup.Container.GetInstance<OwinContextProvider>().Current;
+            var owinContext = Global.Container.GetInstance<OwinContextProvider>().Current;
             var property = typeof(T).GetProperty(propertyName);
             if (property == null)
                 throw new ArgumentException("Invalid property name.", nameof(propertyName));
@@ -35,29 +35,10 @@ namespace Keylol.StateTreeManager
         }
 
         /// <summary>
-        /// 从容器获取一个 Service 实例
-        /// </summary>
-        /// <typeparam name="T">Service 类型</typeparam>
-        /// <returns>Service 实例</returns>
-        public static T GetService<T>() where T : class
-        {
-            return Startup.Container.GetInstance<T>();
-        }
-
-        /// <summary>
-        /// 从容器获取一个 Service 实例
-        /// </summary>
-        /// <param name="serviceType">Service 类型</param>
-        /// <returns>Service 实例</returns>
-        public static object GetService(Type serviceType)
-        {
-            return Startup.Container.GetInstance(serviceType);
-        }
-
-        /// <summary>
         /// 获取当前登录的用户
         /// </summary>
         /// <returns>当前用户 Principal</returns>
-        public static IPrincipal CurrentUser() => GetService<OwinContextProvider>().Current.Request.User;
+        public static IPrincipal CurrentUser()
+            => Global.Container.GetInstance<OwinContextProvider>().Current.Request.User;
     }
 }

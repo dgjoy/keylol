@@ -22,7 +22,7 @@ namespace Keylol.Identity.MessageServices
             var parts = message.Subject.Split(',');
             var botId = parts[0];
             var tempSilence = bool.Parse(parts[1]);
-            var dbContext = Startup.Container.GetInstance<KeylolDbContext>();
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
             var bot = await dbContext.SteamBots.FindAsync(botId);
             if (!bot.IsOnline())
                 return;
