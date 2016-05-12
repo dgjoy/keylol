@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
-using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.States.DiscoveryPage
@@ -74,8 +73,10 @@ namespace Keylol.States.DiscoveryPage
                     XboxPrice = p.XboxPrice,
                     PlayStationLink = p.PlayStationLink,
                     PlayStationPrice = p.PlayStationPrice,
-                    Subscribed = await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
-                        SubscriptionTargetType.Point)
+                    Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
+                            SubscriptionTargetType.Point)
                 });
             }
             return result;
@@ -175,6 +176,6 @@ namespace Keylol.States.DiscoveryPage
         /// <summary>
         /// 当前用户是否已订阅
         /// </summary>
-        public bool Subscribed { get; set; }
+        public bool? Subscribed { get; set; }
     }
 }

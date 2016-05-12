@@ -4,14 +4,28 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.StateTreeManager;
+using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.DiscoveryPage
 {
     /// <summary>
-    /// 发现页
+    /// 入口 - 发现
     /// </summary>
     public class DiscoveryPage
     {
+        /// <summary>
+        /// 获取“入口 - 发现”页面状态分支
+        /// </summary>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns>是日优惠据点列表</returns>
+        public static async Task<DiscoveryPage> Get([Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData)
+        {
+            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), dbContext, cachedData);
+        }
+
         /// <summary>
         /// 创建 <see cref="DiscoveryPage"/>
         /// </summary>
@@ -31,13 +45,13 @@ namespace Keylol.States.DiscoveryPage
                 SpotlightConferences = await SpotlightConferenceList.CreateAsync(dbContext),
                 SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId,
                     SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData),
-                SalesTodayHeaderImage = await (from feed in dbContext.Feeds
+                OnSalePointHeaderImage = await (from feed in dbContext.Feeds
                     where feed.StreamName == OnSalePointStream.Name
                     join point in dbContext.Points on feed.Entry equals point.Id
                     orderby feed.Id descending
                     select point.HeaderImage).FirstOrDefaultAsync(),
-                SalesTodayPageCount = await OnSalePointList.PageCountAsync(dbContext),
-                SalesToday = await OnSalePointList.CreateAsync(currentUserId, 1, dbContext, cachedData),
+                OnSalePointPageCount = await OnSalePointList.PageCountAsync(dbContext),
+                OnSalePoints = await OnSalePointList.CreateAsync(currentUserId, 1, dbContext, cachedData),
                 SpotlightStories = await SpotlightArticleList.CreateAsync(currentUserId,
                     SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData),
                 LatestArticlePageCount = await LatestArticleList.PageCountAsync(dbContext),
@@ -73,17 +87,17 @@ namespace Keylol.States.DiscoveryPage
         /// <summary>
         /// 是日优惠头部图
         /// </summary>
-        public string SalesTodayHeaderImage { get; set; }
+        public string OnSalePointHeaderImage { get; set; }
 
         /// <summary>
-        /// 是日优惠总数
+        /// 是日优惠总页数
         /// </summary>
-        public int SalesTodayPageCount { get; set; }
+        public int OnSalePointPageCount { get; set; }
 
         /// <summary>
         /// 是日优惠
         /// </summary>
-        public OnSalePointList SalesToday { get; set; }
+        public OnSalePointList OnSalePoints { get; set; }
 
         /// <summary>
         /// 精选谈论
@@ -91,7 +105,7 @@ namespace Keylol.States.DiscoveryPage
         public SpotlightArticleList SpotlightStories { get; set; }
 
         /// <summary>
-        /// 最新文章总数
+        /// 最新文章总页数
         /// </summary>
         public int LatestArticlePageCount { get; set; }
 

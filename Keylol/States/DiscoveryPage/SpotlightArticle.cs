@@ -62,7 +62,9 @@ namespace Keylol.States.DiscoveryPage
                     AuthorIdCode = a.AuthorIdCode,
                     AuthorAvatarImage = a.AuthorAvatarImage,
                     AuthorUserName = a.AuthorUserName,
-                    AuthorIsFriend = await cachedData.Users.IsFriend(currentUserId, a.AuthorId),
+                    AuthorIsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Users.IsFriend(currentUserId, a.AuthorId),
                     PublishTime = a.PublishTime,
                     SidForAuthor = a.SidForAuthor,
                     Title = a.Title,
@@ -72,10 +74,9 @@ namespace Keylol.States.DiscoveryPage
                     PointAvatarImage = a.PointAvatarImage,
                     PointChineseName = a.PointChineseName,
                     PointEnglishName = a.PointEnglishName,
-                    PointInLibrary =
-                        a.PointSteamAppId == null
-                            ? (bool?) null
-                            : await cachedData.Users.IsSteamAppInLibrary(currentUserId, a.PointSteamAppId.Value)
+                    PointInLibrary = string.IsNullOrWhiteSpace(currentUserId) || a.PointSteamAppId == null
+                        ? (bool?) null
+                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, a.PointSteamAppId.Value)
                 });
             }
             return result;

@@ -74,8 +74,9 @@ namespace Keylol.States.DiscoveryPage
                     AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
                     SteamPrice = p.SteamPrice,
                     SteamDiscountedPrice = p.SteamDiscountedPrice,
-                    InLibrary = p.SteamAppId != null &&
-                                await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
+                    InLibrary = currentUserId == null || p.SteamAppId == null
+                        ? (bool?) null
+                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
                 });
             }
             return result;
@@ -138,6 +139,6 @@ namespace Keylol.States.DiscoveryPage
         /// <summary>
         /// 是否已入库
         /// </summary>
-        public bool InLibrary { get; set; }
+        public bool? InLibrary { get; set; }
     }
 }

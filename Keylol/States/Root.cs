@@ -47,6 +47,11 @@ namespace Keylol.States
                         await States.DiscoveryPage.DiscoveryPage.CreateAsync(currentUserId, dbContext, cachedData);
                     break;
 
+                case "entrance.points":
+                    root.PointsPage =
+                        await States.PointsPage.PointsPage.CreateAsync(currentUserId, dbContext, cachedData);
+                    break;
+
                 default:
                     throw new NotSupportedException("Not supported state.");
             }
@@ -60,8 +65,13 @@ namespace Keylol.States
         public CurrentUser CurrentUser { get; set; }
 
         /// <summary>
-        /// 发现页
+        /// 入口 - 发现
         /// </summary>
         public DiscoveryPage.DiscoveryPage DiscoveryPage { get; set; }
+
+        /// <summary>
+        /// 入口 - 据点
+        /// </summary>
+        public PointsPage.PointsPage PointsPage { get; set; }
     }
 }
