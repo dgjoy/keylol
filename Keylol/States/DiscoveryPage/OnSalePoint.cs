@@ -33,7 +33,8 @@ namespace Keylol.States.DiscoveryPage
         public static async Task<OnSalePointList> Get(int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), page, dbContext, cachedData);
+            return (await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(),
+                page, false, false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
@@ -41,27 +42,35 @@ namespace Keylol.States.DiscoveryPage
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="page">分页页码</param>
+        /// <param name="returnPageCount">是否返回总页数</param>
+        /// <param name="returnFirstHeaderImage">是否返回第一个据点头部图</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns><see cref="OnSalePointList"/></returns>
-        public static async Task<OnSalePointList> CreateAsync(string currentUserId, int page, KeylolDbContext dbContext,
+        /// <returns>Item1 表示 <see cref="OnSalePointList"/>，Item2 表示总页数，Item3 表示第一个据点头部图</returns>
+        public static async Task<Tuple<OnSalePointList, int, string>> CreateAsync(string currentUserId, int page,
+            bool returnPageCount,
+            bool returnFirstHeaderImage, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            var queryResult = await (from feed in dbContext.Feeds
+            var conditionQuery = from feed in dbContext.Feeds
                 where feed.StreamName == OnSalePointStream.Name
                 join point in dbContext.Points on feed.Entry equals point.Id
                 orderby feed.Id descending
-                select new
-                {
-                    point.Id,
-                    point.IdCode,
-                    point.CapsuleImage,
-                    point.ChineseName,
-                    point.EnglishName,
-                    point.SteamPrice,
-                    point.SteamDiscountedPrice,
-                    point.SteamAppId
-                }).TakePage(page, RecordsPerPage).ToListAsync();
+                select point;
+            var queryResult = await conditionQuery.Select(point => new
+            {
+                TotalCount = returnPageCount ? conditionQuery.Count() : 1,
+                HeaderImage = returnFirstHeaderImage ? point.HeaderImage : null,
+                point.Id,
+                point.IdCode,
+                point.CapsuleImage,
+                point.ChineseName,
+                point.EnglishName,
+                point.SteamPrice,
+                point.SteamDiscountedPrice,
+                point.SteamAppId
+            }).TakePage(page, RecordsPerPage).ToListAsync();
+
             var result = new OnSalePointList(queryResult.Count);
             foreach (var p in queryResult)
             {
@@ -79,20 +88,11 @@ namespace Keylol.States.DiscoveryPage
                         : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
                 });
             }
-            return result;
-        }
-
-        /// <summary>
-        /// 获取总页数
-        /// </summary>
-        /// <returns>总页数</returns>
-        public static async Task<int> PageCountAsync(KeylolDbContext dbContext)
-        {
-            return (int) Math.Ceiling(await (from feed in dbContext.Feeds
-                where feed.StreamName == OnSalePointStream.Name
-                join point in dbContext.Points on feed.Entry equals point.Id
-                select feed)
-                .CountAsync()/(double) RecordsPerPage);
+            var firstRecord = queryResult.FirstOrDefault(r => !string.IsNullOrWhiteSpace(r.HeaderImage));
+            return new Tuple<OnSalePointList, int, string>(
+                result,
+                (int) Math.Ceiling(firstRecord?.TotalCount/(double) RecordsPerPage ?? 1),
+                firstRecord?.HeaderImage);
         }
     }
 

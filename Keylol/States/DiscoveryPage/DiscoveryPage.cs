@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
@@ -36,6 +34,8 @@ namespace Keylol.States.DiscoveryPage
         public static async Task<DiscoveryPage> CreateAsync(string currentUserId, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
+            var onSalePoints = await OnSalePointList.CreateAsync(currentUserId, 1, true, true, dbContext, cachedData);
+            var latestArticles = await LatestArticleList.CreateAsync(1, true, true, dbContext, cachedData);
             return new DiscoveryPage
             {
                 SlideshowEntries = await SlideshowEntryList.CreateAsync(dbContext),
@@ -45,17 +45,14 @@ namespace Keylol.States.DiscoveryPage
                 SpotlightConferences = await SpotlightConferenceList.CreateAsync(dbContext),
                 SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId,
                     SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData),
-                OnSalePointHeaderImage = await (from feed in dbContext.Feeds
-                    where feed.StreamName == OnSalePointStream.Name
-                    join point in dbContext.Points on feed.Entry equals point.Id
-                    orderby feed.Id descending
-                    select point.HeaderImage).FirstOrDefaultAsync(),
-                OnSalePointPageCount = await OnSalePointList.PageCountAsync(dbContext),
-                OnSalePoints = await OnSalePointList.CreateAsync(currentUserId, 1, dbContext, cachedData),
+                OnSalePointHeaderImage = onSalePoints.Item3,
+                OnSalePointPageCount = onSalePoints.Item2,
+                OnSalePoints = onSalePoints.Item1,
                 SpotlightStories = await SpotlightArticleList.CreateAsync(currentUserId,
                     SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData),
-                LatestArticlePageCount = await LatestArticleList.PageCountAsync(dbContext),
-                LatestArticles = await LatestArticleList.CreateAsync(1, dbContext, cachedData)
+                LatestArticleHeaderImage = latestArticles.Item3,
+                LatestArticlePageCount = latestArticles.Item2,
+                LatestArticles = latestArticles.Item1
             };
         }
 
@@ -103,6 +100,11 @@ namespace Keylol.States.DiscoveryPage
         /// 精选谈论
         /// </summary>
         public SpotlightArticleList SpotlightStories { get; set; }
+
+        /// <summary>
+        /// 最新文章头部图
+        /// </summary>
+        public string LatestArticleHeaderImage { get; set; }
 
         /// <summary>
         /// 最新文章总页数

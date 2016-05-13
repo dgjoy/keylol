@@ -32,38 +32,44 @@ namespace Keylol.States.DiscoveryPage
         public static async Task<LatestArticleList> Get(int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(page, dbContext, cachedData);
+            return (await CreateAsync(page, false, false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
         /// 创建 <see cref="LatestArticleList"/>
         /// </summary>
         /// <param name="page">分页页码</param>
+        /// <param name="returnPageCount">是否返回总页数</param>
+        /// <param name="returnFirstCoverImage">是否返回第一篇文章封面图</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns><see cref="LatestArticleList"/></returns>
-        public static async Task<LatestArticleList> CreateAsync(int page, KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+        /// <returns>Item1 表示 <see cref="LatestArticleList"/>，Item2 表示总页数，Item3 表示第一篇文章封面图</returns>
+        public static async Task<Tuple<LatestArticleList, int, string>> CreateAsync(int page, bool returnPageCount,
+            bool returnFirstCoverImage, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            var queryResult = await (from article in dbContext.Articles
+            var conditionQuery = from article in dbContext.Articles
                 where article.Rejected == false &&
                       article.Archived == ArchivedState.None &&
                       article.Deleted == DeletedState.None
                 orderby article.Sid descending
-                select new
-                {
-                    article.Id,
-                    article.SidForAuthor,
-                    article.Title,
-                    article.PublishTime,
-                    AuthorIdCode = article.Author.IdCode,
-                    AuthorAvatarImage = article.Author.AvatarImage,
-                    AuthorUserName = article.Author.UserName,
-                    PointIdCode = article.TargetPoint.IdCode,
-                    PointAvatarImage = article.TargetPoint.AvatarImage,
-                    PointChineseName = article.TargetPoint.ChineseName,
-                    PointEnglishName = article.TargetPoint.EnglishName
-                }).TakePage(page, RecordsPerPage).ToListAsync();
+                select article;
+            var queryResult = await conditionQuery.Select(a => new
+            {
+                TotalCount = returnPageCount ? conditionQuery.Count() : 1,
+                CoverImage = returnFirstCoverImage ? a.CoverImage : null,
+                a.Id,
+                a.SidForAuthor,
+                a.Title,
+                a.PublishTime,
+                AuthorIdCode = a.Author.IdCode,
+                AuthorAvatarImage = a.Author.AvatarImage,
+                AuthorUserName = a.Author.UserName,
+                PointIdCode = a.TargetPoint.IdCode,
+                PointAvatarImage = a.TargetPoint.AvatarImage,
+                PointChineseName = a.TargetPoint.ChineseName,
+                PointEnglishName = a.TargetPoint.EnglishName
+            }).TakePage(page, RecordsPerPage).ToListAsync();
+
             var result = new LatestArticleList(queryResult.Count);
             foreach (var a in queryResult)
             {
@@ -83,21 +89,11 @@ namespace Keylol.States.DiscoveryPage
                     PointEnglishName = a.PointEnglishName
                 });
             }
-            return result;
-        }
-
-        /// <summary>
-        /// 获取总页数
-        /// </summary>
-        /// <returns>总页数</returns>
-        public static async Task<int> PageCountAsync(KeylolDbContext dbContext)
-        {
-            return (int) Math.Ceiling(await (from article in dbContext.Articles
-                where article.Rejected == false &&
-                      article.Archived == ArchivedState.None &&
-                      article.Deleted == DeletedState.None
-                select article)
-                .CountAsync()/(double) RecordsPerPage);
+            var firstRecord = queryResult.FirstOrDefault(r => !string.IsNullOrWhiteSpace(r.CoverImage));
+            return new Tuple<LatestArticleList, int, string>(
+                result,
+                (int) Math.Ceiling(firstRecord?.TotalCount/(double) RecordsPerPage ?? 1),
+                firstRecord?.CoverImage);
         }
     }
 
