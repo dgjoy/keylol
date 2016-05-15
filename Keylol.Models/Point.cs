@@ -51,10 +51,6 @@ namespace Keylol.Models
         public string HeaderImage { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
-        [MaxLength(256)]
-        public string InboxHeaderImage { get; set; } = string.Empty;
-
-        [Required(AllowEmptyStrings = true)]
         [MaxLength(10000)]
         public string Description { get; set; } = string.Empty;
 
@@ -137,7 +133,11 @@ namespace Keylol.Models
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
-        public string CapsuleImage { get; set; } = string.Empty;
+        public string TitleCoverImage { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string ThumbnailImage { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]

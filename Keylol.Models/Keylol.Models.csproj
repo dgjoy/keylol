@@ -100,6 +100,10 @@
     <Compile Include="Migrations\201605121721303_DiscountedPrice.Designer.cs">
       <DependentUpon>201605121721303_DiscountedPrice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605131204380_PointImages.cs" />
+    <Compile Include="Migrations\201605131204380_PointImages.Designer.cs">
+      <DependentUpon>201605131204380_PointImages.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -680,6 +684,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605121721303_DiscountedPrice.resx">
       <DependentUpon>201605121721303_DiscountedPrice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605131204380_PointImages.resx">
+      <DependentUpon>201605131204380_PointImages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

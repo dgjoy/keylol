@@ -69,4 +69,9 @@ namespace Keylol.Models
     {
         public static string Name => "on-sale-point";
     }
+
+    public static class OutpostStream
+    {
+        public static string Name => "outpost";
+    }
 }

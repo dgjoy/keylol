@@ -57,18 +57,18 @@ namespace Keylol.States.DiscoveryPage
                 join point in dbContext.Points on feed.Entry equals point.Id
                 orderby feed.Id descending
                 select point;
-            var queryResult = await conditionQuery.Select(point => new
+            var queryResult = await conditionQuery.Select(p => new
             {
                 TotalCount = returnPageCount ? conditionQuery.Count() : 1,
-                HeaderImage = returnFirstHeaderImage ? point.HeaderImage : null,
-                point.Id,
-                point.IdCode,
-                point.CapsuleImage,
-                point.ChineseName,
-                point.EnglishName,
-                point.SteamPrice,
-                point.SteamDiscountedPrice,
-                point.SteamAppId
+                HeaderImage = returnFirstHeaderImage ? p.HeaderImage : null,
+                p.Id,
+                p.IdCode,
+                p.ThumbnailImage,
+                p.ChineseName,
+                p.EnglishName,
+                p.SteamPrice,
+                p.SteamDiscountedPrice,
+                p.SteamAppId
             }).TakePage(page, RecordsPerPage).ToListAsync();
 
             var result = new OnSalePointList(queryResult.Count);
@@ -77,13 +77,13 @@ namespace Keylol.States.DiscoveryPage
                 result.Add(new OnSalePoint
                 {
                     IdCode = p.IdCode,
-                    CapsuleImage = p.CapsuleImage,
+                    ThumbnailImage = p.ThumbnailImage,
                     ChineseName = p.ChineseName,
                     EnglishName = p.EnglishName,
                     AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
                     SteamPrice = p.SteamPrice,
                     SteamDiscountedPrice = p.SteamDiscountedPrice,
-                    InLibrary = currentUserId == null || p.SteamAppId == null
+                    InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
                         ? (bool?) null
                         : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
                 });
@@ -107,9 +107,9 @@ namespace Keylol.States.DiscoveryPage
         public string IdCode { get; set; }
 
         /// <summary>
-        /// 胶囊图
+        /// 缩略图
         /// </summary>
-        public string CapsuleImage { get; set; }
+        public string ThumbnailImage { get; set; }
 
         /// <summary>
         /// 中文名

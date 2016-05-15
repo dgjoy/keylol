@@ -76,7 +76,10 @@ namespace Keylol.States.DiscoveryPage
                     Subscribed = string.IsNullOrWhiteSpace(currentUserId)
                         ? (bool?) null
                         : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
-                            SubscriptionTargetType.Point)
+                            SubscriptionTargetType.Point),
+                    InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
+                        ? (bool?) null
+                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
                 });
             }
             return result;
@@ -177,5 +180,10 @@ namespace Keylol.States.DiscoveryPage
         /// 当前用户是否已订阅
         /// </summary>
         public bool? Subscribed { get; set; }
+
+        /// <summary>
+        /// 是否已入库
+        /// </summary>
+        public bool? InLibrary { get; set; }
     }
 }

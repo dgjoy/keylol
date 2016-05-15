@@ -252,6 +252,7 @@
     <Compile Include="States\DiscoveryPage\SpotlightArticle.cs" />
     <Compile Include="States\DiscoveryPage\SpotlightConference.cs" />
     <Compile Include="States\DiscoveryPage\SpotlightPoint.cs" />
+    <Compile Include="States\PointsPage\OutpostPoint.cs" />
     <Compile Include="States\PointsPage\PointsPage.cs" />
     <Compile Include="States\Root.cs" />
     <Compile Include="StateTreeManager\AppBuilderExtensions.cs" />
