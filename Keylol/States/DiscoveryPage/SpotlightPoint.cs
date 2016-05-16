@@ -9,7 +9,7 @@ using Keylol.Provider.CachedDataProvider;
 namespace Keylol.States.DiscoveryPage
 {
     /// <summary>
-    /// Spotlight Point List
+    /// 精选据点列表
     /// </summary>
     public class SpotlightPointList : List<SpotlightPoint>
     {
@@ -48,14 +48,15 @@ namespace Keylol.States.DiscoveryPage
                     point.UplayPrice,
                     point.XboxLink,
                     point.XboxPrice,
-                    point.PlayStationPrice,
-                    point.PlayStationLink
+                    point.PlayStationLink,
+                    point.PlayStationPrice
                 }).Take(30).ToListAsync();
             var result = new SpotlightPointList(queryResult.Count);
             foreach (var p in queryResult)
             {
                 result.Add(new SpotlightPoint
                 {
+                    Id = p.Id,
                     IdCode = p.IdCode,
                     AvatarImage = p.AvatarImage,
                     EnglishName = p.EnglishName,
@@ -87,10 +88,15 @@ namespace Keylol.States.DiscoveryPage
     }
 
     /// <summary>
-    /// Spotlight Point
+    /// 精选据点
     /// </summary>
     public class SpotlightPoint
     {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// 识别码
         /// </summary>

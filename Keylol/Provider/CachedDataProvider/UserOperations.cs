@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
 
@@ -66,6 +69,17 @@ namespace Keylol.Provider.CachedDataProvider
             }
             await redisDb.KeyExpireAsync(cacheKey, CachedDataProvider.DefaultTtl);
             return await redisDb.SetContainsAsync(cacheKey, steamAppId);
+        }
+
+        /// <summary>
+        /// 清除指定用户的 Steam App 库缓存
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        public async Task PurgeSteamAppLibraryCacheAsync([NotNull] string userId)
+        {
+            if (userId == null)
+                throw new ArgumentNullException(nameof(userId));
+            await _redis.GetDatabase().KeyDeleteAsync(UserSteamAppLibraryCacheKey(userId));
         }
     }
 }

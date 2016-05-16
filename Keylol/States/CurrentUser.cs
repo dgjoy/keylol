@@ -40,6 +40,9 @@ namespace Keylol.States
                 }
             }
 
+            // 游戏记录更新
+            UserGameRecordProvider.UpdateUser(user.Id);
+
             return new CurrentUser
             {
                 UserName = user.UserName,

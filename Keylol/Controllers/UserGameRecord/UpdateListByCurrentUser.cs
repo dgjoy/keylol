@@ -76,6 +76,7 @@ namespace Keylol.Controllers.UserGameRecord
                         var games = JArray.Parse(trimed.Substring(0, trimed.Length - 1));
                         foreach (var game in games)
                         {
+                            // game["hours"] 两周游戏时间
                             var appId = (int) game["appid"];
 
                             double totalPlayedTime = 0;

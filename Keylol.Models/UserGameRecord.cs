@@ -20,6 +20,9 @@ namespace Keylol.Models
         public double TotalPlayedTime { get; set; } = 0;
 
         [Index]
+        public double TwoWeekPlayedTime { get; set; } = 0;
+
+        [Index]
         public DateTime LastPlayTime { get; set; } = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
     }
 }

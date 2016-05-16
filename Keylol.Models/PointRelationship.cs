@@ -20,12 +20,12 @@ namespace Keylol.Models
         [Required]
         public string SourcePointId { get; set; }
 
-        public Point SourcePoint { get; set; }
+        public virtual Point SourcePoint { get; set; }
 
         [Required]
         public string TargetPointId { get; set; }
 
-        public Point TargetPoint { get; set; }
+        public virtual Point TargetPoint { get; set; }
     }
 
     public enum PointRelationshipType

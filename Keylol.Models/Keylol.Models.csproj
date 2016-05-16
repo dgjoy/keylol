@@ -104,6 +104,10 @@
     <Compile Include="Migrations\201605131204380_PointImages.Designer.cs">
       <DependentUpon>201605131204380_PointImages.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605160626523_TwoWeekPlayedTime.cs" />
+    <Compile Include="Migrations\201605160626523_TwoWeekPlayedTime.Designer.cs">
+      <DependentUpon>201605160626523_TwoWeekPlayedTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -687,6 +691,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605131204380_PointImages.resx">
       <DependentUpon>201605131204380_PointImages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605160626523_TwoWeekPlayedTime.resx">
+      <DependentUpon>201605160626523_TwoWeekPlayedTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

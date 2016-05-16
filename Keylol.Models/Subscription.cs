@@ -17,7 +17,7 @@ namespace Keylol.Models
         [Required]
         public string SubscriberId { get; set; }
 
-        public KeylolUser Subscriber { get; set; }
+        public virtual KeylolUser Subscriber { get; set; }
 
         public SubscriptionTargetType TargetType { get; set; }
 

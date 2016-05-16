@@ -106,6 +106,8 @@ namespace Keylol
                 return new RetryPolicy<SoapFaultWebServiceTransientErrorDetectionStrategy>(strategy);
             });
 
+            Container.RegisterPerOwinRequest<UserGameRecordProvider>();
+
             // HttpConfiguration / Web API Controllers
             var httpConfiguration = new HttpConfiguration();
             Container.RegisterWebApiControllers(httpConfiguration);

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.States.PointsPage
 {
@@ -19,19 +17,99 @@ namespace Keylol.States.PointsPage
         {
         }
 
-        public static async Task<OutpostPointList> CreateAsync(KeylolDbContext dbContext)
+        /// <summary>
+        /// 创建 <see cref="OutpostPointList"/>
+        /// </summary>
+        /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="OutpostPointList"/></returns>
+        public static async Task<OutpostPointList> CreateAsync(string currentUserId, KeylolDbContext dbContext,
+            CachedDataProvider cachedData)
         {
-            return new OutpostPointList(2);
-//            var queryResult = await (from feed in dbContext.Feeds
-//                where feed.StreamName == OutpostStream.Name
-//                join point in dbContext.Points on feed.Entry equals point.Id
-//                orderby feed.Id descending
-//                select new
-//                {
-//                    point.ChineseName
-//                })
-//                .Take(15)
-//                .ToListAsync();
+            var queryResult = await (from feed in dbContext.Feeds
+                where feed.StreamName == OutpostStream.Name
+                join point in dbContext.Points on feed.Entry equals point.Id
+                orderby feed.Id descending
+                select new
+                {
+                    point.Id,
+                    point.IdCode,
+                    point.AvatarImage,
+                    point.ChineseName,
+                    point.EnglishName,
+                    point.TitleCoverImage,
+                    point.MultiPlayer,
+                    point.SinglePlayer,
+                    point.Coop,
+                    point.CaptionsAvailable,
+                    point.CommentaryAvailable,
+                    point.IncludeLevelEditor,
+                    point.Achievements,
+                    point.Cloud,
+                    point.LocalCoop,
+                    point.SteamTradingCards,
+                    point.SteamWorkshop,
+                    point.SteamAppId,
+                    point.SteamPrice,
+                    point.SteamDiscountedPrice,
+                    point.SonkwoProductId,
+                    point.SonkwoPrice,
+                    point.SonkwoDiscountedPrice,
+                    point.UplayLink,
+                    point.UplayPrice,
+                    point.XboxLink,
+                    point.XboxPrice,
+                    point.PlayStationLink,
+                    point.PlayStationPrice
+                })
+                .Take(15)
+                .ToListAsync();
+            var result = new OutpostPointList(queryResult.Count);
+            foreach (var p in queryResult)
+            {
+                result.Add(new OutpostPoint
+                {
+                    Id = p.Id,
+                    IdCode = p.IdCode,
+                    AvatarImage = p.AvatarImage,
+                    ChineseName = p.ChineseName,
+                    EnglishName = p.EnglishName,
+                    AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
+                    TitleCoverImage = p.TitleCoverImage,
+                    MultiPlayer = p.MultiPlayer,
+                    SinglePlayer = p.SinglePlayer,
+                    Coop = p.Coop,
+                    CaptionsAvailable = p.CaptionsAvailable,
+                    CommentaryAvailable = p.CommentaryAvailable,
+                    IncludeLevelEditor = p.IncludeLevelEditor,
+                    Achievements = p.Achievements,
+                    Cloud = p.Cloud,
+                    LocalCoop = p.LocalCoop,
+                    SteamTradingCards = p.SteamTradingCards,
+                    SteamWorkshop = p.SteamWorkshop,
+                    SteamAppId = p.SteamAppId,
+                    SteamPrice = p.SteamPrice,
+                    SteamDiscountedPrice = p.SteamDiscountedPrice,
+                    SonkwoProductId = p.SonkwoProductId,
+                    SonkwoPrice = p.SonkwoPrice,
+                    SonkwoDiscountedPrice = p.SonkwoDiscountedPrice,
+                    UplayLink = p.UplayLink,
+                    UplayPrice = p.UplayPrice,
+                    XboxLink = p.XboxLink,
+                    XboxPrice = p.XboxPrice,
+                    PlayStationLink = p.PlayStationLink,
+                    PlayStationPrice = p.PlayStationPrice,
+                    Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
+                            SubscriptionTargetType.Point),
+                    InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
+                        ? (bool?) null
+                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
+                });
+            }
+            return result;
         }
     }
 
@@ -40,6 +118,11 @@ namespace Keylol.States.PointsPage
     /// </summary>
     public class OutpostPoint
     {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// 识别码
         /// </summary>

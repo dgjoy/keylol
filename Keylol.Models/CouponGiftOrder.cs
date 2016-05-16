@@ -15,12 +15,12 @@ namespace Keylol.Models
         [Required]
         public string UserId { get; set; }
 
-        public KeylolUser User { get; set; }
+        public virtual KeylolUser User { get; set; }
 
         [Required]
         public string GiftId { get; set; }
 
-        public CouponGift Gift { get; set; }
+        public virtual CouponGift Gift { get; set; }
 
         [Index]
         public DateTime RedeemTime { get; set; } = DateTime.Now;
