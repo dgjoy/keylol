@@ -85,6 +85,30 @@ namespace Keylol.Models
 
         public double? PlayStationPrice { get; set; }
 
+        public string OriginLink { get; set; }
+
+        public double? OriginPrice { get; set; }
+
+        public string WindowsStoreLink { get; set; }
+
+        public double? WindowsStorePrice { get; set; }
+
+        public string AppStoreLink { get; set; }
+
+        public double? AppStorePrice { get; set; }
+
+        public string GooglePlayLink { get; set; }
+
+        public double? GooglePlayPrice { get; set; }
+
+        public string GogLink { get; set; }
+
+        public double? GogPrice { get; set; }
+
+        public string BattleNetLink { get; set; }
+
+        public double? BattleNetPrice { get; set; }
+
         #endregion
 
         #region 特性属性

@@ -108,6 +108,10 @@
     <Compile Include="Migrations\201605160626523_TwoWeekPlayedTime.Designer.cs">
       <DependentUpon>201605160626523_TwoWeekPlayedTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605161155022_MoreGamePlatform.cs" />
+    <Compile Include="Migrations\201605161155022_MoreGamePlatform.Designer.cs">
+      <DependentUpon>201605161155022_MoreGamePlatform.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -694,6 +698,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605160626523_TwoWeekPlayedTime.resx">
       <DependentUpon>201605160626523_TwoWeekPlayedTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605161155022_MoreGamePlatform.resx">
+      <DependentUpon>201605161155022_MoreGamePlatform.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

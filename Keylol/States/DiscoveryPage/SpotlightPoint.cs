@@ -49,7 +49,19 @@ namespace Keylol.States.DiscoveryPage
                     point.XboxLink,
                     point.XboxPrice,
                     point.PlayStationLink,
-                    point.PlayStationPrice
+                    point.PlayStationPrice,
+                    point.OriginLink,
+                    point.OriginPrice,
+                    point.WindowsStoreLink,
+                    point.WindowsStorePrice,
+                    point.AppStoreLink,
+                    point.AppStorePrice,
+                    point.GooglePlayLink,
+                    point.GooglePlayPrice,
+                    point.GogLink,
+                    point.GogPrice,
+                    point.BattleNetLink,
+                    point.BattleNetPrice
                 }).Take(30).ToListAsync();
             var result = new SpotlightPointList(queryResult.Count);
             foreach (var p in queryResult)
@@ -74,6 +86,18 @@ namespace Keylol.States.DiscoveryPage
                     XboxPrice = p.XboxPrice,
                     PlayStationLink = p.PlayStationLink,
                     PlayStationPrice = p.PlayStationPrice,
+                    OriginLink = p.OriginLink,
+                    OriginPrice = p.OriginPrice,
+                    WindowsStoreLink = p.WindowsStoreLink,
+                    WindowsStorePrice =p.WindowsStorePrice,
+                    AppStoreLink=p.AppStoreLink,
+                    AppStorePrice=p.AppStorePrice,
+                    GooglePlayLink = p.GooglePlayLink,
+                    GooglePlayPrice = p.GooglePlayPrice,
+                    GogLink = p.GogLink,
+                    GogPrice = p.GogPrice,
+                    BattleNetLink = p.BattleNetLink,
+                    BattleNetPrice = p.BattleNetPrice,
                     Subscribed = string.IsNullOrWhiteSpace(currentUserId)
                         ? (bool?) null
                         : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
@@ -181,6 +205,66 @@ namespace Keylol.States.DiscoveryPage
         /// PlayStation 价格
         /// </summary>
         public double? PlayStationPrice { get; set; }
+
+        /// <summary>
+        /// Origin 链接
+        /// </summary>
+        public string OriginLink { get; set; }
+
+        /// <summary>
+        /// Origin 价格
+        /// </summary>
+        public double? OriginPrice { get; set; }
+
+        /// <summary>
+        /// Windows Store 链接
+        /// </summary>
+        public string WindowsStoreLink { get; set; }
+
+        /// <summary>
+        /// Windows Store 价格
+        /// </summary>
+        public double? WindowsStorePrice { get; set; }
+
+        /// <summary>
+        /// App Store 链接
+        /// </summary>
+        public string AppStoreLink { get; set; }
+
+        /// <summary>
+        /// App Store 价格
+        /// </summary>
+        public double? AppStorePrice { get; set; }
+
+        /// <summary>
+        /// Google Play 链接
+        /// </summary>
+        public string GooglePlayLink { get; set; }
+
+        /// <summary>
+        /// Google Play 价格
+        /// </summary>
+        public double? GooglePlayPrice { get; set; }
+
+        /// <summary>
+        /// Gog 链接
+        /// </summary>
+        public string GogLink { get; set; }
+
+        /// <summary>
+        /// GOG 价格
+        /// </summary>
+        public double? GogPrice { get; set; }
+
+        /// <summary>
+        /// 战网链接
+        /// </summary>
+        public string BattleNetLink { get; set; }
+
+        /// <summary>
+        /// 战网价格
+        /// </summary>
+        public double? BattleNetPrice { get; set; }
 
         /// <summary>
         /// 当前用户是否已订阅
