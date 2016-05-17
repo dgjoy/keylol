@@ -5,7 +5,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.DiscoveryPage
+namespace Keylol.States.Entrance.DiscoveryPage
 {
     /// <summary>
     /// 入口 - 发现
@@ -17,7 +17,7 @@ namespace Keylol.States.DiscoveryPage
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns>是日优惠据点列表</returns>
+        /// <returns><see cref="DiscoveryPage"/></returns>
         public static async Task<DiscoveryPage> Get([Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {

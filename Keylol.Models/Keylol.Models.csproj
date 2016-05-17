@@ -112,6 +112,10 @@
     <Compile Include="Migrations\201605161155022_MoreGamePlatform.Designer.cs">
       <DependentUpon>201605161155022_MoreGamePlatform.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605171252240_RemoveLastUpdateTime.cs" />
+    <Compile Include="Migrations\201605171252240_RemoveLastUpdateTime.Designer.cs">
+      <DependentUpon>201605171252240_RemoveLastUpdateTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -701,6 +705,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605161155022_MoreGamePlatform.resx">
       <DependentUpon>201605161155022_MoreGamePlatform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605171252240_RemoveLastUpdateTime.resx">
+      <DependentUpon>201605171252240_RemoveLastUpdateTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

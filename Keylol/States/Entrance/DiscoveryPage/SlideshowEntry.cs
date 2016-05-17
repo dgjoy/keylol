@@ -7,7 +7,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Newtonsoft.Json;
 
-namespace Keylol.States.DiscoveryPage
+namespace Keylol.States.Entrance.DiscoveryPage
 {
     /// <summary>
     /// 滑动展柜内容列表

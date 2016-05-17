@@ -6,29 +6,29 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 
-namespace Keylol.States.DiscoveryPage
+namespace Keylol.States.Entrance.PointsPage
 {
     /// <summary>
-    /// 精选据点列表
+    /// 哨所据点列表
     /// </summary>
-    public class SpotlightPointList : List<SpotlightPoint>
+    public class OutpostPointList : List<OutpostPoint>
     {
-        private SpotlightPointList(int capacity) : base(capacity)
+        private OutpostPointList(int capacity) : base(capacity)
         {
         }
 
         /// <summary>
-        /// 创建 <see cref="SpotlightPointList"/>
+        /// 创建 <see cref="OutpostPointList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns><see cref="SpotlightPointList"/></returns>
-        public static async Task<SpotlightPointList> CreateAsync(string currentUserId, KeylolDbContext dbContext,
+        /// <returns><see cref="OutpostPointList"/></returns>
+        public static async Task<OutpostPointList> CreateAsync(string currentUserId, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
             var queryResult = await (from feed in dbContext.Feeds
-                where feed.StreamName == SpotlightPointStream.Name
+                where feed.StreamName == OutpostStream.Name
                 join point in dbContext.Points on feed.Entry equals point.Id
                 orderby feed.Id descending
                 select new
@@ -36,8 +36,20 @@ namespace Keylol.States.DiscoveryPage
                     point.Id,
                     point.IdCode,
                     point.AvatarImage,
-                    point.EnglishName,
                     point.ChineseName,
+                    point.EnglishName,
+                    point.TitleCoverImage,
+                    point.MultiPlayer,
+                    point.SinglePlayer,
+                    point.Coop,
+                    point.CaptionsAvailable,
+                    point.CommentaryAvailable,
+                    point.IncludeLevelEditor,
+                    point.Achievements,
+                    point.Cloud,
+                    point.LocalCoop,
+                    point.SteamTradingCards,
+                    point.SteamWorkshop,
                     point.SteamAppId,
                     point.SteamPrice,
                     point.SteamDiscountedPrice,
@@ -62,18 +74,32 @@ namespace Keylol.States.DiscoveryPage
                     point.GogPrice,
                     point.BattleNetLink,
                     point.BattleNetPrice
-                }).Take(30).ToListAsync();
-            var result = new SpotlightPointList(queryResult.Count);
+                })
+                .Take(15)
+                .ToListAsync();
+            var result = new OutpostPointList(queryResult.Count);
             foreach (var p in queryResult)
             {
-                result.Add(new SpotlightPoint
+                result.Add(new OutpostPoint
                 {
                     Id = p.Id,
                     IdCode = p.IdCode,
                     AvatarImage = p.AvatarImage,
-                    EnglishName = p.EnglishName,
                     ChineseName = p.ChineseName,
+                    EnglishName = p.EnglishName,
                     AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
+                    TitleCoverImage = p.TitleCoverImage,
+                    MultiPlayer = p.MultiPlayer,
+                    SinglePlayer = p.SinglePlayer,
+                    Coop = p.Coop ? p.Coop : (bool?) null,
+                    CaptionsAvailable = p.CaptionsAvailable ? true : (bool?) null,
+                    CommentaryAvailable = p.CommentaryAvailable ? true : (bool?) null,
+                    IncludeLevelEditor = p.IncludeLevelEditor ? true : (bool?) null,
+                    Achievements = p.Achievements ? true : (bool?) null,
+                    Cloud = p.Cloud ? true : (bool?) null,
+                    LocalCoop = p.LocalCoop ? true : (bool?) null,
+                    SteamTradingCards = p.SteamTradingCards ? true : (bool?) null,
+                    SteamWorkshop = p.SteamWorkshop ? true : (bool?) null,
                     SteamAppId = p.SteamAppId,
                     SteamPrice = p.SteamPrice,
                     SteamDiscountedPrice = p.SteamDiscountedPrice,
@@ -89,9 +115,9 @@ namespace Keylol.States.DiscoveryPage
                     OriginLink = p.OriginLink,
                     OriginPrice = p.OriginPrice,
                     WindowsStoreLink = p.WindowsStoreLink,
-                    WindowsStorePrice =p.WindowsStorePrice,
-                    AppStoreLink=p.AppStoreLink,
-                    AppStorePrice=p.AppStorePrice,
+                    WindowsStorePrice = p.WindowsStorePrice,
+                    AppStoreLink = p.AppStoreLink,
+                    AppStorePrice = p.AppStorePrice,
                     GooglePlayLink = p.GooglePlayLink,
                     GooglePlayPrice = p.GooglePlayPrice,
                     GogLink = p.GogLink,
@@ -112,9 +138,9 @@ namespace Keylol.States.DiscoveryPage
     }
 
     /// <summary>
-    /// 精选据点
+    /// 哨所据点
     /// </summary>
-    public class SpotlightPoint
+    public class OutpostPoint
     {
         /// <summary>
         /// ID
@@ -132,19 +158,83 @@ namespace Keylol.States.DiscoveryPage
         public string AvatarImage { get; set; }
 
         /// <summary>
-        /// 英文名
-        /// </summary>
-        public string EnglishName { get; set; }
-
-        /// <summary>
         /// 中文名
         /// </summary>
         public string ChineseName { get; set; }
 
         /// <summary>
+        /// 英文名
+        /// </summary>
+        public string EnglishName { get; set; }
+
+        /// <summary>
         /// 平均评分
         /// </summary>
         public double? AverageRating { get; set; }
+
+        /// <summary>
+        /// 标题封面
+        /// </summary>
+        public string TitleCoverImage { get; set; }
+
+        #region 特性属性
+
+        /// <summary>
+        /// 多人游戏
+        /// </summary>
+        public bool? MultiPlayer { get; set; }
+
+        /// <summary>
+        /// 单人游戏
+        /// </summary>
+        public bool? SinglePlayer { get; set; }
+
+        /// <summary>
+        /// 合作
+        /// </summary>
+        public bool? Coop { get; set; }
+
+        /// <summary>
+        /// 视听字幕
+        /// </summary>
+        public bool? CaptionsAvailable { get; set; }
+
+        /// <summary>
+        /// 旁白解说
+        /// </summary>
+        public bool? CommentaryAvailable { get; set; }
+
+        /// <summary>
+        /// 关卡客制化
+        /// </summary>
+        public bool? IncludeLevelEditor { get; set; }
+
+        /// <summary>
+        /// 成就系统
+        /// </summary>
+        public bool? Achievements { get; set; }
+
+        /// <summary>
+        /// 云存档
+        /// </summary>
+        public bool? Cloud { get; set; }
+
+        /// <summary>
+        /// 本地多人
+        /// </summary>
+        public bool? LocalCoop { get; set; }
+
+        /// <summary>
+        /// Steam 卡牌
+        /// </summary>
+        public bool? SteamTradingCards { get; set; }
+
+        /// <summary>
+        /// Steam 创意工坊
+        /// </summary>
+        public bool? SteamWorkshop { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Steam App ID

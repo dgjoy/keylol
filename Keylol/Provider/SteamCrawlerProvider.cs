@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Models.DTO;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
 using Keylol.Services;
@@ -17,42 +18,48 @@ using SteamKit2;
 namespace Keylol.Provider
 {
     /// <summary>
-    /// 提供用户游戏记录操作服务
+    /// 提供 Steam 爬虫服务
     /// </summary>
-    public class UserGameRecordProvider
+    public class SteamCrawlerProvider
     {
         private readonly KeylolDbContext _dbContext;
         private readonly KeylolUserManager _userManager;
         private readonly CachedDataProvider.CachedDataProvider _cachedData;
+        private readonly RedisProvider _redis;
+
+        private static string UserGameRecordsCrawlerStampCacheKey(string userId)
+            => $"crawler-stamp:user-game-records:{userId}";
 
         /// <summary>
-        /// 创建 <see cref="UserGameRecordProvider"/>
+        /// 创建 <see cref="SteamCrawlerProvider"/>
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        public UserGameRecordProvider(KeylolDbContext dbContext, KeylolUserManager userManager,
-            CachedDataProvider.CachedDataProvider cachedData)
+        /// <param name="redis"><see cref="RedisProvider"/></param>
+        public SteamCrawlerProvider(KeylolDbContext dbContext, KeylolUserManager userManager,
+            CachedDataProvider.CachedDataProvider cachedData, RedisProvider redis)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _cachedData = cachedData;
+            _redis = redis;
         }
 
         /// <summary>
         /// 异步重新抓取指定用户的游戏记录 (fire-and-forget)
         /// </summary>
         /// <param name="userId">用户 ID</param>
-        public static void UpdateUser(string userId)
+        public static void UpdateUserGameRecords(string userId)
         {
             Task.Run(async () =>
             {
                 using (var dbContext = new KeylolDbContext())
                 using (var userManager = new KeylolUserManager(dbContext))
                 {
-                    await UpdateUserAsync(userId, dbContext, userManager,
-                        new CachedDataProvider.CachedDataProvider(dbContext,
-                            Global.Container.GetInstance<RedisProvider>()));
+                    var redis = Global.Container.GetInstance<RedisProvider>();
+                    await UpdateUserGameRecordsAsync(userId, dbContext, userManager, redis,
+                        new CachedDataProvider.CachedDataProvider(dbContext, redis));
                 }
             });
         }
@@ -62,23 +69,25 @@ namespace Keylol.Provider
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>如果抓取成功，返回 <c>true</c></returns>
-        public async Task<bool> UpdateUserAsync(string userId)
+        public async Task<bool> UpdateUserGameRecordsAsync(string userId)
         {
-            return await UpdateUserAsync(userId, _dbContext, _userManager, _cachedData);
+            return await UpdateUserGameRecordsAsync(userId, _dbContext, _userManager, _redis, _cachedData);
         }
 
-        private static async Task<bool> UpdateUserAsync(string userId, KeylolDbContext dbContext,
-            KeylolUserManager userManager, CachedDataProvider.CachedDataProvider cachedData)
+        private static async Task<bool> UpdateUserGameRecordsAsync(string userId, KeylolDbContext dbContext,
+            KeylolUserManager userManager, RedisProvider redis, CachedDataProvider.CachedDataProvider cachedData)
         {
-            var user = await userManager.FindByIdAsync(userId);
-            if (user.LastGameUpdateSucceed && DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromDays(3))
+            var cacheKey = UserGameRecordsCrawlerStampCacheKey(userId);
+            var redisDb = redis.GetDatabase();
+            var cacheResult = await redisDb.StringGetAsync(cacheKey);
+            if (cacheResult.HasValue)
                 return false;
 
-            user.LastGameUpdateTime = DateTime.Now;
-            user.LastGameUpdateSucceed = true;
-            await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(3));
+
             try
             {
+                var user = await userManager.FindByIdAsync(userId);
                 var steamId = new SteamID();
                 steamId.SetFromSteam3String(await userManager.GetSteamIdAsync(user.Id));
                 string allGamesHtml;
@@ -128,8 +137,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                user.LastGameUpdateSucceed = false;
-                await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+                await redisDb.KeyDeleteAsync(cacheKey);
                 return false;
             }
         }

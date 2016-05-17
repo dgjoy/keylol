@@ -7,7 +7,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 
-namespace Keylol.States.PointsPage
+namespace Keylol.States.Entrance.PointsPage
 {
     /// <summary>
     /// 最近玩过的游戏对应据点列表

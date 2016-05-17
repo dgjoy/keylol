@@ -41,7 +41,7 @@ namespace Keylol.States
             }
 
             // 游戏记录更新
-            UserGameRecordProvider.UpdateUser(user.Id);
+            SteamCrawlerProvider.UpdateUserGameRecords(user.Id);
 
             return new CurrentUser
             {

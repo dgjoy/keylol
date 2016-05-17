@@ -4,7 +4,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.PointsPage
+namespace Keylol.States.Entrance.PointsPage
 {
     /// <summary>
     /// 入口 - 据点
@@ -16,7 +16,7 @@ namespace Keylol.States.PointsPage
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns>是日优惠据点列表</returns>
+        /// <returns><see cref="PointsPage"/></returns>
         public static async Task<PointsPage> Get([Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
