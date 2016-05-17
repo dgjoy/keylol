@@ -28,7 +28,7 @@ namespace Keylol.Models.DAL
         public DbSet<SteamBindingToken> SteamBindingTokens { get; set; }
         public DbSet<SteamBot> SteamBots { get; set; }
         public DbSet<InvitationCode> InvitationCodes { get; set; }
-        public DbSet<UserGameRecord> UserGameRecords { get; set; }
+        public DbSet<UserSteamGameRecord> UserSteamGameRecords { get; set; }
         public DbSet<SteamStoreName> SteamStoreNames { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<CouponLog> CouponLogs { get; set; }
@@ -42,6 +42,7 @@ namespace Keylol.Models.DAL
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<PointRelationship> PointRelationships { get; set; }
         public DbSet<Feed> Feeds { get; set; }
+        public DbSet<UserSteamFriendRecord> UserSteamFriendRecords { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

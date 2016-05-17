@@ -61,7 +61,7 @@ namespace Keylol.Provider.CachedDataProvider
             var redisDb = _redis.GetDatabase();
             if (!await redisDb.KeyExistsAsync(cacheKey))
             {
-                foreach (var appId in await _dbContext.UserGameRecords.Where(r => r.UserId == userId)
+                foreach (var appId in await _dbContext.UserSteamGameRecords.Where(r => r.UserId == userId)
                     .Select(r => r.SteamAppId).ToListAsync())
                 {
                     await redisDb.SetAddAsync(cacheKey, appId);

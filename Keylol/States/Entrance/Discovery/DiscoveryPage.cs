@@ -5,7 +5,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.Entrance.DiscoveryPage
+namespace Keylol.States.Entrance.Discovery
 {
     /// <summary>
     /// 入口 - 发现

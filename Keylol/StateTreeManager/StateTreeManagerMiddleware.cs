@@ -48,7 +48,7 @@ namespace Keylol.StateTreeManager
                         ? result.ToString()
                         : JsonConvert.SerializeObject(result, new JsonSerializerSettings
                         {
-                            Converters = new List<JsonConverter> {new StringEnumConverter()},
+                            Converters = new List<JsonConverter> {new StringEnumConverter(true)},
                             ContractResolver = new CamelCasePropertyNamesContractResolver(),
                             NullValueHandling = NullValueHandling.Ignore
                         }));

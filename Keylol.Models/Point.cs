@@ -146,6 +146,9 @@ namespace Keylol.Models
         [Index]
         public bool SteamWorkshop { get; set; }
 
+        [Index]
+        public bool InAppPurchases { get; set; }
+
         #endregion
 
         [Required(AllowEmptyStrings = true)]

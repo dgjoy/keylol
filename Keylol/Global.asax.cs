@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Web;
 using System.Web.Http;
-using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
@@ -28,13 +27,14 @@ namespace Keylol
         /// <summary>
         ///     全局 IoC 容器
         /// </summary>
-        public static Container Container { get; set; } = new Container();
+        public static Container Container { get; private set; }
 
         /// <summary>
         ///     当应用启动时调用（优先级高于 Startup 类）
         /// </summary>
         protected void Application_Start(object sender, EventArgs e)
         {
+            Container = new Container();
             RegisterServices();
             SimpleInjectorServiceHostFactory.SetContainer(Container);
         }

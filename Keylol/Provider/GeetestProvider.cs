@@ -10,11 +10,12 @@ namespace Keylol.Provider
     /// <summary>
     ///     提供极验验证服务
     /// </summary>
-    public class GeetestProvider
+    public class GeetestProvider : IDisposable
     {
-        private readonly string _key = ConfigurationManager.AppSettings["geetestKey"];
+        private bool _disposed;
+        private readonly string _key = ConfigurationManager.AppSettings["geetestKey"] ?? string.Empty;
 
-        private HttpClient Client { get; } = new HttpClient
+        private readonly HttpClient _httpClient = new HttpClient
         {
             BaseAddress = new Uri("http://api.geetest.com/"),
             Timeout = TimeSpan.FromSeconds(2)
@@ -40,7 +41,7 @@ namespace Keylol.Provider
             };
             try
             {
-                var result = await Client.PostAsync("validate.php", new FormUrlEncodedContent(postData));
+                var result = await _httpClient.PostAsync("validate.php", new FormUrlEncodedContent(postData));
                 result.EnsureSuccessStatusCode();
                 if (await result.Content.ReadAsStringAsync() != Helpers.Md5(seccode))
                     return false;
@@ -50,6 +51,28 @@ namespace Keylol.Provider
                 // ignored
             }
             return true;
+        }
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     资源清理
+        /// </summary>
+        /// <param name="disposing">是否清理托管对象</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            if (disposing)
+            {
+                _httpClient.Dispose();
+            }
+            _disposed = true;
         }
     }
 }

@@ -6,7 +6,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 
-namespace Keylol.States.Entrance.PointsPage
+namespace Keylol.States.Entrance.Points
 {
     /// <summary>
     /// 哨所据点列表
@@ -50,6 +50,7 @@ namespace Keylol.States.Entrance.PointsPage
                     point.LocalCoop,
                     point.SteamTradingCards,
                     point.SteamWorkshop,
+                    point.InAppPurchases,
                     point.SteamAppId,
                     point.SteamPrice,
                     point.SteamDiscountedPrice,
@@ -100,6 +101,7 @@ namespace Keylol.States.Entrance.PointsPage
                     LocalCoop = p.LocalCoop ? true : (bool?) null,
                     SteamTradingCards = p.SteamTradingCards ? true : (bool?) null,
                     SteamWorkshop = p.SteamWorkshop ? true : (bool?) null,
+                    InAppPurchases = p.InAppPurchases ? true : (bool?) null,
                     SteamAppId = p.SteamAppId,
                     SteamPrice = p.SteamPrice,
                     SteamDiscountedPrice = p.SteamDiscountedPrice,
@@ -233,6 +235,11 @@ namespace Keylol.States.Entrance.PointsPage
         /// Steam 创意工坊
         /// </summary>
         public bool? SteamWorkshop { get; set; }
+
+        /// <summary>
+        /// 内购
+        /// </summary>
+        public bool? InAppPurchases { get; set; }
 
         #endregion
 

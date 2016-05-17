@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
 
-namespace Keylol.States.Entrance.PointsPage
+namespace Keylol.States.Entrance.Points
 {
     /// <summary>
     /// 可能感兴趣的据点列表

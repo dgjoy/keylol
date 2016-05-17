@@ -10,7 +10,7 @@ using Keylol.StateTreeManager;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.Entrance.PointsPage
+namespace Keylol.States.Entrance.Points
 {
     /// <summary>
     /// 最近有动态的据点列表

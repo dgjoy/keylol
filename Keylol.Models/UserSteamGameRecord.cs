@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
-    public class UserGameRecord
+    public class UserSteamGameRecord
     {
         public int Id { get; set; }
 

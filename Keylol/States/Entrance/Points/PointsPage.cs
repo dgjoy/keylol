@@ -4,7 +4,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.Entrance.PointsPage
+namespace Keylol.States.Entrance.Points
 {
     /// <summary>
     /// 入口 - 据点
@@ -41,6 +41,7 @@ namespace Keylol.States.Entrance.PointsPage
                 RecentPlayedPointHeaderImage = recentPlayedPoints.Item2,
                 RecentPlayedPoints = recentPlayedPoints.Item1,
                 InterestedPoints = await InterestedPointList.CreateAsync(currentUserId, dbContext),
+                SpotlightUsers = await SpotlightUserList.CreateAsync(currentUserId, dbContext),
                 RecentPointPageCount = recentPoints.Item2,
                 RecentPoints = recentPoints.Item1
             };
@@ -65,6 +66,11 @@ namespace Keylol.States.Entrance.PointsPage
         /// 可能感兴趣的据点
         /// </summary>
         public InterestedPointList InterestedPoints { get; set; }
+
+        /// <summary>
+        /// 精选用户
+        /// </summary>
+        public SpotlightUserList SpotlightUsers { get; set; }
 
         /// <summary>
         /// 最近有动态的据点总页数

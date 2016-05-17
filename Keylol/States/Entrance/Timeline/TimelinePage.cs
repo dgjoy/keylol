@@ -4,7 +4,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.Entrance.TimelinePage
+namespace Keylol.States.Entrance.Timeline
 {
     /// <summary>
     /// 轨道

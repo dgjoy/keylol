@@ -7,7 +7,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 
-namespace Keylol.States.Entrance.DiscoveryPage
+namespace Keylol.States.Entrance.Discovery
 {
     /// <summary>
     /// 精选文章列表

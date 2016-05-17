@@ -44,23 +44,23 @@ namespace Keylol.States
             switch (state)
             {
                 case "entrance":
-                    root.Entrance = await States.Entrance
-                        .Entrance.CreateAsync(currentUserId, EntrancePage.Auto, dbContext, cachedData);
+                    root.Entrance =
+                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Auto, dbContext, cachedData);
                     break;
 
                 case "entrance.discovery":
-                    root.Entrance = await States.Entrance
-                        .Entrance.CreateAsync(currentUserId, EntrancePage.Discovery, dbContext, cachedData);
+                    root.Entrance =
+                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Discovery, dbContext, cachedData);
                     break;
 
                 case "entrance.points":
-                    root.Entrance = await States.Entrance
-                        .Entrance.CreateAsync(currentUserId, EntrancePage.Points, dbContext, cachedData);
+                    root.Entrance =
+                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Points, dbContext, cachedData);
                     break;
 
                 case "entrance.timeline":
-                    root.Entrance = await States.Entrance
-                        .Entrance.CreateAsync(currentUserId, EntrancePage.Timeline, dbContext, cachedData);
+                    root.Entrance =
+                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Timeline, dbContext, cachedData);
                     break;
 
                 default:
@@ -78,6 +78,6 @@ namespace Keylol.States
         /// <summary>
         /// 入口层级
         /// </summary>
-        public Entrance.Entrance Entrance { get; set; }
+        public EntranceLevel Entrance { get; set; }
     }
 }

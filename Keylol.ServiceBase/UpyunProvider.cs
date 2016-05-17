@@ -11,9 +11,9 @@ namespace Keylol.ServiceBase
     /// </summary>
     public static class UpyunProvider
     {
-        private static readonly string Bucket = ConfigurationManager.AppSettings["upyunBucket"];
-        private static readonly string Operator = ConfigurationManager.AppSettings["upyunOperator"];
-        private static readonly string PasswordHash = ConfigurationManager.AppSettings["upyunPasswordHash"];
+        private static readonly string Bucket = ConfigurationManager.AppSettings["upyunBucket"] ?? string.Empty;
+        private static readonly string Operator = ConfigurationManager.AppSettings["upyunOperator"] ?? string.Empty;
+        private static readonly string PasswordHash = ConfigurationManager.AppSettings["upyunPasswordHash"] ?? string.Empty;
 
         /// <summary>
         ///     允许的最大图片尺寸（字节）

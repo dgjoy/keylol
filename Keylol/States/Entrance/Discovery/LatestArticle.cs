@@ -9,7 +9,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
-namespace Keylol.States.Entrance.DiscoveryPage
+namespace Keylol.States.Entrance.Discovery
 {
     /// <summary>
     /// 最新文章列表

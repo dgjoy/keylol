@@ -116,6 +116,10 @@
     <Compile Include="Migrations\201605171252240_RemoveLastUpdateTime.Designer.cs">
       <DependentUpon>201605171252240_RemoveLastUpdateTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605171516182_UserSteamFriendRecord.cs" />
+    <Compile Include="Migrations\201605171516182_UserSteamFriendRecord.Designer.cs">
+      <DependentUpon>201605171516182_UserSteamFriendRecord.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointRelationship.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
@@ -433,12 +437,13 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
+    <Compile Include="UserSteamFriendRecord.cs" />
     <Compile Include="SteamStoreName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamBindingToken.cs" />
     <Compile Include="SteamBot.cs" />
     <Compile Include="Subscription.cs" />
-    <Compile Include="UserGameRecord.cs" />
+    <Compile Include="UserSteamGameRecord.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201510111634394_Initial.resx">
@@ -708,6 +713,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605171252240_RemoveLastUpdateTime.resx">
       <DependentUpon>201605171252240_RemoveLastUpdateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605171516182_UserSteamFriendRecord.resx">
+      <DependentUpon>201605171516182_UserSteamFriendRecord.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

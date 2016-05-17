@@ -7,7 +7,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 
-namespace Keylol.States.Entrance.PointsPage
+namespace Keylol.States.Entrance.Points
 {
     /// <summary>
     /// 最近玩过的游戏对应据点列表
@@ -44,7 +44,7 @@ namespace Keylol.States.Entrance.PointsPage
                         point.EnglishName,
                         TwoWeekPlayedTime = (double?) null
                     }
-                : from record in dbContext.UserGameRecords
+                : from record in dbContext.UserSteamGameRecords
                     where record.UserId == currentUserId
                     join point in dbContext.Points on record.SteamAppId equals point.SteamAppId
                     where !dbContext.Subscriptions.Any(s =>

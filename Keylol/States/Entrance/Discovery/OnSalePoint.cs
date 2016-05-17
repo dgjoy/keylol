@@ -10,7 +10,7 @@ using Keylol.StateTreeManager;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.Entrance.DiscoveryPage
+namespace Keylol.States.Entrance.Discovery
 {
     /// <summary>
     /// 是日优惠据点列表

@@ -40,8 +40,11 @@ namespace Keylol.States
                 }
             }
 
-            // 游戏记录更新
-            SteamCrawlerProvider.UpdateUserGameRecords(user.Id);
+            // Steam 游戏记录更新
+            SteamCrawlerProvider.UpdateUserSteamGameRecords(user.Id);
+
+            // Steam 好友列表更新
+            SteamCrawlerProvider.UpdateUserSteamFrineds(user.Id);
 
             return new CurrentUser
             {

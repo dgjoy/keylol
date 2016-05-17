@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
-using Keylol.Models.DTO;
-using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
 using Keylol.Services;
 using Keylol.Utilities;
@@ -26,9 +26,14 @@ namespace Keylol.Provider
         private readonly KeylolUserManager _userManager;
         private readonly CachedDataProvider.CachedDataProvider _cachedData;
         private readonly RedisProvider _redis;
+        private static readonly string ApiKey = ConfigurationManager.AppSettings["steamWebApiKey"] ?? string.Empty;
+        private static readonly HttpClient HttpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(20)};
 
-        private static string UserGameRecordsCrawlerStampCacheKey(string userId)
-            => $"crawler-stamp:user-game-records:{userId}";
+        private static string UserSteamGameRecordsCrawlerStampCacheKey(string userId)
+            => $"crawler-stamp:user-steam-game-records:{userId}";
+
+        private static string UserSteamFriendRecordsCrawlerStampCacheKey(string userId)
+            => $"crawler-stamp:user-steam-friend-records:{userId}";
 
         /// <summary>
         /// 创建 <see cref="SteamCrawlerProvider"/>
@@ -50,7 +55,7 @@ namespace Keylol.Provider
         /// 异步重新抓取指定用户的游戏记录 (fire-and-forget)
         /// </summary>
         /// <param name="userId">用户 ID</param>
-        public static void UpdateUserGameRecords(string userId)
+        public static void UpdateUserSteamGameRecords(string userId)
         {
             Task.Run(async () =>
             {
@@ -58,33 +63,49 @@ namespace Keylol.Provider
                 using (var userManager = new KeylolUserManager(dbContext))
                 {
                     var redis = Global.Container.GetInstance<RedisProvider>();
-                    await UpdateUserGameRecordsAsync(userId, dbContext, userManager, redis,
+                    await UpdateUserSteamGameRecordsAsync(userId, dbContext, userManager, redis,
                         new CachedDataProvider.CachedDataProvider(dbContext, redis));
                 }
             });
         }
 
         /// <summary>
-        /// 重新抓取指定用户的游戏记录
+        /// 异步重新抓取指定用户的 Steam 好友列表 (fire-and-forget)
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        public static void UpdateUserSteamFrineds(string userId)
+        {
+            Task.Run(async () =>
+            {
+                using (var dbContext = new KeylolDbContext())
+                using (var userManager = new KeylolUserManager(dbContext))
+                {
+                    var redis = Global.Container.GetInstance<RedisProvider>();
+                    await UpdateUserSteamFrinedsAsync(userId, dbContext, userManager, redis);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 重新抓取指定用户的 Steam App 库
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>如果抓取成功，返回 <c>true</c></returns>
-        public async Task<bool> UpdateUserGameRecordsAsync(string userId)
+        public async Task<bool> UpdateUserSteamGameRecordsAsync(string userId)
         {
-            return await UpdateUserGameRecordsAsync(userId, _dbContext, _userManager, _redis, _cachedData);
+            return await UpdateUserSteamGameRecordsAsync(userId, _dbContext, _userManager, _redis, _cachedData);
         }
 
-        private static async Task<bool> UpdateUserGameRecordsAsync(string userId, KeylolDbContext dbContext,
-            KeylolUserManager userManager, RedisProvider redis, CachedDataProvider.CachedDataProvider cachedData)
+        private static async Task<bool> UpdateUserSteamGameRecordsAsync([NotNull] string userId,
+            KeylolDbContext dbContext, KeylolUserManager userManager, RedisProvider redis,
+            CachedDataProvider.CachedDataProvider cachedData)
         {
-            var cacheKey = UserGameRecordsCrawlerStampCacheKey(userId);
+            var cacheKey = UserSteamGameRecordsCrawlerStampCacheKey(userId);
             var redisDb = redis.GetDatabase();
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
                 return false;
-
-            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(3));
-
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromHours(12));
             try
             {
                 var user = await userManager.FindByIdAsync(userId);
@@ -99,8 +120,7 @@ namespace Keylol.Provider
                 }
                 else
                 {
-                    var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(20)};
-                    allGamesHtml = await httpClient.GetStringAsync(
+                    allGamesHtml = await HttpClient.GetStringAsync(
                         $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
                 }
                 if (string.IsNullOrWhiteSpace(allGamesHtml))
@@ -110,29 +130,89 @@ namespace Keylol.Provider
                     throw new Exception();
                 var trimed = match.Groups[1].Value.Trim();
                 var games = JArray.Parse(trimed.Substring(0, trimed.Length - 1));
+                var oldRecords = (await dbContext.UserSteamGameRecords.Where(r => r.UserId == user.Id).ToListAsync())
+                    .ToDictionary(r => r.SteamAppId, r => r);
                 foreach (var game in games)
                 {
                     var appId = (int) game["appid"];
-
-                    var record = await dbContext.UserGameRecords
-                        .Where(r => r.UserId == user.Id && r.SteamAppId == appId)
-                        .SingleOrDefaultAsync();
-                    if (record == null)
+                    UserSteamGameRecord record;
+                    if (oldRecords.TryGetValue(appId, out record))
                     {
-                        record = new UserGameRecord
+                        oldRecords.Remove(appId);
+                    }
+                    else
+                    {
+                        record = new UserSteamGameRecord
                         {
                             UserId = user.Id,
                             SteamAppId = appId
                         };
-                        dbContext.UserGameRecords.Add(record);
+                        dbContext.UserSteamGameRecords.Add(record);
                     }
                     record.TwoWeekPlayedTime = game["hours"] != null ? (double) game["hours"] : 0;
                     record.TotalPlayedTime = game["hours_forever"] != null ? (double) game["hours_forever"] : 0;
                     if (game["last_played"] != null)
-                        record.LastPlayTime = Helpers.DateTimeFromTimeStamp((int) game["last_played"]);
+                        record.LastPlayTime = Helpers.DateTimeFromTimeStamp((ulong) game["last_played"]);
                 }
+                dbContext.UserSteamGameRecords.RemoveRange(oldRecords.Values);
                 await dbContext.SaveChangesAsync();
                 await cachedData.Users.PurgeSteamAppLibraryCacheAsync(userId);
+                return true;
+            }
+            catch (Exception)
+            {
+                await redisDb.KeyDeleteAsync(cacheKey);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 重新抓取指定用户的 Steam 好友列表
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="redis"><see cref="RedisProvider"/></param>
+        /// <returns>如果抓取成功，返回 <c>true</c></returns>
+        public static async Task<bool> UpdateUserSteamFrinedsAsync([NotNull] string userId, KeylolDbContext dbContext,
+            KeylolUserManager userManager, RedisProvider redis)
+        {
+            var cacheKey = UserSteamFriendRecordsCrawlerStampCacheKey(userId);
+            var redisDb = redis.GetDatabase();
+            var cacheResult = await redisDb.StringGetAsync(cacheKey);
+            if (cacheResult.HasValue)
+                return false;
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(2));
+            try
+            {
+                var steamId = new SteamID();
+                steamId.SetFromSteam3String(await userManager.GetSteamIdAsync(userId));
+                var result = JObject.Parse(await HttpClient.GetStringAsync(
+                    $"http://api.steampowered.com/ISteamUser/GetFriendList/v1/?key={ApiKey}&format=json&steamid={steamId.ConvertToUInt64()}&relationship=friend"));
+                var oldRecords = (await dbContext.UserSteamFriendRecords.Where(r => r.UserId == userId).ToListAsync())
+                    .ToDictionary(r => r.FriendSteamId, r => r);
+                foreach (var friend in result["friendslist"]["friends"])
+                {
+                    var friendSteamId = (new SteamID(ulong.Parse((string) friend["steamid"]))).Render(true);
+                    UserSteamFriendRecord record;
+                    if (oldRecords.TryGetValue(friendSteamId, out record))
+                    {
+                        oldRecords.Remove(friendSteamId);
+                    }
+                    else
+                    {
+                        record = new UserSteamFriendRecord
+                        {
+                            UserId = userId,
+                            FriendSteamId = friendSteamId
+                        };
+                        dbContext.UserSteamFriendRecords.Add(record);
+                        if (friend["friend_since"] != null)
+                            record.FriendSince = Helpers.DateTimeFromTimeStamp((ulong) friend["friend_since"]);
+                    }
+                }
+                dbContext.UserSteamFriendRecords.RemoveRange(oldRecords.Values);
+                await dbContext.SaveChangesAsync();
                 return true;
             }
             catch (Exception)

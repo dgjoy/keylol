@@ -1,10 +1,8 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Identity;
-using Keylol.Models;
 using Keylol.Models.DAL;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Newtonsoft.Json;
 
 namespace Keylol.Controllers.DatabaseMigration
 {
@@ -15,64 +13,6 @@ namespace Keylol.Controllers.DatabaseMigration
     [RoutePrefix("database-migration")]
     public class DatabaseMigrationController : ApiController
     {
-        [Route("new-slideshow-entry")]
-        [HttpPost]
-        public async Task<IHttpActionResult> NewSlideshowEntry(string title, string subtitle, string summary,
-            string minorTitle, string minorSubtitle, string backgroundImage, string link)
-        {
-            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
-            dbContext.Feeds.Add(new Feed
-            {
-                StreamName = SlideshowStream.Name,
-                Entry = string.Empty,
-                Properties = JsonConvert.SerializeObject(new SlideshowStream.FeedProperties
-                {
-                    Title = title,
-                    Subtitle = subtitle,
-                    Summary = summary,
-                    MinorTitle = minorTitle,
-                    MinorSubtitle = minorSubtitle,
-                    BackgroundImage = backgroundImage,
-                    Link = link
-                })
-            });
-            await dbContext.SaveChangesAsync();
-            return Ok();
-        }
-
-        [Route("new-spotlight-point")]
-        [HttpPost]
-        public async Task<IHttpActionResult> NewSpotlightPoint(string pointId)
-        {
-            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
-            dbContext.Feeds.Add(new Feed
-            {
-                StreamName = SpotlightPointStream.Name,
-                EntryType = FeedEntryType.PointId,
-                Entry = pointId,
-                Properties = string.Empty
-            });
-            await dbContext.SaveChangesAsync();
-            return Ok();
-        }
-
-        [Route("new-spotlight-article")]
-        [HttpPost]
-        public async Task<IHttpActionResult> NewSpotlightArticle(string articleId,
-            SpotlightArticleStream.ArticleCategory articleCategory)
-        {
-            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
-            dbContext.Feeds.Add(new Feed
-            {
-                StreamName = SpotlightArticleStream.Name(articleCategory),
-                EntryType = FeedEntryType.ArticleId,
-                Entry = articleId,
-                Properties = string.Empty
-            });
-            await dbContext.SaveChangesAsync();
-            return Ok();
-        }
-
         /// <summary>
         ///     执行迁移
         /// </summary>

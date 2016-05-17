@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Keylol.Models.DAL;
 
-namespace Keylol.States.Entrance.DiscoveryPage
+namespace Keylol.States.Entrance.Discovery
 {
     /// <summary>
     /// 精选专题列表
