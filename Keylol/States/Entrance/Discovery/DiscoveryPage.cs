@@ -25,6 +25,48 @@ namespace Keylol.States.Entrance.Discovery
         }
 
         /// <summary>
+        /// 获取精选评测
+        /// </summary>
+        /// <param name="before">起始位置</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="SpotlightArticleList"/></returns>
+        public static async Task<SpotlightArticleList> GetSpotlightReviews(int before,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
+        {
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12,
+                SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData, before);
+        }
+
+        /// <summary>
+        /// 获取精选研究
+        /// </summary>
+        /// <param name="before">起始位置</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="SpotlightArticleList"/></returns>
+        public static async Task<SpotlightArticleList> GetSpotlightStudies(int before,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
+        {
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12,
+                SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData, before);
+        }
+
+        /// <summary>
+        /// 获取精选谈论
+        /// </summary>
+        /// <param name="before">起始位置</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="SpotlightArticleList"/></returns>
+        public static async Task<SpotlightArticleList> GetSpotlightStories(int before,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
+        {
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12,
+                SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData, before);
+        }
+
+        /// <summary>
         /// 创建 <see cref="DiscoveryPage"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
@@ -40,15 +82,15 @@ namespace Keylol.States.Entrance.Discovery
             {
                 SlideshowEntries = await SlideshowEntryList.CreateAsync(dbContext),
                 SpotlightPoints = await SpotlightPointList.CreateAsync(currentUserId, dbContext, cachedData),
-                SpotlightReviews = await SpotlightArticleList.CreateAsync(currentUserId,
+                SpotlightReviews = await SpotlightArticleList.CreateAsync(currentUserId, 4,
                     SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData),
                 SpotlightConferences = await SpotlightConferenceList.CreateAsync(dbContext),
-                SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId,
+                SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId, 4,
                     SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData),
                 OnSalePointHeaderImage = onSalePoints.Item3,
                 OnSalePointPageCount = onSalePoints.Item2,
                 OnSalePoints = onSalePoints.Item1,
-                SpotlightStories = await SpotlightArticleList.CreateAsync(currentUserId,
+                SpotlightStories = await SpotlightArticleList.CreateAsync(currentUserId, 4,
                     SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData),
                 LatestArticleHeaderImage = latestArticles.Item3,
                 LatestArticlePageCount = latestArticles.Item2,

@@ -6,6 +6,9 @@ using JetBrains.Annotations;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.StateTreeManager;
+using Keylol.Utilities;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.States.Entrance.Points
@@ -20,12 +23,25 @@ namespace Keylol.States.Entrance.Points
         }
 
         /// <summary>
+        /// 获取精选用户列表
+        /// </summary>
+        /// <param name="page">分页页码</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <returns><see cref="SpotlightUserList"/></returns>
+        public static async Task<SpotlightUserList> Get(int page, [Injected] KeylolDbContext dbContext)
+        {
+            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), page, dbContext);
+        }
+
+        /// <summary>
         /// 创建 <see cref="SpotlightUserList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <returns><see cref="SpotlightUserList"/></returns>
-        public static async Task<SpotlightUserList> CreateAsync(string currentUserId, KeylolDbContext dbContext)
+        public static async Task<SpotlightUserList> CreateAsync(string currentUserId, int page,
+            KeylolDbContext dbContext)
         {
             var query = string.IsNullOrWhiteSpace(currentUserId)
                 ? from user in dbContext.Users
@@ -57,7 +73,7 @@ namespace Keylol.States.Entrance.Points
                         user.AvatarImage,
                         user.UserName
                     };
-            return new SpotlightUserList((await query.Take(12).ToListAsync()).Select(u => new SpotlightUser
+            return new SpotlightUserList((await query.TakePage(page, 12).ToListAsync()).Select(u => new SpotlightUser
             {
                 Id = u.Id,
                 IdCode = u.IdCode,

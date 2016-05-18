@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.StateTreeManager;
+using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance.Points
 {
@@ -18,14 +20,30 @@ namespace Keylol.States.Entrance.Points
         }
 
         /// <summary>
-        /// 创建 <see cref="OutpostPointList"/>
+        /// 获取哨所据点列表
         /// </summary>
-        /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="before">起始位置</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="OutpostPointList"/></returns>
-        public static async Task<OutpostPointList> CreateAsync(string currentUserId, KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+        public async Task<OutpostPointList> Get(int before, [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData)
+        {
+            return
+                await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12, dbContext, cachedData, before);
+        }
+
+        /// <summary>
+        /// 创建 <see cref="OutpostPointList"/>
+        /// </summary>
+        /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="take">获取数量</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="before">起始位置</param>
+        /// <returns><see cref="OutpostPointList"/></returns>
+        public static async Task<OutpostPointList> CreateAsync(string currentUserId, int take, KeylolDbContext dbContext,
+            CachedDataProvider cachedData, int before = int.MaxValue)
         {
             var queryResult = await (from feed in dbContext.Feeds
                 where feed.StreamName == OutpostStream.Name
@@ -33,6 +51,7 @@ namespace Keylol.States.Entrance.Points
                 orderby feed.Id descending
                 select new
                 {
+                    FeedId = feed.Id,
                     point.Id,
                     point.IdCode,
                     point.AvatarImage,
@@ -76,13 +95,14 @@ namespace Keylol.States.Entrance.Points
                     point.BattleNetLink,
                     point.BattleNetPrice
                 })
-                .Take(15)
+                .Take(() => take)
                 .ToListAsync();
             var result = new OutpostPointList(queryResult.Count);
             foreach (var p in queryResult)
             {
                 result.Add(new OutpostPoint
                 {
+                    FeedId = p.FeedId,
                     Id = p.Id,
                     IdCode = p.IdCode,
                     AvatarImage = p.AvatarImage,
@@ -144,6 +164,11 @@ namespace Keylol.States.Entrance.Points
     /// </summary>
     public class OutpostPoint
     {
+        /// <summary>
+        /// Feed ID
+        /// </summary>
+        public int FeedId { get; set; }
+
         /// <summary>
         /// ID
         /// </summary>

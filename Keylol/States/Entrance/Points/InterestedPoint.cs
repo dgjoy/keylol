@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.StateTreeManager;
+using Keylol.Utilities;
+using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance.Points
 {
@@ -18,12 +21,25 @@ namespace Keylol.States.Entrance.Points
         }
 
         /// <summary>
+        /// 获取可能感兴趣的据点列表
+        /// </summary>
+        /// <param name="page">分页页码</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <returns><see cref="InterestedPointList"/></returns>
+        public static async Task<InterestedPointList> Get(int page, [Injected] KeylolDbContext dbContext)
+        {
+            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), page, dbContext);
+        }
+
+        /// <summary>
         /// 创建 <see cref="InterestedPointList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <returns><see cref="InterestedPointList"/></returns>
-        public static async Task<InterestedPointList> CreateAsync(string currentUserId, KeylolDbContext dbContext)
+        public static async Task<InterestedPointList> CreateAsync(string currentUserId, int page,
+            KeylolDbContext dbContext)
         {
             return new InterestedPointList((await (string.IsNullOrWhiteSpace(currentUserId)
                 ? from point in dbContext.Points
@@ -67,7 +83,7 @@ namespace Keylol.States.Entrance.Points
                             .Select(r => r.SourcePointId)
                             .Distinct()
                             .Count()
-                    }).Take(9).ToListAsync())
+                    }).TakePage(page, 9).ToListAsync())
                 .Select(p => new InterestedPoint
                 {
                     Id = p.Id,

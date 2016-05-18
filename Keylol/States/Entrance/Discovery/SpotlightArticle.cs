@@ -22,21 +22,24 @@ namespace Keylol.States.Entrance.Discovery
         /// 创建 <see cref="SpotlightArticleList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="take">获取数量</param>
         /// <param name="spotlightArticleCategory">文章分类</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="before">起始位置</param>
         /// <returns><see cref="SpotlightArticleList"/></returns>
-        public static async Task<SpotlightArticleList> CreateAsync(string currentUserId,
+        public static async Task<SpotlightArticleList> CreateAsync(string currentUserId, int take,
             SpotlightArticleStream.ArticleCategory spotlightArticleCategory, KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+            CachedDataProvider cachedData, int before = int.MaxValue)
         {
             var streamName = SpotlightArticleStream.Name(spotlightArticleCategory);
             var queryResult = await (from feed in dbContext.Feeds
-                where feed.StreamName == streamName
+                where feed.StreamName == streamName && feed.Id < before
                 join article in dbContext.Articles on feed.Entry equals article.Id
                 orderby feed.Id descending
                 select new
                 {
+                    FeedId = feed.Id,
                     article.AuthorId,
                     AuthorIdCode = article.Author.IdCode,
                     AuthorAvatarImage = article.Author.AvatarImage,
@@ -52,13 +55,14 @@ namespace Keylol.States.Entrance.Discovery
                     PointEnglishName = article.TargetPoint.EnglishName,
                     PointSteamAppId = article.TargetPoint.SteamAppId
                 })
-                .Take(4)
+                .Take(() => take)
                 .ToListAsync();
             var result = new SpotlightArticleList(queryResult.Count);
             foreach (var a in queryResult)
             {
                 result.Add(new SpotlightArticle
                 {
+                    FeedId = a.FeedId,
                     AuthorIdCode = a.AuthorIdCode,
                     AuthorAvatarImage = a.AuthorAvatarImage,
                     AuthorUserName = a.AuthorUserName,
@@ -88,6 +92,11 @@ namespace Keylol.States.Entrance.Discovery
     /// </summary>
     public class SpotlightArticle
     {
+        /// <summary>
+        /// Feed ID
+        /// </summary>
+        public int FeedId { get; set; }
+
         /// <summary>
         /// 作者识别码
         /// </summary>
