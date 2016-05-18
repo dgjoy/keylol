@@ -4,6 +4,8 @@ using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Aggregation;
+using Keylol.States.Aggregation.Point;
 using Keylol.States.Entrance;
 using Keylol.StateTreeManager;
 using Microsoft.AspNet.Identity;
@@ -28,10 +30,11 @@ namespace Keylol.States
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="coupon"><see cref="CouponProvider"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="pointIdCode">据点识别码</param>
         /// <returns>完整状态树</returns>
         public static async Task<Root> Locate(string state, [Injected] KeylolUserManager userManager,
             [Injected] KeylolDbContext dbContext, [Injected] CouponProvider coupon,
-            [Injected] CachedDataProvider cachedData)
+            [Injected] CachedDataProvider cachedData, string pointIdCode = null)
         {
             var root = new Root();
             var currentUserId = StateTreeHelper.CurrentUser().Identity.GetUserId();
@@ -44,23 +47,55 @@ namespace Keylol.States
             switch (state)
             {
                 case "entrance":
-                    root.Entrance =
-                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Auto, dbContext, cachedData);
+                    root.Entrance = await EntranceLevel.CreateAsync(currentUserId,
+                        States.Entrance.EntrancePage.Auto, dbContext, cachedData);
                     break;
 
                 case "entrance.discovery":
-                    root.Entrance =
-                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Discovery, dbContext, cachedData);
+                    root.Entrance = await EntranceLevel.CreateAsync(currentUserId,
+                        States.Entrance.EntrancePage.Discovery, dbContext, cachedData);
                     break;
 
                 case "entrance.points":
-                    root.Entrance =
-                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Points, dbContext, cachedData);
+                    root.Entrance = await EntranceLevel.CreateAsync(currentUserId,
+                        States.Entrance.EntrancePage.Points, dbContext, cachedData);
                     break;
 
                 case "entrance.timeline":
-                    root.Entrance =
-                        await EntranceLevel.CreateAsync(currentUserId, EntrancePage.Timeline, dbContext, cachedData);
+                    root.Entrance = await EntranceLevel.CreateAsync(currentUserId,
+                        States.Entrance.EntrancePage.Timeline, dbContext, cachedData);
+                    break;
+
+                case "aggregation.point":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
+                            States.Aggregation.Point.EntrancePage.Auto, dbContext, cachedData)
+                    };
+                    break;
+
+                case "aggregation.point.frontpage":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
+                            States.Aggregation.Point.EntrancePage.Frontpage, dbContext, cachedData)
+                    };
+                    break;
+
+                case "aggregation.point.intel":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
+                            States.Aggregation.Point.EntrancePage.Intel, dbContext, cachedData)
+                    };
+                    break;
+
+                case "aggregation.point.timeline":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
+                            States.Aggregation.Point.EntrancePage.Timeline, dbContext, cachedData)
+                    };
                     break;
 
                 default:
@@ -79,5 +114,10 @@ namespace Keylol.States
         /// 入口层级
         /// </summary>
         public EntranceLevel Entrance { get; set; }
+
+        /// <summary>
+        /// 聚合层级
+        /// </summary>
+        public AggregationLevel Aggregation { get; set; }
     }
 }

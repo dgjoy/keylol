@@ -7,7 +7,7 @@ using Microsoft.AspNet.Identity;
 namespace Keylol.States.Entrance.Timeline
 {
     /// <summary>
-    /// 轨道
+    /// 入口 - 轨道
     /// </summary>
     public class TimelinePage
     {

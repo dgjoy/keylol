@@ -245,6 +245,17 @@
     </Compile>
     <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
+    <Compile Include="States\Aggregation\AggregationLevel.cs" />
+    <Compile Include="States\Aggregation\Point\BasicInfo\BasicInfo.cs" />
+    <Compile Include="States\Aggregation\Point\BasicInfo\SimplePoint.cs" />
+    <Compile Include="States\Aggregation\Point\Editing\EditingLevel.cs" />
+    <Compile Include="States\Aggregation\Point\Editing\InfoPage.cs" />
+    <Compile Include="States\Aggregation\Point\Editing\StylePage.cs" />
+    <Compile Include="States\Aggregation\Point\Frontpage\FrontpagePage.cs" />
+    <Compile Include="States\Aggregation\Point\Frontpage\SimplePlatformPoint.cs" />
+    <Compile Include="States\Aggregation\Point\Intel\IntelPage.cs" />
+    <Compile Include="States\Aggregation\Point\PointLevel.cs" />
+    <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
     <Compile Include="States\CurrentUser.cs" />
     <Compile Include="States\Entrance\Discovery\DiscoveryPage.cs" />
     <Compile Include="States\Entrance\Discovery\LatestArticle.cs" />

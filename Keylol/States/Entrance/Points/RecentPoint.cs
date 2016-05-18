@@ -134,7 +134,7 @@ namespace Keylol.States.Entrance.Points
         public double? AverageRating { get; set; }
 
         /// <summary>
-        /// 当前用户是否已订阅
+        /// 是否已订阅
         /// </summary>
         public bool? Subscribed { get; set; }
 

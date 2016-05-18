@@ -14,17 +14,6 @@ namespace Keylol.Identity
     {
         private async Task GrantPasswordCaptcha(OAuthGrantCustomExtensionContext context)
         {
-#if !DEBUG
-            var geetest = Startup.Container.GetInstance<GeetestProvider>();
-            if (!await geetest.ValidateAsync(context.Parameters["geetest_challenge"],
-                context.Parameters["geetest_seccode"],
-                context.Parameters["geetest_validate"]))
-            {
-                context.SetError(Errors.InvalidCaptcha);
-                return;
-            }
-#endif
-
             var userManager = Global.Container.GetInstance<KeylolUserManager>();
 
             var idCode = context.Parameters["id_code"];
@@ -58,7 +47,17 @@ namespace Keylol.Identity
                 context.SetError(Errors.UserNonExistent);
                 return;
             }
-
+            if (await userManager.GetAccessFailedCountAsync(user.Id) > 0)
+            {
+                var geetest = Global.Container.GetInstance<GeetestProvider>();
+                if (!await geetest.ValidateAsync(context.Parameters["geetest_challenge"],
+                    context.Parameters["geetest_seccode"],
+                    context.Parameters["geetest_validate"]))
+                {
+                    context.SetError(Errors.InvalidCaptcha);
+                    return;
+                }
+            }
             if (await userManager.IsLockedOutAsync(user.Id))
             {
                 context.SetError(Errors.AccountLockedOut);

@@ -146,6 +146,8 @@ namespace Keylol.States.Entrance.Discovery
         /// </summary>
         public double? AverageRating { get; set; }
 
+        #region 商店信息
+
         /// <summary>
         /// Steam App ID
         /// </summary>
@@ -266,8 +268,10 @@ namespace Keylol.States.Entrance.Discovery
         /// </summary>
         public double? BattleNetPrice { get; set; }
 
+        #endregion
+
         /// <summary>
-        /// 当前用户是否已订阅
+        /// 是否已订阅
         /// </summary>
         public bool? Subscribed { get; set; }
 

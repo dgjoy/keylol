@@ -47,6 +47,7 @@ namespace Keylol.Provider.CachedDataProvider
                 return RedisProvider.Deserialize<PointRatingsDto>(cacheResult);
             }
 
+            // TODO
             var rating = new PointRatingsDto
             {
                 OneStarCount = 5,

@@ -110,9 +110,9 @@ namespace Keylol.States.Entrance.Points
                     EnglishName = p.EnglishName,
                     AverageRating = (await cachedData.Points.GetRatingsAsync(p.Id)).AverageRating,
                     TitleCoverImage = p.TitleCoverImage,
-                    MultiPlayer = p.MultiPlayer,
-                    SinglePlayer = p.SinglePlayer,
-                    Coop = p.Coop ? p.Coop : (bool?) null,
+                    MultiPlayer = p.MultiPlayer ? true : (bool?) null,
+                    SinglePlayer = p.SinglePlayer ? true : (bool?) null,
+                    Coop = p.Coop ? true : (bool?) null,
                     CaptionsAvailable = p.CaptionsAvailable ? true : (bool?) null,
                     CommentaryAvailable = p.CommentaryAvailable ? true : (bool?) null,
                     IncludeLevelEditor = p.IncludeLevelEditor ? true : (bool?) null,
@@ -268,6 +268,8 @@ namespace Keylol.States.Entrance.Points
 
         #endregion
 
+        #region 商店信息
+
         /// <summary>
         /// Steam App ID
         /// </summary>
@@ -388,8 +390,10 @@ namespace Keylol.States.Entrance.Points
         /// </summary>
         public double? BattleNetPrice { get; set; }
 
+        #endregion
+
         /// <summary>
-        /// 当前用户是否已订阅
+        /// 是否已订阅
         /// </summary>
         public bool? Subscribed { get; set; }
 
