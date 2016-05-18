@@ -99,11 +99,11 @@ namespace Keylol.States.Aggregation.Point
                     PlayedTime = (await dbContext.UserSteamGameRecords
                         .Where(r => r.UserId == currentUserId && r.SteamAppId == point.SteamAppId)
                         .SingleOrDefaultAsync())?.TotalPlayedTime,
-                    AveragePlayedTime = await dbContext.UserSteamGameRecords
+                    AveragePlayedTime = Math.Round(await dbContext.UserSteamGameRecords
                         .Where(r => r.SteamAppId == point.SteamAppId)
                         .Select(r => r.TotalPlayedTime)
                         .DefaultIfEmpty()
-                        .AverageAsync(),
+                        .AverageAsync(), 1),
                     OneStarCount = rating.OneStarCount,
                     TwoStarCount = rating.TwoStarCount,
                     ThreeStarCount = rating.ThreeStarCount,
