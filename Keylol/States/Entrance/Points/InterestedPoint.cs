@@ -65,21 +65,20 @@ namespace Keylol.States.Entrance.Points
                         on subscription.TargetId equals relationship.SourcePointId
                     where relationship.Relationship == PointRelationshipType.Tag ||
                           relationship.Relationship == PointRelationshipType.Series
-                    group relationship by relationship.TargetPointId
+                    group 1 by relationship.TargetPoint
                     into g
-                    where !dbContext.Subscriptions.Any(s => s.SubscriberId == currentUserId &&
-                                                            s.TargetId == g.Key &&
+                  where !dbContext.Subscriptions.Any(s => s.SubscriberId == currentUserId &&
+                                                            s.TargetId == g.Key.Id &&
                                                             s.TargetType == SubscriptionTargetType.Point)
-                    join point in dbContext.Points on g.Key equals point.Id
                     orderby g.Count() descending
                     select new
                     {
-                        point.Id,
-                        point.IdCode,
-                        point.AvatarImage,
-                        point.ChineseName,
-                        point.EnglishName,
-                        GameCount = dbContext.PointRelationships.Where(r => r.TargetPointId == g.Key)
+                        g.Key.Id,
+                        g.Key.IdCode,
+                        g.Key.AvatarImage,
+                        g.Key.ChineseName,
+                        g.Key.EnglishName,
+                        GameCount = dbContext.PointRelationships.Where(r => r.TargetPointId == g.Key.Id)
                             .Select(r => r.SourcePointId)
                             .Distinct()
                             .Count()

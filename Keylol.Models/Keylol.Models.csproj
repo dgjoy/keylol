@@ -59,7 +59,9 @@
     <Compile Include="ActivityComment.cs" />
     <Compile Include="ArticleComment.cs" />
     <Compile Include="AtRecord.cs" />
+    <Compile Include="ChineseAvailability.cs" />
     <Compile Include="FeedStream.cs" />
+    <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
       <DependentUpon>201605080759295_ModelRefactor2.cs</DependentUpon>

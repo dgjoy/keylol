@@ -251,7 +251,9 @@
     <Compile Include="States\Aggregation\Point\Editing\EditingLevel.cs" />
     <Compile Include="States\Aggregation\Point\Editing\InfoPage.cs" />
     <Compile Include="States\Aggregation\Point\Editing\StylePage.cs" />
+    <Compile Include="States\Aggregation\Point\Frontpage\AddictedUser.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\FrontpagePage.cs" />
+    <Compile Include="States\Aggregation\Point\Frontpage\SimilarPoint.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\SimplePlatformPoint.cs" />
     <Compile Include="States\Aggregation\Point\Intel\IntelPage.cs" />
     <Compile Include="States\Aggregation\Point\PointLevel.cs" />

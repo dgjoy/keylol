@@ -2,10 +2,8 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
-using Keylol.States.Aggregation.Point.BasicInfo;
 using Keylol.States.Aggregation.Point.Editing;
 using Keylol.States.Aggregation.Point.Frontpage;
 using Keylol.States.Aggregation.Point.Intel;
@@ -52,103 +50,16 @@ namespace Keylol.States.Aggregation.Point
             var point = await dbContext.Points.Where(p => p.IdCode == pointIdCode).SingleOrDefaultAsync();
             if (point == null)
                 return null;
-            var rating = await cachedData.Points.GetRatingsAsync(point.Id);
             var result = new PointLevel
             {
-                BasicInfo = new BasicInfo.BasicInfo
-                {
-                    Id = point.Id,
-                    HeaderImage = point.HeaderImage,
-                    AvatarImage = point.AvatarImage,
-                    ChineseName = point.ChineseName,
-                    EnglishName = point.EnglishName,
-                    Categories = (await (from relationship in dbContext.PointRelationships
-                        where relationship.SourcePointId == point.Id &&
-                              relationship.Relationship == PointRelationshipType.Tag
-                        select new
-                        {
-                            relationship.TargetPoint.IdCode,
-                            relationship.TargetPoint.ChineseName
-                        })
-                        .ToListAsync())
-                        .Select(p => new SimplePoint
-                        {
-                            IdCode = p.IdCode,
-                            ChineseName = p.ChineseName
-                        })
-                        .ToList(),
-                    Vendors = (await (from relationship in dbContext.PointRelationships
-                        where relationship.SourcePointId == point.Id &&
-                              relationship.Relationship == PointRelationshipType.Developer ||
-                              relationship.Relationship == PointRelationshipType.Manufacturer
-                        select new
-                        {
-                            relationship.TargetPoint.IdCode,
-                            relationship.TargetPoint.ChineseName,
-                            relationship.TargetPoint.EnglishName
-                        })
-                        .ToListAsync())
-                        .Select(p => new SimplePoint
-                        {
-                            IdCode = p.IdCode,
-                            ChineseName = p.ChineseName,
-                            EnglishName = p.EnglishName
-                        })
-                        .ToList(),
-                    TitleCoverImage = point.TitleCoverImage,
-                    PlayedTime = (await dbContext.UserSteamGameRecords
-                        .Where(r => r.UserId == currentUserId && r.SteamAppId == point.SteamAppId)
-                        .SingleOrDefaultAsync())?.TotalPlayedTime,
-                    AveragePlayedTime = Math.Round(await dbContext.UserSteamGameRecords
-                        .Where(r => r.SteamAppId == point.SteamAppId)
-                        .Select(r => r.TotalPlayedTime)
-                        .DefaultIfEmpty()
-                        .AverageAsync(), 1),
-                    OneStarCount = rating.OneStarCount,
-                    TwoStarCount = rating.TwoStarCount,
-                    ThreeStarCount = rating.ThreeStarCount,
-                    FourStarCount = rating.FourStarCount,
-                    FiveStarCount = rating.FiveStarCount,
-                    AverageRating = rating.AverageRating,
-                    SteamAppId = point.SteamAppId,
-                    SteamPrice = point.SteamPrice,
-                    SteamDiscountedPrice = point.SteamDiscountedPrice,
-                    SonkwoProductId = point.SonkwoProductId,
-                    SonkwoPrice = point.SonkwoPrice,
-                    SonkwoDiscountedPrice = point.SonkwoDiscountedPrice,
-                    UplayLink = point.UplayLink,
-                    UplayPrice = point.UplayPrice,
-                    XboxLink = point.XboxLink,
-                    XboxPrice = point.XboxPrice,
-                    PlayStationLink = point.PlayStationLink,
-                    PlayStationPrice = point.PlayStationPrice,
-                    OriginLink = point.OriginLink,
-                    OriginPrice = point.OriginPrice,
-                    WindowsStoreLink = point.WindowsStoreLink,
-                    WindowsStorePrice = point.WindowsStorePrice,
-                    AppStoreLink = point.AppStoreLink,
-                    AppStorePrice = point.AppStorePrice,
-                    GooglePlayLink = point.GooglePlayLink,
-                    GooglePlayPrice = point.GooglePlayPrice,
-                    GogLink = point.GogLink,
-                    GogPrice = point.GogPrice,
-                    BattleNetLink = point.BattleNetLink,
-                    BattleNetPrice = point.BattleNetPrice,
-                    Subscribed = string.IsNullOrWhiteSpace(currentUserId)
-                        ? (bool?) null
-                        : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, point.Id,
-                            SubscriptionTargetType.Point),
-                    InLibrary = string.IsNullOrWhiteSpace(currentUserId) || point.SteamAppId == null
-                        ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, point.SteamAppId.Value)
-                }
+                BasicInfo = await Point.BasicInfo.BasicInfo.CreateAsync(currentUserId, point, dbContext, cachedData)
             };
             switch (targetPage)
             {
                 case EntrancePage.Auto:
                     if (string.IsNullOrWhiteSpace(currentUserId))
                     {
-                        result.Frontpage = await FrontpagePage.CreateAsync(point, dbContext, cachedData);
+                        result.Frontpage = await FrontpagePage.CreateAsync(point, currentUserId, dbContext, cachedData);
                         result.Current = EntrancePage.Frontpage;
                     }
                     else
@@ -158,7 +69,7 @@ namespace Keylol.States.Aggregation.Point
                     break;
 
                 case EntrancePage.Frontpage:
-                    result.Frontpage = await FrontpagePage.CreateAsync(point, dbContext, cachedData);
+                    result.Frontpage = await FrontpagePage.CreateAsync(point, currentUserId, dbContext, cachedData);
                     break;
 
                 case EntrancePage.Intel:

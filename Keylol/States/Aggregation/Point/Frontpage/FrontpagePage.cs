@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,8 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
+using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 
 namespace Keylol.States.Aggregation.Point.Frontpage
 {
@@ -27,18 +30,19 @@ namespace Keylol.States.Aggregation.Point.Frontpage
             var point = await dbContext.Points.Where(p => p.IdCode == idCode).SingleOrDefaultAsync();
             if (point == null)
                 return null;
-            return await CreateAsync(point, dbContext, cachedData);
+            return await CreateAsync(point, StateTreeHelper.CurrentUser().Identity.GetUserId(), dbContext, cachedData);
         }
 
         /// <summary>
         /// 创建 <see cref="FrontpagePage"/>
         /// </summary>
         /// <param name="point">已经查询好的据点对象</param>
+        /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="FrontpagePage"/></returns>
-        public static async Task<FrontpagePage> CreateAsync(Models.Point point, KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+        public static async Task<FrontpagePage> CreateAsync(Models.Point point, string currentUserId,
+            KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             return new FrontpagePage
             {
@@ -71,7 +75,25 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                 SteamTradingCards = point.SteamTradingCards ? true : (bool?) null,
                 SteamWorkshop = point.SteamWorkshop ? true : (bool?) null,
                 InAppPurchases = point.InAppPurchases ? true : (bool?) null,
+                ChineseAvailability = SafeDeserialize<ChineseAvailability>(point.ChineseAvailability),
+                MediaHeaderImage = point.MediaHeaderImage,
+                Media = SafeDeserialize<List<PointMedia>>(point.Media),
+                AddictedUsers =
+                    await AddictedUserList.CreateAsync(currentUserId, point.SteamAppId, 1, dbContext, cachedData),
+                SimilarPoints = await SimilarPointList.CreateAsync(point.Id, currentUserId, 1, dbContext, cachedData)
             };
+        }
+
+        private static T SafeDeserialize<T>(string jsonText)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(jsonText);
+            }
+            catch (Exception)
+            {
+                return default(T);
+            }
         }
 
         /// <summary>
@@ -142,5 +164,30 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         public bool? InAppPurchases { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// 华语可用度
+        /// </summary>
+        public ChineseAvailability ChineseAvailability { get; set; }
+
+        /// <summary>
+        /// 媒体中心头部图
+        /// </summary>
+        public string MediaHeaderImage { get; set; }
+
+        /// <summary>
+        /// 媒体中心
+        /// </summary>
+        public List<PointMedia> Media { get; set; }
+
+        /// <summary>
+        /// 入坑用户
+        /// </summary>
+        public AddictedUserList AddictedUsers { get; set; }
+
+        /// <summary>
+        /// 近畿据点
+        /// </summary>
+        public SimilarPointList SimilarPoints { get; set; }
     }
 }
