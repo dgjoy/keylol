@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.States.Aggregation.Point.BasicInfo
@@ -26,6 +27,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
             KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var rating = await cachedData.Points.GetRatingsAsync(point.Id);
+            SteamCrawlerProvider.UpdatePointPrice(point.Id);
             return new BasicInfo
             {
                 Id = point.Id,

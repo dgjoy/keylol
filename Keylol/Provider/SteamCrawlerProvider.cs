@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CsQuery;
 using JetBrains.Annotations;
 using Keylol.Identity;
 using Keylol.Models;
@@ -35,6 +36,8 @@ namespace Keylol.Provider
         private static string UserSteamFriendRecordsCrawlerStampCacheKey(string userId)
             => $"crawler-stamp:user-steam-friend-records:{userId}";
 
+        private static string PointPriceCrawlerStampCacheKey(string pointId) => $"crawler-stamp:point-price:{pointId}";
+
         /// <summary>
         /// 创建 <see cref="SteamCrawlerProvider"/>
         /// </summary>
@@ -52,7 +55,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 异步重新抓取指定用户的游戏记录 (fire-and-forget)
+        /// 异步抓取指定用户的游戏记录 (fire-and-forget)
         /// </summary>
         /// <param name="userId">用户 ID</param>
         public static void UpdateUserSteamGameRecords(string userId)
@@ -70,7 +73,7 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 异步重新抓取指定用户的 Steam 好友列表 (fire-and-forget)
+        /// 异步抓取指定用户的 Steam 好友列表 (fire-and-forget)
         /// </summary>
         /// <param name="userId">用户 ID</param>
         public static void UpdateUserSteamFrineds(string userId)
@@ -87,13 +90,29 @@ namespace Keylol.Provider
         }
 
         /// <summary>
-        /// 重新抓取指定用户的 Steam App 库
+        /// 抓取指定用户的 Steam App 库
         /// </summary>
         /// <param name="userId">用户 ID</param>
         /// <returns>如果抓取成功，返回 <c>true</c></returns>
         public async Task<bool> UpdateUserSteamGameRecordsAsync(string userId)
         {
             return await UpdateUserSteamGameRecordsAsync(userId, _dbContext, _userManager, _redis, _cachedData);
+        }
+
+        /// <summary>
+        /// 异步抓取指定据点的价格 (fire-and-forget)
+        /// </summary>
+        /// <param name="pointId"></param>
+        public static void UpdatePointPrice(string pointId)
+        {
+            Task.Run(async () =>
+            {
+                using (var dbContext = new KeylolDbContext())
+                {
+                    var redis = Global.Container.GetInstance<RedisProvider>();
+                    await UpdatePointPriceAsync(pointId, dbContext, redis);
+                }
+            });
         }
 
         private static async Task<bool> UpdateUserSteamGameRecordsAsync([NotNull] string userId,
@@ -166,15 +185,7 @@ namespace Keylol.Provider
             }
         }
 
-        /// <summary>
-        /// 重新抓取指定用户的 Steam 好友列表
-        /// </summary>
-        /// <param name="userId">用户 ID</param>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <param name="redis"><see cref="RedisProvider"/></param>
-        /// <returns>如果抓取成功，返回 <c>true</c></returns>
-        public static async Task<bool> UpdateUserSteamFrinedsAsync([NotNull] string userId, KeylolDbContext dbContext,
+        private static async Task<bool> UpdateUserSteamFrinedsAsync([NotNull] string userId, KeylolDbContext dbContext,
             KeylolUserManager userManager, RedisProvider redis)
         {
             var cacheKey = UserSteamFriendRecordsCrawlerStampCacheKey(userId);
@@ -213,6 +224,75 @@ namespace Keylol.Provider
                 }
                 dbContext.UserSteamFriendRecords.RemoveRange(oldRecords.Values);
                 await dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await redisDb.KeyDeleteAsync(cacheKey);
+                return false;
+            }
+        }
+
+        private static async Task<bool> UpdatePointPriceAsync([NotNull] string pointId, KeylolDbContext dbContext,
+            RedisProvider redis)
+        {
+            var cacheKey = PointPriceCrawlerStampCacheKey(pointId);
+            var redisDb = redis.GetDatabase();
+            var cacheResult = await redisDb.StringGetAsync(cacheKey);
+            if (cacheResult.HasValue)
+                return false;
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(1));
+            try
+            {
+                var point = await dbContext.Points.FindAsync(pointId);
+                if (point.SteamAppId != null)
+                {
+                    var steamResult = JToken.Parse(await HttpClient.GetStringAsync(
+                        $"http://store.steampowered.com/api/appdetails/?appids={point.SteamAppId}&cc=cn&l=english"));
+                    steamResult = steamResult[point.SteamAppId.ToString()];
+                    if ((bool) steamResult["success"])
+                    {
+                        steamResult = steamResult["data"];
+                        if ((bool) steamResult["is_free"])
+                        {
+                            point.SteamPrice = 0;
+                            point.SteamDiscountedPrice = null;
+                        }
+                        else
+                        {
+                            point.SteamPrice = (double) steamResult["price_overview"]["initial"]/100;
+                            point.SteamDiscountedPrice = (int) steamResult["price_overview"]["discount_percent"] > 0
+                                ? (double) steamResult["price_overview"]["final"]/100
+                                : (double?) null;
+                        }
+                        await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+                    }
+                }
+                if (point.SonkwoProductId != null)
+                {
+                    var sonkwoHtml =
+                        await HttpClient.GetStringAsync($"http://www.sonkwo.com/products/{point.SonkwoProductId}");
+                    var sonkwoDom = CQ.Create(sonkwoHtml);
+                    var sonkwoPriceText = sonkwoDom[".sale-price"]?.Text().Replace("￥", string.Empty) ??
+                                          sonkwoDom[".list-price"]?.Text().Replace("￥", string.Empty);
+                    double sonkwoPrice;
+                    if (double.TryParse(sonkwoPriceText, out sonkwoPrice))
+                    {
+                        point.SonkwoPrice = sonkwoPrice;
+                        var sonkwoDiscountedPriceText = sonkwoDom[".discounted-sale-price"]?.Text()
+                            .Replace("￥", string.Empty);
+                        double sonkwoDiscountedPrice;
+                        if (double.TryParse(sonkwoDiscountedPriceText, out sonkwoDiscountedPrice))
+                        {
+                            point.SonkwoDiscountedPrice = sonkwoDiscountedPrice;
+                        }
+                        else
+                        {
+                            point.SonkwoDiscountedPrice = null;
+                        }
+                        await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+                    }
+                }
                 return true;
             }
             catch (Exception)
