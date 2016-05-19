@@ -29,6 +29,7 @@ namespace Keylol.Provider
         private readonly RedisProvider _redis;
         private static readonly string ApiKey = ConfigurationManager.AppSettings["steamWebApiKey"] ?? string.Empty;
         private static readonly HttpClient HttpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(20)};
+        private static readonly int SilenceSeconds = 8*60;
 
         private static string UserSteamGameRecordsCrawlerStampCacheKey(string userId)
             => $"crawler-stamp:user-steam-game-records:{userId}";
@@ -180,7 +181,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                await redisDb.KeyDeleteAsync(cacheKey);
+                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
                 return false;
             }
         }
@@ -228,7 +229,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                await redisDb.KeyDeleteAsync(cacheKey);
+                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
                 return false;
             }
         }
@@ -245,7 +246,7 @@ namespace Keylol.Provider
             try
             {
                 var point = await dbContext.Points.FindAsync(pointId);
-                if (point.SteamAppId != null)
+                if (point.SteamAppId != null) // Steam
                 {
                     var steamResult = JToken.Parse(await HttpClient.GetStringAsync(
                         $"http://store.steampowered.com/api/appdetails/?appids={point.SteamAppId}&cc=cn&l=english"));
@@ -268,7 +269,7 @@ namespace Keylol.Provider
                         await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                     }
                 }
-                if (point.SonkwoProductId != null)
+                if (point.SonkwoProductId != null) // 杉果
                 {
                     var sonkwoHtml =
                         await HttpClient.GetStringAsync($"http://www.sonkwo.com/products/{point.SonkwoProductId}");
@@ -297,7 +298,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                await redisDb.KeyDeleteAsync(cacheKey);
+                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
                 return false;
             }
         }
