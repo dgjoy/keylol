@@ -65,6 +65,10 @@
     <Compile Include="Migrations\201605191338241_SteamAppIdResetNull.Designer.cs">
       <DependentUpon>201605191338241_SteamAppIdResetNull.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605201604150_PointSteamSpyData.cs" />
+    <Compile Include="Migrations\201605201604150_PointSteamSpyData.Designer.cs">
+      <DependentUpon>201605201604150_PointSteamSpyData.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -725,6 +729,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605191338241_SteamAppIdResetNull.resx">
       <DependentUpon>201605191338241_SteamAppIdResetNull.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605201604150_PointSteamSpyData.resx">
+      <DependentUpon>201605201604150_PointSteamSpyData.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

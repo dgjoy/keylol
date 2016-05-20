@@ -176,6 +176,32 @@ namespace Keylol.Models
         [Required(AllowEmptyStrings = true)]
         public string ChineseAvailability { get; set; } = string.Empty;
 
+        #region Steam Spy 数据
+
+        public int? OwnerCount { get; set; }
+
+        public int? OwnerCountVariance { get; set; }
+
+        public int? TotalPlayerCount { get; set; }
+
+        public int? TotalPlayerCountVariance { get; set; }
+
+        public int? TwoWeekPlayerCount { get; set; }
+
+        public int? TwoWeekPlayerCountVariance { get; set; }
+
+        public int? AveragePlayedTime { get; set; }
+
+        public int? TwoWeekAveragePlayedTime { get; set; }
+
+        public int? MedianPlayedTime { get; set; }
+
+        public int? TwoWeekMedianPlayedTime { get; set; }
+
+        public int? Ccu { get; set; }
+
+        #endregion
+
         #endregion
 
         #region 平台据点

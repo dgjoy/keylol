@@ -39,6 +39,9 @@ namespace Keylol.Provider
 
         private static string PointPriceCrawlerStampCacheKey(string pointId) => $"crawler-stamp:point-price:{pointId}";
 
+        private static string PointSteamSpyCrawlerStampCacheKey(string pointId)
+            => $"crawler-stamp:point-steam-spy:{pointId}";
+
         /// <summary>
         /// 创建 <see cref="SteamCrawlerProvider"/>
         /// </summary>
@@ -294,6 +297,43 @@ namespace Keylol.Provider
                         await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                     }
                 }
+                return true;
+            }
+            catch (Exception)
+            {
+                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
+                return false;
+            }
+        }
+
+        private static async Task<bool> UpdateSteamSpyData(string pointId, KeylolDbContext dbContext,
+            RedisProvider redis)
+        {
+            var cacheKey = PointSteamSpyCrawlerStampCacheKey(pointId);
+            var redisDb = redis.GetDatabase();
+            var cacheResult = await redisDb.StringGetAsync(cacheKey);
+            if (cacheResult.HasValue)
+                return false;
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(1));
+            try
+            {
+                var point = await dbContext.Points.FindAsync(pointId);
+                if (point.SteamAppId == null) return true;
+                var result = JToken.Parse(await HttpClient.GetStringAsync(
+                    $"http://steamspy.com/api.php?request=appdetails&appid={point.SteamAppId}"));
+                if (result["name"] == null) return true;
+                point.OwnerCount = (int) result["owners"];
+                point.OwnerCountVariance = (int) result["owners_variance"];
+                point.TotalPlayerCount = (int) result["players_forever"];
+                point.TotalPlayerCountVariance = (int) result["players_forever_variance"];
+                point.TwoWeekPlayerCount = (int) result["players_2weeks"];
+                point.TwoWeekAveragePlayedTime = (int) result["players_2weeks_variance"];
+                point.AveragePlayedTime = (int) result["average_forever"];
+                point.TwoWeekAveragePlayedTime = (int) result["average_2weeks"];
+                point.MedianPlayedTime = (int) result["median_forever"];
+                point.TwoWeekMedianPlayedTime = (int) result["median_2weeks"];
+                point.Ccu = (int) result["ccu"];
+                await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                 return true;
             }
             catch (Exception)
