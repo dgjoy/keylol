@@ -27,7 +27,8 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
             KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var rating = await cachedData.Points.GetRatingsAsync(point.Id);
-            SteamCrawlerProvider.UpdatePointPrice(point.Id);
+            if (point.Type == PointType.Game)
+                SteamCrawlerProvider.UpdatePointPrice(point.Id);
             return new BasicInfo
             {
                 Id = point.Id,
@@ -72,7 +73,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                 TotalPlayedTime = (await dbContext.UserSteamGameRecords
                     .Where(r => r.UserId == currentUserId && r.SteamAppId == point.SteamAppId)
                     .SingleOrDefaultAsync())?.TotalPlayedTime,
-                AveragePlayedTime = Math.Round(await dbContext.UserSteamGameRecords
+                KeylolAveragePlayedTime = Math.Round(await dbContext.UserSteamGameRecords
                     .Where(r => r.SteamAppId == point.SteamAppId)
                     .Select(r => r.TotalPlayedTime)
                     .DefaultIfEmpty()
@@ -165,7 +166,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         /// <summary>
         /// 其乐用户平均在档时间
         /// </summary>
-        public double AveragePlayedTime { get; set; }
+        public double? KeylolAveragePlayedTime { get; set; }
 
         /// <summary>
         /// 一星评分个数

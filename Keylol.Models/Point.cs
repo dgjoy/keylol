@@ -56,6 +56,18 @@ namespace Keylol.Models
 
         public virtual ICollection<SteamStoreName> SteamStoreNames { get; set; }
 
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string Logo { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(7)]
+        public string ThemeColor { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(7)]
+        public string LightThemeColor { get; set; }
+
         #region 游戏、硬件据点属性
 
         #region 商店信息
@@ -155,8 +167,12 @@ namespace Keylol.Models
         [MaxLength(256)]
         public string DisplayAliases { get; set; } = string.Empty;
 
+        public DateTime? PublishDate { get; set; }
+
         [Index]
-        public DateTime ReleaseDate { get; set; } = DateTime.Now;
+        public DateTime? ReleaseDate { get; set; }
+
+        public DateTime? PreOrderDate { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
@@ -201,14 +217,6 @@ namespace Keylol.Models
         public int? Ccu { get; set; }
 
         #endregion
-
-        #endregion
-
-        #region 平台据点
-
-        [Required(AllowEmptyStrings = true)]
-        [MaxLength(256)]
-        public string EmblemImage { get; set; } = string.Empty;
 
         #endregion
     }

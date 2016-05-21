@@ -73,6 +73,7 @@ namespace Keylol.States.Aggregation.Point
                     break;
 
                 case EntrancePage.Intel:
+                    result.Intel = await IntelPage.CreateAsync(point, dbContext, cachedData);
                     break;
 
                 case EntrancePage.Timeline:

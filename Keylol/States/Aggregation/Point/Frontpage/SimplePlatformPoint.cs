@@ -14,10 +14,5 @@
         /// 英文名
         /// </summary>
         public string EnglishName { get; set; }
-
-        /// <summary>
-        /// 徽标
-        /// </summary>
-        public string EmblemImage { get; set; }
     }
 }

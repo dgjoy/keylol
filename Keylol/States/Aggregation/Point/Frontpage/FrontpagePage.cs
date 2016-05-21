@@ -52,15 +52,13 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                     select new
                     {
                         relationship.TargetPoint.IdCode,
-                        relationship.TargetPoint.EnglishName,
-                        relationship.TargetPoint.EmblemImage
+                        relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
                     .Select(p => new SimplePlatformPoint
                     {
                         IdCode = p.IdCode,
-                        EnglishName = p.EnglishName,
-                        EmblemImage = p.EmblemImage
+                        EnglishName = p.EnglishName
                     })
                     .ToList(),
                 MultiPlayer = point.MultiPlayer ? true : (bool?) null,

@@ -256,6 +256,7 @@
     <Compile Include="States\Aggregation\Point\Frontpage\SimilarPoint.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\SimplePlatformPoint.cs" />
     <Compile Include="States\Aggregation\Point\Intel\IntelPage.cs" />
+    <Compile Include="States\Aggregation\Point\Intel\VendorPoint.cs" />
     <Compile Include="States\Aggregation\Point\PointLevel.cs" />
     <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
     <Compile Include="States\CurrentUser.cs" />

@@ -106,7 +106,7 @@ namespace Keylol.Provider
         /// <summary>
         /// 异步抓取指定据点的价格 (fire-and-forget)
         /// </summary>
-        /// <param name="pointId"></param>
+        /// <param name="pointId">据点 ID</param>
         public static void UpdatePointPrice(string pointId)
         {
             Task.Run(async () =>
@@ -115,6 +115,22 @@ namespace Keylol.Provider
                 {
                     var redis = Global.Container.GetInstance<RedisProvider>();
                     await UpdatePointPriceAsync(pointId, dbContext, redis);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 异步抓取指定据点的 SteamSpy 数据 (fire-and-forget)
+        /// </summary>
+        /// <param name="pointId">据点 ID</param>
+        public static void UpdateSteamSpyData(string pointId)
+        {
+            Task.Run(async () =>
+            {
+                using (var dbContext = new KeylolDbContext())
+                {
+                    var redis = Global.Container.GetInstance<RedisProvider>();
+                    await UpdateSteamSpyData(pointId, dbContext, redis);
                 }
             });
         }

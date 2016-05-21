@@ -22,11 +22,6 @@ namespace Keylol.Controllers.DatabaseMigration
         {
             var roleManager = Global.Container.GetInstance<KeylolRoleManager>();
             await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Operator));
-            await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Moderator));
-            await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Developer));
-            await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Publisher));
-            await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Manufacturer));
-            await roleManager.CreateAsync(new IdentityRole(KeylolRoles.Staff));
 
             var dbContext = Global.Container.GetInstance<KeylolDbContext>();
             var operators = await dbContext.Database

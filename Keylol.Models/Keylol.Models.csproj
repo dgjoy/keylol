@@ -69,6 +69,14 @@
     <Compile Include="Migrations\201605201604150_PointSteamSpyData.Designer.cs">
       <DependentUpon>201605201604150_PointSteamSpyData.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605210720021_PointPublishPreOrderDate.cs" />
+    <Compile Include="Migrations\201605210720021_PointPublishPreOrderDate.Designer.cs">
+      <DependentUpon>201605210720021_PointPublishPreOrderDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605210845487_PointThemeStyle.cs" />
+    <Compile Include="Migrations\201605210845487_PointThemeStyle.Designer.cs">
+      <DependentUpon>201605210845487_PointThemeStyle.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -131,6 +139,7 @@
       <DependentUpon>201605171516182_UserSteamFriendRecord.cs</DependentUpon>
     </Compile>
     <Compile Include="PointRelationship.cs" />
+    <Compile Include="PointStaff.cs" />
     <Compile Include="Reply.cs" />
     <Compile Include="Conference.cs" />
     <Compile Include="ConferenceEntry.cs" />
@@ -732,6 +741,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605201604150_PointSteamSpyData.resx">
       <DependentUpon>201605201604150_PointSteamSpyData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605210720021_PointPublishPreOrderDate.resx">
+      <DependentUpon>201605210720021_PointPublishPreOrderDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605210845487_PointThemeStyle.resx">
+      <DependentUpon>201605210845487_PointThemeStyle.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
