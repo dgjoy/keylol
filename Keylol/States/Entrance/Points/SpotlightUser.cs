@@ -51,7 +51,7 @@ namespace Keylol.States.Entrance.Points
                     {
                         user.Id,
                         user.IdCode,
-                        user.BackgroundImage,
+                        user.HeaderImage,
                         user.AvatarImage,
                         user.UserName
                     }
@@ -69,7 +69,7 @@ namespace Keylol.States.Entrance.Points
                     {
                         user.Id,
                         user.IdCode,
-                        user.BackgroundImage,
+                        user.HeaderImage,
                         user.AvatarImage,
                         user.UserName
                     };
@@ -77,7 +77,7 @@ namespace Keylol.States.Entrance.Points
             {
                 Id = u.Id,
                 IdCode = u.IdCode,
-                BackgroundImage = u.BackgroundImage,
+                HeaderImage = u.HeaderImage,
                 AvatarImage = u.AvatarImage,
                 UserName = u.UserName
             }));
@@ -100,9 +100,9 @@ namespace Keylol.States.Entrance.Points
         public string IdCode { get; set; }
 
         /// <summary>
-        /// 背景图
+        /// 头部图
         /// </summary>
-        public string BackgroundImage { get; set; }
+        public string HeaderImage { get; set; }
 
         /// <summary>
         /// 头像

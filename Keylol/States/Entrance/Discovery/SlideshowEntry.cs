@@ -28,19 +28,28 @@ namespace Keylol.States.Entrance.Discovery
             return new SlideshowEntryList((await (from feed in dbContext.Feeds
                 where feed.StreamName == SlideshowStream.Name
                 orderby feed.Id descending
-                select feed.Properties)
+                select new
+                {
+                    feed.Id,
+                    feed.Properties
+                })
                 .Take(4)
                 .ToListAsync())
-                .Select(JsonConvert.DeserializeObject<SlideshowStream.FeedProperties>)
-                .Select(e => new SlideshowEntry
+                .Select(f =>
                 {
-                    Title = e.Title,
-                    Subtitle = e.Subtitle,
-                    Summary = e.Summary,
-                    MinorTitle = e.MinorTitle,
-                    MinorSubtitle = e.MinorSubtitle,
-                    BackgroundImage = e.BackgroundImage,
-                    Link = e.Link
+                    var p = JsonConvert.DeserializeObject<SlideshowStream.FeedProperties>(f.Properties);
+                    return new SlideshowEntry
+                    {
+                        FeedId = f.Id,
+                        Title = p.Title,
+                        Subtitle = p.Subtitle,
+                        Author = p.Author,
+                        Date = p.Date,
+                        MinorTitle = p.MinorTitle,
+                        MinorSubtitle = p.MinorSubtitle,
+                        BackgroundImage = p.BackgroundImage,
+                        Link = p.Link
+                    };
                 }));
         }
     }
@@ -50,6 +59,11 @@ namespace Keylol.States.Entrance.Discovery
     /// </summary>
     public class SlideshowEntry
     {
+        /// <summary>
+        /// Feed ID
+        /// </summary>
+        public int FeedId { get; set; }
+
         /// <summary>
         /// 主标题
         /// </summary>
@@ -61,9 +75,14 @@ namespace Keylol.States.Entrance.Discovery
         public string Subtitle { get; set; }
 
         /// <summary>
-        /// 概要
+        /// 作者
         /// </summary>
-        public string Summary { get; set; }
+        public string Author { get; set; }
+
+        /// <summary>
+        /// 日期
+        /// </summary>
+        public string Date { get; set; }
 
         /// <summary>
         /// 次要主标题

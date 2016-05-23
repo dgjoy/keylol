@@ -58,15 +58,15 @@ namespace Keylol.Models
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
-        public string Logo { get; set; }
+        public string Logo { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(7)]
-        public string ThemeColor { get; set; }
+        public string ThemeColor { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(7)]
-        public string LightThemeColor { get; set; }
+        public string LightThemeColor { get; set; } = string.Empty;
 
         #region 游戏、硬件据点属性
 

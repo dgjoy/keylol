@@ -204,9 +204,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
+    <Compile Include="Controllers\Feed\CreateOneSpotlightArticle.cs" />
+    <Compile Include="Controllers\Feed\DeleteOne.cs" />
+    <Compile Include="Controllers\Feed\UpdateOneSpotlightArticle.cs" />
+    <Compile Include="Controllers\Feed\UpdateOneSlideshowEntry.cs" />
+    <Compile Include="Controllers\Feed\CreateOneSlideshowEntry.cs" />
+    <Compile Include="Controllers\Feed\FeedController.cs" />
     <Compile Include="Controllers\RedisCache\DeleteListByKeyPattern.cs" />
     <Compile Include="Controllers\RedisCache\GetOneByKey.cs" />
     <Compile Include="Controllers\RedisCache\RedisCacheController.cs" />
+    <Compile Include="Controllers\Subscription\DeleteOne.cs" />
+    <Compile Include="Controllers\Subscription\CreateOne.cs" />
+    <Compile Include="Controllers\Subscription\SubscriptionController.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -253,6 +262,7 @@
     <Compile Include="States\Aggregation\Point\Editing\StylePage.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\AddictedUser.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\FrontpagePage.cs" />
+    <Compile Include="States\Aggregation\Point\Frontpage\PointStaff.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\SimilarPoint.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\SimplePlatformPoint.cs" />
     <Compile Include="States\Aggregation\Point\Intel\IntelPage.cs" />

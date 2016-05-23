@@ -58,7 +58,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                 select new
                 {
                     record.User.Id,
-                    record.User.BackgroundImage,
+                    record.User.HeaderImage,
                     record.User.IdCode,
                     record.User.AvatarImage,
                     record.User.UserName,
@@ -72,7 +72,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                 result.Add(new AddictedUser
                 {
                     Id = u.Id,
-                    BackgroundImage = u.BackgroundImage,
+                    HeaderImage = u.HeaderImage,
                     IdCode = u.IdCode,
                     AvatarImage = u.AvatarImage,
                     UserName = u.UserName,
@@ -99,9 +99,9 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         public string Id { get; set; }
 
         /// <summary>
-        /// 背景图
+        /// 头部图
         /// </summary>
-        public string BackgroundImage { get; set; }
+        public string HeaderImage { get; set; }
 
         /// <summary>
         /// 识别码

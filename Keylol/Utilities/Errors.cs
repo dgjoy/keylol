@@ -92,9 +92,9 @@
         public const string AvatarImageUntrusted = "avatar_image_untrusted";
 
         /// <summary>
-        ///     背景横幅图片来源不可信
+        ///     页眉图片来源不可信
         /// </summary>
-        public const string BackgroundImageUntrusted = "background_image_untrusted";
+        public const string HeaderImageUntrusted = "header_image_untrusted";
 
         /// <summary>
         ///     全自动区分电脑与人类的图灵测试未通过

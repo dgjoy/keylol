@@ -20,13 +20,13 @@ namespace Keylol.Models
         [Index]
         [Required(AllowEmptyStrings = true)]
         [MaxLength(400)]
-        public string Entry { get; set; }
+        public string Entry { get; set; } = string.Empty;
 
         /// <summary>
         /// JSON 字符串，无 Properties 的 Stream 可以为空，有 Properties 的 Stream 不能为空（但可以为 "[]"）
         /// </summary>
         [Required(AllowEmptyStrings = true)]
-        public string Properties { get; set; }
+        public string Properties { get; set; } = string.Empty;
     }
 
     public enum FeedEntryType

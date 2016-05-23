@@ -10,7 +10,8 @@ namespace Keylol.Models
         {
             public string Title { get; set; }
             public string Subtitle { get; set; }
-            public string Summary { get; set; }
+            public string Author { get; set; }
+            public string Date { get; set; }
             public string MinorTitle { get; set; }
             public string MinorSubtitle { get; set; }
             public string BackgroundImage { get; set; }
@@ -62,6 +63,12 @@ namespace Keylol.Models
             /// 谈
             /// </summary>
             Story
+        }
+
+        public class FeedProperties
+        {
+            public string Title { get; set; }
+            public string Subtitle { get; set; }
         }
     }
 

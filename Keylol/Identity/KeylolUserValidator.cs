@@ -58,8 +58,8 @@ namespace Keylol.Identity
             if (!Helpers.IsTrustedUrl(user.AvatarImage))
                 return IdentityResult.Failed(Errors.AvatarImageUntrusted);
 
-            if (!Helpers.IsTrustedUrl(user.BackgroundImage))
-                return IdentityResult.Failed(Errors.BackgroundImageUntrusted);
+            if (!Helpers.IsTrustedUrl(user.HeaderImage))
+                return IdentityResult.Failed(Errors.HeaderImageUntrusted);
 
             var idCodeOwner = await _userManager.FindByIdCodeAsync(user.IdCode);
             if (idCodeOwner == null && IsIdCodeReserved(user.IdCode))

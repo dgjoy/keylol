@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Newtonsoft.Json;
 
 namespace Keylol.States.Entrance.Discovery
 {
@@ -40,6 +41,7 @@ namespace Keylol.States.Entrance.Discovery
                 select new
                 {
                     FeedId = feed.Id,
+                    FeedProperties = feed.Properties,
                     article.AuthorId,
                     AuthorIdCode = article.Author.IdCode,
                     AuthorAvatarImage = article.Author.AvatarImage,
@@ -60,6 +62,7 @@ namespace Keylol.States.Entrance.Discovery
             var result = new SpotlightArticleList(queryResult.Count);
             foreach (var a in queryResult)
             {
+                var p = JsonConvert.DeserializeObject<SpotlightArticleStream.FeedProperties>(a.FeedProperties);
                 result.Add(new SpotlightArticle
                 {
                     FeedId = a.FeedId,
@@ -71,8 +74,8 @@ namespace Keylol.States.Entrance.Discovery
                         : await cachedData.Users.IsFriend(currentUserId, a.AuthorId),
                     PublishTime = a.PublishTime,
                     SidForAuthor = a.SidForAuthor,
-                    Title = a.Title,
-                    Subtitle = a.Subtitle,
+                    Title = p?.Title ?? a.Title,
+                    Subtitle = p?.Subtitle ?? a.Subtitle,
                     CoverImage = a.CoverImage,
                     PointIdCode = a.PointIdCode,
                     PointAvatarImage = a.PointAvatarImage,

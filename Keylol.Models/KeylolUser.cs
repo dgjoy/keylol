@@ -36,7 +36,15 @@ namespace Keylol.Models
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
-        public string BackgroundImage { get; set; } = string.Empty;
+        public string HeaderImage { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(7)]
+        public string ThemeColor { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(7)]
+        public string LightThemeColor { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(64)]
