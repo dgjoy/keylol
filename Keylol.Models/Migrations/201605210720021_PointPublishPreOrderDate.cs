@@ -16,7 +16,7 @@ namespace Keylol.Models.Migrations
                         PointId = c.String(nullable: false, maxLength: 128),
                         StaffId = c.String(nullable: false, maxLength: 128),
                     })
-                .PrimaryKey(t => t.Id)
+                .PrimaryKey(t => t.Id, clustered: false)
                 .ForeignKey("dbo.Points", t => t.PointId)
                 .ForeignKey("dbo.KeylolUsers", t => t.StaffId)
                 .Index(t => t.PointId)

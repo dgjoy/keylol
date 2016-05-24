@@ -30,7 +30,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
             var point = await dbContext.Points.Where(p => p.IdCode == idCode).SingleOrDefaultAsync();
             if (point == null)
                 return null;
-            return await CreateAsync(point, StateTreeHelper.CurrentUser().Identity.GetUserId(), dbContext, cachedData);
+            return await CreateAsync(point, StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
         }
 
         /// <summary>

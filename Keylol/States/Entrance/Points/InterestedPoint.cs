@@ -28,7 +28,7 @@ namespace Keylol.States.Entrance.Points
         /// <returns><see cref="InterestedPointList"/></returns>
         public static async Task<InterestedPointList> Get(int page, [Injected] KeylolDbContext dbContext)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), page, dbContext);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, dbContext);
         }
 
         /// <summary>

@@ -33,7 +33,7 @@ namespace Keylol.States.Entrance.Discovery
         public static async Task<OnSalePointList> Get(int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return (await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(),
+            return (await CreateAsync(StateTreeHelper.GetCurrentUserId(),
                 page, false, false, dbContext, cachedData)).Item1;
         }
 
@@ -85,7 +85,7 @@ namespace Keylol.States.Entrance.Discovery
                     SteamDiscountedPrice = p.SteamDiscountedPrice,
                     InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
                         ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, p.SteamAppId.Value)
                 });
             }
             var firstRecord = queryResult.FirstOrDefault(r => !string.IsNullOrWhiteSpace(r.HeaderImage));

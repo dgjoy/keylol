@@ -20,6 +20,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Owin;
 using SimpleInjector.Integration.Owin;
 using Swashbuckle.Application;
@@ -149,6 +150,7 @@ namespace Keylol
             var jsonSerializerSettings = config.Formatters.JsonFormatter.SerializerSettings;
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             jsonSerializerSettings.Converters.Add(new StringEnumConverter());
+            jsonSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
             config.Filters.Add(new ValidateModelAttribute());
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;

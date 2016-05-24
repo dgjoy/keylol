@@ -81,6 +81,10 @@
     <Compile Include="Migrations\201605230810384_UserThemeHeaderImage.Designer.cs">
       <DependentUpon>201605230810384_UserThemeHeaderImage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605240415391_PointStaffSid.cs" />
+    <Compile Include="Migrations\201605240415391_PointStaffSid.Designer.cs">
+      <DependentUpon>201605240415391_PointStaffSid.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -754,6 +758,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605230810384_UserThemeHeaderImage.resx">
       <DependentUpon>201605230810384_UserThemeHeaderImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605240415391_PointStaffSid.resx">
+      <DependentUpon>201605240415391_PointStaffSid.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

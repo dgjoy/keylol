@@ -30,7 +30,7 @@ namespace Keylol.States.Entrance.Points
         /// <returns><see cref="SpotlightUserList"/></returns>
         public static async Task<SpotlightUserList> Get(int page, [Injected] KeylolDbContext dbContext)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), page, dbContext);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, dbContext);
         }
 
         /// <summary>

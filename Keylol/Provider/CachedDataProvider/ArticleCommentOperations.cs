@@ -35,7 +35,7 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="articleId">ндуб ID</param>
         /// <exception cref="ArgumentNullException"><paramref name="articleId"/> н╙ null</exception>
         /// <returns></returns>
-        public async Task<int> GetArticleCommentCount([NotNull] string articleId)
+        public async Task<int> GetArticleCommentCountAsync([NotNull] string articleId)
         {
             if (articleId == null)
                 throw new ArgumentNullException(nameof(articleId));

@@ -117,7 +117,7 @@ namespace Keylol.Provider.CachedDataProvider
             if (targetId == null)
                 throw new ArgumentNullException(nameof(targetId));
 
-            if (await IsSubscribedAsync(subscriberId, targetId, targetType))
+            if (subscriberId == targetId || await IsSubscribedAsync(subscriberId, targetId, targetType))
                 return;
 
             _dbContext.Subscriptions.Add(new Subscription
@@ -149,7 +149,7 @@ namespace Keylol.Provider.CachedDataProvider
             if (targetId == null)
                 throw new ArgumentNullException(nameof(targetId));
 
-            if (!await IsSubscribedAsync(subscriberId, targetId, targetType))
+            if (subscriberId == targetId || !await IsSubscribedAsync(subscriberId, targetId, targetType))
                 return;
 
             var subscriptions = await _dbContext.Subscriptions.Where(s => s.SubscriberId == subscriberId &&

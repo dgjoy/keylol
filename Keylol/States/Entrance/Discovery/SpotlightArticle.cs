@@ -71,7 +71,7 @@ namespace Keylol.States.Entrance.Discovery
                     AuthorUserName = a.AuthorUserName,
                     AuthorIsFriend = string.IsNullOrWhiteSpace(currentUserId)
                         ? (bool?) null
-                        : await cachedData.Users.IsFriend(currentUserId, a.AuthorId),
+                        : await cachedData.Users.IsFriendAsync(currentUserId, a.AuthorId),
                     PublishTime = a.PublishTime,
                     SidForAuthor = a.SidForAuthor,
                     Title = p?.Title ?? a.Title,
@@ -83,7 +83,7 @@ namespace Keylol.States.Entrance.Discovery
                     PointEnglishName = a.PointEnglishName,
                     PointInLibrary = string.IsNullOrWhiteSpace(currentUserId) || a.PointSteamAppId == null
                         ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, a.PointSteamAppId.Value)
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, a.PointSteamAppId.Value)
                 });
             }
             return result;

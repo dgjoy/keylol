@@ -21,7 +21,7 @@ namespace Keylol.States.Entrance.Discovery
         public static async Task<DiscoveryPage> Get([Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), dbContext, cachedData);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Keylol.States.Entrance.Discovery
         public static async Task<SpotlightArticleList> GetSpotlightReviews(int before,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await SpotlightArticleList.CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12,
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), 12,
                 SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData, before);
         }
 
@@ -48,7 +48,7 @@ namespace Keylol.States.Entrance.Discovery
         public static async Task<SpotlightArticleList> GetSpotlightStudies(int before,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await SpotlightArticleList.CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12,
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), 12,
                 SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData, before);
         }
 
@@ -62,7 +62,7 @@ namespace Keylol.States.Entrance.Discovery
         public static async Task<SpotlightArticleList> GetSpotlightStories(int before,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await SpotlightArticleList.CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12,
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), 12,
                 SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData, before);
         }
 

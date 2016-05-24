@@ -30,7 +30,7 @@ namespace Keylol.States.Aggregation.Point
         public static async Task<PointLevel> Get(string entrance, string idCode, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(),
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(),
                 idCode, entrance.ToEnum<EntrancePage>(), dbContext, cachedData);
         }
 
@@ -73,7 +73,7 @@ namespace Keylol.States.Aggregation.Point
                     break;
 
                 case EntrancePage.Intel:
-                    result.Intel = await IntelPage.CreateAsync(point, dbContext, cachedData);
+                    result.Intel = await IntelPage.CreateAsync(point, currentUserId, dbContext, cachedData);
                     break;
 
                 case EntrancePage.Timeline:

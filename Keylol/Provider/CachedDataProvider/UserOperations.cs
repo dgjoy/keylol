@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="userId1">A 用户 ID</param>
         /// <param name="userId2">B 用户 ID</param>
         /// <returns>如果是好友，返回 <c>true</c></returns>
-        public async Task<bool> IsFriend(string userId1, string userId2)
+        public async Task<bool> IsFriendAsync(string userId1, string userId2)
         {
             if (userId1 == null || userId2 == null)
                 return false;
@@ -53,7 +52,7 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="userId">用户 ID</param>
         /// <param name="steamAppId">Steam App ID</param>
         /// <returns>如果已入库，返回 <c>true</c></returns>
-        public async Task<bool> IsSteamAppInLibrary(string userId, int steamAppId)
+        public async Task<bool> IsSteamAppInLibraryAsync(string userId, int steamAppId)
         {
             if (userId == null)
                 return false;

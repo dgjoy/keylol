@@ -19,16 +19,18 @@ namespace Keylol.States.Aggregation.Point.Intel
         /// 创建 <see cref="IntelPage"/>
         /// </summary>
         /// <param name="point">据点对象</param>
+        /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="IntelPage"/></returns>
-        public static async Task<IntelPage> CreateAsync(Models.Point point, KeylolDbContext dbContext,
+        public static async Task<IntelPage> CreateAsync(Models.Point point, string currentUserId,
+            KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
             var intelPage = new IntelPage();
             if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
-                intelPage.VendorPoints = (await (from relationship in dbContext.PointRelationships
+                var vendorPointsGroup = await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           (relationship.Relationship == PointRelationshipType.Developer ||
                            relationship.Relationship == PointRelationshipType.Manufacturer ||
@@ -36,36 +38,71 @@ namespace Keylol.States.Aggregation.Point.Intel
                            relationship.Relationship == PointRelationshipType.Reseller)
                     group relationship.Relationship by new
                     {
+                        relationship.TargetPoint.Id,
                         relationship.TargetPoint.IdCode,
                         relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
-                    .ToListAsync())
-                    .Select(p => new VendorPoint
+                    .ToListAsync();
+                intelPage.VendorPoints = vendorPointsGroup.Select(g => new VendorPoint
+                {
+                    IdCode = g.Key.IdCode,
+                    AvatarImage = g.Key.AvatarImage,
+                    ChineseName = g.Key.ChineseName,
+                    EnglishName = g.Key.EnglishName,
+                    Roles = string.Join("、", g.Select(r =>
                     {
-                        IdCode = p.Key.IdCode,
-                        AvatarImage = p.Key.AvatarImage,
-                        ChineseName = p.Key.ChineseName,
-                        EnglishName = p.Key.EnglishName,
-                        Roles = string.Join("、", p.Select(r =>
+                        switch (r)
                         {
-                            switch (r)
-                            {
-                                case PointRelationshipType.Developer:
-                                    return "开发商";
-                                case PointRelationshipType.Publisher:
-                                    return "发行商";
-                                case PointRelationshipType.Manufacturer:
-                                    return "制造商";
-                                case PointRelationshipType.Reseller:
-                                    return "代理商";
-                                default:
-                                    return r.ToString();
-                            }
-                        }))
-                    })
-                    .ToList();
+                            case PointRelationshipType.Developer:
+                                return "开发商";
+                            case PointRelationshipType.Publisher:
+                                return "发行商";
+                            case PointRelationshipType.Manufacturer:
+                                return "制造商";
+                            case PointRelationshipType.Reseller:
+                                return "代理商";
+                            default:
+                                return r.ToString();
+                        }
+                    }))
+                }).ToList();
+                var vendorIds = vendorPointsGroup.Select(g => g.Key.Id).ToList();
+                var vendorPointStaffQueryResult = await (from staff in dbContext.PointStaff
+                    where vendorIds.Contains(staff.PointId)
+                    select new
+                    {
+                        staff.Staff.Id,
+                        staff.Staff.HeaderImage,
+                        staff.Staff.IdCode,
+                        staff.Staff.AvatarImage,
+                        staff.Staff.UserName,
+                        PointChineseName = staff.Point.ChineseName,
+                        PointEnglishName = staff.Point.EnglishName
+                    }).ToListAsync();
+                intelPage.VenderPointStaff = new List<VendorPointStaff>(vendorPointStaffQueryResult.Count);
+                foreach (var u in vendorPointStaffQueryResult)
+                {
+                    intelPage.VenderPointStaff.Add(new VendorPointStaff
+                    {
+                        Id = u.Id,
+                        HeaderImage = u.HeaderImage,
+                        IdCode = u.IdCode,
+                        AvatarImage = u.AvatarImage,
+                        UserName = u.UserName,
+                        PointChineseName = u.PointChineseName,
+                        PointEnglishName = u.PointEnglishName,
+                        IsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                            ? (bool?) null
+                            : await cachedData.Users.IsFriendAsync(currentUserId, u.Id),
+                        Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                            ? (bool?) null
+                            : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, u.Id,
+                                SubscriptionTargetType.User)
+                    });
+                }
+                intelPage.PointStaff = await PointStaffList.CreateAsync(point.Id, currentUserId, dbContext, cachedData);
             }
             if (point.Type == PointType.Game)
             {
@@ -162,5 +199,15 @@ namespace Keylol.States.Aggregation.Point.Intel
         /// 全网人均在档中位数（分钟）
         /// </summary>
         public int? MedianPlayedTime { get; set; }
+
+        /// <summary>
+        /// 厂商据点职员
+        /// </summary>
+        public List<VendorPointStaff> VenderPointStaff { get; set; }
+
+        /// <summary>
+        /// 该据点职员
+        /// </summary>
+        public PointStaffList PointStaff { get; set; }
     }
 }

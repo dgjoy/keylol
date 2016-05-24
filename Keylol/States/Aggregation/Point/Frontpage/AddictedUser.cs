@@ -27,7 +27,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         public static async Task<AddictedUserList> Get(int steamAppId, int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), steamAppId, page,
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), steamAppId, page,
                 dbContext, cachedData);
         }
 

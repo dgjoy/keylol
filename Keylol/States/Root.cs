@@ -37,7 +37,7 @@ namespace Keylol.States
             [Injected] CachedDataProvider cachedData, string pointIdCode = null)
         {
             var root = new Root();
-            var currentUserId = StateTreeHelper.CurrentUser().Identity.GetUserId();
+            var currentUserId = StateTreeHelper.GetCurrentUserId();
             if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
             {
                 var user = await userManager.FindByIdAsync(currentUserId);

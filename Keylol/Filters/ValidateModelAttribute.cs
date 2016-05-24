@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using System.Web.Http.ModelBinding;
 using JetBrains.Annotations;
 using Keylol.Utilities;
 

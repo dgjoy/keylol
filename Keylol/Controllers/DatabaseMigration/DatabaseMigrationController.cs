@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Identity;
+using Keylol.Models;
 using Keylol.Models.DAL;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -13,6 +14,26 @@ namespace Keylol.Controllers.DatabaseMigration
     [RoutePrefix("database-migration")]
     public class DatabaseMigrationController : ApiController
     {
+        /// <summary>
+        /// 添加一个据点职员
+        /// </summary>
+        /// <param name="pointId">据点 ID</param>
+        /// <param name="staffId">职员 ID</param>
+        /// <returns></returns>
+        [Route("add-point-staff")]
+        [HttpPost]
+        public async Task<IHttpActionResult> AddPointStaff(string pointId, string staffId)
+        {
+            var dbContext = Global.Container.GetInstance<KeylolDbContext>();
+            dbContext.PointStaff.Add(new PointStaff
+            {
+                PointId = pointId,
+                StaffId = staffId
+            });
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
         /// <summary>
         ///     执行迁移
         /// </summary>

@@ -20,7 +20,7 @@ namespace Keylol.States.Entrance.Points
         public static async Task<PointsPage> Get([Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), dbContext, cachedData);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
         }
 
         /// <summary>

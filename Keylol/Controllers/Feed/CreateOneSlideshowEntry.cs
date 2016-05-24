@@ -2,6 +2,7 @@
 using System.Web.Http;
 using JetBrains.Annotations;
 using Keylol.Models;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Newtonsoft.Json;
 
@@ -18,6 +19,8 @@ namespace Keylol.Controllers.Feed
         public async Task<IHttpActionResult> CreateOneSlideshowEntry(
             [NotNull] CreateOrUpdateOneSlideshowEntryRequestDto dto)
         {
+            if (!Helpers.IsTrustedUrl(dto.BackgroundImage))
+                return this.BadRequest(nameof(dto), nameof(dto.BackgroundImage), Errors.Invalid);
             _dbContext.Feeds.Add(new Models.Feed
             {
                 StreamName = SlideshowStream.Name,

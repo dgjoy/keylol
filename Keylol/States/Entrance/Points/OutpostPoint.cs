@@ -30,7 +30,7 @@ namespace Keylol.States.Entrance.Points
             [Injected] CachedDataProvider cachedData)
         {
             return
-                await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), 12, dbContext, cachedData, before);
+                await CreateAsync(StateTreeHelper.GetCurrentUserId(), 12, dbContext, cachedData, before);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Keylol.States.Entrance.Points
                             SubscriptionTargetType.Point),
                     InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
                         ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, p.SteamAppId.Value)
                 });
             }
             return result;

@@ -18,11 +18,11 @@ namespace Keylol.Controllers.Feed
         [Route("slideshow-entry/{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定 Feed 不存在")]
-        public async Task<IHttpActionResult> UpdateOneSlideshowEntry(string id,
+        public async Task<IHttpActionResult> UpdateOneSlideshowEntry(int id,
             [NotNull] CreateOrUpdateOneSlideshowEntryRequestDto dto)
         {
             var feed = await _dbContext.Feeds.FindAsync(id);
-            if (feed == null)
+            if (feed == null || feed.StreamName != SlideshowStream.Name)
                 return NotFound();
             feed.Properties = JsonConvert.SerializeObject(new SlideshowStream.FeedProperties
             {

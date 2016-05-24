@@ -24,7 +24,7 @@ namespace Keylol.States.Entrance
         public static async Task<EntranceLevel> Get([Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), EntrancePage.Auto,
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), EntrancePage.Auto,
                 dbContext, cachedData);
         }
 

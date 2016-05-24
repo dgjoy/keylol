@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Identity;
 using Keylol.Models;
@@ -50,6 +52,7 @@ namespace Keylol.States
             {
                 UserName = user.UserName,
                 IdCode = user.IdCode,
+                Roles = (await userManager.GetRolesAsync(user.Id)).ToList(),
                 AvatarImage = user.AvatarImage,
                 MessageCount = await dbContext.Messages.CountAsync(m => m.ReceiverId == user.Id && m.Unread),
                 Coupon = user.Coupon,
@@ -67,6 +70,11 @@ namespace Keylol.States
         /// 识别码
         /// </summary>
         public string IdCode { get; set; }
+
+        /// <summary>
+        /// 角色
+        /// </summary>
+        public List<string> Roles { get; set; }
 
         /// <summary>
         /// 头像

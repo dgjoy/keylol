@@ -27,7 +27,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         public static async Task<SimilarPointList> Get(string pointId, int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(pointId, StateTreeHelper.CurrentUser().Identity.GetUserId(), page,
+            return await CreateAsync(pointId, StateTreeHelper.GetCurrentUserId(), page,
                 dbContext, cachedData);
         }
 
@@ -78,7 +78,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                             SubscriptionTargetType.Point),
                     InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
                         ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, p.SteamAppId.Value)
                 });
             }
             return result;

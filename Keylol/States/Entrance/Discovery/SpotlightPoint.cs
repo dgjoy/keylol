@@ -104,7 +104,7 @@ namespace Keylol.States.Entrance.Discovery
                             SubscriptionTargetType.Point),
                     InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
                         ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, p.SteamAppId.Value)
                 });
             }
             return result;

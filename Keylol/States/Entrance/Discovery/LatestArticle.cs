@@ -76,7 +76,7 @@ namespace Keylol.States.Entrance.Discovery
                 result.Add(new LatestArticle
                 {
                     LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(a.Id, LikeTargetType.Article),
-                    CommentCount = await cachedData.ArticleComments.GetArticleCommentCount(a.Id),
+                    CommentCount = await cachedData.ArticleComments.GetArticleCommentCountAsync(a.Id),
                     SidForAuthor = a.SidForAuthor,
                     Title = a.Title,
                     PublishTime = a.PublishTime,

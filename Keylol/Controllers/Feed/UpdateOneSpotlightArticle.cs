@@ -15,15 +15,16 @@ namespace Keylol.Controllers.Feed
         /// 更新一个 Spotlight Article
         /// </summary>
         /// <param name="id">Feed ID</param>
+        /// <param name="category">文章类型</param>
         /// <param name="dto">DTO 对象</param>
         [Route("spotlight-article/{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定 Feed 不存在")]
-        public async Task<IHttpActionResult> UpdateOneSpotlightArticle(string id,
-            [NotNull] CreateOrUpdateOneSpotlightArticleRequestDto dto)
+        public async Task<IHttpActionResult> UpdateOneSpotlightArticle(int id,
+            SpotlightArticleStream.ArticleCategory category, [NotNull] CreateOrUpdateOneSpotlightArticleRequestDto dto)
         {
             var feed = await _dbContext.Feeds.FindAsync(id);
-            if (feed == null)
+            if (feed == null || feed.StreamName != SpotlightArticleStream.Name(category))
                 return NotFound();
 
             var article = await _dbContext.Articles.FindAsync(dto.ArticleId);
@@ -34,12 +35,12 @@ namespace Keylol.Controllers.Feed
             feed.Properties = JsonConvert.SerializeObject(new SpotlightArticleStream.FeedProperties
             {
                 Title = string.IsNullOrWhiteSpace(dto.Title) || dto.Title == article.Title
-                        ? null
-                        : dto.Title,
+                    ? null
+                    : dto.Title,
                 Subtitle = string.IsNullOrWhiteSpace(dto.Subtitle) || dto.Subtitle == article.Subtitle
-                        ? null
-                        : dto.Subtitle
-            }, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                    ? null
+                    : dto.Subtitle
+            }, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
 
             await _dbContext.SaveChangesAsync();
             return Ok();

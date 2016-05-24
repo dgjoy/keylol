@@ -1,9 +1,9 @@
-﻿namespace Keylol.States.Aggregation.Point.Frontpage
+﻿namespace Keylol.States.Aggregation.Point.Intel
 {
     /// <summary>
     /// 据点职员
     /// </summary>
-    public class PointStaff
+    public class VendorPointStaff
     {
         /// <summary>
         /// ID
@@ -11,9 +11,9 @@
         public string Id { get; set; }
 
         /// <summary>
-        /// 背景图
+        /// 头部图
         /// </summary>
-        public string BackgroundImage { get; set; }
+        public string HeaderImage { get; set; }
 
         /// <summary>
         /// 识别码
@@ -29,7 +29,17 @@
         /// 昵称
         /// </summary>
         public string UserName { get; set; }
-        
+
+        /// <summary>
+        /// 管理据点中文名
+        /// </summary>
+        public string PointChineseName { get; set; }
+
+        /// <summary>
+        /// 管理据点英文名
+        /// </summary>
+        public string PointEnglishName { get; set; }
+
         /// <summary>
         /// 是否是好友
         /// </summary>

@@ -33,7 +33,7 @@ namespace Keylol.States.Entrance.Points
         public static async Task<RecentPointList> Get(int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return (await CreateAsync(StateTreeHelper.CurrentUser().Identity.GetUserId(), page, false,
+            return (await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, false,
                 dbContext, cachedData)).Item1;
         }
 
@@ -83,7 +83,7 @@ namespace Keylol.States.Entrance.Points
                             SubscriptionTargetType.Point),
                     InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
                         ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibrary(currentUserId, p.SteamAppId.Value)
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, p.SteamAppId.Value)
                 });
             }
             var firstRecord = queryResult.FirstOrDefault();
