@@ -80,8 +80,8 @@ namespace Keylol.States.Entrance.Discovery
             var latestArticles = await LatestArticleList.CreateAsync(1, true, true, dbContext, cachedData);
             return new DiscoveryPage
             {
-                SlideshowEntries = await SlideshowEntryList.CreateAsync(dbContext),
-                SpotlightPoints = await SpotlightPointList.CreateAsync(currentUserId, dbContext, cachedData),
+                SlideshowEntries = await SlideshowEntryList.CreateAsync(1, 4, dbContext),
+                SpotlightPoints = await SpotlightPointList.CreateAsync(currentUserId, 1, 30, dbContext, cachedData),
                 SpotlightReviews = await SpotlightArticleList.CreateAsync(currentUserId, 4,
                     SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData),
                 SpotlightConferences = await SpotlightConferenceList.CreateAsync(dbContext),

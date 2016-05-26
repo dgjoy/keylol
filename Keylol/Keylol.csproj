@@ -204,8 +204,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
+    <Compile Include="Controllers\Feed\CreateOneSpotlightPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightArticle.cs" />
     <Compile Include="Controllers\Feed\DeleteOne.cs" />
+    <Compile Include="Controllers\Feed\UpdateOneSpolightPoint.cs" />
+    <Compile Include="Controllers\Feed\UpdateOneToTop.cs" />
     <Compile Include="Controllers\Feed\UpdateOneSpotlightArticle.cs" />
     <Compile Include="Controllers\Feed\UpdateOneSlideshowEntry.cs" />
     <Compile Include="Controllers\Feed\CreateOneSlideshowEntry.cs" />

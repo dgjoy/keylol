@@ -119,5 +119,7 @@ namespace Keylol.States
         /// 聚合层级
         /// </summary>
         public AggregationLevel Aggregation { get; set; }
+
+
     }
 }

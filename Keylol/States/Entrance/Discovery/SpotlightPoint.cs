@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.StateTreeManager;
+using Keylol.Utilities;
 
 namespace Keylol.States.Entrance.Discovery
 {
@@ -18,14 +20,29 @@ namespace Keylol.States.Entrance.Discovery
         }
 
         /// <summary>
+        /// 获取精选据点列表
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="cachedData"></param>
+        /// <returns></returns>
+        public static async Task<SpotlightPointList> Get(int page, [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData)
+        {
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, 10, dbContext, cachedData);
+        }
+
+        /// <summary>
         /// 创建 <see cref="SpotlightPointList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="page">分页页码</param>
+        /// <param name="recordPerPage">每页个数</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="SpotlightPointList"/></returns>
-        public static async Task<SpotlightPointList> CreateAsync(string currentUserId, KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+        public static async Task<SpotlightPointList> CreateAsync(string currentUserId, int page, int recordPerPage,
+            KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var queryResult = await (from feed in dbContext.Feeds
                 where feed.StreamName == SpotlightPointStream.Name
@@ -62,7 +79,7 @@ namespace Keylol.States.Entrance.Discovery
                     point.GogPrice,
                     point.BattleNetLink,
                     point.BattleNetPrice
-                }).Take(30).ToListAsync();
+                }).TakePage(page, recordPerPage).ToListAsync();
             var result = new SpotlightPointList(queryResult.Count);
             foreach (var p in queryResult)
             {

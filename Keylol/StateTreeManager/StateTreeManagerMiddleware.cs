@@ -57,7 +57,7 @@ namespace Keylol.StateTreeManager
             {
                 context.Response.ContentType = "text/plain";
                 context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                await context.Response.WriteAsync("Unauthorized operation.");
+                await context.Response.WriteAsync("Access denied.");
             }
         }
 
@@ -186,25 +186,16 @@ namespace Keylol.StateTreeManager
             if (!authorized)
                 throw new NotAuthorizedException();
 
-            object result = null;
-            if (previousType != null)
-            {
-                var getMethod = previousType.GetMethod($"Get{currentPropertyName}",
-                    BindingFlags.Public | BindingFlags.Static);
-                if (getMethod != null)
-                {
-                    result = await InvokeGetMethodAsync(getMethod, owinContext.Request.Query, locators);
-                }
-            }
-            if (result == null)
-            {
-                var getMethod = currentType.GetMethod(currentHasLocator ? "Locate" : "Get",
-                    BindingFlags.Public | BindingFlags.Static);
-                if (getMethod == null)
-                    throw new NoGetMethodException();
-                result = await InvokeGetMethodAsync(getMethod, owinContext.Request.Query, locators);
-            }
-            return result;
+            var getMethod = previousType?.GetMethod($"Get{currentPropertyName}",
+                BindingFlags.Public | BindingFlags.Static);
+            if (getMethod != null)
+                return await InvokeGetMethodAsync(getMethod, owinContext.Request.Query, locators);
+
+            getMethod = currentType.GetMethod(currentHasLocator ? "Locate" : "Get",
+                BindingFlags.Public | BindingFlags.Static);
+            if (getMethod == null)
+                throw new NoGetMethodException();
+            return await InvokeGetMethodAsync(getMethod, owinContext.Request.Query, locators);
         }
 
         private async Task<object> InvokeGetMethodAsync(MethodInfo getMethod, IReadableStringCollection query,
