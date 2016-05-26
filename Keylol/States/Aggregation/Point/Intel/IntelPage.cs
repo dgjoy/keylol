@@ -103,6 +103,8 @@ namespace Keylol.States.Aggregation.Point.Intel
                     });
                 }
                 intelPage.PointStaff = await PointStaffList.CreateAsync(point.Id, currentUserId, dbContext, cachedData);
+                intelPage.GenrePoints = await GenrePointList.CreateAsync(point.Id, currentUserId, dbContext, cachedData);
+                intelPage.TagPoints = await TagPointList.CreateAsync(point.Id, currentUserId, dbContext, cachedData);
             }
             if (point.Type == PointType.Game)
             {
@@ -201,13 +203,23 @@ namespace Keylol.States.Aggregation.Point.Intel
         public int? MedianPlayedTime { get; set; }
 
         /// <summary>
-        /// 厂商据点职员
+        /// 厂商据点职员列表
         /// </summary>
         public List<VendorPointStaff> VenderPointStaff { get; set; }
 
         /// <summary>
-        /// 该据点职员
+        /// 该据点职员列表
         /// </summary>
         public PointStaffList PointStaff { get; set; }
+
+        /// <summary>
+        /// 流派据点列表
+        /// </summary>
+        public GenrePointList GenrePoints { get; set; }
+
+        /// <summary>
+        /// 特性据点列表
+        /// </summary>
+        public TagPointList TagPoints { get; set; }
     }
 }

@@ -26,7 +26,7 @@
         public string EnglishName { get; set; }
 
         /// <summary>
-        /// 扮演角色
+        /// 厂商角色
         /// </summary>
         public string Roles { get; set; }
     }
