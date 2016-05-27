@@ -97,8 +97,8 @@ namespace Keylol.Controllers.Point
                                 point.ChineseName = requestDto.ChineseName;
 
                             var genreNames = new List<string>();
-                            var tags =
-                                dom[".popular_tags a.app_tag"].Select(child => child.InnerText.Trim()).Take(5).ToList();
+                            var tags = dom[".popular_tags a.app_tag"].Select(child => child.InnerText.Trim())
+                                .Except(_tagBlacklist).Take(5).ToList();
                             var developerNames = new List<string>();
                             var publisherNames = new List<string>();
                             foreach (var child in dom[".game_details .details_block"].First().Find("b"))
@@ -377,6 +377,27 @@ namespace Keylol.Controllers.Point
             }
             return Ok();
         }
+
+        /// <summary>
+        /// 特性据点关联黑名单
+        /// </summary>
+        private static List<string> _tagBlacklist = new List<string>
+        {
+            "Action",
+            "Indie",
+            "Adventure",
+            "RPG",
+            "Multiplayer",
+            "Open World",
+            "Casual",
+            "Singleplayer",
+            "Early Access",
+            "Co-op",
+            "Free to Play",
+            "Story Rich",
+            "Classic",
+            "Local Co-Op"
+        };
 
         /// <summary>
         /// CreateOne request DTO
