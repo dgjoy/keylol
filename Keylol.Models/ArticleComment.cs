@@ -38,8 +38,6 @@ namespace Keylol.Models
 
         public bool DismissReplyMessage { get; set; } = false;
 
-        public DeletedState Deleted { get; set; } = DeletedState.None;
-
         public ArchivedState Archived { get; set; } = ArchivedState.None;
 
         public bool Warned { get; set; } = false;

@@ -49,7 +49,7 @@ namespace Keylol.Provider.CachedDataProvider
             }
 
             var commentCount = await _dbContext.ArticleComments
-                .Where(c => c.ArticleId == articleId && c.Deleted == DeletedState.None)
+                .Where(c => c.ArticleId == articleId)
                 .CountAsync();
             await redisDb.StringSetAsync(cacheKey, commentCount, CachedDataProvider.DefaultTtl);
             return commentCount;

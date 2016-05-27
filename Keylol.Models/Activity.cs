@@ -57,8 +57,6 @@ namespace Keylol.Models
         [Required(AllowEmptyStrings = true)]
         public string AttachedPoints { get; set; } = string.Empty;
 
-        public DeletedState Deleted { get; set; } = DeletedState.None;
-
         public ArchivedState Archived { get; set; } = ArchivedState.None;
 
         public bool Rejected { get; set; } = false;

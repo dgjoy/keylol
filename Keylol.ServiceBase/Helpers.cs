@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Keylol.ServiceBase
 {
@@ -51,6 +52,24 @@ namespace Keylol.ServiceBase
         public static bool IsTrustedUrl(string url, bool allowNullOrEmpty = true)
         {
             return (allowNullOrEmpty && string.IsNullOrEmpty(url)) || url.StartsWith("keylol://");
+        }
+
+        /// <summary>
+        /// 安全反序列化（如果无法反序列化，返回 null）
+        /// </summary>
+        /// <param name="jsonText">JSON 文本</param>
+        /// <typeparam name="T">结果类型</typeparam>
+        /// <return>反序列化后的对象</return>
+        public static T SafeDeserialize<T>(string jsonText)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(jsonText);
+            }
+            catch (Exception)
+            {
+                return default(T);
+            }
         }
     }
 }

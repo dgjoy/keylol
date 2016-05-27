@@ -214,7 +214,8 @@ namespace Keylol.StateTreeManager
                 }
                 else
                 {
-                    var value = query[parameter.Name];
+                    var value = query[parameter.Name] ??
+                                query[parameter.Name.ToCase(NameConventionCase.CamelCase, NameConventionCase.SnakeCase)];
                     if (value != null)
                         arguments.Add(CastType(value, parameter.ParameterType));
                     else if (locators.ContainsKey(parameter.Name))

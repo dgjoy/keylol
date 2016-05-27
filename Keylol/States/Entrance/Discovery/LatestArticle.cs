@@ -49,8 +49,7 @@ namespace Keylol.States.Entrance.Discovery
         {
             var conditionQuery = from article in dbContext.Articles
                 where article.Rejected == false &&
-                      article.Archived == ArchivedState.None &&
-                      article.Deleted == DeletedState.None
+                      article.Archived == ArchivedState.None
                 orderby article.Sid descending
                 select article;
             var queryResult = await conditionQuery.Select(a => new

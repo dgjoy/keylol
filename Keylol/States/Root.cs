@@ -120,6 +120,10 @@ namespace Keylol.States
         /// </summary>
         public AggregationLevel Aggregation { get; set; }
 
-
+        /// <summary>
+        /// 待开设据点
+        /// </summary>
+        [Authorize]
+        public PointToCreate PointToCreate { get; set; }
     }
 }

@@ -75,8 +75,6 @@ namespace Keylol.Models
         [MaxLength(5000)]
         public string Cons { get; set; } = string.Empty;
         
-        public DeletedState Deleted { get; set; } = DeletedState.None;
-
         public ArchivedState Archived { get; set; } = ArchivedState.None;
         
         public bool Rejected { get; set; } = false;
@@ -85,25 +83,7 @@ namespace Keylol.Models
 
         public bool Warned { get; set; } = false;
     }
-
-    public enum DeletedState
-    {
-        /// <summary>
-        ///     没有删除
-        /// </summary>
-        None,
-
-        /// <summary>
-        ///     用户自行删除
-        /// </summary>
-        User,
-
-        /// <summary>
-        ///     运维职员删除
-        /// </summary>
-        Operator
-    }
-
+    
     public enum ArchivedState
     {
         /// <summary>

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.ServiceBase;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
 
 namespace Keylol.States.Aggregation.Point.Frontpage
 {
@@ -73,25 +71,13 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                 SteamTradingCards = point.SteamTradingCards ? true : (bool?) null,
                 SteamWorkshop = point.SteamWorkshop ? true : (bool?) null,
                 InAppPurchases = point.InAppPurchases ? true : (bool?) null,
-                ChineseAvailability = SafeDeserialize<ChineseAvailability>(point.ChineseAvailability),
+                ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability),
                 MediaHeaderImage = point.MediaHeaderImage,
-                Media = SafeDeserialize<List<PointMedia>>(point.Media),
+                Media = Helpers.SafeDeserialize<List<PointMedia>>(point.Media),
                 AddictedUsers =
                     await AddictedUserList.CreateAsync(currentUserId, point.SteamAppId, 1, dbContext, cachedData),
                 SimilarPoints = await SimilarPointList.CreateAsync(point.Id, currentUserId, 1, dbContext, cachedData)
             };
-        }
-
-        private static T SafeDeserialize<T>(string jsonText)
-        {
-            try
-            {
-                return JsonConvert.DeserializeObject<T>(jsonText);
-            }
-            catch (Exception)
-            {
-                return default(T);
-            }
         }
 
         /// <summary>

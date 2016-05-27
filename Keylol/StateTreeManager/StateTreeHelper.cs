@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using SimpleInjector.Integration.Owin;

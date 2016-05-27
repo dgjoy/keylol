@@ -142,6 +142,11 @@
         public const string NotEnoughCoupon = "not_enough_coupon";
 
         /// <summary>
+        /// 网络错误
+        /// </summary>
+        public const string NetworkError = "network_error";
+
+        /// <summary>
         ///     不支持的 Steam 应用（不是游戏或硬件）
         /// </summary>
         public const string SteamAppNotSupported = "steam_app_not_supported";

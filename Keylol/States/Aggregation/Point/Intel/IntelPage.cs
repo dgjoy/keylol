@@ -7,6 +7,8 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.ServiceBase;
+using Keylol.States.Aggregation.Point.Frontpage;
 
 namespace Keylol.States.Aggregation.Point.Intel
 {
@@ -27,7 +29,37 @@ namespace Keylol.States.Aggregation.Point.Intel
             KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            var intelPage = new IntelPage();
+            var intelPage = new IntelPage
+            {
+                Platforms = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Platform
+                    select new
+                    {
+                        relationship.TargetPoint.IdCode,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePlatformPoint
+                    {
+                        IdCode = p.IdCode,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList(),
+                MultiPlayer = point.MultiPlayer ? true : (bool?) null,
+                SinglePlayer = point.SinglePlayer ? true : (bool?) null,
+                Coop = point.Coop ? true : (bool?) null,
+                CaptionsAvailable = point.CaptionsAvailable ? true : (bool?) null,
+                CommentaryAvailable = point.CommentaryAvailable ? true : (bool?) null,
+                IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?) null,
+                Achievements = point.Achievements ? true : (bool?) null,
+                Cloud = point.Cloud ? true : (bool?) null,
+                LocalCoop = point.LocalCoop ? true : (bool?) null,
+                SteamTradingCards = point.SteamTradingCards ? true : (bool?) null,
+                SteamWorkshop = point.SteamWorkshop ? true : (bool?) null,
+                InAppPurchases = point.InAppPurchases ? true : (bool?) null,
+                ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability),
+            };
             if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
                 var vendorPointsGroup = await (from relationship in dbContext.PointRelationships
@@ -126,6 +158,80 @@ namespace Keylol.States.Aggregation.Point.Intel
             }
             return intelPage;
         }
+
+        /// <summary>
+        /// 平台
+        /// </summary>
+        public List<SimplePlatformPoint> Platforms { get; set; }
+
+        #region 特性属性
+
+        /// <summary>
+        /// 多人游戏
+        /// </summary>
+        public bool? MultiPlayer { get; set; }
+
+        /// <summary>
+        /// 单人游戏
+        /// </summary>
+        public bool? SinglePlayer { get; set; }
+
+        /// <summary>
+        /// 合作
+        /// </summary>
+        public bool? Coop { get; set; }
+
+        /// <summary>
+        /// 视听字幕
+        /// </summary>
+        public bool? CaptionsAvailable { get; set; }
+
+        /// <summary>
+        /// 旁白解说
+        /// </summary>
+        public bool? CommentaryAvailable { get; set; }
+
+        /// <summary>
+        /// 关卡客制化
+        /// </summary>
+        public bool? IncludeLevelEditor { get; set; }
+
+        /// <summary>
+        /// 成就系统
+        /// </summary>
+        public bool? Achievements { get; set; }
+
+        /// <summary>
+        /// 云存档
+        /// </summary>
+        public bool? Cloud { get; set; }
+
+        /// <summary>
+        /// 本地多人
+        /// </summary>
+        public bool? LocalCoop { get; set; }
+
+        /// <summary>
+        /// Steam 卡牌
+        /// </summary>
+        public bool? SteamTradingCards { get; set; }
+
+        /// <summary>
+        /// Steam 创意工坊
+        /// </summary>
+        public bool? SteamWorkshop { get; set; }
+
+        /// <summary>
+        /// 内购
+        /// </summary>
+        public bool? InAppPurchases { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// 华语可用度
+        /// </summary>
+        public ChineseAvailability ChineseAvailability { get; set; }
 
         /// <summary>
         /// 厂商据点

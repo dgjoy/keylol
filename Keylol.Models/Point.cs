@@ -52,6 +52,7 @@ namespace Keylol.Models
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(10000)]
+        [Obsolete]
         public string Description { get; set; } = string.Empty;
 
         public virtual ICollection<SteamStoreName> SteamStoreNames { get; set; }
@@ -176,11 +177,11 @@ namespace Keylol.Models
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
-        public string TitleCoverImage { get; set; }
+        public string TitleCoverImage { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
-        public string ThumbnailImage { get; set; }
+        public string ThumbnailImage { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
