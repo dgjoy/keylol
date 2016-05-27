@@ -9,6 +9,7 @@ using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
 using Keylol.States.Aggregation.Point.Frontpage;
+using Keylol.StateTreeManager;
 
 namespace Keylol.States.Aggregation.Point.Intel
 {
@@ -18,6 +19,22 @@ namespace Keylol.States.Aggregation.Point.Intel
     public class IntelPage
     {
         /// <summary>
+        /// 获取据点情报
+        /// </summary>
+        /// <param name="pointIdCode">据点识别码</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="IntelPage"/></returns>
+        public static async Task<IntelPage> Get(string pointIdCode, [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData)
+        {
+            var point = await dbContext.Points.Where(p => p.IdCode == pointIdCode).SingleOrDefaultAsync();
+            if (point == null)
+                return new IntelPage();
+            return await CreateAsync(point, StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
+        }
+
+        /// <summary>
         /// 创建 <see cref="IntelPage"/>
         /// </summary>
         /// <param name="point">据点对象</param>
@@ -26,8 +43,7 @@ namespace Keylol.States.Aggregation.Point.Intel
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="IntelPage"/></returns>
         public static async Task<IntelPage> CreateAsync(Models.Point point, string currentUserId,
-            KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+            KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var intelPage = new IntelPage
             {

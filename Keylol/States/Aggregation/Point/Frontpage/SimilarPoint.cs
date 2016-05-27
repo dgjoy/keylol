@@ -7,7 +7,6 @@ using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Aggregation.Point.Frontpage
 {

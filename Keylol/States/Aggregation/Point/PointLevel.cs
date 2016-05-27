@@ -23,15 +23,15 @@ namespace Keylol.States.Aggregation.Point
         /// 获取据点层级状态树
         /// </summary>
         /// <param name="entrance">要获取的页面</param>
-        /// <param name="idCode">据点识别码</param>
+        /// <param name="pointIdCode">据点识别码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="PointLevel"/></returns>
-        public static async Task<PointLevel> Get(string entrance, string idCode, [Injected] KeylolDbContext dbContext,
+        public static async Task<PointLevel> Get(string entrance, string pointIdCode, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
             return await CreateAsync(StateTreeHelper.GetCurrentUserId(),
-                idCode, entrance.ToEnum<EntrancePage>(), dbContext, cachedData);
+                pointIdCode, entrance.ToEnum<EntrancePage>(), dbContext, cachedData);
         }
 
         /// <summary>

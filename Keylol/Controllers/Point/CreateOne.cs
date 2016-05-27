@@ -28,22 +28,27 @@ namespace Keylol.Controllers.Point
         [HttpPost]
         public async Task<IHttpActionResult> CreateOne([NotNull] CreateOneRequestDto requestDto)
         {
+            requestDto.IdCode = requestDto.IdCode.ToUpper();
+            if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Invalid);
+
+            if (await _dbContext.Points.AnyAsync(p => p.IdCode == requestDto.IdCode))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Duplicate);
+
+            if (!Helpers.IsTrustedUrl(requestDto.HeaderImage))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.HeaderImage),
+                    Errors.HeaderImageUntrusted);
+
+            if (!Helpers.IsTrustedUrl(requestDto.AvatarImage))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.HeaderImage),
+                    Errors.AvatarImageUntrusted);
+
             switch (requestDto.Type)
             {
                 case CreateOneRequestDto.CreateType.SteamGame:
                 {
                     if (requestDto.SteamAppId == null || requestDto.SteamAppId <= 0)
                         return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamAppId), Errors.Invalid);
-
-                    if (string.IsNullOrWhiteSpace(requestDto.EnglishName))
-                        return this.BadRequest(nameof(requestDto), nameof(requestDto.EnglishName), Errors.Required);
-
-                    if (string.IsNullOrWhiteSpace(requestDto.IdCode))
-                        return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Required);
-
-                    requestDto.IdCode = requestDto.IdCode.ToUpper();
-                    if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
-                        return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Invalid);
 
                     if (await _dbContext.Points.AnyAsync(p => p.SteamAppId == requestDto.SteamAppId))
                         return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamAppId), Errors.Duplicate);
@@ -275,21 +280,95 @@ namespace Keylol.Controllers.Point
 
                 case CreateOneRequestDto.CreateType.OtherGame:
                 {
+                    if (string.IsNullOrWhiteSpace(requestDto.HeaderImage))
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.HeaderImage), Errors.Required);
+
+                    if (string.IsNullOrWhiteSpace(requestDto.AvatarImage))
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.AvatarImage), Errors.Required);
+
+                    var point = new Models.Point
+                    {
+                        Type = PointType.Game,
+                        IdCode = requestDto.IdCode,
+                        EnglishName = requestDto.EnglishName,
+                        HeaderImage = requestDto.HeaderImage,
+                        AvatarImage = requestDto.AvatarImage
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(requestDto.ChineseName))
+                        point.ChineseName = requestDto.ChineseName;
+
+                    _dbContext.Points.Add(point);
+                    _dbContext.PointRelationships.AddRange((await _dbContext.Points
+                        .Where(p => requestDto.PlatformPoitns.Contains(p.IdCode) && p.Type == PointType.Platform)
+                        .Select(p => p.Id)
+                        .ToListAsync())
+                        .Select(id => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Platform,
+                            SourcePointId = point.Id,
+                            TargetPointId = id
+                        }));
+                    await _dbContext.SaveChangesAsync();
                     break;
                 }
 
                 case CreateOneRequestDto.CreateType.Hardware:
                 {
+                    if (string.IsNullOrWhiteSpace(requestDto.HeaderImage))
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.HeaderImage), Errors.Required);
+
+                    var point = new Models.Point
+                    {
+                        Type = PointType.Hardware,
+                        IdCode = requestDto.IdCode,
+                        EnglishName = requestDto.EnglishName,
+                        HeaderImage = requestDto.HeaderImage
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(requestDto.ChineseName))
+                        point.ChineseName = requestDto.ChineseName;
+
+                    _dbContext.Points.Add(point);
+                    await _dbContext.SaveChangesAsync();
                     break;
                 }
 
                 case CreateOneRequestDto.CreateType.Vendor:
                 {
+                    var point = new Models.Point
+                    {
+                        Type = PointType.Vendor,
+                        IdCode = requestDto.IdCode,
+                        EnglishName = requestDto.EnglishName
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(requestDto.ChineseName))
+                        point.ChineseName = requestDto.ChineseName;
+                    if (!string.IsNullOrWhiteSpace(requestDto.AvatarImage))
+                        point.AvatarImage = requestDto.AvatarImage;
+
+                    _dbContext.Points.Add(point);
+                    await _dbContext.SaveChangesAsync();
                     break;
                 }
 
                 case CreateOneRequestDto.CreateType.Category:
                 {
+                    var point = new Models.Point
+                    {
+                        Type = PointType.Category,
+                        IdCode = requestDto.IdCode,
+                        EnglishName = requestDto.EnglishName
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(requestDto.ChineseName))
+                        point.ChineseName = requestDto.ChineseName;
+                    if (!string.IsNullOrWhiteSpace(requestDto.AvatarImage))
+                        point.AvatarImage = requestDto.AvatarImage;
+
+                    _dbContext.Points.Add(point);
+                    await _dbContext.SaveChangesAsync();
                     break;
                 }
 
@@ -317,6 +396,7 @@ namespace Keylol.Controllers.Point
             /// <summary>
             /// 英文名
             /// </summary>
+            [Required]
             public string EnglishName { get; set; }
 
             /// <summary>
@@ -327,6 +407,7 @@ namespace Keylol.Controllers.Point
             /// <summary>
             /// 识别码
             /// </summary>
+            [Required]
             public string IdCode { get; set; }
 
             /// <summary>

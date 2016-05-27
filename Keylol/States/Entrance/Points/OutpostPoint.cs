@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Aggregation.Point.BasicInfo;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance.Points
 {
@@ -93,7 +93,16 @@ namespace Keylol.States.Entrance.Points
                     point.GogLink,
                     point.GogPrice,
                     point.BattleNetLink,
-                    point.BattleNetPrice
+                    point.BattleNetPrice,
+                    Categories = (from relationship in dbContext.PointRelationships
+                        where relationship.SourcePointId == point.Id &&
+                              relationship.Relationship == PointRelationshipType.Tag
+                        select new
+                        {
+                            relationship.TargetPoint.IdCode,
+                            relationship.TargetPoint.ChineseName,
+                            relationship.TargetPoint.EnglishName
+                        }).ToList()
                 })
                 .Take(() => take)
                 .ToListAsync();
@@ -146,6 +155,11 @@ namespace Keylol.States.Entrance.Points
                     GogPrice = p.GogPrice,
                     BattleNetLink = p.BattleNetLink,
                     BattleNetPrice = p.BattleNetPrice,
+                    Categories = p.Categories.Select(c => new SimplePoint
+                    {
+                        IdCode = c.IdCode,
+                        ChineseName = string.IsNullOrWhiteSpace(c.ChineseName) ? c.EnglishName : c.ChineseName
+                    }).ToList(),
                     Subscribed = string.IsNullOrWhiteSpace(currentUserId)
                         ? (bool?) null
                         : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
@@ -391,6 +405,11 @@ namespace Keylol.States.Entrance.Points
         public double? BattleNetPrice { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// 类型
+        /// </summary>
+        public List<SimplePoint> Categories { get; set; }
 
         /// <summary>
         /// 是否已订阅

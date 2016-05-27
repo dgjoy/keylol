@@ -2,7 +2,6 @@
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance.Points
 {

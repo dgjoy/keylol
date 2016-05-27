@@ -42,13 +42,14 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                     select new
                     {
                         relationship.TargetPoint.IdCode,
-                        relationship.TargetPoint.ChineseName
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
                     .Select(p => new SimplePoint
                     {
                         IdCode = p.IdCode,
-                        ChineseName = p.ChineseName
+                        ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
                     })
                     .ToList(),
                 Vendors = (await (from relationship in dbContext.PointRelationships

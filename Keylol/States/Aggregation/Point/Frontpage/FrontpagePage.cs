@@ -18,16 +18,16 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         /// <summary>
         /// 获取据点扉页
         /// </summary>
-        /// <param name="idCode">据点识别码</param>
+        /// <param name="pointIdCode">据点识别码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns></returns>
-        public static async Task<FrontpagePage> Get(string idCode, [Injected] KeylolDbContext dbContext,
+        /// <returns><see cref="FrontpagePage"/></returns>
+        public static async Task<FrontpagePage> Get(string pointIdCode, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            var point = await dbContext.Points.Where(p => p.IdCode == idCode).SingleOrDefaultAsync();
+            var point = await dbContext.Points.Where(p => p.IdCode == pointIdCode).SingleOrDefaultAsync();
             if (point == null)
-                return null;
+                return new FrontpagePage();
             return await CreateAsync(point, StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
         }
 
