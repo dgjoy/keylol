@@ -3,7 +3,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Keylol.Models;
 using Keylol.Models.DAL;
 
 namespace Keylol.Provider.CachedDataProvider

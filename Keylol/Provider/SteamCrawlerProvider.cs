@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
@@ -41,6 +42,8 @@ namespace Keylol.Provider
 
         private static string PointSteamSpyCrawlerStampCacheKey(string pointId)
             => $"crawler-stamp:point-steam-spy:{pointId}";
+
+        private static string OnSalePointsCrawlerStampCacheKey() => "crawler-stamp:on-sale-points";
 
         /// <summary>
         /// 创建 <see cref="SteamCrawlerProvider"/>
@@ -131,6 +134,21 @@ namespace Keylol.Provider
                 {
                     var redis = Global.Container.GetInstance<RedisProvider>();
                     await UpdateSteamSpyData(pointId, dbContext, redis);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 异步抓取是日优惠据点 (fire-and-forget)
+        /// </summary>
+        public static void UpdateOnSalePoints()
+        {
+            Task.Run(async () =>
+            {
+                using (var dbContext = new KeylolDbContext())
+                {
+                    var redis = Global.Container.GetInstance<RedisProvider>();
+                    await UpdateOnSalePoints(dbContext, redis);
                 }
             });
         }
@@ -293,13 +311,13 @@ namespace Keylol.Provider
                     var sonkwoHtml =
                         await HttpClient.GetStringAsync($"http://www.sonkwo.com/products/{point.SonkwoProductId}");
                     var sonkwoDom = CQ.Create(sonkwoHtml);
-                    var sonkwoPriceText = sonkwoDom[".sale-price"]?.Text().Replace("￥", string.Empty) ??
-                                          sonkwoDom[".list-price"]?.Text().Replace("￥", string.Empty);
+                    var sonkwoPriceText = sonkwoDom[".sale-price, .list-price"].Text()
+                        .Replace("￥", string.Empty);
                     double sonkwoPrice;
                     if (double.TryParse(sonkwoPriceText, out sonkwoPrice))
                     {
                         point.SonkwoPrice = sonkwoPrice;
-                        var sonkwoDiscountedPriceText = sonkwoDom[".discounted-sale-price"]?.Text()
+                        var sonkwoDiscountedPriceText = sonkwoDom[".discounted-sale-price"].Text()
                             .Replace("￥", string.Empty);
                         double sonkwoDiscountedPrice;
                         if (double.TryParse(sonkwoDiscountedPriceText, out sonkwoDiscountedPrice))
@@ -350,6 +368,62 @@ namespace Keylol.Provider
                 point.TwoWeekMedianPlayedTime = (int) result["median_2weeks"];
                 point.Ccu = (int) result["ccu"];
                 await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+                return true;
+            }
+            catch (Exception)
+            {
+                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
+                return false;
+            }
+        }
+
+        private static async Task<bool> UpdateOnSalePoints(KeylolDbContext dbContext, RedisProvider redis)
+        {
+            var cacheKey = OnSalePointsCrawlerStampCacheKey();
+            var redisDb = redis.GetDatabase();
+            var cacheResult = await redisDb.StringGetAsync(cacheKey);
+            if (cacheResult.HasValue)
+                return false;
+            var expiry = TimeSpan.FromHours(3) - DateTime.Now.TimeOfDay; // 凌晨三时
+            if (expiry <= TimeSpan.Zero)
+                expiry += TimeSpan.FromHours(24);
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), expiry);
+            try
+            {
+                var points = new HashSet<string>();
+                var currentPage = 1;
+                var continueNext = true;
+                do
+                {
+                    var dom = CQ.Create(await HttpClient.GetStreamAsync(
+                        $"http://store.steampowered.com/search/results?specials=1&os=win&page={currentPage}&cc=cn"));
+                    var anchors = dom[".search_result_row"];
+                    if (anchors.Length < 25)
+                        continueNext = false;
+                    foreach (var anchor in anchors)
+                    {
+                        int appId;
+                        if (!int.TryParse(anchor.Attributes["data-ds-appid"], out appId)) continue;
+                        var point = await dbContext.Points.Where(p => p.SteamAppId == appId).SingleOrDefaultAsync();
+                        if (point == null) continue;
+                        if (!points.Add(point.Id)) continue;
+                        var matches = Regex.Matches(anchor.Cq().Find(".search_price").Text(), @"¥ (\d+)");
+                        if (matches.Count != 2) continue;
+                        point.SteamPrice = double.Parse(matches[0].Groups[1].Value);
+                        point.SteamDiscountedPrice = double.Parse(matches[1].Groups[1].Value);
+                    }
+                    currentPage++;
+                } while (continueNext && points.Count < 50); // 至少 50 个
+
+                var oldPoints = await dbContext.Feeds.Where(f => f.StreamName == OnSalePointStream.Name).ToListAsync();
+                dbContext.Feeds.RemoveRange(oldPoints);
+                dbContext.Feeds.AddRange(points.Select(id => new Feed
+                {
+                    StreamName = OnSalePointStream.Name,
+                    EntryType = FeedEntryType.PointId,
+                    Entry = id
+                }));
+                await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
                 return true;
             }
             catch (Exception)

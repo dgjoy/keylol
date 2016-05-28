@@ -98,7 +98,7 @@ namespace Keylol.Controllers.Point
 
                             var genreNames = new List<string>();
                             var tags = dom[".popular_tags a.app_tag"].Select(child => child.InnerText.Trim())
-                                .Except(_tagBlacklist).Take(5).ToList();
+                                .Except(TagBlacklist).Take(5).ToList();
                             var developerNames = new List<string>();
                             var publisherNames = new List<string>();
                             foreach (var child in dom[".game_details .details_block"].First().Find("b"))
@@ -381,7 +381,7 @@ namespace Keylol.Controllers.Point
         /// <summary>
         /// 特性据点关联黑名单
         /// </summary>
-        private static List<string> _tagBlacklist = new List<string>
+        private static readonly List<string> TagBlacklist = new List<string>
         {
             "Action",
             "Indie",

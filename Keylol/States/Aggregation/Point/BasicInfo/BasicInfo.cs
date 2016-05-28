@@ -26,9 +26,9 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         public static async Task<BasicInfo> CreateAsync(string currentUserId, Models.Point point,
             KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            var rating = await cachedData.Points.GetRatingsAsync(point.Id);
             if (point.Type == PointType.Game)
                 SteamCrawlerProvider.UpdatePointPrice(point.Id);
+            var rating = await cachedData.Points.GetRatingsAsync(point.Id);
             return new BasicInfo
             {
                 Id = point.Id,

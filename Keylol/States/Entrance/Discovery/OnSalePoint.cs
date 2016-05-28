@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance.Discovery
 {
@@ -52,6 +52,7 @@ namespace Keylol.States.Entrance.Discovery
             bool returnFirstHeaderImage, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
+            SteamCrawlerProvider.UpdateOnSalePoints();
             var conditionQuery = from feed in dbContext.Feeds
                 where feed.StreamName == OnSalePointStream.Name
                 join point in dbContext.Points on feed.Entry equals point.Id
