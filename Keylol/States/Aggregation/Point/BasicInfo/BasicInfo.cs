@@ -26,17 +26,31 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         public static async Task<BasicInfo> CreateAsync(string currentUserId, Models.Point point,
             KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            if (point.Type == PointType.Game)
-                SteamCrawlerProvider.UpdatePointPrice(point.Id);
-            var rating = await cachedData.Points.GetRatingsAsync(point.Id);
-            return new BasicInfo
+            var basicInfo = new BasicInfo
             {
                 Id = point.Id,
+                Type = point.Type,
                 HeaderImage = point.HeaderImage,
                 AvatarImage = point.AvatarImage,
                 ChineseName = point.ChineseName,
                 EnglishName = point.EnglishName,
-                Categories = (await (from relationship in dbContext.PointRelationships
+                Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                    ? (bool?) null
+                    : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, point.Id,
+                        SubscriptionTargetType.Point)
+            };
+
+            if (point.Type == PointType.Game || point.Type == PointType.Hardware)
+            {
+                var rating = await cachedData.Points.GetRatingsAsync(point.Id);
+                basicInfo.OneStarCount = rating.OneStarCount;
+                basicInfo.TwoStarCount = rating.TwoStarCount;
+                basicInfo.ThreeStarCount = rating.ThreeStarCount;
+                basicInfo.FourStarCount = rating.FourStarCount;
+                basicInfo.FiveStarCount = rating.FiveStarCount;
+                basicInfo.AverageRating = rating.AverageRating;
+
+                basicInfo.Categories = (await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           relationship.Relationship == PointRelationshipType.Tag
                     select new
@@ -51,8 +65,9 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                         IdCode = p.IdCode,
                         ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
                     })
-                    .ToList(),
-                Vendors = (await (from relationship in dbContext.PointRelationships
+                    .ToList();
+
+                basicInfo.Vendors = (await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           relationship.Relationship == PointRelationshipType.Developer ||
                           relationship.Relationship == PointRelationshipType.Manufacturer
@@ -69,60 +84,85 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
-                    .ToList(),
-                TitleCoverImage = point.TitleCoverImage,
-                TotalPlayedTime = (await dbContext.UserSteamGameRecords
+                    .ToList();
+
+                basicInfo.TitleCoverImage = point.TitleCoverImage;
+
+                basicInfo.SteamAppId = point.SteamAppId;
+                basicInfo.SteamPrice = point.SteamPrice;
+                basicInfo.SteamDiscountedPrice = point.SteamDiscountedPrice;
+                basicInfo.SonkwoProductId = point.SonkwoProductId;
+                basicInfo.SonkwoPrice = point.SonkwoPrice;
+                basicInfo.SonkwoDiscountedPrice = point.SonkwoDiscountedPrice;
+                basicInfo.UplayLink = point.UplayLink;
+                basicInfo.UplayPrice = point.UplayPrice;
+                basicInfo.XboxLink = point.XboxLink;
+                basicInfo.XboxPrice = point.XboxPrice;
+                basicInfo.PlayStationLink = point.PlayStationLink;
+                basicInfo.PlayStationPrice = point.PlayStationPrice;
+                basicInfo.OriginLink = point.OriginLink;
+                basicInfo.OriginPrice = point.OriginPrice;
+                basicInfo.WindowsStoreLink = point.WindowsStoreLink;
+                basicInfo.WindowsStorePrice = point.WindowsStorePrice;
+                basicInfo.AppStoreLink = point.AppStoreLink;
+                basicInfo.AppStorePrice = point.AppStorePrice;
+                basicInfo.GooglePlayLink = point.GooglePlayLink;
+                basicInfo.GooglePlayPrice = point.GooglePlayPrice;
+                basicInfo.GogLink = point.GogLink;
+                basicInfo.GogPrice = point.GogPrice;
+                basicInfo.BattleNetLink = point.BattleNetLink;
+                basicInfo.BattleNetPrice = point.BattleNetPrice;
+            }
+            else
+            {
+                var childPoints = await dbContext.PointRelationships
+                    .Where(r => r.TargetPointId == point.Id)
+                    .GroupBy(r => r.SourcePointId)
+                    .Select(g => g.Key)
+                    .ToListAsync();
+                basicInfo.GameCount = childPoints.Count;
+                double totalScore = 0;
+                var validRatingCount = 0;
+                foreach (var childPointId in childPoints)
+                {
+                    var rating = (await cachedData.Points.GetRatingsAsync(childPointId)).AverageRating;
+                    if (rating == null) continue;
+                    totalScore += rating.Value;
+                    validRatingCount++;
+                }
+                if (validRatingCount > 0)
+                    basicInfo.AverageRating = Math.Round(totalScore/validRatingCount, 1);
+            }
+            if (point.Type == PointType.Game)
+            {
+                SteamCrawlerProvider.UpdatePointPrice(point.Id);
+
+                basicInfo.TotalPlayedTime = (await dbContext.UserSteamGameRecords
                     .Where(r => r.UserId == currentUserId && r.SteamAppId == point.SteamAppId)
-                    .SingleOrDefaultAsync())?.TotalPlayedTime,
-                KeylolAveragePlayedTime = Math.Round(await dbContext.UserSteamGameRecords
+                    .SingleOrDefaultAsync())?.TotalPlayedTime;
+
+                basicInfo.KeylolAveragePlayedTime = Math.Round(await dbContext.UserSteamGameRecords
                     .Where(r => r.SteamAppId == point.SteamAppId)
                     .Select(r => r.TotalPlayedTime)
                     .DefaultIfEmpty()
-                    .AverageAsync(), 1),
-                OneStarCount = rating.OneStarCount,
-                TwoStarCount = rating.TwoStarCount,
-                ThreeStarCount = rating.ThreeStarCount,
-                FourStarCount = rating.FourStarCount,
-                FiveStarCount = rating.FiveStarCount,
-                AverageRating = rating.AverageRating,
-                SteamAppId = point.SteamAppId,
-                SteamPrice = point.SteamPrice,
-                SteamDiscountedPrice = point.SteamDiscountedPrice,
-                SonkwoProductId = point.SonkwoProductId,
-                SonkwoPrice = point.SonkwoPrice,
-                SonkwoDiscountedPrice = point.SonkwoDiscountedPrice,
-                UplayLink = point.UplayLink,
-                UplayPrice = point.UplayPrice,
-                XboxLink = point.XboxLink,
-                XboxPrice = point.XboxPrice,
-                PlayStationLink = point.PlayStationLink,
-                PlayStationPrice = point.PlayStationPrice,
-                OriginLink = point.OriginLink,
-                OriginPrice = point.OriginPrice,
-                WindowsStoreLink = point.WindowsStoreLink,
-                WindowsStorePrice = point.WindowsStorePrice,
-                AppStoreLink = point.AppStoreLink,
-                AppStorePrice = point.AppStorePrice,
-                GooglePlayLink = point.GooglePlayLink,
-                GooglePlayPrice = point.GooglePlayPrice,
-                GogLink = point.GogLink,
-                GogPrice = point.GogPrice,
-                BattleNetLink = point.BattleNetLink,
-                BattleNetPrice = point.BattleNetPrice,
-                Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                    .AverageAsync(), 1);
+
+                basicInfo.InLibrary = string.IsNullOrWhiteSpace(currentUserId) || point.SteamAppId == null
                     ? (bool?) null
-                    : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, point.Id,
-                        SubscriptionTargetType.Point),
-                InLibrary = string.IsNullOrWhiteSpace(currentUserId) || point.SteamAppId == null
-                    ? (bool?) null
-                    : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, point.SteamAppId.Value)
-            };
+                    : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, point.SteamAppId.Value);
+            }
+            return basicInfo;
         }
 
         /// <summary>
         /// ID
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// 据点类型
+        /// </summary>
+        public PointType Type { get; set; }
 
         /// <summary>
         /// 头部图
@@ -172,27 +212,27 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         /// <summary>
         /// 一星评分个数
         /// </summary>
-        public int OneStarCount { get; set; }
+        public int? OneStarCount { get; set; }
 
         /// <summary>
         /// 二星评分个数
         /// </summary>
-        public int TwoStarCount { get; set; }
+        public int? TwoStarCount { get; set; }
 
         /// <summary>
         /// 三星评分个数
         /// </summary>
-        public int ThreeStarCount { get; set; }
+        public int? ThreeStarCount { get; set; }
 
         /// <summary>
         /// 四星评分个数
         /// </summary>
-        public int FourStarCount { get; set; }
+        public int? FourStarCount { get; set; }
 
         /// <summary>
         /// 五星评分个数
         /// </summary>
-        public int FiveStarCount { get; set; }
+        public int? FiveStarCount { get; set; }
 
         /// <summary>
         /// 平均评分
@@ -332,5 +372,10 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         /// 是否已订阅
         /// </summary>
         public bool? Subscribed { get; set; }
+
+        /// <summary>
+        /// 旗下游戏数
+        /// </summary>
+        public int? GameCount { get; set; }
     }
 }

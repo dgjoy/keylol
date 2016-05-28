@@ -204,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
+    <Compile Include="Controllers\Feed\CreateOneOutpostPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightArticle.cs" />
     <Compile Include="Controllers\Feed\DeleteOne.cs" />
@@ -285,7 +286,6 @@
     <Compile Include="States\Entrance\Discovery\OnSalePoint.cs" />
     <Compile Include="States\Entrance\Discovery\SlideshowEntry.cs" />
     <Compile Include="States\Entrance\Discovery\SpotlightArticle.cs" />
-    <Compile Include="States\Entrance\Discovery\SpotlightConference.cs" />
     <Compile Include="States\Entrance\Discovery\SpotlightPoint.cs" />
     <Compile Include="States\Entrance\EntranceLevel.cs" />
     <Compile Include="States\Entrance\Points\InterestedPoint.cs" />

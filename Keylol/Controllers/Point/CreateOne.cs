@@ -98,7 +98,7 @@ namespace Keylol.Controllers.Point
 
                             var genreNames = new List<string>();
                             var tags = dom[".popular_tags a.app_tag"].Select(child => child.InnerText.Trim())
-                                .Except(TagBlacklist).Take(5).ToList();
+                                .Except(TagBlacklist).Take(6).ToList();
                             var developerNames = new List<string>();
                             var publisherNames = new List<string>();
                             foreach (var child in dom[".game_details .details_block"].First().Find("b"))
@@ -140,6 +140,60 @@ namespace Keylol.Controllers.Point
                                         point.ReleaseDate = DateTime.TryParse(values[0], out releaseDate)
                                             ? releaseDate
                                             : Helpers.DateTimeFromTimeStamp(0);
+                                        break;
+                                }
+                            }
+
+                            foreach (var spec in dom[".game_area_details_specs a.name"])
+                            {
+                                switch (spec.InnerText)
+                                {
+                                    case "Multi-player":
+                                        point.MultiPlayer = true;
+                                        break;
+
+                                    case "Single-player":
+                                        point.SinglePlayer = true;
+                                        break;
+
+                                    case "Co-op":
+                                        point.Coop = true;
+                                        break;
+
+                                    case "Captions available":
+                                        point.CaptionsAvailable = true;
+                                        break;
+
+                                    case "Commentary available":
+                                        point.CommentaryAvailable = true;
+                                        break;
+
+                                    case "Includes level editor":
+                                        point.IncludeLevelEditor = true;
+                                        break;
+
+                                    case "Steam Achievements":
+                                        point.Achievements = true;
+                                        break;
+
+                                    case "Steam Cloud":
+                                        point.Cloud = true;
+                                        break;
+
+                                    case "Local Co-op":
+                                        point.LocalCoop = true;
+                                        break;
+
+                                    case "Steam Trading Cards":
+                                        point.SteamTradingCards = true;
+                                        break;
+
+                                    case "Steam Workshop":
+                                        point.SteamWorkshop = true;
+                                        break;
+
+                                    case "In-App Purchases":
+                                        point.InAppPurchases = true;
                                         break;
                                 }
                             }
@@ -396,7 +450,14 @@ namespace Keylol.Controllers.Point
             "Free to Play",
             "Story Rich",
             "Classic",
-            "Local Co-Op"
+            "Local Co-Op",
+            "Massively Multiplayer",
+            "Demos",
+            "Virtual Reality",
+            "Racing",
+            "Simulation",
+            "Sports",
+            "Strategy"
         };
 
         /// <summary>

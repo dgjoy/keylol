@@ -30,7 +30,13 @@ namespace Keylol.Provider
         private readonly RedisProvider _redis;
         private static readonly string ApiKey = ConfigurationManager.AppSettings["steamWebApiKey"] ?? string.Empty;
         private static readonly HttpClient HttpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(20)};
-        private static readonly int SilenceSeconds = 8*60;
+        private static readonly TimeSpan SilenceTime = TimeSpan.FromMinutes(8);
+        private static readonly TimeSpan PointPriceUpdatePeriod = TimeSpan.FromDays(1);
+        private static readonly TimeSpan UserSteamGameRecordsUpdatePeriod = TimeSpan.FromHours(12);
+        private static readonly TimeSpan UserSteamFriendsUpdatePeriod = TimeSpan.FromDays(2);
+        private static readonly TimeSpan SteamSpyDataUpdatePeriod = TimeSpan.FromDays(1);
+        private static readonly TimeSpan OnSalePointsUpdateTime = TimeSpan.FromHours(3); // 凌晨三时
+        private const int OnSalePointMinCount = 50; // 至少获取的是日优惠据点个数
 
         private static string UserSteamGameRecordsCrawlerStampCacheKey(string userId)
             => $"crawler-stamp:user-steam-game-records:{userId}";
@@ -162,7 +168,7 @@ namespace Keylol.Provider
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
                 return false;
-            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromHours(12));
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), UserSteamGameRecordsUpdatePeriod);
             try
             {
                 var user = await userManager.FindByIdAsync(userId);
@@ -218,7 +224,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
+                await redisDb.KeyExpireAsync(cacheKey, SilenceTime);
                 return false;
             }
         }
@@ -231,7 +237,7 @@ namespace Keylol.Provider
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
                 return false;
-            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(2));
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), UserSteamFriendsUpdatePeriod);
             try
             {
                 var steamId = new SteamID();
@@ -266,7 +272,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
+                await redisDb.KeyExpireAsync(cacheKey, SilenceTime);
                 return false;
             }
         }
@@ -279,7 +285,7 @@ namespace Keylol.Provider
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
                 return false;
-            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(1));
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), PointPriceUpdatePeriod);
             try
             {
                 var point = await dbContext.Points.FindAsync(pointId);
@@ -335,7 +341,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
+                await redisDb.KeyExpireAsync(cacheKey, SilenceTime);
                 return false;
             }
         }
@@ -348,7 +354,7 @@ namespace Keylol.Provider
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
                 return false;
-            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), TimeSpan.FromDays(1));
+            await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), SteamSpyDataUpdatePeriod);
             try
             {
                 var point = await dbContext.Points.FindAsync(pointId);
@@ -372,7 +378,7 @@ namespace Keylol.Provider
             }
             catch (Exception)
             {
-                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
+                await redisDb.KeyExpireAsync(cacheKey, SilenceTime);
                 return false;
             }
         }
@@ -384,7 +390,7 @@ namespace Keylol.Provider
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
                 return false;
-            var expiry = TimeSpan.FromHours(3) - DateTime.Now.TimeOfDay; // 凌晨三时
+            var expiry = OnSalePointsUpdateTime - DateTime.Now.TimeOfDay;
             if (expiry <= TimeSpan.Zero)
                 expiry += TimeSpan.FromHours(24);
             await redisDb.StringSetAsync(cacheKey, DateTime.Now.ToTimestamp(), expiry);
@@ -413,7 +419,7 @@ namespace Keylol.Provider
                         point.SteamDiscountedPrice = double.Parse(matches[1].Groups[1].Value);
                     }
                     currentPage++;
-                } while (continueNext && points.Count < 50); // 至少 50 个
+                } while (continueNext && points.Count < OnSalePointMinCount);
 
                 var oldPoints = await dbContext.Feeds.Where(f => f.StreamName == OnSalePointStream.Name).ToListAsync();
                 dbContext.Feeds.RemoveRange(oldPoints);
@@ -423,12 +429,17 @@ namespace Keylol.Provider
                     EntryType = FeedEntryType.PointId,
                     Entry = id
                 }));
+                foreach (var pointId in points)
+                {
+                    await redisDb.StringSetAsync(PointPriceCrawlerStampCacheKey(pointId), DateTime.Now.ToTimestamp(),
+                        PointPriceUpdatePeriod);
+                }
                 await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
                 return true;
             }
             catch (Exception)
             {
-                await redisDb.KeyExpireAsync(cacheKey, TimeSpan.FromSeconds(SilenceSeconds));
+                await redisDb.KeyExpireAsync(cacheKey, SilenceTime);
                 return false;
             }
         }

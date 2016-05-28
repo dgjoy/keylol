@@ -3,7 +3,6 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance.Discovery
 {
@@ -84,7 +83,6 @@ namespace Keylol.States.Entrance.Discovery
                 SpotlightPoints = await SpotlightPointList.CreateAsync(currentUserId, 1, 30, dbContext, cachedData),
                 SpotlightReviews = await SpotlightArticleList.CreateAsync(currentUserId, 4,
                     SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData),
-                SpotlightConferences = await SpotlightConferenceList.CreateAsync(dbContext),
                 SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId, 4,
                     SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData),
                 OnSalePointHeaderImage = onSalePoints.Item3,
@@ -112,11 +110,6 @@ namespace Keylol.States.Entrance.Discovery
         /// 精选评测
         /// </summary>
         public SpotlightArticleList SpotlightReviews { get; set; }
-
-        /// <summary>
-        /// 精选专题
-        /// </summary>
-        public SpotlightConferenceList SpotlightConferences { get; set; }
 
         /// <summary>
         /// 精选研究

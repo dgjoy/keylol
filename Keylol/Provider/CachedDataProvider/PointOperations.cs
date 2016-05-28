@@ -48,15 +48,16 @@ namespace Keylol.Provider.CachedDataProvider
             }
 
             // TODO
+            var random = new Random();
             var rating = new PointRatingsDto
             {
-                OneStarCount = 5,
-                TwoStarCount = 6,
-                ThreeStarCount = 7,
-                FourStarCount = 8,
-                FiveStarCount = 9,
-                TotalScore = 27,
-                TotalCount = 7
+                OneStarCount = random.Next(0, 100),
+                TwoStarCount = random.Next(0, 100),
+                ThreeStarCount = random.Next(0, 100),
+                FourStarCount = random.Next(0, 100),
+                FiveStarCount = random.Next(0, 100),
+                TotalScore = random.Next(200, 1001),
+                TotalCount = 100
             };
 //                await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(rating), DefaultTtl);
             return rating;
