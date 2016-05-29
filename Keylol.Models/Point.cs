@@ -50,11 +50,6 @@ namespace Keylol.Models
         [MaxLength(256)]
         public string HeaderImage { get; set; } = string.Empty;
 
-        [Required(AllowEmptyStrings = true)]
-        [MaxLength(10000)]
-        [Obsolete]
-        public string Description { get; set; } = string.Empty;
-
         public virtual ICollection<SteamStoreName> SteamStoreNames { get; set; }
 
         [Required(AllowEmptyStrings = true)]
@@ -163,10 +158,6 @@ namespace Keylol.Models
         public bool InAppPurchases { get; set; }
 
         #endregion
-
-        [Required(AllowEmptyStrings = true)]
-        [MaxLength(256)]
-        public string DisplayAliases { get; set; } = string.Empty;
 
         public DateTime? PublishDate { get; set; }
 

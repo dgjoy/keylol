@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
 using Keylol.Models;
+using Keylol.ServiceBase;
+using Keylol.Utilities;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger.Annotations;
 
@@ -24,6 +26,10 @@ namespace Keylol.Controllers.Feed
             var feed = await _dbContext.Feeds.FindAsync(id);
             if (feed == null || feed.StreamName != SlideshowStream.Name)
                 return NotFound();
+
+            if (!Helpers.IsTrustedUrl(dto.BackgroundImage))
+                return this.BadRequest(nameof(dto), nameof(dto.BackgroundImage), Errors.Invalid);
+
             feed.Properties = JsonConvert.SerializeObject(new SlideshowStream.FeedProperties
             {
                 Title = dto.Title,
@@ -35,6 +41,7 @@ namespace Keylol.Controllers.Feed
                 BackgroundImage = dto.BackgroundImage,
                 Link = dto.Link
             });
+
             await _dbContext.SaveChangesAsync();
             return Ok();
         }

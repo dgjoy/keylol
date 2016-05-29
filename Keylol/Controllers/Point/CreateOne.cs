@@ -198,6 +198,43 @@ namespace Keylol.Controllers.Point
                                 }
                             }
 
+                            var chineseAvailability = new ChineseAvailability
+                            {
+                                ThirdPartyLinks = new List<ChineseAvailability.ThirdPartyLink>()
+                            };
+                            foreach (var tr in dom[".game_language_options tr"])
+                            {
+                                var tds = tr.ChildElements.ToList();
+                                if (tds.Count < 4)
+                                    continue;
+                                var language = new ChineseAvailability.Language
+                                {
+                                    Interface = tds[1].ChildElements.Any(),
+                                    FullAudio = tds[2].ChildElements.Any(),
+                                    Subtitles = tds[3].ChildElements.Any()
+                                };
+                                switch (tds[0].InnerText.Trim())
+                                {
+                                    case "English":
+                                        chineseAvailability.English = language;
+                                        break;
+
+                                    case "Japanese":
+                                        chineseAvailability.Japanese = language;
+                                        break;
+
+                                    case "Simplified Chinese":
+                                        chineseAvailability.SimplifiedChinese = language;
+                                        break;
+
+                                    case "Traditional Chinese":
+                                        chineseAvailability.TraditionalChinese = language;
+                                        break;
+                                }
+                            }
+                            point.ChineseAvailability = JsonConvert.SerializeObject(chineseAvailability,
+                                new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+
                             var screenshots = dom[".highlight_strip_screenshot img"];
                             var media = new List<PointMedia>(screenshots.Length);
                             foreach (var screenshot in screenshots)
@@ -354,7 +391,7 @@ namespace Keylol.Controllers.Point
 
                     _dbContext.Points.Add(point);
                     _dbContext.PointRelationships.AddRange((await _dbContext.Points
-                        .Where(p => requestDto.PlatformPoitns.Contains(p.IdCode) && p.Type == PointType.Platform)
+                        .Where(p => requestDto.PlatformPoints.Contains(p.IdCode) && p.Type == PointType.Platform)
                         .Select(p => p.Id)
                         .ToListAsync())
                         .Select(id => new PointRelationship
@@ -495,7 +532,7 @@ namespace Keylol.Controllers.Point
             /// <summary>
             /// 平台据点识别码列表
             /// </summary>
-            public List<string> PlatformPoitns { get; set; }
+            public List<string> PlatformPoints { get; set; }
 
             /// <summary>
             /// 头部图

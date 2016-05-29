@@ -13,6 +13,7 @@ namespace Keylol.Provider.CachedDataProvider
     {
         private readonly KeylolDbContext _dbContext;
         private readonly RedisProvider _redis;
+        private readonly Random _random = new Random();
 
         /// <summary>
         /// ´´½¨ <see cref="PointOperations"/>
@@ -48,15 +49,14 @@ namespace Keylol.Provider.CachedDataProvider
             }
 
             // TODO
-            var random = new Random();
             var rating = new PointRatingsDto
             {
-                OneStarCount = random.Next(0, 100),
-                TwoStarCount = random.Next(0, 100),
-                ThreeStarCount = random.Next(0, 100),
-                FourStarCount = random.Next(0, 100),
-                FiveStarCount = random.Next(0, 100),
-                TotalScore = random.Next(200, 1001),
+                OneStarCount = _random.Next(0, 100),
+                TwoStarCount = _random.Next(0, 100),
+                ThreeStarCount = _random.Next(0, 100),
+                FourStarCount = _random.Next(0, 100),
+                FiveStarCount = _random.Next(0, 100),
+                TotalScore = _random.Next(200, 1001),
                 TotalCount = 100
             };
 //                await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(rating), DefaultTtl);

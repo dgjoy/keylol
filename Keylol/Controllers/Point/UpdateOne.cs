@@ -1,0 +1,632 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Drawing;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web.Http;
+using JetBrains.Annotations;
+using Keylol.Models;
+using Keylol.ServiceBase;
+using Newtonsoft.Json;
+using Swashbuckle.Swagger.Annotations;
+
+namespace Keylol.Controllers.Point
+{
+    public partial class PointController
+    {
+        /// <summary>
+        /// 更新指定据点的属性
+        /// </summary>
+        /// <param name="id">据点 ID</param>
+        /// <param name="requestDto">请求 DTO</param>
+        [Route("{id}")]
+        [HttpPut]
+        [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
+        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] UpdateOneRequestDto requestDto)
+        {
+            var point = await _dbContext.Points.FindAsync(id);
+            if (point == null)
+                return NotFound();
+
+            if (!string.IsNullOrWhiteSpace(requestDto.ChineseName))
+                point.ChineseName = requestDto.ChineseName;
+
+            if (!string.IsNullOrWhiteSpace(requestDto.EnglishName))
+                point.EnglishName = requestDto.EnglishName;
+
+            if (!string.IsNullOrWhiteSpace(requestDto.ChineseAliases))
+                point.ChineseAliases = requestDto.ChineseAliases;
+
+            if (!string.IsNullOrWhiteSpace(requestDto.EnglishAliases))
+                point.EnglishAliases = requestDto.EnglishAliases;
+
+            if (point.Type != PointType.Game && point.Type != PointType.Hardware)
+            {
+                await _dbContext.SaveChangesAsync();
+                return Ok();
+            }
+
+            if (requestDto.PlatformPoints != null)
+            {
+                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Platform)
+                    .ToListAsync());
+                _dbContext.PointRelationships.AddRange((await _dbContext.Points
+                    .Where(p => requestDto.PlatformPoints.Contains(p.IdCode) && p.Type == PointType.Platform)
+                    .Select(p => p.Id)
+                    .ToListAsync())
+                    .Select(platformPointId => new PointRelationship
+                    {
+                        Relationship = PointRelationshipType.Platform,
+                        SourcePointId = point.Id,
+                        TargetPointId = platformPointId
+                    }));
+            }
+
+            #region 更新商店信息
+
+            if (requestDto.SteamAppId != null && requestDto.SteamAppId > 0)
+                point.SteamAppId = requestDto.SteamAppId;
+
+            if (requestDto.SonkwoProductId != null && requestDto.SonkwoProductId > 0)
+                point.SonkwoProductId = requestDto.SonkwoProductId;
+
+            if (requestDto.UplayLink != null)
+                point.UplayLink = requestDto.UplayLink;
+
+            if (requestDto.UplayPrice != null && requestDto.UplayPrice >= 0)
+                point.UplayPrice = requestDto.UplayPrice;
+
+            if (requestDto.XboxLink != null)
+                point.XboxLink = requestDto.XboxLink;
+
+            if (requestDto.XboxPrice != null && requestDto.XboxPrice >= 0)
+                point.XboxPrice = requestDto.XboxPrice;
+
+            if (requestDto.PlayStationLink != null)
+                point.PlayStationLink = requestDto.PlayStationLink;
+
+            if (requestDto.PlayStationPrice != null && requestDto.PlayStationPrice >= 0)
+                point.PlayStationPrice = requestDto.PlayStationPrice;
+
+            if (requestDto.OriginLink != null)
+                point.OriginLink = requestDto.OriginLink;
+
+            if (requestDto.OriginPrice != null && requestDto.OriginPrice >= 0)
+                point.OriginPrice = requestDto.OriginPrice;
+
+            if (requestDto.WindowsStoreLink != null)
+                point.WindowsStoreLink = requestDto.WindowsStoreLink;
+
+            if (requestDto.WindowsStorePrice != null && requestDto.WindowsStorePrice >= 0)
+                point.WindowsStorePrice = requestDto.WindowsStorePrice;
+
+            if (requestDto.AppStoreLink != null)
+                point.AppStoreLink = requestDto.AppStoreLink;
+
+            if (requestDto.AppStorePrice != null && requestDto.AppStorePrice >= 0)
+                point.AppStorePrice = requestDto.AppStorePrice;
+
+            if (requestDto.GooglePlayLink != null)
+                point.GooglePlayLink = requestDto.GooglePlayLink;
+
+            if (requestDto.GooglePlayPrice != null && requestDto.GooglePlayPrice >= 0)
+                point.GooglePlayPrice = requestDto.GooglePlayPrice;
+
+            if (requestDto.GogLink != null)
+                point.GogLink = requestDto.GogLink;
+
+            if (requestDto.GogPrice != null && requestDto.GogPrice >= 0)
+                point.GogPrice = requestDto.GogPrice;
+
+            if (requestDto.BattleNetLink != null)
+                point.BattleNetLink = requestDto.BattleNetLink;
+
+            if (requestDto.BattleNetPrice != null && requestDto.BattleNetPrice >= 0)
+                point.BattleNetPrice = requestDto.BattleNetPrice;
+
+            #endregion
+
+            #region 更新特性属性
+
+            if (requestDto.MultiPlayer != null)
+                point.MultiPlayer = requestDto.MultiPlayer.Value;
+
+            if (requestDto.SinglePlayer != null)
+                point.SinglePlayer = requestDto.SinglePlayer.Value;
+
+            if (requestDto.Coop != null)
+                point.Coop = requestDto.Coop.Value;
+
+            if (requestDto.CaptionsAvailable != null)
+                point.CaptionsAvailable = requestDto.CaptionsAvailable.Value;
+
+            if (requestDto.CommentaryAvailable != null)
+                point.CommentaryAvailable = requestDto.CommentaryAvailable.Value;
+
+            if (requestDto.IncludeLevelEditor != null)
+                point.IncludeLevelEditor = requestDto.IncludeLevelEditor.Value;
+
+            if (requestDto.Achievements != null)
+                point.Achievements = requestDto.Achievements.Value;
+
+            if (requestDto.Cloud != null)
+                point.Cloud = requestDto.Cloud.Value;
+
+            if (requestDto.LocalCoop != null)
+                point.LocalCoop = requestDto.LocalCoop.Value;
+
+            if (requestDto.SteamTradingCards != null)
+                point.SteamTradingCards = requestDto.SteamTradingCards.Value;
+
+            if (requestDto.SteamWorkshop != null)
+                point.SteamWorkshop = requestDto.SteamWorkshop.Value;
+
+            if (requestDto.InAppPurchases != null)
+                point.InAppPurchases = requestDto.InAppPurchases.Value;
+
+            #endregion
+
+            if (requestDto.DeveloperPoints != null)
+            {
+                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Developer)
+                    .ToListAsync());
+                _dbContext.PointRelationships.AddRange(requestDto.DeveloperPoints
+                    .Select(targetPointId => new PointRelationship
+                    {
+                        Relationship = PointRelationshipType.Developer,
+                        SourcePointId = point.Id,
+                        TargetPointId = targetPointId
+                    }));
+            }
+
+            if (requestDto.PublisherPoints != null)
+            {
+                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Publisher)
+                    .ToListAsync());
+                _dbContext.PointRelationships.AddRange(requestDto.PublisherPoints
+                    .Select(targetPointId => new PointRelationship
+                    {
+                        Relationship = PointRelationshipType.Publisher,
+                        SourcePointId = point.Id,
+                        TargetPointId = targetPointId
+                    }));
+            }
+
+            if (requestDto.ResellerPoints != null)
+            {
+                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Reseller)
+                    .ToListAsync());
+                _dbContext.PointRelationships.AddRange(requestDto.ResellerPoints
+                    .Select(targetPointId => new PointRelationship
+                    {
+                        Relationship = PointRelationshipType.Reseller,
+                        SourcePointId = point.Id,
+                        TargetPointId = targetPointId
+                    }));
+            }
+
+            if (requestDto.GenrePoints != null)
+            {
+                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Genre)
+                    .ToListAsync());
+                _dbContext.PointRelationships.AddRange(requestDto.GenrePoints
+                    .Select(targetPointId => new PointRelationship
+                    {
+                        Relationship = PointRelationshipType.Genre,
+                        SourcePointId = point.Id,
+                        TargetPointId = targetPointId
+                    }));
+            }
+
+            if (requestDto.TagPoints != null)
+            {
+                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Tag)
+                    .ToListAsync());
+                _dbContext.PointRelationships.AddRange(requestDto.TagPoints
+                    .Select(targetPointId => new PointRelationship
+                    {
+                        Relationship = PointRelationshipType.Tag,
+                        SourcePointId = point.Id,
+                        TargetPointId = targetPointId
+                    }));
+            }
+
+            if (requestDto.SeriesPoints != null)
+            {
+                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Series)
+                    .ToListAsync());
+                _dbContext.PointRelationships.AddRange(requestDto.SeriesPoints
+                    .Select(targetPointId => new PointRelationship
+                    {
+                        Relationship = PointRelationshipType.Series,
+                        SourcePointId = point.Id,
+                        TargetPointId = targetPointId
+                    }));
+            }
+
+            if (requestDto.PublishDate != null)
+                point.PublishDate = requestDto.PublishDate;
+
+            if (requestDto.PreOrderDate != null)
+                point.PreOrderDate = requestDto.PreOrderDate;
+
+            if (requestDto.ReleaseDate != null)
+                point.ReleaseDate = requestDto.ReleaseDate;
+
+            var chineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability) ??
+                                      new ChineseAvailability
+                                      {
+                                          English = new ChineseAvailability.Language
+                                          {
+                                              Interface = true,
+                                              Subtitles = true,
+                                              FullAudio = true
+                                          },
+                                          ThirdPartyLinks = new List<ChineseAvailability.ThirdPartyLink>()
+                                      };
+
+            if (requestDto.EnglishLanguage != null)
+                chineseAvailability.English = requestDto.EnglishLanguage;
+
+            if (requestDto.JapaneseLanguage != null)
+                chineseAvailability.Japanese = requestDto.JapaneseLanguage;
+
+            if (requestDto.SimplifiedChineseLanguage != null)
+                chineseAvailability.SimplifiedChinese = requestDto.SimplifiedChineseLanguage;
+
+            if (requestDto.TraditionalChineseLanguage != null)
+                chineseAvailability.TraditionalChinese = requestDto.TraditionalChineseLanguage;
+
+            if (requestDto.ChineseThirdPartyLinks != null)
+                chineseAvailability.ThirdPartyLinks = requestDto.ChineseThirdPartyLinks;
+
+            point.ChineseAvailability = JsonConvert.SerializeObject(chineseAvailability,
+                new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+
+            if (Helpers.IsTrustedUrl(requestDto.HeaderImage, false))
+                point.HeaderImage = requestDto.HeaderImage;
+
+            if (Helpers.IsTrustedUrl(requestDto.AvatarImage, false))
+                point.AvatarImage = requestDto.AvatarImage;
+
+            if (Helpers.IsTrustedUrl(requestDto.MediaHeaderImage, false))
+                point.MediaHeaderImage = requestDto.MediaHeaderImage;
+
+            if (Helpers.IsTrustedUrl(requestDto.TitleCoverImage, false))
+                point.TitleCoverImage = requestDto.TitleCoverImage;
+
+            if (Helpers.IsTrustedUrl(requestDto.ThumbnailImage, false))
+                point.ThumbnailImage = requestDto.ThumbnailImage;
+
+            if (Helpers.IsTrustedUrl(requestDto.Logo, false))
+                point.Logo = requestDto.Logo;
+
+            if (requestDto.ThemeColor != null)
+                point.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.ThemeColor));
+
+            if (requestDto.LightThemeColor != null)
+                point.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.LightThemeColor));
+
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        /// <summary>
+        /// UpdateOne request DTO
+        /// </summary>
+        public class UpdateOneRequestDto
+        {
+            /// <summary>
+            /// 中文名
+            /// </summary>
+            public string ChineseName { get; set; }
+
+            /// <summary>
+            /// 英文名
+            /// </summary>
+            public string EnglishName { get; set; }
+
+            /// <summary>
+            /// 中文索引
+            /// </summary>
+            public string ChineseAliases { get; set; }
+
+            /// <summary>
+            /// 英文索引
+            /// </summary>
+            public string EnglishAliases { get; set; }
+
+            /// <summary>
+            /// 平台据点识别码列表
+            /// </summary>
+            public List<string> PlatformPoints { get; set; }
+
+            #region 商店信息
+
+            /// <summary>
+            /// Steam App ID
+            /// </summary>
+            public int? SteamAppId { get; set; }
+
+            /// <summary>
+            /// 杉果 Product ID
+            /// </summary>
+            public int? SonkwoProductId { get; set; }
+
+            /// <summary>
+            /// Uplay 链接
+            /// </summary>
+            public string UplayLink { get; set; }
+
+            /// <summary>
+            /// Uplay 价格
+            /// </summary>
+            public double? UplayPrice { get; set; }
+
+            /// <summary>
+            /// Xbox 链接
+            /// </summary>
+            public string XboxLink { get; set; }
+
+            /// <summary>
+            /// Xbox 价格
+            /// </summary>
+            public double? XboxPrice { get; set; }
+
+            /// <summary>
+            /// PlayStation 链接
+            /// </summary>
+            public string PlayStationLink { get; set; }
+
+            /// <summary>
+            /// PlayStation 价格
+            /// </summary>
+            public double? PlayStationPrice { get; set; }
+
+            /// <summary>
+            /// Origin 链接
+            /// </summary>
+            public string OriginLink { get; set; }
+
+            /// <summary>
+            /// Origin 价格
+            /// </summary>
+            public double? OriginPrice { get; set; }
+
+            /// <summary>
+            /// Windows Store 链接
+            /// </summary>
+            public string WindowsStoreLink { get; set; }
+
+            /// <summary>
+            /// Windows Store 价格
+            /// </summary>
+            public double? WindowsStorePrice { get; set; }
+
+            /// <summary>
+            /// App Store 链接
+            /// </summary>
+            public string AppStoreLink { get; set; }
+
+            /// <summary>
+            /// App Store 价格
+            /// </summary>
+            public double? AppStorePrice { get; set; }
+
+            /// <summary>
+            /// Google Play 链接
+            /// </summary>
+            public string GooglePlayLink { get; set; }
+
+            /// <summary>
+            /// Google Play 价格
+            /// </summary>
+            public double? GooglePlayPrice { get; set; }
+
+            /// <summary>
+            /// Gog 链接
+            /// </summary>
+            public string GogLink { get; set; }
+
+            /// <summary>
+            /// GOG 价格
+            /// </summary>
+            public double? GogPrice { get; set; }
+
+            /// <summary>
+            /// 战网链接
+            /// </summary>
+            public string BattleNetLink { get; set; }
+
+            /// <summary>
+            /// 战网价格
+            /// </summary>
+            public double? BattleNetPrice { get; set; }
+
+            #endregion
+
+            #region 特性属性
+
+            /// <summary>
+            /// 多人游戏
+            /// </summary>
+            public bool? MultiPlayer { get; set; }
+
+            /// <summary>
+            /// 单人游戏
+            /// </summary>
+            public bool? SinglePlayer { get; set; }
+
+            /// <summary>
+            /// 合作
+            /// </summary>
+            public bool? Coop { get; set; }
+
+            /// <summary>
+            /// 视听字幕
+            /// </summary>
+            public bool? CaptionsAvailable { get; set; }
+
+            /// <summary>
+            /// 旁白解说
+            /// </summary>
+            public bool? CommentaryAvailable { get; set; }
+
+            /// <summary>
+            /// 关卡客制化
+            /// </summary>
+            public bool? IncludeLevelEditor { get; set; }
+
+            /// <summary>
+            /// 成就系统
+            /// </summary>
+            public bool? Achievements { get; set; }
+
+            /// <summary>
+            /// 云存档
+            /// </summary>
+            public bool? Cloud { get; set; }
+
+            /// <summary>
+            /// 本地多人
+            /// </summary>
+            public bool? LocalCoop { get; set; }
+
+            /// <summary>
+            /// Steam 卡牌
+            /// </summary>
+            public bool? SteamTradingCards { get; set; }
+
+            /// <summary>
+            /// Steam 创意工坊
+            /// </summary>
+            public bool? SteamWorkshop { get; set; }
+
+            /// <summary>
+            /// 内购
+            /// </summary>
+            public bool? InAppPurchases { get; set; }
+
+            #endregion
+
+            /// <summary>
+            /// 开发商据点 ID 列表
+            /// </summary>
+            public List<string> DeveloperPoints { get; set; }
+
+            /// <summary>
+            /// 发行商据点 ID 列表
+            /// </summary>
+            public List<string> PublisherPoints { get; set; }
+
+            /// <summary>
+            /// 代理商据点 ID 列表
+            /// </summary>
+            public List<string> ResellerPoints { get; set; }
+
+            /// <summary>
+            /// 流派据点 ID 列表
+            /// </summary>
+            public List<string> GenrePoints { get; set; }
+
+            /// <summary>
+            /// 特性据点 ID 列表
+            /// </summary>
+            public List<string> TagPoints { get; set; }
+
+            /// <summary>
+            /// 系列据点 ID 列表
+            /// </summary>
+            public List<string> SeriesPoints { get; set; }
+
+            /// <summary>
+            /// 公开日期
+            /// </summary>
+            public DateTime? PublishDate { get; set; }
+
+            /// <summary>
+            /// 预购日期
+            /// </summary>
+            public DateTime? PreOrderDate { get; set; }
+
+            /// <summary>
+            /// 发行日期
+            /// </summary>
+            public DateTime? ReleaseDate { get; set; }
+
+            /// <summary>
+            /// 英语可用度
+            /// </summary>
+            public ChineseAvailability.Language EnglishLanguage { get; set; }
+
+            /// <summary>
+            /// 日语可用度
+            /// </summary>
+            public ChineseAvailability.Language JapaneseLanguage { get; set; }
+
+            /// <summary>
+            /// 简体中文可用度
+            /// </summary>
+            public ChineseAvailability.Language SimplifiedChineseLanguage { get; set; }
+
+            /// <summary>
+            /// 繁体中文可用度
+            /// </summary>
+            public ChineseAvailability.Language TraditionalChineseLanguage { get; set; }
+
+            /// <summary>
+            /// 第三方汉化链接列表
+            /// </summary>
+            public List<ChineseAvailability.ThirdPartyLink> ChineseThirdPartyLinks { get; set; }
+
+            /// <summary>
+            /// 页眉图片
+            /// </summary>
+            public string HeaderImage { get; set; }
+
+            /// <summary>
+            /// 头像
+            /// </summary>
+            public string AvatarImage { get; set; }
+
+            /// <summary>
+            /// 媒体中心封面
+            /// </summary>
+            public string MediaHeaderImage { get; set; }
+
+            /// <summary>
+            /// 标题封面
+            /// </summary>
+            public string TitleCoverImage { get; set; }
+
+            /// <summary>
+            /// 缩略图
+            /// </summary>
+            public string ThumbnailImage { get; set; }
+
+            /// <summary>
+            /// Logo
+            /// </summary>
+            public string Logo { get; set; }
+
+            /// <summary>
+            /// 主题色
+            /// </summary>
+            public string ThemeColor { get; set; }
+
+            /// <summary>
+            /// 轻主题色
+            /// </summary>
+            public string LightThemeColor { get; set; }
+        }
+    }
+}

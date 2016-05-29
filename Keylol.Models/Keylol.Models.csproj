@@ -89,6 +89,10 @@
     <Compile Include="Migrations\201605260848213_RemoveArticleDeleted.Designer.cs">
       <DependentUpon>201605260848213_RemoveArticleDeleted.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605290800084_RemovePointObsoleteProperties.cs" />
+    <Compile Include="Migrations\201605290800084_RemovePointObsoleteProperties.Designer.cs">
+      <DependentUpon>201605290800084_RemovePointObsoleteProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -768,6 +772,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605260848213_RemoveArticleDeleted.resx">
       <DependentUpon>201605260848213_RemoveArticleDeleted.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605290800084_RemovePointObsoleteProperties.resx">
+      <DependentUpon>201605290800084_RemovePointObsoleteProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
