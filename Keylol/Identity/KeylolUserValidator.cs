@@ -78,7 +78,12 @@ namespace Keylol.Identity
             return IdentityResult.Success;
         }
 
-        private static bool IsIdCodeReserved(string idCode)
+        /// <summary>
+        /// 判断指定识别码是否被保留
+        /// </summary>
+        /// <param name="idCode">识别码</param>
+        /// <returns>如果识别码被保留，返回 <c>true</c></returns>
+        public static bool IsIdCodeReserved(string idCode)
         {
             if (new[]
             {

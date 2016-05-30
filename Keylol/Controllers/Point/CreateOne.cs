@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using CsQuery;
 using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
@@ -32,7 +33,8 @@ namespace Keylol.Controllers.Point
             if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Invalid);
 
-            if (await _dbContext.Points.AnyAsync(p => p.IdCode == requestDto.IdCode))
+            if (KeylolUserValidator.IsIdCodeReserved(requestDto.IdCode) ||
+                await _dbContext.Points.AnyAsync(p => p.IdCode == requestDto.IdCode))
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Duplicate);
 
             if (!Helpers.IsTrustedUrl(requestDto.HeaderImage))

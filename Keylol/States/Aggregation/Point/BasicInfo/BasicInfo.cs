@@ -29,6 +29,9 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
             var basicInfo = new BasicInfo
             {
                 Id = point.Id,
+                Logo = point.Logo,
+                ThemeColor = point.ThemeColor,
+                LightThemeColor = point.LightThemeColor,
                 Type = point.Type,
                 HeaderImage = point.HeaderImage,
                 AvatarImage = point.AvatarImage,
@@ -88,6 +91,8 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
 
                 basicInfo.TitleCoverImage = point.TitleCoverImage;
 
+                #region 商店信息
+
                 basicInfo.SteamAppId = point.SteamAppId;
                 basicInfo.SteamPrice = point.SteamPrice;
                 basicInfo.SteamDiscountedPrice = point.SteamDiscountedPrice;
@@ -112,6 +117,8 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                 basicInfo.GogPrice = point.GogPrice;
                 basicInfo.BattleNetLink = point.BattleNetLink;
                 basicInfo.BattleNetPrice = point.BattleNetPrice;
+
+                #endregion
             }
             else
             {
@@ -158,6 +165,21 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         /// ID
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Logo
+        /// </summary>
+        public string Logo { get; set; }
+
+        /// <summary>
+        /// 主题色
+        /// </summary>
+        public string ThemeColor { get; set; }
+
+        /// <summary>
+        /// 轻主题色
+        /// </summary>
+        public string LightThemeColor { get; set; }
 
         /// <summary>
         /// 据点类型

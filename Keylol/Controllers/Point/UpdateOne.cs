@@ -42,6 +42,21 @@ namespace Keylol.Controllers.Point
             if (!string.IsNullOrWhiteSpace(requestDto.EnglishAliases))
                 point.EnglishAliases = requestDto.EnglishAliases;
 
+            if (Helpers.IsTrustedUrl(requestDto.HeaderImage, false))
+                point.HeaderImage = requestDto.HeaderImage;
+
+            if (Helpers.IsTrustedUrl(requestDto.AvatarImage, false))
+                point.AvatarImage = requestDto.AvatarImage;
+
+            if (Helpers.IsTrustedUrl(requestDto.Logo, false))
+                point.Logo = requestDto.Logo;
+
+            if (requestDto.ThemeColor != null)
+                point.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.ThemeColor));
+
+            if (requestDto.LightThemeColor != null)
+                point.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.LightThemeColor));
+
             if (point.Type != PointType.Game && point.Type != PointType.Hardware)
             {
                 await _dbContext.SaveChangesAsync();
@@ -291,13 +306,7 @@ namespace Keylol.Controllers.Point
 
             point.ChineseAvailability = JsonConvert.SerializeObject(chineseAvailability,
                 new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
-
-            if (Helpers.IsTrustedUrl(requestDto.HeaderImage, false))
-                point.HeaderImage = requestDto.HeaderImage;
-
-            if (Helpers.IsTrustedUrl(requestDto.AvatarImage, false))
-                point.AvatarImage = requestDto.AvatarImage;
-
+            
             if (Helpers.IsTrustedUrl(requestDto.MediaHeaderImage, false))
                 point.MediaHeaderImage = requestDto.MediaHeaderImage;
 
@@ -306,15 +315,6 @@ namespace Keylol.Controllers.Point
 
             if (Helpers.IsTrustedUrl(requestDto.ThumbnailImage, false))
                 point.ThumbnailImage = requestDto.ThumbnailImage;
-
-            if (Helpers.IsTrustedUrl(requestDto.Logo, false))
-                point.Logo = requestDto.Logo;
-
-            if (requestDto.ThemeColor != null)
-                point.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.ThemeColor));
-
-            if (requestDto.LightThemeColor != null)
-                point.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.LightThemeColor));
 
             await _dbContext.SaveChangesAsync();
             return Ok();

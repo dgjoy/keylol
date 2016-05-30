@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
-using Keylol.States.Aggregation.Point.Editing;
+using Keylol.States.Aggregation.Point.Edit;
 using Keylol.States.Aggregation.Point.Frontpage;
 using Keylol.States.Aggregation.Point.Intel;
 using Keylol.States.Aggregation.Point.Timeline;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Aggregation.Point
 {
@@ -27,7 +26,8 @@ namespace Keylol.States.Aggregation.Point
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="PointLevel"/></returns>
-        public static async Task<PointLevel> Get(string entrance, string pointIdCode, [Injected] KeylolDbContext dbContext,
+        public static async Task<PointLevel> Get(string entrance, string pointIdCode,
+            [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
             return await CreateAsync(StateTreeHelper.GetCurrentUserId(),
@@ -79,6 +79,20 @@ namespace Keylol.States.Aggregation.Point
                 case EntrancePage.Timeline:
                     break;
 
+                case EntrancePage.EditInfo:
+                    result.Edit = new EditLevel
+                    {
+                        Info = await InfoPage.CreateAsync(point, dbContext)
+                    };
+                    break;
+
+                case EntrancePage.EditStyle:
+                    result.Edit = new EditLevel
+                    {
+                        Style = StylePage.Create(point)
+                    };
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(targetPage), targetPage, null);
             }
@@ -113,7 +127,8 @@ namespace Keylol.States.Aggregation.Point
         /// <summary>
         /// 编辑层级
         /// </summary>
-        public EditingLevel Editing { get; set; }
+        [Authorize]
+        public EditLevel Edit { get; set; }
     }
 
     /// <summary>
@@ -139,6 +154,16 @@ namespace Keylol.States.Aggregation.Point
         /// <summary>
         /// 轨道
         /// </summary>
-        Timeline
+        Timeline,
+
+        /// <summary>
+        /// 编辑 - 信息
+        /// </summary>
+        EditInfo,
+
+        /// <summary>
+        /// 编辑 - 样式
+        /// </summary>
+        EditStyle
     }
 }

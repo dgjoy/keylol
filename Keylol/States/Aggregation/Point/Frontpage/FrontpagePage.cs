@@ -6,6 +6,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
+using Keylol.States.Aggregation.Point.BasicInfo;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Aggregation.Point.Frontpage
@@ -50,12 +51,15 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                     select new
                     {
                         relationship.TargetPoint.IdCode,
+                        relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
+                        
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePlatformPoint
+                    .Select(p => new SimplePoint
                     {
                         IdCode = p.IdCode,
+                        ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
                     .ToList(),
@@ -83,7 +87,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         /// <summary>
         /// 平台
         /// </summary>
-        public List<SimplePlatformPoint> Platforms { get; set; }
+        public List<SimplePoint> Platforms { get; set; }
 
         #region 特性属性
 

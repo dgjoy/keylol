@@ -8,7 +8,6 @@ using Keylol.States.Aggregation;
 using Keylol.States.Aggregation.Point;
 using Keylol.States.Entrance;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States
 {
@@ -95,6 +94,22 @@ namespace Keylol.States
                     {
                         Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
                             States.Aggregation.Point.EntrancePage.Timeline, dbContext, cachedData)
+                    };
+                    break;
+
+                case "aggregation.point.edit.info":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
+                            States.Aggregation.Point.EntrancePage.EditInfo, dbContext, cachedData)
+                    };
+                    break;
+
+                case "aggregation.point.edit.style":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
+                            States.Aggregation.Point.EntrancePage.EditStyle, dbContext, cachedData)
                     };
                     break;
 
