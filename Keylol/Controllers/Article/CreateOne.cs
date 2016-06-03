@@ -26,101 +26,34 @@ namespace Keylol.Controllers.Article
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(HttpStatusCode.Created, Type = typeof(ArticleDto))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "用户文券不足")]
-        public async Task<IHttpActionResult> CreateOne([NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] CreateOrUpdateOneRequestDto requestDto)
         {
-            var article = _dbContext.Articles.Create();
-
-            article.Type = requestDto.TypeName.ToEnum<ArticleType>();
             var userId = User.Identity.GetUserId();
-            var couponEvent = article.Type == ArticleType.简评 ? CouponEvent.发布简评 : CouponEvent.发布文章;
-            if (!await _coupon.CanTriggerEvent(userId, couponEvent))
-                return Unauthorized();
-
-            if (article.Type.AllowVote())
+            var article = new Models.Article
             {
-                if (requestDto.VoteForPointId == null)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.Required);
+                AuthorId = userId,
+                Title = requestDto.Title,
+            };
 
-                var voteForPoint = await _dbContext.NormalPoints
-                    .Include(p => p.DeveloperPoints)
-                    .Include(p => p.PublisherPoints)
-                    .Include(p => p.SeriesPoints)
-                    .Include(p => p.GenrePoints)
-                    .Include(p => p.TagPoints)
-                    .SingleOrDefaultAsync(p => p.Id == requestDto.VoteForPointId);
+            if (!string.IsNullOrWhiteSpace(requestDto.Subtitle))
+                article.Subtitle = requestDto.Subtitle;
 
-                if (voteForPoint == null)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.NonExistent);
+            var targetPoint = await _dbContext.Points.FindAsync(requestDto.TargetPointId);
+            if (targetPoint == null)
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetPointId), Errors.NonExistent);
 
-                if (voteForPoint.Type != NormalPointType.Game && voteForPoint.Type != NormalPointType.Hardware)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.VoteForPointId), Errors.Invalid);
+            article.TargetPointId = targetPoint.Id;
 
-                article.VoteForPointId = voteForPoint.Id;
-                article.Vote = requestDto.Vote > 5 ? 5 : (requestDto.Vote < 1 ? 1 : requestDto.Vote);
-
-                if (requestDto.Pros == null)
-                    requestDto.Pros = new List<string>();
-                article.Pros = JsonConvert.SerializeObject(requestDto.Pros);
-
-                if (requestDto.Cons == null)
-                    requestDto.Cons = new List<string>();
-                article.Cons = JsonConvert.SerializeObject(requestDto.Cons);
-
-                article.AttachedPoints = voteForPoint.DeveloperPoints
-                    .Concat(voteForPoint.PublisherPoints)
-                    .Concat(voteForPoint.SeriesPoints)
-                    .Concat(voteForPoint.GenrePoints)
-                    .Concat(voteForPoint.TagPoints).ToList();
-                article.AttachedPoints.Add(voteForPoint);
-            }
-            else
+            if (targetPoint.Type == PointType.Game || targetPoint.Type == PointType.Hardware)
             {
-                if (requestDto.AttachedPointsId == null)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.AttachedPointsId), Errors.Required);
-
-                if (requestDto.AttachedPointsId.Count > 50)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.AttachedPointsId), Errors.TooMany);
-
-                article.AttachedPoints = await _dbContext.NormalPoints
-                    .Where(PredicateBuilder.Contains<Models.NormalPoint, string>(requestDto.AttachedPointsId,
-                        point => point.Id)).ToListAsync();
+                article.Rating = requestDto.Rating;
+                article.Pros = JsonConvert.SerializeObject(requestDto.Pros ?? new List<string>());
+                article.Cons = JsonConvert.SerializeObject(requestDto.Cons ?? new List<string>());
             }
-
-            foreach (var attachedPoint in article.AttachedPoints)
-            {
-                attachedPoint.LastActivityTime = DateTime.Now;
-            }
-
-            article.Title = requestDto.Title;
-            article.Content = requestDto.Content;
-
-            if (article.Type == ArticleType.简评)
-            {
-                if (requestDto.Content.Length > 99)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Content), Errors.TooMany);
-                article.UnstyledContent = article.Content;
-                article.ThumbnailImage = string.Empty;
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(requestDto.Summary))
-                {
-                    SanitizeArticle(article, true);
-                }
-                else
-                {
-                    article.UnstyledContent = requestDto.Summary;
-                    SanitizeArticle(article, false);
-                }
-            }
-
-            article.PrincipalId = userId;
             _dbContext.Articles.Add(article);
-            article.SequenceNumberForAuthor =
-                _dbContext.Articles.Where(a => a.PrincipalId == article.PrincipalId)
-                    .Select(a => a.SequenceNumberForAuthor)
+            article.SidForAuthor =
+                _dbContext.Articles.Where(a => a.AuthorId == article.AuthorId)
+                    .Select(a => a.SidForAuthor)
                     .DefaultIfEmpty(0)
                     .Max() + 1;
             _dbContext.SaveChanges();
@@ -128,62 +61,65 @@ namespace Keylol.Controllers.Article
             {
                 ArticleId = article.Id
             });
-            var author = await _userManager.FindByIdAsync(userId);
-            await _coupon.Update(author, couponEvent, new {ArticleId = article.Id});
-            return Created($"article/{article.Id}", new ArticleDto(article));
+//            var author = await _userManager.FindByIdAsync(userId);
+//            await _coupon.Update(author, couponEvent, new {ArticleId = article.Id});
+//            return Created($"article/{article.Id}", new ArticleDto(article));
+            return Ok();
         }
 
         /// <summary>
         ///     请求 DTO（CreateOne 与 UpdateOne 共用）
         /// </summary>
-        public class ArticleCreateOrUpdateOneRequestDto
+        public class CreateOrUpdateOneRequestDto
         {
-            /// <summary>
-            ///     文章类型名称
-            /// </summary>
-            [Required]
-            public string TypeName { get; set; }
-
             /// <summary>
             ///     文章标题
             /// </summary>
             [Required]
+            [MaxLength(50)]
             public string Title { get; set; }
 
             /// <summary>
-            ///     文章概要
+            ///     文章副标题
             /// </summary>
-            public string Summary { get; set; }
+            [MaxLength(50)]
+            public string Subtitle { get; set; }
 
             /// <summary>
             ///     文章内容
             /// </summary>
             [Required]
+            [MaxLength(100000)]
             public string Content { get; set; }
 
             /// <summary>
-            ///     文章推送到的据点 Id 列表
+            ///     投稿据点 ID
             /// </summary>
-            public List<string> AttachedPointsId { get; set; }
+            [Required]
+            public string TargetPointId { get; set; }
 
             /// <summary>
-            ///     文章评价的据点 Id
+            ///     额外投稿据点 ID 列表
             /// </summary>
-            public string VoteForPointId { get; set; }
+            [MaxLength(10)]
+            public List<string> AttachedPointIds { get; set; }
 
             /// <summary>
             ///     文章打出的评分
             /// </summary>
-            public int? Vote { get; set; }
+            [Range(1, 5)]
+            public int? Rating { get; set; }
 
             /// <summary>
-            ///     亮点列表
+            ///     优点列表
             /// </summary>
+            [MaxLength(3)]
             public List<string> Pros { get; set; }
 
             /// <summary>
             ///     缺点列表
             /// </summary>
+            [MaxLength(3)]
             public List<string> Cons { get; set; }
         }
     }

@@ -64,7 +64,7 @@ namespace Keylol.Hubs
                 dbContext.SteamBindingTokens.Add(token);
                 await dbContext.SaveChangesAsync();
 
-                Clients.Caller.OnCode(token.Id, code, bot?.SteamId);
+                Clients.Caller.OnCode(token.Id, code, bot?.SteamId, $"其乐机器人 #{bot?.Sid}");
             }
         }
 
@@ -113,7 +113,8 @@ namespace Keylol.Hubs
         /// <param name="tokenId">Steam Binding Token ID</param>
         /// <param name="code">绑定验证码</param>
         /// <param name="botSteamId">机器人 Steam ID</param>
-        void OnCode(string tokenId, string code, string botSteamId);
+        /// <param name="botName">机器人名称</param>
+        void OnCode(string tokenId, string code, string botSteamId, string botName);
 
         /// <summary>
         /// 通知已经接受了好友请求

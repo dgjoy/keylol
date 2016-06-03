@@ -76,10 +76,8 @@ namespace Keylol.Models.Migrations
             RenameColumn("dbo.ArticleComments", "IgnoreNewComments", "DismissReplyMessage");
 
             AddColumn("dbo.ArticleComments", "Deleted", c => c.Int(nullable: false));
-
-            DropColumn("dbo.Articles", "Type");
+            
             DropColumn("dbo.Articles", "UnstyledContent");
-            DropColumn("dbo.Articles", "SpotlightTime");
 
             DropTable("dbo.AutoSubscriptions");
             DropTable("dbo.ArticlePointPushes");
@@ -107,10 +105,8 @@ namespace Keylol.Models.Migrations
                     DisplayOrder = c.Int(nullable: false),
                 })
                 .PrimaryKey(t => t.Id);
-
-            AddColumn("dbo.Articles", "SpotlightTime", c => c.DateTime());
+            
             AddColumn("dbo.Articles", "UnstyledContent", c => c.String(nullable: false));
-            AddColumn("dbo.Articles", "Type", c => c.Int(nullable: false));
 
             DropColumn("dbo.ArticleComments", "Deleted");
 

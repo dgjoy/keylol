@@ -45,39 +45,8 @@ namespace Keylol.States.Aggregation.Point.Intel
         public static async Task<IntelPage> CreateAsync(Models.Point point, string currentUserId,
             KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            var intelPage = new IntelPage
-            {
-                Platforms = (await (from relationship in dbContext.PointRelationships
-                    where relationship.SourcePointId == point.Id &&
-                          relationship.Relationship == PointRelationshipType.Platform
-                    select new
-                    {
-                        relationship.TargetPoint.IdCode,
-                        relationship.TargetPoint.ChineseName,
-                        relationship.TargetPoint.EnglishName
-                    })
-                    .ToListAsync())
-                    .Select(p => new SimplePoint
-                    {
-                        IdCode = p.IdCode,
-                        ChineseName = p.ChineseName,
-                        EnglishName = p.EnglishName
-                    })
-                    .ToList(),
-                MultiPlayer = point.MultiPlayer ? true : (bool?) null,
-                SinglePlayer = point.SinglePlayer ? true : (bool?) null,
-                Coop = point.Coop ? true : (bool?) null,
-                CaptionsAvailable = point.CaptionsAvailable ? true : (bool?) null,
-                CommentaryAvailable = point.CommentaryAvailable ? true : (bool?) null,
-                IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?) null,
-                Achievements = point.Achievements ? true : (bool?) null,
-                Cloud = point.Cloud ? true : (bool?) null,
-                LocalCoop = point.LocalCoop ? true : (bool?) null,
-                SteamTradingCards = point.SteamTradingCards ? true : (bool?) null,
-                SteamWorkshop = point.SteamWorkshop ? true : (bool?) null,
-                InAppPurchases = point.InAppPurchases ? true : (bool?) null,
-                ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability),
-            };
+            var intelPage = new IntelPage();
+
             if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
                 var vendorPointsGroup = await (from relationship in dbContext.PointRelationships
@@ -106,11 +75,11 @@ namespace Keylol.States.Aggregation.Point.Intel
                         switch (r)
                         {
                             case PointRelationshipType.Developer:
-                                return "开发商";
+                                return "开发厂";
                             case PointRelationshipType.Publisher:
                                 return "发行商";
                             case PointRelationshipType.Manufacturer:
-                                return "制造商";
+                                return "制造厂";
                             case PointRelationshipType.Reseller:
                                 return "代理商";
                             default:
@@ -158,7 +127,45 @@ namespace Keylol.States.Aggregation.Point.Intel
             }
             if (point.Type == PointType.Game)
             {
+                intelPage.Platforms = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Platform
+                    select new
+                    {
+                        relationship.TargetPoint.IdCode,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        IdCode = p.IdCode,
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList();
+
+                #region 特性属性
+
+                intelPage.MultiPlayer = point.MultiPlayer ? true : (bool?)null;
+                intelPage.SinglePlayer = point.SinglePlayer ? true : (bool?)null;
+                intelPage.Coop = point.Coop ? true : (bool?)null;
+                intelPage.CaptionsAvailable = point.CaptionsAvailable ? true : (bool?)null;
+                intelPage.CommentaryAvailable = point.CommentaryAvailable ? true : (bool?)null;
+                intelPage.IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?)null;
+                intelPage.Achievements = point.Achievements ? true : (bool?)null;
+                intelPage.Cloud = point.Cloud ? true : (bool?)null;
+                intelPage.LocalCoop = point.LocalCoop ? true : (bool?)null;
+                intelPage.SteamTradingCards = point.SteamTradingCards ? true : (bool?)null;
+                intelPage.SteamWorkshop = point.SteamWorkshop ? true : (bool?)null;
+                intelPage.InAppPurchases = point.InAppPurchases ? true : (bool?)null;
+
+                #endregion
+
+                intelPage.ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability);
+
                 SteamCrawlerProvider.UpdateSteamSpyData(point.Id);
+
                 intelPage.PublishDate = point.PublishDate;
                 intelPage.PointCreateTime = point.CreateTime;
                 intelPage.PreOrderDate = point.PreOrderDate;

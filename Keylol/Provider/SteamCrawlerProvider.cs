@@ -428,7 +428,7 @@ namespace Keylol.Provider
                     StreamName = OnSalePointStream.Name,
                     EntryType = FeedEntryType.PointId,
                     Entry = id
-                }));
+                }).Reverse());
                 foreach (var pointId in points)
                 {
                     await redisDb.StringSetAsync(PointPriceCrawlerStampCacheKey(pointId), DateTime.Now.ToTimestamp(),

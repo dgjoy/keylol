@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.StateTreeManager;
 
@@ -32,6 +33,8 @@ namespace Keylol.States.Aggregation.Point.Edit
         /// <returns><see cref="StylePage"/></returns>
         public static StylePage Create(Models.Point point)
         {
+            if (point.Type != PointType.Game && point.Type != PointType.Hardware)
+                return new StylePage();
             return new StylePage
             {
                 MediaHeaderImage = point.MediaHeaderImage,

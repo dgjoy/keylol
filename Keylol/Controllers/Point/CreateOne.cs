@@ -392,7 +392,7 @@ namespace Keylol.Controllers.Point
                         point.ChineseName = requestDto.ChineseName;
 
                     _dbContext.Points.Add(point);
-                    _dbContext.PointRelationships.AddRange((await _dbContext.Points
+                    var platforms = (await _dbContext.Points
                         .Where(p => requestDto.PlatformPoints.Contains(p.IdCode) && p.Type == PointType.Platform)
                         .Select(p => p.Id)
                         .ToListAsync())
@@ -401,7 +401,10 @@ namespace Keylol.Controllers.Point
                             Relationship = PointRelationshipType.Platform,
                             SourcePointId = point.Id,
                             TargetPointId = id
-                        }));
+                        }).ToList();
+                    if (platforms.Count <= 0)
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.PlatformPoints), Errors.Required);
+                    _dbContext.PointRelationships.AddRange(platforms);
                     await _dbContext.SaveChangesAsync();
                     break;
                 }

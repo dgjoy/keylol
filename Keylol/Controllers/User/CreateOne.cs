@@ -23,10 +23,7 @@ namespace Keylol.Controllers.User
         [AllowAnonymous]
         [Route]
         [HttpPost]
-        [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(LoginLogDto))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> CreateOne([NotNull] UserCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] CreateOneRequestDto requestDto)
         {
             if (!await _geetest.ValidateAsync(requestDto.GeetestChallenge,
                 requestDto.GeetestSeccode,
@@ -92,21 +89,21 @@ namespace Keylol.Controllers.User
             _dbContext.SteamBindingTokens.Remove(steamBindingToken);
             await _dbContext.SaveChangesAsync();
 
-            await _coupon.Update(user, CouponEvent.新注册);
-
-            // 邀请人
-            if (requestDto.Inviter != null)
-            {
-                var inviterIdCode = requestDto.Inviter;
-                var inviter = await _userManager.FindByIdCodeAsync(inviterIdCode);
-                if (inviter != null)
-                {
-                    user.InviterId = inviter.Id;
-                    await _dbContext.SaveChangesAsync();
-                    await _coupon.Update(inviter, CouponEvent.邀请注册, new {UserId = user.Id});
-                    await _coupon.Update(user, CouponEvent.应邀注册, new {InviterId = user.Id});
-                }
-            }
+//            await _coupon.Update(user, CouponEvent.新注册);
+//
+//            // 邀请人
+//            if (requestDto.Inviter != null)
+//            {
+//                var inviterIdCode = requestDto.Inviter;
+//                var inviter = await _userManager.FindByIdCodeAsync(inviterIdCode);
+//                if (inviter != null)
+//                {
+//                    user.InviterId = inviter.Id;
+//                    await _dbContext.SaveChangesAsync();
+//                    await _coupon.Update(inviter, CouponEvent.邀请注册, new {UserId = user.Id});
+//                    await _coupon.Update(user, CouponEvent.应邀注册, new {InviterId = user.Id});
+//                }
+//            }
 
             return Created($"user/{user.Id}", await _oneTimeToken.Generate(user.Id,
                 TimeSpan.FromMinutes(1), OneTimeTokenPurpose.UserLogin));
@@ -116,7 +113,7 @@ namespace Keylol.Controllers.User
         /// <summary>
         ///     请求 DTO
         /// </summary>
-        public class UserCreateOneRequestDto
+        public class CreateOneRequestDto
         {
             /// <summary>
             ///     识别码

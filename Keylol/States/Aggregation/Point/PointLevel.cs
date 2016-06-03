@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation.Point.Edit;
@@ -57,14 +58,15 @@ namespace Keylol.States.Aggregation.Point
             switch (targetPage)
             {
                 case EntrancePage.Auto:
-                    if (string.IsNullOrWhiteSpace(currentUserId))
+                    if (await cachedData.Subscriptions
+                        .IsSubscribedAsync(currentUserId, point.Id, SubscriptionTargetType.Point))
                     {
-                        result.Frontpage = await FrontpagePage.CreateAsync(point, currentUserId, dbContext, cachedData);
-                        result.Current = EntrancePage.Frontpage;
+                        result.Current = EntrancePage.Timeline;
                     }
                     else
                     {
-                        result.Current = EntrancePage.Timeline;
+                        result.Frontpage = await FrontpagePage.CreateAsync(point, currentUserId, dbContext, cachedData);
+                        result.Current = EntrancePage.Frontpage;
                     }
                     break;
 

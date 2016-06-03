@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,176 +43,205 @@ namespace Keylol.States.Aggregation.Point.Edit
                 EnglishAliases = point.EnglishAliases
             };
 
-            if (point.Type != PointType.Game && point.Type != PointType.Hardware)
-                return infoPage;
+            if (point.Type == PointType.Game || point.Type == PointType.Hardware)
+            {
+                #region 商店信息
 
-            infoPage.PlatformPoints = (await (from relationship in dbContext.PointRelationships
-                where relationship.SourcePointId == point.Id &&
-                      relationship.Relationship == PointRelationshipType.Platform
-                select new
-                {
-                    relationship.TargetPoint.Id,
-                    relationship.TargetPoint.ChineseName,
-                    relationship.TargetPoint.EnglishName
-                })
-                .ToListAsync())
-                .Select(p => new SimplePoint
-                {
-                    Id = p.Id,
-                    ChineseName = p.ChineseName,
-                    EnglishName = p.EnglishName
-                })
-                .ToList();
+                infoPage.SteamAppId = point.SteamAppId;
+                infoPage.SonkwoProductId = point.SonkwoProductId;
+                infoPage.UplayLink = point.UplayLink;
+                infoPage.UplayPrice = point.UplayPrice;
+                infoPage.XboxLink = point.XboxLink;
+                infoPage.XboxPrice = point.XboxPrice;
+                infoPage.PlayStationLink = point.PlayStationLink;
+                infoPage.PlayStationPrice = point.PlayStationPrice;
+                infoPage.OriginLink = point.OriginLink;
+                infoPage.OriginPrice = point.OriginPrice;
+                infoPage.WindowsStoreLink = point.WindowsStoreLink;
+                infoPage.WindowsStorePrice = point.WindowsStorePrice;
+                infoPage.AppStoreLink = point.AppStoreLink;
+                infoPage.AppStorePrice = point.AppStorePrice;
+                infoPage.GooglePlayLink = point.GooglePlayLink;
+                infoPage.GooglePlayPrice = point.GooglePlayPrice;
+                infoPage.GogLink = point.GogLink;
+                infoPage.GogPrice = point.GogPrice;
+                infoPage.BattleNetLink = point.BattleNetLink;
+                infoPage.BattleNetPrice = point.BattleNetPrice;
 
-            #region 商店信息
+                #endregion
 
-            infoPage.SteamAppId = point.SteamAppId;
-            infoPage.SonkwoProductId = point.SonkwoProductId;
-            infoPage.UplayLink = point.UplayLink;
-            infoPage.UplayPrice = point.UplayPrice;
-            infoPage.XboxLink = point.XboxLink;
-            infoPage.XboxPrice = point.XboxPrice;
-            infoPage.PlayStationLink = point.PlayStationLink;
-            infoPage.PlayStationPrice = point.PlayStationPrice;
-            infoPage.OriginLink = point.OriginLink;
-            infoPage.OriginPrice = point.OriginPrice;
-            infoPage.WindowsStoreLink = point.WindowsStoreLink;
-            infoPage.WindowsStorePrice = point.WindowsStorePrice;
-            infoPage.AppStoreLink = point.AppStoreLink;
-            infoPage.AppStorePrice = point.AppStorePrice;
-            infoPage.GooglePlayLink = point.GooglePlayLink;
-            infoPage.GooglePlayPrice = point.GooglePlayPrice;
-            infoPage.GogLink = point.GogLink;
-            infoPage.GogPrice = point.GogPrice;
-            infoPage.BattleNetLink = point.BattleNetLink;
-            infoPage.BattleNetPrice = point.BattleNetPrice;
+                infoPage.GenrePoints = (await (from relationship in dbContext.PointRelationships
+                                               where relationship.SourcePointId == point.Id &&
+                                                     relationship.Relationship == PointRelationshipType.Genre
+                                               select new
+                                               {
+                                                   relationship.TargetPoint.Id,
+                                                   relationship.TargetPoint.ChineseName,
+                                                   relationship.TargetPoint.EnglishName
+                                               })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
+                    })
+                    .ToList();
 
-            #endregion
+                infoPage.TagPoints = (await (from relationship in dbContext.PointRelationships
+                                             where relationship.SourcePointId == point.Id &&
+                                                   relationship.Relationship == PointRelationshipType.Tag
+                                             select new
+                                             {
+                                                 relationship.TargetPoint.Id,
+                                                 relationship.TargetPoint.ChineseName,
+                                                 relationship.TargetPoint.EnglishName
+                                             })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
+                    })
+                    .ToList();
+            }
 
-            #region 特性属性
+            if (point.Type == PointType.Game)
+            {
+                infoPage.PlatformPoints = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Platform
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList();
 
-            infoPage.MultiPlayer = point.MultiPlayer ? true : (bool?) null;
-            infoPage.SinglePlayer = point.SinglePlayer ? true : (bool?) null;
-            infoPage.Coop = point.Coop ? true : (bool?) null;
-            infoPage.CaptionsAvailable = point.CaptionsAvailable ? true : (bool?) null;
-            infoPage.CommentaryAvailable = point.CommentaryAvailable ? true : (bool?) null;
-            infoPage.IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?) null;
-            infoPage.Achievements = point.Achievements ? true : (bool?) null;
-            infoPage.Cloud = point.Cloud ? true : (bool?) null;
-            infoPage.LocalCoop = point.LocalCoop ? true : (bool?) null;
-            infoPage.SteamTradingCards = point.SteamTradingCards ? true : (bool?) null;
-            infoPage.SteamWorkshop = point.SteamWorkshop ? true : (bool?) null;
-            infoPage.InAppPurchases = point.InAppPurchases ? true : (bool?) null;
+                #region 特性属性
 
-            #endregion
+                infoPage.MultiPlayer = point.MultiPlayer ? true : (bool?) null;
+                infoPage.SinglePlayer = point.SinglePlayer ? true : (bool?) null;
+                infoPage.Coop = point.Coop ? true : (bool?) null;
+                infoPage.CaptionsAvailable = point.CaptionsAvailable ? true : (bool?) null;
+                infoPage.CommentaryAvailable = point.CommentaryAvailable ? true : (bool?) null;
+                infoPage.IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?) null;
+                infoPage.Achievements = point.Achievements ? true : (bool?) null;
+                infoPage.Cloud = point.Cloud ? true : (bool?) null;
+                infoPage.LocalCoop = point.LocalCoop ? true : (bool?) null;
+                infoPage.SteamTradingCards = point.SteamTradingCards ? true : (bool?) null;
+                infoPage.SteamWorkshop = point.SteamWorkshop ? true : (bool?) null;
+                infoPage.InAppPurchases = point.InAppPurchases ? true : (bool?) null;
 
-            infoPage.DeveloperPoints = (await (from relationship in dbContext.PointRelationships
-                where relationship.SourcePointId == point.Id &&
-                      relationship.Relationship == PointRelationshipType.Developer
-                select new
-                {
-                    relationship.TargetPoint.Id,
-                    relationship.TargetPoint.ChineseName,
-                    relationship.TargetPoint.EnglishName
-                })
-                .ToListAsync())
-                .Select(p => new SimplePoint
-                {
-                    Id = p.Id,
-                    ChineseName = p.ChineseName,
-                    EnglishName = p.EnglishName
-                })
-                .ToList();
+                #endregion
 
-            infoPage.PublisherPoints = (await (from relationship in dbContext.PointRelationships
-                where relationship.SourcePointId == point.Id &&
-                      relationship.Relationship == PointRelationshipType.Publisher
-                select new
-                {
-                    relationship.TargetPoint.Id,
-                    relationship.TargetPoint.ChineseName,
-                    relationship.TargetPoint.EnglishName
-                })
-                .ToListAsync())
-                .Select(p => new SimplePoint
-                {
-                    Id = p.Id,
-                    ChineseName = p.ChineseName,
-                    EnglishName = p.EnglishName
-                })
-                .ToList();
+                infoPage.DeveloperPoints = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Developer
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList();
 
-            infoPage.ResellerPoints = (await (from relationship in dbContext.PointRelationships
-                where relationship.SourcePointId == point.Id &&
-                      relationship.Relationship == PointRelationshipType.Reseller
-                select new
-                {
-                    relationship.TargetPoint.Id,
-                    relationship.TargetPoint.ChineseName,
-                    relationship.TargetPoint.EnglishName
-                })
-                .ToListAsync())
-                .Select(p => new SimplePoint
-                {
-                    Id = p.Id,
-                    ChineseName = p.ChineseName,
-                    EnglishName = p.EnglishName
-                })
-                .ToList();
+                infoPage.PublisherPoints = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Publisher
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList();
 
-            infoPage.GenrePoints = (await (from relationship in dbContext.PointRelationships
-                where relationship.SourcePointId == point.Id &&
-                      relationship.Relationship == PointRelationshipType.Genre
-                select new
-                {
-                    relationship.TargetPoint.Id,
-                    relationship.TargetPoint.ChineseName,
-                    relationship.TargetPoint.EnglishName
-                })
-                .ToListAsync())
-                .Select(p => new SimplePoint
-                {
-                    Id = p.Id,
-                    ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
-                })
-                .ToList();
+                infoPage.ResellerPoints = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Reseller
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList();
 
-            infoPage.TagPoints = (await (from relationship in dbContext.PointRelationships
-                where relationship.SourcePointId == point.Id &&
-                      relationship.Relationship == PointRelationshipType.Tag
-                select new
-                {
-                    relationship.TargetPoint.Id,
-                    relationship.TargetPoint.ChineseName,
-                    relationship.TargetPoint.EnglishName
-                })
-                .ToListAsync())
-                .Select(p => new SimplePoint
-                {
-                    Id = p.Id,
-                    ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
-                })
-                .ToList();
+                infoPage.SeriesPoints = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Series
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList();
 
-            infoPage.SeriesPoints = (await (from relationship in dbContext.PointRelationships
-                where relationship.SourcePointId == point.Id &&
-                      relationship.Relationship == PointRelationshipType.Series
-                select new
-                {
-                    relationship.TargetPoint.Id,
-                    relationship.TargetPoint.ChineseName,
-                    relationship.TargetPoint.EnglishName
-                })
-                .ToListAsync())
-                .Select(p => new SimplePoint
-                {
-                    Id = p.Id,
-                    ChineseName = p.ChineseName,
-                    EnglishName = p.EnglishName
-                })
-                .ToList();
+                infoPage.PointCreateTime = point.CreateTime;
+                infoPage.PublishDate = point.PublishDate;
+                infoPage.PreOrderDate = point.PreOrderDate;
+                infoPage.ReleaseDate = point.ReleaseDate;
 
-            infoPage.ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability);
+                infoPage.ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability);
+            }
+
+            if (point.Type == PointType.Hardware)
+            {
+                infoPage.ManufacturerPoints = (await (from relationship in dbContext.PointRelationships
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Manufacturer
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
+                    .ToListAsync())
+                    .Select(p => new SimplePoint
+                    {
+                        Id = p.Id,
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
+                    })
+                    .ToList();
+            }
 
             return infoPage;
         }
@@ -428,6 +458,31 @@ namespace Keylol.States.Aggregation.Point.Edit
         /// 系列据点列表
         /// </summary>
         public List<SimplePoint> SeriesPoints { get; set; }
+
+        /// <summary>
+        /// 制造厂据点列表
+        /// </summary>
+        public List<SimplePoint> ManufacturerPoints { get; set; }
+
+        /// <summary>
+        /// 据点创建时间
+        /// </summary>
+        public DateTime? PointCreateTime { get; set; }
+
+        /// <summary>
+        /// 公开日期
+        /// </summary>
+        public DateTime? PublishDate { get; set; }
+
+        /// <summary>
+        /// 预购日期
+        /// </summary>
+        public DateTime? PreOrderDate { get; set; }
+
+        /// <summary>
+        /// 发行日期
+        /// </summary>
+        public DateTime? ReleaseDate { get; set; }
 
         /// <summary>
         /// 华语可用度

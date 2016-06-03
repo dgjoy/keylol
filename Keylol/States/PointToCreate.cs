@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CsQuery;
 using Keylol.Models.DAL;
@@ -87,6 +88,15 @@ namespace Keylol.States
                                 result.EnglishName = values[0];
                         }
 
+
+                        foreach (var img in dom[".highlight_strip_screenshot img"])
+                        {
+                            var match = Regex.Match(img.Attributes["src"], @"ss_([^\/]*)\.\d+x\d+\.jpg");
+                            if (!match.Success) continue;
+                            result.HeaderImage = $"keylol://steam/app-screenshots/{steamAppId}-{match.Groups[1].Value}";
+                            break;
+                        }
+
                         using (var picsResponse = await picsAwaiter)
                         {
                             var picsRs = picsResponse.GetResponseStream();
@@ -138,6 +148,11 @@ namespace Keylol.States
         /// 缩略图
         /// </summary>
         public string ThumbnailImage { get; set; }
+
+        /// <summary>
+        /// 页眉图片
+        /// </summary>
+        public string HeaderImage { get; set; }
 
         /// <summary>
         /// 头像

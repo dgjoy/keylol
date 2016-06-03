@@ -17,7 +17,7 @@ namespace Keylol.Controllers.Article
     [RoutePrefix("article")]
     public partial class ArticleController : ApiController
     {
-        private readonly CouponProvider _coupon;
+//        private readonly CouponProvider _coupon;
         private readonly KeylolDbContext _dbContext;
         private readonly IModel _mqChannel;
         private readonly KeylolUserManager _userManager;
@@ -41,54 +41,54 @@ namespace Keylol.Controllers.Article
             KeylolUserManager userManager)
         {
             _mqChannel = mqChannel;
-            _coupon = coupon;
+//            _coupon = coupon;
             _dbContext = dbContext;
             _userManager = userManager;
         }
 
-        private static void SanitizeArticle(Models.Article article, bool extractUnstyledContent)
-        {
-            Config.HtmlEncoder = new HtmlEncoderMinimum();
-            var sanitizer =
-                new HtmlSanitizer(
-                    new[]
-                    {
-                        "br", "span", "a", "img", "b", "strong", "i", "strike", "u", "p", "blockquote", "h1", "hr",
-                        "comment", "spoiler", "table", "colgroup", "col", "thead", "tr", "th", "tbody", "td"
-                    },
-                    null,
-                    new[] {"src", "alt", "width", "height", "data-non-image", "href", "style"},
-                    null,
-                    new[] {"text-align"});
-            var dom = CQ.Create(sanitizer.Sanitize(article.Content));
-            article.ThumbnailImage = string.Empty;
-            foreach (var img in dom["img"])
-            {
-                var url = string.Empty;
-                if (string.IsNullOrWhiteSpace(img.Attributes["src"]))
-                {
-                    img.Remove();
-                }
-                else
-                {
-                    var fileName = UpyunProvider.ExtractFileName(img.Attributes["src"]);
-                    if (string.IsNullOrWhiteSpace(fileName))
-                    {
-                        url = img.Attributes["src"];
-                    }
-                    else
-                    {
-                        url = $"keylol://{fileName}";
-                        img.Attributes["article-image-src"] = url;
-                        img.RemoveAttribute("src");
-                    }
-                }
-                if (string.IsNullOrWhiteSpace(article.ThumbnailImage))
-                    article.ThumbnailImage = url;
-            }
-            article.Content = dom.Render();
-            if (extractUnstyledContent)
-                article.UnstyledContent = dom.Render(OutputFormatters.PlainText);
-        }
+//        private static void SanitizeArticle(Models.Article article, bool extractUnstyledContent)
+//        {
+//            Config.HtmlEncoder = new HtmlEncoderMinimum();
+//            var sanitizer =
+//                new HtmlSanitizer(
+//                    new[]
+//                    {
+//                        "br", "span", "a", "img", "b", "strong", "i", "strike", "u", "p", "blockquote", "h1", "hr",
+//                        "comment", "spoiler", "table", "colgroup", "col", "thead", "tr", "th", "tbody", "td"
+//                    },
+//                    null,
+//                    new[] {"src", "alt", "width", "height", "data-non-image", "href", "style"},
+//                    null,
+//                    new[] {"text-align"});
+//            var dom = CQ.Create(sanitizer.Sanitize(article.Content));
+//            article.ThumbnailImage = string.Empty;
+//            foreach (var img in dom["img"])
+//            {
+//                var url = string.Empty;
+//                if (string.IsNullOrWhiteSpace(img.Attributes["src"]))
+//                {
+//                    img.Remove();
+//                }
+//                else
+//                {
+//                    var fileName = UpyunProvider.ExtractFileName(img.Attributes["src"]);
+//                    if (string.IsNullOrWhiteSpace(fileName))
+//                    {
+//                        url = img.Attributes["src"];
+//                    }
+//                    else
+//                    {
+//                        url = $"keylol://{fileName}";
+//                        img.Attributes["article-image-src"] = url;
+//                        img.RemoveAttribute("src");
+//                    }
+//                }
+//                if (string.IsNullOrWhiteSpace(article.ThumbnailImage))
+//                    article.ThumbnailImage = url;
+//            }
+//            article.Content = dom.Render();
+//            if (extractUnstyledContent)
+//                article.UnstyledContent = dom.Render(OutputFormatters.PlainText);
+//        }
     }
 }

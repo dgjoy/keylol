@@ -43,9 +43,20 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         public static async Task<FrontpagePage> CreateAsync(Models.Point point, string currentUserId,
             KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            return new FrontpagePage
+            var frontPage = new FrontpagePage();
+
+            if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
-                Platforms = (await (from relationship in dbContext.PointRelationships
+                frontPage.MediaHeaderImage = point.MediaHeaderImage;
+                frontPage.Media = Helpers.SafeDeserialize<List<PointMedia>>(point.Media);
+
+                frontPage.SimilarPoints =
+                    await SimilarPointList.CreateAsync(point.Id, currentUserId, 1, dbContext, cachedData);
+            }
+
+            if (point.Type == PointType.Game)
+            {
+                frontPage.Platforms = (await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           relationship.Relationship == PointRelationshipType.Platform
                     select new
@@ -53,7 +64,6 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                         relationship.TargetPoint.IdCode,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
-                        
                     })
                     .ToListAsync())
                     .Select(p => new SimplePoint
@@ -62,26 +72,32 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
-                    .ToList(),
-                MultiPlayer = point.MultiPlayer ? true : (bool?) null,
-                SinglePlayer = point.SinglePlayer ? true : (bool?) null,
-                Coop = point.Coop ? true : (bool?) null,
-                CaptionsAvailable = point.CaptionsAvailable ? true : (bool?) null,
-                CommentaryAvailable = point.CommentaryAvailable ? true : (bool?) null,
-                IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?) null,
-                Achievements = point.Achievements ? true : (bool?) null,
-                Cloud = point.Cloud ? true : (bool?) null,
-                LocalCoop = point.LocalCoop ? true : (bool?) null,
-                SteamTradingCards = point.SteamTradingCards ? true : (bool?) null,
-                SteamWorkshop = point.SteamWorkshop ? true : (bool?) null,
-                InAppPurchases = point.InAppPurchases ? true : (bool?) null,
-                ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability),
-                MediaHeaderImage = point.MediaHeaderImage,
-                Media = Helpers.SafeDeserialize<List<PointMedia>>(point.Media),
-                AddictedUsers =
-                    await AddictedUserList.CreateAsync(currentUserId, point.SteamAppId, 1, dbContext, cachedData),
-                SimilarPoints = await SimilarPointList.CreateAsync(point.Id, currentUserId, 1, dbContext, cachedData)
-            };
+                    .ToList();
+
+                #region 特性属性
+
+                frontPage.MultiPlayer = point.MultiPlayer ? true : (bool?) null;
+                frontPage.SinglePlayer = point.SinglePlayer ? true : (bool?) null;
+                frontPage.Coop = point.Coop ? true : (bool?) null;
+                frontPage.CaptionsAvailable = point.CaptionsAvailable ? true : (bool?) null;
+                frontPage.CommentaryAvailable = point.CommentaryAvailable ? true : (bool?) null;
+                frontPage.IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?) null;
+                frontPage.Achievements = point.Achievements ? true : (bool?) null;
+                frontPage.Cloud = point.Cloud ? true : (bool?) null;
+                frontPage.LocalCoop = point.LocalCoop ? true : (bool?) null;
+                frontPage.SteamTradingCards = point.SteamTradingCards ? true : (bool?) null;
+                frontPage.SteamWorkshop = point.SteamWorkshop ? true : (bool?) null;
+                frontPage.InAppPurchases = point.InAppPurchases ? true : (bool?) null;
+
+                #endregion
+
+                frontPage.ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability);
+
+                frontPage.AddictedUsers =
+                    await AddictedUserList.CreateAsync(currentUserId, point.SteamAppId, 1, dbContext, cachedData);
+            }
+
+            return frontPage;
         }
 
         /// <summary>

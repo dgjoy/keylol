@@ -57,264 +57,285 @@ namespace Keylol.Controllers.Point
             if (requestDto.LightThemeColor != null)
                 point.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.LightThemeColor));
 
-            if (point.Type != PointType.Game && point.Type != PointType.Hardware)
+            if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
-                await _dbContext.SaveChangesAsync();
-                return Ok();
+                #region 更新商店信息
+
+                if (requestDto.SteamAppId != null && requestDto.SteamAppId > 0)
+                    point.SteamAppId = requestDto.SteamAppId;
+
+                if (requestDto.SonkwoProductId != null && requestDto.SonkwoProductId > 0)
+                    point.SonkwoProductId = requestDto.SonkwoProductId;
+
+                if (requestDto.UplayLink != null)
+                    point.UplayLink = requestDto.UplayLink;
+
+                if (requestDto.UplayPrice != null && requestDto.UplayPrice >= 0)
+                    point.UplayPrice = requestDto.UplayPrice;
+
+                if (requestDto.XboxLink != null)
+                    point.XboxLink = requestDto.XboxLink;
+
+                if (requestDto.XboxPrice != null && requestDto.XboxPrice >= 0)
+                    point.XboxPrice = requestDto.XboxPrice;
+
+                if (requestDto.PlayStationLink != null)
+                    point.PlayStationLink = requestDto.PlayStationLink;
+
+                if (requestDto.PlayStationPrice != null && requestDto.PlayStationPrice >= 0)
+                    point.PlayStationPrice = requestDto.PlayStationPrice;
+
+                if (requestDto.OriginLink != null)
+                    point.OriginLink = requestDto.OriginLink;
+
+                if (requestDto.OriginPrice != null && requestDto.OriginPrice >= 0)
+                    point.OriginPrice = requestDto.OriginPrice;
+
+                if (requestDto.WindowsStoreLink != null)
+                    point.WindowsStoreLink = requestDto.WindowsStoreLink;
+
+                if (requestDto.WindowsStorePrice != null && requestDto.WindowsStorePrice >= 0)
+                    point.WindowsStorePrice = requestDto.WindowsStorePrice;
+
+                if (requestDto.AppStoreLink != null)
+                    point.AppStoreLink = requestDto.AppStoreLink;
+
+                if (requestDto.AppStorePrice != null && requestDto.AppStorePrice >= 0)
+                    point.AppStorePrice = requestDto.AppStorePrice;
+
+                if (requestDto.GooglePlayLink != null)
+                    point.GooglePlayLink = requestDto.GooglePlayLink;
+
+                if (requestDto.GooglePlayPrice != null && requestDto.GooglePlayPrice >= 0)
+                    point.GooglePlayPrice = requestDto.GooglePlayPrice;
+
+                if (requestDto.GogLink != null)
+                    point.GogLink = requestDto.GogLink;
+
+                if (requestDto.GogPrice != null && requestDto.GogPrice >= 0)
+                    point.GogPrice = requestDto.GogPrice;
+
+                if (requestDto.BattleNetLink != null)
+                    point.BattleNetLink = requestDto.BattleNetLink;
+
+                if (requestDto.BattleNetPrice != null && requestDto.BattleNetPrice >= 0)
+                    point.BattleNetPrice = requestDto.BattleNetPrice;
+
+                #endregion
+
+                if (requestDto.GenrePoints != null)
+                {
+                    _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                        .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Genre)
+                        .ToListAsync());
+                    _dbContext.PointRelationships.AddRange(requestDto.GenrePoints
+                        .Select(targetPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Genre,
+                            SourcePointId = point.Id,
+                            TargetPointId = targetPointId
+                        }));
+                }
+
+                if (requestDto.TagPoints != null)
+                {
+                    _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                        .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Tag)
+                        .ToListAsync());
+                    _dbContext.PointRelationships.AddRange(requestDto.TagPoints
+                        .Select(targetPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Tag,
+                            SourcePointId = point.Id,
+                            TargetPointId = targetPointId
+                        }));
+                }
+
+                if (Helpers.IsTrustedUrl(requestDto.MediaHeaderImage, false))
+                    point.MediaHeaderImage = requestDto.MediaHeaderImage;
+
+                if (Helpers.IsTrustedUrl(requestDto.TitleCoverImage, false))
+                    point.TitleCoverImage = requestDto.TitleCoverImage;
+
+                if (Helpers.IsTrustedUrl(requestDto.ThumbnailImage, false))
+                    point.ThumbnailImage = requestDto.ThumbnailImage;
             }
 
-            if (requestDto.PlatformPoints != null)
+            if (point.Type == PointType.Game)
             {
-                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
-                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Platform)
-                    .ToListAsync());
-                _dbContext.PointRelationships.AddRange((await _dbContext.Points
-                    .Where(p => requestDto.PlatformPoints.Contains(p.IdCode) && p.Type == PointType.Platform)
-                    .Select(p => p.Id)
-                    .ToListAsync())
-                    .Select(platformPointId => new PointRelationship
+                if (requestDto.PlatformPoints != null)
+                {
+                    var platforms = (await _dbContext.Points
+                        .Where(p => requestDto.PlatformPoints.Contains(p.IdCode) && p.Type == PointType.Platform)
+                        .Select(p => p.Id)
+                        .ToListAsync())
+                        .Select(platformPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Platform,
+                            SourcePointId = point.Id,
+                            TargetPointId = platformPointId
+                        }).ToList();
+                    if (platforms.Count > 0)
                     {
-                        Relationship = PointRelationshipType.Platform,
-                        SourcePointId = point.Id,
-                        TargetPointId = platformPointId
-                    }));
-            }
+                        _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                            .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Platform)
+                            .ToListAsync());
+                        _dbContext.PointRelationships.AddRange(platforms);
+                    }
+                }
 
-            #region 更新商店信息
+                #region 更新特性属性
 
-            if (requestDto.SteamAppId != null && requestDto.SteamAppId > 0)
-                point.SteamAppId = requestDto.SteamAppId;
+                if (requestDto.MultiPlayer != null)
+                    point.MultiPlayer = requestDto.MultiPlayer.Value;
 
-            if (requestDto.SonkwoProductId != null && requestDto.SonkwoProductId > 0)
-                point.SonkwoProductId = requestDto.SonkwoProductId;
+                if (requestDto.SinglePlayer != null)
+                    point.SinglePlayer = requestDto.SinglePlayer.Value;
 
-            if (requestDto.UplayLink != null)
-                point.UplayLink = requestDto.UplayLink;
+                if (requestDto.Coop != null)
+                    point.Coop = requestDto.Coop.Value;
 
-            if (requestDto.UplayPrice != null && requestDto.UplayPrice >= 0)
-                point.UplayPrice = requestDto.UplayPrice;
+                if (requestDto.CaptionsAvailable != null)
+                    point.CaptionsAvailable = requestDto.CaptionsAvailable.Value;
 
-            if (requestDto.XboxLink != null)
-                point.XboxLink = requestDto.XboxLink;
+                if (requestDto.CommentaryAvailable != null)
+                    point.CommentaryAvailable = requestDto.CommentaryAvailable.Value;
 
-            if (requestDto.XboxPrice != null && requestDto.XboxPrice >= 0)
-                point.XboxPrice = requestDto.XboxPrice;
+                if (requestDto.IncludeLevelEditor != null)
+                    point.IncludeLevelEditor = requestDto.IncludeLevelEditor.Value;
 
-            if (requestDto.PlayStationLink != null)
-                point.PlayStationLink = requestDto.PlayStationLink;
+                if (requestDto.Achievements != null)
+                    point.Achievements = requestDto.Achievements.Value;
 
-            if (requestDto.PlayStationPrice != null && requestDto.PlayStationPrice >= 0)
-                point.PlayStationPrice = requestDto.PlayStationPrice;
+                if (requestDto.Cloud != null)
+                    point.Cloud = requestDto.Cloud.Value;
 
-            if (requestDto.OriginLink != null)
-                point.OriginLink = requestDto.OriginLink;
+                if (requestDto.LocalCoop != null)
+                    point.LocalCoop = requestDto.LocalCoop.Value;
 
-            if (requestDto.OriginPrice != null && requestDto.OriginPrice >= 0)
-                point.OriginPrice = requestDto.OriginPrice;
+                if (requestDto.SteamTradingCards != null)
+                    point.SteamTradingCards = requestDto.SteamTradingCards.Value;
 
-            if (requestDto.WindowsStoreLink != null)
-                point.WindowsStoreLink = requestDto.WindowsStoreLink;
+                if (requestDto.SteamWorkshop != null)
+                    point.SteamWorkshop = requestDto.SteamWorkshop.Value;
 
-            if (requestDto.WindowsStorePrice != null && requestDto.WindowsStorePrice >= 0)
-                point.WindowsStorePrice = requestDto.WindowsStorePrice;
+                if (requestDto.InAppPurchases != null)
+                    point.InAppPurchases = requestDto.InAppPurchases.Value;
 
-            if (requestDto.AppStoreLink != null)
-                point.AppStoreLink = requestDto.AppStoreLink;
+                #endregion
 
-            if (requestDto.AppStorePrice != null && requestDto.AppStorePrice >= 0)
-                point.AppStorePrice = requestDto.AppStorePrice;
+                if (requestDto.DeveloperPoints != null)
+                {
+                    _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                        .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Developer)
+                        .ToListAsync());
+                    _dbContext.PointRelationships.AddRange(requestDto.DeveloperPoints
+                        .Select(targetPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Developer,
+                            SourcePointId = point.Id,
+                            TargetPointId = targetPointId
+                        }));
+                }
 
-            if (requestDto.GooglePlayLink != null)
-                point.GooglePlayLink = requestDto.GooglePlayLink;
+                if (requestDto.PublisherPoints != null)
+                {
+                    _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                        .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Publisher)
+                        .ToListAsync());
+                    _dbContext.PointRelationships.AddRange(requestDto.PublisherPoints
+                        .Select(targetPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Publisher,
+                            SourcePointId = point.Id,
+                            TargetPointId = targetPointId
+                        }));
+                }
 
-            if (requestDto.GooglePlayPrice != null && requestDto.GooglePlayPrice >= 0)
-                point.GooglePlayPrice = requestDto.GooglePlayPrice;
+                if (requestDto.ResellerPoints != null)
+                {
+                    _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                        .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Reseller)
+                        .ToListAsync());
+                    _dbContext.PointRelationships.AddRange(requestDto.ResellerPoints
+                        .Select(targetPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Reseller,
+                            SourcePointId = point.Id,
+                            TargetPointId = targetPointId
+                        }));
+                }
 
-            if (requestDto.GogLink != null)
-                point.GogLink = requestDto.GogLink;
+                if (requestDto.SeriesPoints != null)
+                {
+                    _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                        .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Series)
+                        .ToListAsync());
+                    _dbContext.PointRelationships.AddRange(requestDto.SeriesPoints
+                        .Select(targetPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Series,
+                            SourcePointId = point.Id,
+                            TargetPointId = targetPointId
+                        }));
+                }
 
-            if (requestDto.GogPrice != null && requestDto.GogPrice >= 0)
-                point.GogPrice = requestDto.GogPrice;
+                if (requestDto.PublishDate != null)
+                    point.PublishDate = requestDto.PublishDate;
 
-            if (requestDto.BattleNetLink != null)
-                point.BattleNetLink = requestDto.BattleNetLink;
+                if (requestDto.PreOrderDate != null)
+                    point.PreOrderDate = requestDto.PreOrderDate;
 
-            if (requestDto.BattleNetPrice != null && requestDto.BattleNetPrice >= 0)
-                point.BattleNetPrice = requestDto.BattleNetPrice;
+                if (requestDto.ReleaseDate != null)
+                    point.ReleaseDate = requestDto.ReleaseDate;
 
-            #endregion
-
-            #region 更新特性属性
-
-            if (requestDto.MultiPlayer != null)
-                point.MultiPlayer = requestDto.MultiPlayer.Value;
-
-            if (requestDto.SinglePlayer != null)
-                point.SinglePlayer = requestDto.SinglePlayer.Value;
-
-            if (requestDto.Coop != null)
-                point.Coop = requestDto.Coop.Value;
-
-            if (requestDto.CaptionsAvailable != null)
-                point.CaptionsAvailable = requestDto.CaptionsAvailable.Value;
-
-            if (requestDto.CommentaryAvailable != null)
-                point.CommentaryAvailable = requestDto.CommentaryAvailable.Value;
-
-            if (requestDto.IncludeLevelEditor != null)
-                point.IncludeLevelEditor = requestDto.IncludeLevelEditor.Value;
-
-            if (requestDto.Achievements != null)
-                point.Achievements = requestDto.Achievements.Value;
-
-            if (requestDto.Cloud != null)
-                point.Cloud = requestDto.Cloud.Value;
-
-            if (requestDto.LocalCoop != null)
-                point.LocalCoop = requestDto.LocalCoop.Value;
-
-            if (requestDto.SteamTradingCards != null)
-                point.SteamTradingCards = requestDto.SteamTradingCards.Value;
-
-            if (requestDto.SteamWorkshop != null)
-                point.SteamWorkshop = requestDto.SteamWorkshop.Value;
-
-            if (requestDto.InAppPurchases != null)
-                point.InAppPurchases = requestDto.InAppPurchases.Value;
-
-            #endregion
-
-            if (requestDto.DeveloperPoints != null)
-            {
-                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
-                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Developer)
-                    .ToListAsync());
-                _dbContext.PointRelationships.AddRange(requestDto.DeveloperPoints
-                    .Select(targetPointId => new PointRelationship
-                    {
-                        Relationship = PointRelationshipType.Developer,
-                        SourcePointId = point.Id,
-                        TargetPointId = targetPointId
-                    }));
-            }
-
-            if (requestDto.PublisherPoints != null)
-            {
-                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
-                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Publisher)
-                    .ToListAsync());
-                _dbContext.PointRelationships.AddRange(requestDto.PublisherPoints
-                    .Select(targetPointId => new PointRelationship
-                    {
-                        Relationship = PointRelationshipType.Publisher,
-                        SourcePointId = point.Id,
-                        TargetPointId = targetPointId
-                    }));
-            }
-
-            if (requestDto.ResellerPoints != null)
-            {
-                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
-                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Reseller)
-                    .ToListAsync());
-                _dbContext.PointRelationships.AddRange(requestDto.ResellerPoints
-                    .Select(targetPointId => new PointRelationship
-                    {
-                        Relationship = PointRelationshipType.Reseller,
-                        SourcePointId = point.Id,
-                        TargetPointId = targetPointId
-                    }));
-            }
-
-            if (requestDto.GenrePoints != null)
-            {
-                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
-                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Genre)
-                    .ToListAsync());
-                _dbContext.PointRelationships.AddRange(requestDto.GenrePoints
-                    .Select(targetPointId => new PointRelationship
-                    {
-                        Relationship = PointRelationshipType.Genre,
-                        SourcePointId = point.Id,
-                        TargetPointId = targetPointId
-                    }));
-            }
-
-            if (requestDto.TagPoints != null)
-            {
-                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
-                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Tag)
-                    .ToListAsync());
-                _dbContext.PointRelationships.AddRange(requestDto.TagPoints
-                    .Select(targetPointId => new PointRelationship
-                    {
-                        Relationship = PointRelationshipType.Tag,
-                        SourcePointId = point.Id,
-                        TargetPointId = targetPointId
-                    }));
-            }
-
-            if (requestDto.SeriesPoints != null)
-            {
-                _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
-                    .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Series)
-                    .ToListAsync());
-                _dbContext.PointRelationships.AddRange(requestDto.SeriesPoints
-                    .Select(targetPointId => new PointRelationship
-                    {
-                        Relationship = PointRelationshipType.Series,
-                        SourcePointId = point.Id,
-                        TargetPointId = targetPointId
-                    }));
-            }
-
-            if (requestDto.PublishDate != null)
-                point.PublishDate = requestDto.PublishDate;
-
-            if (requestDto.PreOrderDate != null)
-                point.PreOrderDate = requestDto.PreOrderDate;
-
-            if (requestDto.ReleaseDate != null)
-                point.ReleaseDate = requestDto.ReleaseDate;
-
-            var chineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability) ??
-                                      new ChineseAvailability
-                                      {
-                                          English = new ChineseAvailability.Language
+                var chineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability) ??
+                                          new ChineseAvailability
                                           {
-                                              Interface = true,
-                                              Subtitles = true,
-                                              FullAudio = true
-                                          },
-                                          ThirdPartyLinks = new List<ChineseAvailability.ThirdPartyLink>()
-                                      };
+                                              English = new ChineseAvailability.Language
+                                              {
+                                                  Interface = true,
+                                                  Subtitles = true,
+                                                  FullAudio = true
+                                              },
+                                              ThirdPartyLinks = new List<ChineseAvailability.ThirdPartyLink>()
+                                          };
 
-            if (requestDto.EnglishLanguage != null)
-                chineseAvailability.English = requestDto.EnglishLanguage;
+                if (requestDto.EnglishLanguage != null)
+                    chineseAvailability.English = requestDto.EnglishLanguage;
 
-            if (requestDto.JapaneseLanguage != null)
-                chineseAvailability.Japanese = requestDto.JapaneseLanguage;
+                if (requestDto.JapaneseLanguage != null)
+                    chineseAvailability.Japanese = requestDto.JapaneseLanguage;
 
-            if (requestDto.SimplifiedChineseLanguage != null)
-                chineseAvailability.SimplifiedChinese = requestDto.SimplifiedChineseLanguage;
+                if (requestDto.SimplifiedChineseLanguage != null)
+                    chineseAvailability.SimplifiedChinese = requestDto.SimplifiedChineseLanguage;
 
-            if (requestDto.TraditionalChineseLanguage != null)
-                chineseAvailability.TraditionalChinese = requestDto.TraditionalChineseLanguage;
+                if (requestDto.TraditionalChineseLanguage != null)
+                    chineseAvailability.TraditionalChinese = requestDto.TraditionalChineseLanguage;
 
-            if (requestDto.ChineseThirdPartyLinks != null)
-                chineseAvailability.ThirdPartyLinks = requestDto.ChineseThirdPartyLinks;
+                if (requestDto.ChineseThirdPartyLinks != null)
+                    chineseAvailability.ThirdPartyLinks = requestDto.ChineseThirdPartyLinks;
 
-            point.ChineseAvailability = JsonConvert.SerializeObject(chineseAvailability,
-                new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
-            
-            if (Helpers.IsTrustedUrl(requestDto.MediaHeaderImage, false))
-                point.MediaHeaderImage = requestDto.MediaHeaderImage;
+                point.ChineseAvailability = JsonConvert.SerializeObject(chineseAvailability,
+                    new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+            }
 
-            if (Helpers.IsTrustedUrl(requestDto.TitleCoverImage, false))
-                point.TitleCoverImage = requestDto.TitleCoverImage;
-
-            if (Helpers.IsTrustedUrl(requestDto.ThumbnailImage, false))
-                point.ThumbnailImage = requestDto.ThumbnailImage;
+            if (point.Type == PointType.Hardware)
+            {
+                if (requestDto.ManufacturerPoints != null)
+                {
+                    _dbContext.PointRelationships.RemoveRange(await _dbContext.PointRelationships
+                        .Where(r => r.SourcePointId == point.Id && r.Relationship == PointRelationshipType.Manufacturer)
+                        .ToListAsync());
+                    _dbContext.PointRelationships.AddRange(requestDto.TagPoints
+                        .Select(targetPointId => new PointRelationship
+                        {
+                            Relationship = PointRelationshipType.Manufacturer,
+                            SourcePointId = point.Id,
+                            TargetPointId = targetPointId
+                        }));
+                }
+            }
 
             await _dbContext.SaveChangesAsync();
             return Ok();
@@ -519,7 +540,7 @@ namespace Keylol.Controllers.Point
             #endregion
 
             /// <summary>
-            /// 开发商据点 ID 列表
+            /// 开发厂据点 ID 列表
             /// </summary>
             public List<string> DeveloperPoints { get; set; }
 
@@ -547,6 +568,11 @@ namespace Keylol.Controllers.Point
             /// 系列据点 ID 列表
             /// </summary>
             public List<string> SeriesPoints { get; set; }
+
+            /// <summary>
+            /// 制造厂据点 ID 列表
+            /// </summary>
+            public List<string> ManufacturerPoints { get; set; }
 
             /// <summary>
             /// 公开日期
