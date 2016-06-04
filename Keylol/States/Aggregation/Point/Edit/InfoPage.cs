@@ -45,40 +45,15 @@ namespace Keylol.States.Aggregation.Point.Edit
 
             if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
-                #region 商店信息
-
-                infoPage.SteamAppId = point.SteamAppId;
-                infoPage.SonkwoProductId = point.SonkwoProductId;
-                infoPage.UplayLink = point.UplayLink;
-                infoPage.UplayPrice = point.UplayPrice;
-                infoPage.XboxLink = point.XboxLink;
-                infoPage.XboxPrice = point.XboxPrice;
-                infoPage.PlayStationLink = point.PlayStationLink;
-                infoPage.PlayStationPrice = point.PlayStationPrice;
-                infoPage.OriginLink = point.OriginLink;
-                infoPage.OriginPrice = point.OriginPrice;
-                infoPage.WindowsStoreLink = point.WindowsStoreLink;
-                infoPage.WindowsStorePrice = point.WindowsStorePrice;
-                infoPage.AppStoreLink = point.AppStoreLink;
-                infoPage.AppStorePrice = point.AppStorePrice;
-                infoPage.GooglePlayLink = point.GooglePlayLink;
-                infoPage.GooglePlayPrice = point.GooglePlayPrice;
-                infoPage.GogLink = point.GogLink;
-                infoPage.GogPrice = point.GogPrice;
-                infoPage.BattleNetLink = point.BattleNetLink;
-                infoPage.BattleNetPrice = point.BattleNetPrice;
-
-                #endregion
-
                 infoPage.GenrePoints = (await (from relationship in dbContext.PointRelationships
-                                               where relationship.SourcePointId == point.Id &&
-                                                     relationship.Relationship == PointRelationshipType.Genre
-                                               select new
-                                               {
-                                                   relationship.TargetPoint.Id,
-                                                   relationship.TargetPoint.ChineseName,
-                                                   relationship.TargetPoint.EnglishName
-                                               })
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Genre
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
                     .ToListAsync())
                     .Select(p => new SimplePoint
                     {
@@ -88,14 +63,14 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .ToList();
 
                 infoPage.TagPoints = (await (from relationship in dbContext.PointRelationships
-                                             where relationship.SourcePointId == point.Id &&
-                                                   relationship.Relationship == PointRelationshipType.Tag
-                                             select new
-                                             {
-                                                 relationship.TargetPoint.Id,
-                                                 relationship.TargetPoint.ChineseName,
-                                                 relationship.TargetPoint.EnglishName
-                                             })
+                    where relationship.SourcePointId == point.Id &&
+                          relationship.Relationship == PointRelationshipType.Tag
+                    select new
+                    {
+                        relationship.TargetPoint.Id,
+                        relationship.TargetPoint.ChineseName,
+                        relationship.TargetPoint.EnglishName
+                    })
                     .ToListAsync())
                     .Select(p => new SimplePoint
                     {
@@ -107,23 +82,11 @@ namespace Keylol.States.Aggregation.Point.Edit
 
             if (point.Type == PointType.Game)
             {
-                infoPage.PlatformPoints = (await (from relationship in dbContext.PointRelationships
+                infoPage.PlatformPoints = await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           relationship.Relationship == PointRelationshipType.Platform
-                    select new
-                    {
-                        relationship.TargetPoint.Id,
-                        relationship.TargetPoint.ChineseName,
-                        relationship.TargetPoint.EnglishName
-                    })
-                    .ToListAsync())
-                    .Select(p => new SimplePoint
-                    {
-                        Id = p.Id,
-                        ChineseName = p.ChineseName,
-                        EnglishName = p.EnglishName
-                    })
-                    .ToList();
+                    select relationship.TargetPoint.IdCode)
+                    .ToListAsync();
 
                 #region 特性属性
 
@@ -259,111 +222,7 @@ namespace Keylol.States.Aggregation.Point.Edit
         /// <summary>
         /// 平台据点
         /// </summary>
-        public List<SimplePoint> PlatformPoints { get; set; }
-
-        #region 商店信息
-
-        /// <summary>
-        /// Steam App ID
-        /// </summary>
-        public int? SteamAppId { get; set; }
-
-        /// <summary>
-        /// 杉果 Product ID
-        /// </summary>
-        public int? SonkwoProductId { get; set; }
-
-        /// <summary>
-        /// Uplay 链接
-        /// </summary>
-        public string UplayLink { get; set; }
-
-        /// <summary>
-        /// Uplay 价格
-        /// </summary>
-        public double? UplayPrice { get; set; }
-
-        /// <summary>
-        /// Xbox 链接
-        /// </summary>
-        public string XboxLink { get; set; }
-
-        /// <summary>
-        /// Xbox 价格
-        /// </summary>
-        public double? XboxPrice { get; set; }
-
-        /// <summary>
-        /// PlayStation 链接
-        /// </summary>
-        public string PlayStationLink { get; set; }
-
-        /// <summary>
-        /// PlayStation 价格
-        /// </summary>
-        public double? PlayStationPrice { get; set; }
-
-        /// <summary>
-        /// Origin 链接
-        /// </summary>
-        public string OriginLink { get; set; }
-
-        /// <summary>
-        /// Origin 价格
-        /// </summary>
-        public double? OriginPrice { get; set; }
-
-        /// <summary>
-        /// Windows Store 链接
-        /// </summary>
-        public string WindowsStoreLink { get; set; }
-
-        /// <summary>
-        /// Windows Store 价格
-        /// </summary>
-        public double? WindowsStorePrice { get; set; }
-
-        /// <summary>
-        /// App Store 链接
-        /// </summary>
-        public string AppStoreLink { get; set; }
-
-        /// <summary>
-        /// App Store 价格
-        /// </summary>
-        public double? AppStorePrice { get; set; }
-
-        /// <summary>
-        /// Google Play 链接
-        /// </summary>
-        public string GooglePlayLink { get; set; }
-
-        /// <summary>
-        /// Google Play 价格
-        /// </summary>
-        public double? GooglePlayPrice { get; set; }
-
-        /// <summary>
-        /// Gog 链接
-        /// </summary>
-        public string GogLink { get; set; }
-
-        /// <summary>
-        /// GOG 价格
-        /// </summary>
-        public double? GogPrice { get; set; }
-
-        /// <summary>
-        /// 战网链接
-        /// </summary>
-        public string BattleNetLink { get; set; }
-
-        /// <summary>
-        /// 战网价格
-        /// </summary>
-        public double? BattleNetPrice { get; set; }
-
-        #endregion
+        public List<string> PlatformPoints { get; set; }
 
         #region 特性属性
 

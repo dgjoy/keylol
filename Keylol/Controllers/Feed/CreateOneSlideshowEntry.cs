@@ -49,36 +49,42 @@ namespace Keylol.Controllers.Feed
             /// 主标题
             /// </summary>
             [Required]
+            [MaxLength(256)]
             public string Title { get; set; }
 
             /// <summary>
             /// 副标题
             /// </summary>
             [Required]
+            [MaxLength(256)]
             public string Subtitle { get; set; }
 
             /// <summary>
             /// 作者
             /// </summary>
             [Required]
+            [MaxLength(128)]
             public string Author { get; set; }
 
             /// <summary>
             /// 日期
             /// </summary>
             [Required]
+            [MaxLength(128)]
             public string Date { get; set; }
 
             /// <summary>
             /// 次要主标题
             /// </summary>
             [Required]
+            [MaxLength(64)]
             public string MinorTitle { get; set; }
 
             /// <summary>
             /// 次要副标题
             /// </summary>
             [Required]
+            [MaxLength(64)]
             public string MinorSubtitle { get; set; }
 
             /// <summary>

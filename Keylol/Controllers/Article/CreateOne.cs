@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -24,8 +23,7 @@ namespace Keylol.Controllers.Article
         /// <param name="requestDto">文章相关属性</param>
         [Route]
         [HttpPost]
-        [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(ArticleDto))]
+        [SwaggerResponse(HttpStatusCode.OK, "文章 SidForAuthor")]
         public async Task<IHttpActionResult> CreateOne([NotNull] CreateOrUpdateOneRequestDto requestDto)
         {
             var userId = User.Identity.GetUserId();
@@ -33,16 +31,26 @@ namespace Keylol.Controllers.Article
             {
                 AuthorId = userId,
                 Title = requestDto.Title,
+                Content = requestDto.Content
             };
+            SanitizeArticle(article);
 
             if (!string.IsNullOrWhiteSpace(requestDto.Subtitle))
                 article.Subtitle = requestDto.Subtitle;
 
-            var targetPoint = await _dbContext.Points.FindAsync(requestDto.TargetPointId);
+            var targetPoint = await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Type
+                }).SingleOrDefaultAsync();
             if (targetPoint == null)
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetPointId), Errors.NonExistent);
 
             article.TargetPointId = targetPoint.Id;
+            requestDto.AttachedPointIds = requestDto.AttachedPointIds.Select(id => id.Trim())
+                .Where(id => id != targetPoint.Id.Trim()).Distinct().ToList();
+            article.AttachedPoints = JsonConvert.SerializeObject(requestDto.AttachedPointIds);
 
             if (targetPoint.Type == PointType.Game || targetPoint.Type == PointType.Hardware)
             {
@@ -51,20 +59,21 @@ namespace Keylol.Controllers.Article
                 article.Cons = JsonConvert.SerializeObject(requestDto.Cons ?? new List<string>());
             }
             _dbContext.Articles.Add(article);
-            article.SidForAuthor =
-                _dbContext.Articles.Where(a => a.AuthorId == article.AuthorId)
-                    .Select(a => a.SidForAuthor)
-                    .DefaultIfEmpty(0)
-                    .Max() + 1;
-            _dbContext.SaveChanges();
+            article.SidForAuthor = await _dbContext.Articles.Where(a => a.AuthorId == article.AuthorId)
+                .Select(a => a.SidForAuthor)
+                .DefaultIfEmpty(0)
+                .MaxAsync() + 1;
+            await _dbContext.SaveChangesAsync();
             _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
                 ArticleId = article.Id
             });
-//            var author = await _userManager.FindByIdAsync(userId);
-//            await _coupon.Update(author, couponEvent, new {ArticleId = article.Id});
-//            return Created($"article/{article.Id}", new ArticleDto(article));
-            return Ok();
+            _mqChannel.SendMessage(string.Empty, MqClientProvider.PushHubRequestQueue, new PushHubRequestDto
+            {
+                Type = ContentPushType.Article,
+                ContentId = article.Id
+            });
+            return Ok(article.SidForAuthor);
         }
 
         /// <summary>
@@ -101,6 +110,7 @@ namespace Keylol.Controllers.Article
             /// <summary>
             ///     额外投稿据点 ID 列表
             /// </summary>
+            [Required]
             [MaxLength(10)]
             public List<string> AttachedPointIds { get; set; }
 

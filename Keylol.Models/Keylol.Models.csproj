@@ -93,6 +93,10 @@
     <Compile Include="Migrations\201605290800084_RemovePointObsoleteProperties.Designer.cs">
       <DependentUpon>201605290800084_RemovePointObsoleteProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606041400063_StringPrice.cs" />
+    <Compile Include="Migrations\201606041400063_StringPrice.Designer.cs">
+      <DependentUpon>201606041400063_StringPrice.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -775,6 +779,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605290800084_RemovePointObsoleteProperties.resx">
       <DependentUpon>201605290800084_RemovePointObsoleteProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606041400063_StringPrice.resx">
+      <DependentUpon>201606041400063_StringPrice.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

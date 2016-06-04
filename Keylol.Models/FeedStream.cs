@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Keylol.Models
 {
@@ -80,5 +81,25 @@ namespace Keylol.Models
     public static class OutpostStream
     {
         public static string Name => "outpost";
+    }
+
+    public static class UserStream
+    {
+        public static string Name(string userId) => $"u:{userId}";
+    }
+
+    public static class PointStream
+    {
+        public static string Name(string pointId) => $"p:{pointId}";
+    }
+
+    public static class SubscriptionStream
+    {
+        public static string Name(string userId) => $"s:{userId}";
+
+        public class FeedProperties
+        {
+            public List<string> Reasons { get; set; }
+        }
     }
 }

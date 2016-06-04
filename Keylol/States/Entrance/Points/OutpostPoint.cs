@@ -322,7 +322,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// Uplay 价格
         /// </summary>
-        public double? UplayPrice { get; set; }
+        public string UplayPrice { get; set; }
 
         /// <summary>
         /// Xbox 链接
@@ -332,7 +332,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// Xbox 价格
         /// </summary>
-        public double? XboxPrice { get; set; }
+        public string XboxPrice { get; set; }
 
         /// <summary>
         /// PlayStation 链接
@@ -342,7 +342,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// PlayStation 价格
         /// </summary>
-        public double? PlayStationPrice { get; set; }
+        public string PlayStationPrice { get; set; }
 
         /// <summary>
         /// Origin 链接
@@ -352,7 +352,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// Origin 价格
         /// </summary>
-        public double? OriginPrice { get; set; }
+        public string OriginPrice { get; set; }
 
         /// <summary>
         /// Windows Store 链接
@@ -362,7 +362,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// Windows Store 价格
         /// </summary>
-        public double? WindowsStorePrice { get; set; }
+        public string WindowsStorePrice { get; set; }
 
         /// <summary>
         /// App Store 链接
@@ -372,7 +372,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// App Store 价格
         /// </summary>
-        public double? AppStorePrice { get; set; }
+        public string AppStorePrice { get; set; }
 
         /// <summary>
         /// Google Play 链接
@@ -382,7 +382,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// Google Play 价格
         /// </summary>
-        public double? GooglePlayPrice { get; set; }
+        public string GooglePlayPrice { get; set; }
 
         /// <summary>
         /// Gog 链接
@@ -392,7 +392,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// GOG 价格
         /// </summary>
-        public double? GogPrice { get; set; }
+        public string GogPrice { get; set; }
 
         /// <summary>
         /// 战网链接
@@ -402,7 +402,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// 战网价格
         /// </summary>
-        public double? BattleNetPrice { get; set; }
+        public string BattleNetPrice { get; set; }
 
         #endregion
 

@@ -206,6 +206,7 @@
   <ItemGroup>
     <Compile Include="Controllers\Article\ArticleController.cs" />
     <Compile Include="Controllers\Article\CreateOne.cs" />
+    <Compile Include="Controllers\Article\UpdateOne.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Feed\CreateOneOutpostPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightPoint.cs" />

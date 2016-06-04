@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web;
 using System.Web.Http;
+using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
@@ -78,7 +79,7 @@ namespace Keylol
             {
                 var context = new KeylolDbContext();
 #if DEBUG
-//                context.Database.Log = s => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
+                context.Database.Log = s => { NotificationProvider.Hub<LogHub, ILogHubClient>().All.OnWrite(s); };
 #endif
                 return context;
             });

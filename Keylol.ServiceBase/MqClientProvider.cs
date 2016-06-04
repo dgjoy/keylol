@@ -37,6 +37,7 @@ namespace Keylol.ServiceBase
                 channel.ExchangeDeclare(DelayedMessageExchange, "x-delayed-message", true, false,
                     new Dictionary<string, object> {{"x-delayed-type", "direct"}});
                 channel.QueueDeclare(ImageGarageRequestQueue, true, false, false, null);
+                channel.QueueDeclare(PushHubRequestQueue, true, false, false, null);
             }
         }
 
@@ -93,6 +94,11 @@ namespace Keylol.ServiceBase
         ///     Image Garage 请求队列
         /// </summary>
         public static readonly string ImageGarageRequestQueue = "image-garage-requests";
+
+        /// <summary>
+        /// 内容推送请求队列
+        /// </summary>
+        public static readonly string PushHubRequestQueue = "push-hub-request";
 
         /// <summary>
         ///     Steam Bot 延迟操作队列

@@ -57,11 +57,13 @@ namespace Keylol.Controllers.Feed
             /// <summary>
             /// 主标题
             /// </summary>
+            [MaxLength(128)]
             public string Title { get; set; }
 
             /// <summary>
             /// 副标题
             /// </summary>
+            [MaxLength(256)]
             public string Subtitle { get; set; }
         }
     }

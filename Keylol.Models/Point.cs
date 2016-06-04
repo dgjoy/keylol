@@ -81,41 +81,77 @@ namespace Keylol.Models
 
         public double? SonkwoDiscountedPrice { get; set; }
 
-        public string UplayLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string UplayLink { get; set; } = string.Empty;
 
-        public double? UplayPrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string UplayPrice { get; set; } = string.Empty;
 
-        public string XboxLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string XboxLink { get; set; } = string.Empty;
 
-        public double? XboxPrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string XboxPrice { get; set; } = string.Empty;
 
-        public string PlayStationLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string PlayStationLink { get; set; } = string.Empty;
 
-        public double? PlayStationPrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string PlayStationPrice { get; set; } = string.Empty;
 
-        public string OriginLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string OriginLink { get; set; } = string.Empty;
 
-        public double? OriginPrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string OriginPrice { get; set; } = string.Empty;
 
-        public string WindowsStoreLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string WindowsStoreLink { get; set; } = string.Empty;
 
-        public double? WindowsStorePrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string WindowsStorePrice { get; set; } = string.Empty;
 
-        public string AppStoreLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string AppStoreLink { get; set; } = string.Empty;
 
-        public double? AppStorePrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string AppStorePrice { get; set; } = string.Empty;
 
-        public string GooglePlayLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string GooglePlayLink { get; set; } = string.Empty;
 
-        public double? GooglePlayPrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string GooglePlayPrice { get; set; } = string.Empty;
 
-        public string GogLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string GogLink { get; set; } = string.Empty;
 
-        public double? GogPrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string GogPrice { get; set; } = string.Empty;
 
-        public string BattleNetLink { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(1024)]
+        public string BattleNetLink { get; set; } = string.Empty;
 
-        public double? BattleNetPrice { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(50)]
+        public string BattleNetPrice { get; set; } = string.Empty;
 
         #endregion
 

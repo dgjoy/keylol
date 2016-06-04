@@ -30,8 +30,6 @@ namespace Keylol.Controllers.Point
         public async Task<IHttpActionResult> CreateOne([NotNull] CreateOneRequestDto requestDto)
         {
             requestDto.IdCode = requestDto.IdCode.ToUpper();
-            if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
-                return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Invalid);
 
             if (KeylolUserValidator.IsIdCodeReserved(requestDto.IdCode) ||
                 await _dbContext.Points.AnyAsync(p => p.IdCode == requestDto.IdCode))
@@ -532,6 +530,7 @@ namespace Keylol.Controllers.Point
             /// 识别码
             /// </summary>
             [Required]
+            [RegularExpression(@"^[A-Za-z0-9]{5}$")]
             public string IdCode { get; set; }
 
             /// <summary>

@@ -51,7 +51,7 @@ namespace Keylol.ServiceBase
         /// <returns>可信（allowNullOrEmpty 时 URL 为空也认为可信）返回 true，不可信返回 false</returns>
         public static bool IsTrustedUrl(string url, bool allowNullOrEmpty = true)
         {
-            return (allowNullOrEmpty && string.IsNullOrEmpty(url)) || url.StartsWith("keylol://");
+            return (allowNullOrEmpty && string.IsNullOrEmpty(url)) || (url?.StartsWith("keylol://") ?? false);
         }
 
         /// <summary>

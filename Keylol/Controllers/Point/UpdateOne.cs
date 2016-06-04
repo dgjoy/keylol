@@ -9,6 +9,7 @@ using System.Web.Http;
 using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.ServiceBase;
+using Keylol.Utilities;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger.Annotations;
 
@@ -61,64 +62,64 @@ namespace Keylol.Controllers.Point
             {
                 #region 更新商店信息
 
-                if (requestDto.SteamAppId != null && requestDto.SteamAppId > 0)
+                if (requestDto.SteamAppId != null)
                     point.SteamAppId = requestDto.SteamAppId;
 
-                if (requestDto.SonkwoProductId != null && requestDto.SonkwoProductId > 0)
+                if (requestDto.SonkwoProductId != null)
                     point.SonkwoProductId = requestDto.SonkwoProductId;
 
                 if (requestDto.UplayLink != null)
                     point.UplayLink = requestDto.UplayLink;
 
-                if (requestDto.UplayPrice != null && requestDto.UplayPrice >= 0)
+                if (requestDto.UplayPrice != null)
                     point.UplayPrice = requestDto.UplayPrice;
 
                 if (requestDto.XboxLink != null)
                     point.XboxLink = requestDto.XboxLink;
 
-                if (requestDto.XboxPrice != null && requestDto.XboxPrice >= 0)
+                if (requestDto.XboxPrice != null)
                     point.XboxPrice = requestDto.XboxPrice;
 
                 if (requestDto.PlayStationLink != null)
                     point.PlayStationLink = requestDto.PlayStationLink;
 
-                if (requestDto.PlayStationPrice != null && requestDto.PlayStationPrice >= 0)
+                if (requestDto.PlayStationPrice != null)
                     point.PlayStationPrice = requestDto.PlayStationPrice;
 
                 if (requestDto.OriginLink != null)
                     point.OriginLink = requestDto.OriginLink;
 
-                if (requestDto.OriginPrice != null && requestDto.OriginPrice >= 0)
+                if (requestDto.OriginPrice != null)
                     point.OriginPrice = requestDto.OriginPrice;
 
                 if (requestDto.WindowsStoreLink != null)
                     point.WindowsStoreLink = requestDto.WindowsStoreLink;
 
-                if (requestDto.WindowsStorePrice != null && requestDto.WindowsStorePrice >= 0)
+                if (requestDto.WindowsStorePrice != null)
                     point.WindowsStorePrice = requestDto.WindowsStorePrice;
 
                 if (requestDto.AppStoreLink != null)
                     point.AppStoreLink = requestDto.AppStoreLink;
 
-                if (requestDto.AppStorePrice != null && requestDto.AppStorePrice >= 0)
+                if (requestDto.AppStorePrice != null)
                     point.AppStorePrice = requestDto.AppStorePrice;
 
                 if (requestDto.GooglePlayLink != null)
                     point.GooglePlayLink = requestDto.GooglePlayLink;
 
-                if (requestDto.GooglePlayPrice != null && requestDto.GooglePlayPrice >= 0)
+                if (requestDto.GooglePlayPrice != null)
                     point.GooglePlayPrice = requestDto.GooglePlayPrice;
 
                 if (requestDto.GogLink != null)
                     point.GogLink = requestDto.GogLink;
 
-                if (requestDto.GogPrice != null && requestDto.GogPrice >= 0)
+                if (requestDto.GogPrice != null)
                     point.GogPrice = requestDto.GogPrice;
 
                 if (requestDto.BattleNetLink != null)
                     point.BattleNetLink = requestDto.BattleNetLink;
 
-                if (requestDto.BattleNetPrice != null && requestDto.BattleNetPrice >= 0)
+                if (requestDto.BattleNetPrice != null)
                     point.BattleNetPrice = requestDto.BattleNetPrice;
 
                 #endregion
@@ -349,21 +350,25 @@ namespace Keylol.Controllers.Point
             /// <summary>
             /// 中文名
             /// </summary>
+            [MaxLength(60)]
             public string ChineseName { get; set; }
 
             /// <summary>
             /// 英文名
             /// </summary>
+            [MaxLength(100)]
             public string EnglishName { get; set; }
 
             /// <summary>
             /// 中文索引
             /// </summary>
+            [MaxLength(128)]
             public string ChineseAliases { get; set; }
 
             /// <summary>
             /// 英文索引
             /// </summary>
+            [MaxLength(128)]
             public string EnglishAliases { get; set; }
 
             /// <summary>
@@ -376,102 +381,122 @@ namespace Keylol.Controllers.Point
             /// <summary>
             /// Steam App ID
             /// </summary>
+            [Range(1, int.MaxValue)]
             public int? SteamAppId { get; set; }
 
             /// <summary>
             /// 杉果 Product ID
             /// </summary>
+            [Range(1, int.MaxValue)]
             public int? SonkwoProductId { get; set; }
 
             /// <summary>
             /// Uplay 链接
             /// </summary>
+            [MaxLength(512)]
             public string UplayLink { get; set; }
 
             /// <summary>
             /// Uplay 价格
             /// </summary>
-            public double? UplayPrice { get; set; }
+            [MaxLength(25)]
+            public string UplayPrice { get; set; }
 
             /// <summary>
             /// Xbox 链接
             /// </summary>
+            [MaxLength(512)]
             public string XboxLink { get; set; }
 
             /// <summary>
             /// Xbox 价格
             /// </summary>
-            public double? XboxPrice { get; set; }
+            [MaxLength(25)]
+            public string XboxPrice { get; set; }
 
             /// <summary>
             /// PlayStation 链接
             /// </summary>
+            [MaxLength(512)]
             public string PlayStationLink { get; set; }
 
             /// <summary>
             /// PlayStation 价格
             /// </summary>
-            public double? PlayStationPrice { get; set; }
+            [MaxLength(25)]
+            public string PlayStationPrice { get; set; }
 
             /// <summary>
             /// Origin 链接
             /// </summary>
+            [MaxLength(512)]
             public string OriginLink { get; set; }
 
             /// <summary>
             /// Origin 价格
             /// </summary>
-            public double? OriginPrice { get; set; }
+            [MaxLength(25)]
+            public string OriginPrice { get; set; }
 
             /// <summary>
             /// Windows Store 链接
             /// </summary>
+            [MaxLength(512)]
             public string WindowsStoreLink { get; set; }
 
             /// <summary>
             /// Windows Store 价格
             /// </summary>
-            public double? WindowsStorePrice { get; set; }
+            [MaxLength(25)]
+            public string WindowsStorePrice { get; set; }
 
             /// <summary>
             /// App Store 链接
             /// </summary>
+            [MaxLength(512)]
             public string AppStoreLink { get; set; }
 
             /// <summary>
             /// App Store 价格
             /// </summary>
-            public double? AppStorePrice { get; set; }
+            [MaxLength(25)]
+            public string AppStorePrice { get; set; }
 
             /// <summary>
             /// Google Play 链接
             /// </summary>
+            [MaxLength(512)]
             public string GooglePlayLink { get; set; }
 
             /// <summary>
             /// Google Play 价格
             /// </summary>
-            public double? GooglePlayPrice { get; set; }
+            [MaxLength(25)]
+            public string GooglePlayPrice { get; set; }
 
             /// <summary>
             /// Gog 链接
             /// </summary>
+            [MaxLength(512)]
             public string GogLink { get; set; }
 
             /// <summary>
             /// GOG 价格
             /// </summary>
-            public double? GogPrice { get; set; }
+            [MaxLength(25)]
+            public string GogPrice { get; set; }
 
             /// <summary>
             /// 战网链接
             /// </summary>
+            [MaxLength(512)]
             public string BattleNetLink { get; set; }
 
             /// <summary>
             /// 战网价格
             /// </summary>
-            public double? BattleNetPrice { get; set; }
+            [MaxLength(25)]
+            public string BattleNetPrice { get; set; }
 
             #endregion
 
@@ -542,36 +567,43 @@ namespace Keylol.Controllers.Point
             /// <summary>
             /// 开发厂据点 ID 列表
             /// </summary>
+            [MaxLength(6)]
             public List<string> DeveloperPoints { get; set; }
 
             /// <summary>
             /// 发行商据点 ID 列表
             /// </summary>
+            [MaxLength(6)]
             public List<string> PublisherPoints { get; set; }
 
             /// <summary>
             /// 代理商据点 ID 列表
             /// </summary>
+            [MaxLength(6)]
             public List<string> ResellerPoints { get; set; }
 
             /// <summary>
             /// 流派据点 ID 列表
             /// </summary>
+            [MaxLength(6)]
             public List<string> GenrePoints { get; set; }
 
             /// <summary>
             /// 特性据点 ID 列表
             /// </summary>
+            [MaxLength(15)]
             public List<string> TagPoints { get; set; }
 
             /// <summary>
             /// 系列据点 ID 列表
             /// </summary>
+            [MaxLength(6)]
             public List<string> SeriesPoints { get; set; }
 
             /// <summary>
             /// 制造厂据点 ID 列表
             /// </summary>
+            [MaxLength(6)]
             public List<string> ManufacturerPoints { get; set; }
 
             /// <summary>
