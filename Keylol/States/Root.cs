@@ -140,5 +140,17 @@ namespace Keylol.States
         /// </summary>
         [Authorize]
         public PointToCreate PointToCreate { get; set; }
+
+        /// <summary>
+        /// 据点查询结果列表
+        /// </summary>
+        [Authorize]
+        public PointQueryResultList PointQueryResults { get; set; }
+
+        /// <summary>
+        /// 关联投稿据点列表
+        /// </summary>
+        [Authorize]
+        public RelatedPointList RelatedPoints { get; set; }
     }
 }

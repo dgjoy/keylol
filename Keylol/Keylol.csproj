@@ -284,6 +284,7 @@
     <Compile Include="States\Aggregation\Point\Intel\VendorPoint.cs" />
     <Compile Include="States\Aggregation\Point\PointLevel.cs" />
     <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
+    <Compile Include="States\PointQueryResult.cs" />
     <Compile Include="States\PointToCreate.cs" />
     <Compile Include="States\CurrentUser.cs" />
     <Compile Include="States\Entrance\Discovery\DiscoveryPage.cs" />
@@ -300,6 +301,7 @@
     <Compile Include="States\Entrance\Points\RecentPoint.cs" />
     <Compile Include="States\Entrance\Points\SpotlightUser.cs" />
     <Compile Include="States\Entrance\Timeline\TimelinePage.cs" />
+    <Compile Include="States\RelatedPoint.cs" />
     <Compile Include="States\Root.cs" />
     <Compile Include="StateTreeManager\AppBuilderExtensions.cs" />
     <Compile Include="StateTreeManager\AuthorizeAttribute.cs" />
