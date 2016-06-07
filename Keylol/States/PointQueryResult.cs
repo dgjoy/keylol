@@ -3,7 +3,6 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.StateTreeManager;

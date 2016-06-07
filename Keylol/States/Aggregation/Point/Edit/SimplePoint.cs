@@ -11,6 +11,11 @@
         public string Id { get; set; }
 
         /// <summary>
+        /// 头像
+        /// </summary>
+        public string AvatarImage { get; set; }
+
+        /// <summary>
         /// 中文名
         /// </summary>
         public string ChineseName { get; set; }

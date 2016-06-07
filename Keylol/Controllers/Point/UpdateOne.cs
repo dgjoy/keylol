@@ -328,8 +328,7 @@ namespace Keylol.Controllers.Point
                 point.ChineseAvailability = JsonConvert.SerializeObject(chineseAvailability,
                     new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
             }
-
-            if (point.Type == PointType.Hardware)
+            else if (point.Type == PointType.Hardware)
             {
                 if (requestDto.ManufacturerPoints != null)
                 {

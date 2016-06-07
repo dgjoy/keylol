@@ -127,7 +127,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                     .GroupBy(r => r.SourcePointId)
                     .Select(g => g.Key)
                     .ToListAsync();
-                basicInfo.GameCount = childPoints.Count;
+                basicInfo.ProductCount = childPoints.Count;
                 double totalScore = 0;
                 var validRatingCount = 0;
                 foreach (var childPointId in childPoints)
@@ -396,8 +396,8 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         public bool? Subscribed { get; set; }
 
         /// <summary>
-        /// 旗下游戏数
+        /// 旗下作品数
         /// </summary>
-        public int? GameCount { get; set; }
+        public int? ProductCount { get; set; }
     }
 }

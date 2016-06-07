@@ -283,6 +283,8 @@
     <Compile Include="States\Aggregation\Point\Intel\IntelPage.cs" />
     <Compile Include="States\Aggregation\Point\Intel\VendorPoint.cs" />
     <Compile Include="States\Aggregation\Point\PointLevel.cs" />
+    <Compile Include="States\Aggregation\Point\Product\ProductPoint.cs" />
+    <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
     <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
     <Compile Include="States\PointQueryResult.cs" />
     <Compile Include="States\PointToCreate.cs" />

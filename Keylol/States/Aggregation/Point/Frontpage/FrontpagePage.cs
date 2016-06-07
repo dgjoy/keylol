@@ -7,6 +7,7 @@ using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
 using Keylol.States.Aggregation.Point.BasicInfo;
+using Keylol.States.Aggregation.Point.Product;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Aggregation.Point.Frontpage
@@ -95,6 +96,51 @@ namespace Keylol.States.Aggregation.Point.Frontpage
 
                 frontPage.AddictedUsers =
                     await AddictedUserList.CreateAsync(currentUserId, point.SteamAppId, 1, dbContext, cachedData);
+            }
+            else if (point.Type == PointType.Vendor)
+            {
+                var developerProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Developer, 3, dbContext, cachedData);
+                frontPage.DeveloperProducts = developerProducts.Item1;
+                frontPage.DeveloperProductCount = developerProducts.Item2;
+
+                var publisherProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Publisher, 3, dbContext, cachedData);
+                frontPage.PublisherProducts = publisherProducts.Item1;
+                frontPage.PublisherProductCount = publisherProducts.Item2;
+
+                var resellerProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Reseller, 3, dbContext, cachedData);
+                frontPage.ResellerProducts = resellerProducts.Item1;
+                frontPage.ResellerProductCount = resellerProducts.Item2;
+
+                var manufacturerProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Manufacturer, 3, dbContext, cachedData);
+                frontPage.ManufacturerProducts = manufacturerProducts.Item1;
+                frontPage.ManufacturerProductCount = manufacturerProducts.Item2;
+            }
+            else if (point.Type == PointType.Category)
+            {
+                var tagProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Tag, 3, dbContext, cachedData);
+                frontPage.TagProducts = tagProducts.Item1;
+                frontPage.TagProductCount = tagProducts.Item2;
+
+                var seriesProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Series, 3, dbContext, cachedData);
+                frontPage.SeriesProducts = seriesProducts.Item1;
+                frontPage.SeriesProductCount = seriesProducts.Item2;
+
+                var genreProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Genre, 3, dbContext, cachedData);
+                frontPage.GenreProducts = genreProducts.Item1;
+                frontPage.GenreProductCount = genreProducts.Item2;
+            }
+            else if (point.Type == PointType.Platform)
+            {
+                var platformProducts = await ProductPointList.CreateAsync(currentUserId, point.Id,
+                    PointRelationshipType.Platform, 3, dbContext, cachedData);
+                frontPage.PlatformProducts = platformProducts.Item1;
             }
 
             return frontPage;
@@ -193,5 +239,80 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         /// 近畿据点
         /// </summary>
         public SimilarPointList SimilarPoints { get; set; }
+
+        /// <summary>
+        /// 开发的作品
+        /// </summary>
+        public ProductPointList DeveloperProducts { get; set; }
+
+        /// <summary>
+        /// 开发的作品数
+        /// </summary>
+        public int? DeveloperProductCount { get; set; }
+
+        /// <summary>
+        /// 发行的作品
+        /// </summary>
+        public ProductPointList PublisherProducts { get; set; }
+
+        /// <summary>
+        /// 发行的作品数
+        /// </summary>
+        public int? PublisherProductCount { get; set; }
+
+        /// <summary>
+        /// 代理的作品
+        /// </summary>
+        public ProductPointList ResellerProducts { get; set; }
+
+        /// <summary>
+        /// 代理的作品数
+        /// </summary>
+        public int? ResellerProductCount { get; set; }
+
+        /// <summary>
+        /// 制造的作品
+        /// </summary>
+        public ProductPointList ManufacturerProducts { get; set; }
+
+        /// <summary>
+        /// 制造的作品数
+        /// </summary>
+        public int? ManufacturerProductCount { get; set; }
+
+        /// <summary>
+        /// 该特性的作品
+        /// </summary>
+        public ProductPointList TagProducts { get; set; }
+
+        /// <summary>
+        /// 该特性的作品数
+        /// </summary>
+        public int? TagProductCount { get; set; }
+
+        /// <summary>
+        /// 该系列的作品
+        /// </summary>
+        public ProductPointList SeriesProducts { get; set; }
+
+        /// <summary>
+        /// 该系列的作品数
+        /// </summary>
+        public int? SeriesProductCount { get; set; }
+
+        /// <summary>
+        /// 该流派的作品
+        /// </summary>
+        public ProductPointList GenreProducts { get; set; }
+
+        /// <summary>
+        /// 该流派的作品数
+        /// </summary>
+        public int? GenreProductCount { get; set; }
+
+        /// <summary>
+        /// 该平台的作品
+        /// </summary>
+        public ProductPointList PlatformProducts { get; set; }
     }
 }

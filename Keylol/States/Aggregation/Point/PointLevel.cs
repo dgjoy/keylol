@@ -8,6 +8,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation.Point.Edit;
 using Keylol.States.Aggregation.Point.Frontpage;
 using Keylol.States.Aggregation.Point.Intel;
+using Keylol.States.Aggregation.Point.Product;
 using Keylol.States.Aggregation.Point.Timeline;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
@@ -78,6 +79,10 @@ namespace Keylol.States.Aggregation.Point
                     result.Intel = await IntelPage.CreateAsync(point, currentUserId, dbContext, cachedData);
                     break;
 
+                case EntrancePage.Product:
+                    result.Product = await ProductPage.CreateAsync(point, currentUserId, dbContext, cachedData);
+                    break;
+
                 case EntrancePage.Timeline:
                     break;
 
@@ -122,6 +127,11 @@ namespace Keylol.States.Aggregation.Point
         public IntelPage Intel { get; set; }
 
         /// <summary>
+        /// 作品
+        /// </summary>
+        public ProductPage Product { get; set; }
+
+        /// <summary>
         /// 轨道
         /// </summary>
         public TimelinePage Timeline { get; set; }
@@ -152,6 +162,11 @@ namespace Keylol.States.Aggregation.Point
         /// 情报
         /// </summary>
         Intel,
+
+        /// <summary>
+        /// 作品
+        /// </summary>
+        Product,
 
         /// <summary>
         /// 轨道

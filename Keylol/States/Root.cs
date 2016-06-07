@@ -89,6 +89,14 @@ namespace Keylol.States
                     };
                     break;
 
+                case "aggregation.point.product":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
+                            States.Aggregation.Point.EntrancePage.Product, dbContext, cachedData)
+                    };
+                    break;
+
                 case "aggregation.point.timeline":
                     root.Aggregation = new AggregationLevel
                     {

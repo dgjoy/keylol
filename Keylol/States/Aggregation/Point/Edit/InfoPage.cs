@@ -51,6 +51,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     select new
                     {
                         relationship.TargetPoint.Id,
+                        relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
@@ -58,6 +59,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .Select(p => new SimplePoint
                     {
                         Id = p.Id,
+                        AvatarImage = p.AvatarImage,
                         ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
                     })
                     .ToList();
@@ -68,6 +70,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     select new
                     {
                         relationship.TargetPoint.Id,
+                        relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
@@ -75,6 +78,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .Select(p => new SimplePoint
                     {
                         Id = p.Id,
+                        AvatarImage = p.AvatarImage,
                         ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
                     })
                     .ToList();
@@ -111,6 +115,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     select new
                     {
                         relationship.TargetPoint.Id,
+                        relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
@@ -118,6 +123,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .Select(p => new SimplePoint
                     {
                         Id = p.Id,
+                        AvatarImage = p.AvatarImage,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
@@ -129,6 +135,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     select new
                     {
                         relationship.TargetPoint.Id,
+                        relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
@@ -136,6 +143,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .Select(p => new SimplePoint
                     {
                         Id = p.Id,
+                        AvatarImage = p.AvatarImage,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
@@ -147,6 +155,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     select new
                     {
                         relationship.TargetPoint.Id,
+                        relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
@@ -154,6 +163,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .Select(p => new SimplePoint
                     {
                         Id = p.Id,
+                        AvatarImage = p.AvatarImage,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
@@ -165,6 +175,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     select new
                     {
                         relationship.TargetPoint.Id,
+                        relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
@@ -172,6 +183,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .Select(p => new SimplePoint
                     {
                         Id = p.Id,
+                        AvatarImage = p.AvatarImage,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
@@ -193,6 +205,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     select new
                     {
                         relationship.TargetPoint.Id,
+                        relationship.TargetPoint.AvatarImage,
                         relationship.TargetPoint.ChineseName,
                         relationship.TargetPoint.EnglishName
                     })
@@ -200,6 +213,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                     .Select(p => new SimplePoint
                     {
                         Id = p.Id,
+                        AvatarImage = p.AvatarImage,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName
                     })
