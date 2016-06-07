@@ -61,10 +61,8 @@ namespace Keylol.Controllers.Article
                     null,
                     new[] {"text-align"});
             var dom = CQ.Create(sanitizer.Sanitize(article.Content));
-            article.CoverImage = string.Empty;
             foreach (var img in dom["img"])
             {
-                var url = string.Empty;
                 if (string.IsNullOrWhiteSpace(img.Attributes["src"]))
                 {
                     img.Remove();
@@ -72,19 +70,10 @@ namespace Keylol.Controllers.Article
                 else
                 {
                     var fileName = UpyunProvider.ExtractFileName(img.Attributes["src"]);
-                    if (string.IsNullOrWhiteSpace(fileName))
-                    {
-                        url = img.Attributes["src"];
-                    }
-                    else
-                    {
-                        url = $"keylol://{fileName}";
-                        img.Attributes["article-image-src"] = url;
-                        img.RemoveAttribute("src");
-                    }
+                    if (string.IsNullOrWhiteSpace(fileName)) continue;
+                    img.Attributes["article-image-src"] = $"keylol://{fileName}";
+                    img.RemoveAttribute("src");
                 }
-                if (string.IsNullOrWhiteSpace(article.CoverImage))
-                    article.CoverImage = url;
             }
             article.Content = dom.Render();
         }

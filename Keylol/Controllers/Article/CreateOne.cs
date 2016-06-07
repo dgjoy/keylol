@@ -31,7 +31,8 @@ namespace Keylol.Controllers.Article
             {
                 AuthorId = userId,
                 Title = requestDto.Title,
-                Content = requestDto.Content
+                Content = requestDto.Content,
+                CoverImage = requestDto.CoverImage
             };
             SanitizeArticle(article);
 
@@ -64,14 +65,14 @@ namespace Keylol.Controllers.Article
                 .DefaultIfEmpty(0)
                 .MaxAsync() + 1;
             await _dbContext.SaveChangesAsync();
-            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
-            {
-                ArticleId = article.Id
-            });
             _mqChannel.SendMessage(string.Empty, MqClientProvider.PushHubRequestQueue, new PushHubRequestDto
             {
                 Type = ContentPushType.Article,
                 ContentId = article.Id
+            });
+            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            {
+                ArticleId = article.Id
             });
             return Ok(article.SidForAuthor);
         }
@@ -82,24 +83,31 @@ namespace Keylol.Controllers.Article
         public class CreateOrUpdateOneRequestDto
         {
             /// <summary>
-            ///     文章标题
+            ///     标题
             /// </summary>
             [Required]
             [MaxLength(50)]
             public string Title { get; set; }
 
             /// <summary>
-            ///     文章副标题
+            ///     副标题
             /// </summary>
             [MaxLength(50)]
             public string Subtitle { get; set; }
 
             /// <summary>
-            ///     文章内容
+            ///     内容
             /// </summary>
             [Required]
             [MaxLength(100000)]
             public string Content { get; set; }
+
+            /// <summary>
+            /// 封面图片
+            /// </summary>
+            [Required]
+            [MaxLength(128)]
+            public string CoverImage { get; set; }
 
             /// <summary>
             ///     投稿据点 ID
@@ -115,7 +123,7 @@ namespace Keylol.Controllers.Article
             public List<string> AttachedPointIds { get; set; }
 
             /// <summary>
-            ///     文章打出的评分
+            ///     打出的评分
             /// </summary>
             [Range(1, 5)]
             public int? Rating { get; set; }

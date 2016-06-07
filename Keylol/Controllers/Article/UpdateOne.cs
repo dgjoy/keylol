@@ -40,6 +40,7 @@ namespace Keylol.Controllers.Article
             article.Title = requestDto.Title;
             article.Subtitle = string.IsNullOrWhiteSpace(requestDto.Subtitle) ? string.Empty : requestDto.Subtitle;
             article.Content = requestDto.Content;
+            article.CoverImage = requestDto.CoverImage;
             SanitizeArticle(article);
 
             var targetPoint = await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId)
@@ -65,10 +66,6 @@ namespace Keylol.Controllers.Article
             }
 
             await _dbContext.SaveChangesAsync();
-            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
-            {
-                ArticleId = article.Id
-            });
             var oldAttachedPoints = Helpers.SafeDeserialize<List<string>>(article.AttachedPoints) ?? new List<string>();
             if (requestDto.TargetPointId != article.TargetPointId ||
                 !requestDto.AttachedPointIds.OrderBy(s => s).SequenceEqual(oldAttachedPoints.OrderBy(s => s)))
@@ -84,6 +81,10 @@ namespace Keylol.Controllers.Article
                     ContentId = article.Id
                 });
             }
+            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            {
+                ArticleId = article.Id
+            });
             return Ok();
         }
     }

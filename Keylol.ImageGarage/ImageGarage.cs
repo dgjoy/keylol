@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using System.Timers;
 using ChannelAdam.ServiceModel;
 using CsQuery;
 using CsQuery.Output;
+using JetBrains.Annotations;
 using Keylol.ImageGarage.ServiceReference;
 using Keylol.Models.DTO;
 using Keylol.ServiceBase;
@@ -70,83 +72,33 @@ namespace Keylol.ImageGarage
                             return;
                         }
                         var dom = CQ.Create(article.Content);
-                        article.CoverImage = string.Empty;
                         var downloadCount = 0;
+                        var uploadCache = new Dictionary<string, string>();
                         foreach (var img in dom["img"])
                         {
+                            var imgSrc = img.Attributes["src"];
+                            if (string.IsNullOrWhiteSpace(imgSrc)) continue;
                             string url;
-                            if (string.IsNullOrWhiteSpace(img.Attributes["src"]))
+                            if (!uploadCache.TryGetValue(imgSrc, out url))
                             {
-                                url = img.Attributes["article-image-src"];
+                                url = await UploadFromUrlAsync(imgSrc);
+                                uploadCache[imgSrc] = url;
+                                downloadCount++;
                             }
-                            else
+                            if (string.IsNullOrWhiteSpace(url)) continue;
+                            img.Attributes["article-image-src"] = url;
+                            img.RemoveAttribute("src");
+                        }
+                        if (!Helpers.IsTrustedUrl(article.CoverImage))
+                        {
+                            string url;
+                            if (!uploadCache.TryGetValue(article.CoverImage, out url))
                             {
-                                url = img.Attributes["src"];
-                                try
-                                {
-                                    var request = WebRequest.CreateHttp(url);
-                                    request.Referer = url;
-                                    request.UserAgent =
-                                        "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
-                                    request.Accept = "image/webp,image/*,*/*;q=0.8";
-                                    request.Headers["Accept-Language"] = "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4";
-                                    request.Timeout = 10000;
-                                    request.ReadWriteTimeout = 60000;
-                                    using (var response = await request.GetResponseAsync())
-                                    using (var ms = new MemoryStream(response.ContentLength > 0
-                                        ? (int) response.ContentLength
-                                        : 0))
-                                    {
-                                        do
-                                        {
-                                            var extension = MimeTypeToFileExtension(response.ContentType?.Split(';')[0]);
-                                            if (extension == null) // 不支持的类型
-                                            {
-                                                _logger.Warn($"Unsupported MIME type: {url}");
-                                                break;
-                                            }
-                                            if (response.ContentLength > UpyunProvider.MaxImageSize)
-                                            {
-                                                _logger.Warn($"Image (Content-Length) is too large: {url}");
-                                                break;
-                                            }
-                                            var responseStream = response.GetResponseStream();
-                                            if (responseStream == null)
-                                            {
-                                                _logger.Warn($"Null response stream: {url}");
-                                                break;
-                                            }
-                                            await responseStream.CopyToAsync(ms);
-                                            var fileData = ms.ToArray();
-                                            if (fileData.Length <= 0)
-                                            {
-                                                _logger.Warn($"Empty response stream: {url}");
-                                                break;
-                                            }
-                                            if (fileData.Length > UpyunProvider.MaxImageSize)
-                                            {
-                                                _logger.Warn($"Image (response stream length) is too large: {url}");
-                                                break;
-                                            }
-                                            var name = await UpyunProvider.UploadFile(fileData, extension);
-                                            if (string.IsNullOrWhiteSpace(name))
-                                            {
-                                                _logger.Warn($"Upload failed: {url}");
-                                                break;
-                                            }
-                                            downloadCount++;
-                                            url = $"keylol://{name}";
-                                            img.Attributes["article-image-src"] = url;
-                                            img.RemoveAttribute("src");
-                                        } while (false);
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    _logger.Warn($"Download failed: {url}", e);
-                                }
+                                url = await UploadFromUrlAsync(article.CoverImage);
+                                uploadCache[article.CoverImage] = url;
+                                downloadCount++;
                             }
-                            if (string.IsNullOrWhiteSpace(article.CoverImage))
+                            if (!string.IsNullOrWhiteSpace(url))
                                 article.CoverImage = url;
                         }
                         article.Content = dom.Render();
@@ -192,6 +144,68 @@ namespace Keylol.ImageGarage
                 {"image/webp", "webp"}
             };
             return map.ContainsKey(mimeType) ? map[mimeType] : null;
+        }
+
+        private async Task<string> UploadFromUrlAsync([NotNull] string url)
+        {
+            try
+            {
+                var request = WebRequest.CreateHttp(url);
+                request.Referer = url;
+                request.UserAgent =
+                    "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
+                request.Accept = "image/webp,image/*,*/*;q=0.8";
+                request.Headers["Accept-Language"] = "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4";
+                request.Timeout = 10000;
+                request.ReadWriteTimeout = 60000;
+                using (var response = await request.GetResponseAsync())
+                using (var ms = new MemoryStream(response.ContentLength > 0
+                    ? (int) response.ContentLength
+                    : 0))
+                {
+                    var extension = MimeTypeToFileExtension(response.ContentType?.Split(';')[0]);
+                    if (extension == null) // 不支持的类型
+                    {
+                        _logger.Warn($"Unsupported MIME type: {url}");
+                        return null;
+                    }
+                    if (response.ContentLength > UpyunProvider.MaxImageSize)
+                    {
+                        _logger.Warn($"Image (Content-Length) is too large: {url}");
+                        return null;
+                    }
+                    var responseStream = response.GetResponseStream();
+                    if (responseStream == null)
+                    {
+                        _logger.Warn($"Null response stream: {url}");
+                        return null;
+                    }
+                    await responseStream.CopyToAsync(ms);
+                    var fileData = ms.ToArray();
+                    if (fileData.Length <= 0)
+                    {
+                        _logger.Warn($"Empty response stream: {url}");
+                        return null;
+                    }
+                    if (fileData.Length > UpyunProvider.MaxImageSize)
+                    {
+                        _logger.Warn($"Image (response stream length) is too large: {url}");
+                        return null;
+                    }
+                    var name = await UpyunProvider.UploadFile(fileData, extension);
+                    if (string.IsNullOrWhiteSpace(name))
+                    {
+                        _logger.Warn($"Upload failed: {url}");
+                        return null;
+                    }
+                    return $"keylol://{name}";
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Warn($"Download failed: {url}", e);
+                return null;
+            }
         }
     }
 }

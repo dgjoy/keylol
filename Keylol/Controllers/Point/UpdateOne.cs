@@ -62,11 +62,19 @@ namespace Keylol.Controllers.Point
             {
                 #region 更新商店信息
 
-                if (requestDto.SteamAppId != null)
+                if (requestDto.SteamAppId != null && requestDto.SteamAppId != point.SteamAppId)
+                {
+                    if (await _dbContext.Points.AnyAsync(p => p.SteamAppId == requestDto.SteamAppId))
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamAppId), Errors.Duplicate);
                     point.SteamAppId = requestDto.SteamAppId;
+                }
 
-                if (requestDto.SonkwoProductId != null)
+                if (requestDto.SonkwoProductId != null && requestDto.SonkwoProductId != point.SonkwoProductId)
+                {
+                    if (await _dbContext.Points.AnyAsync(p => p.SonkwoProductId == requestDto.SonkwoProductId))
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.SonkwoProductId), Errors.Duplicate);
                     point.SonkwoProductId = requestDto.SonkwoProductId;
+                }
 
                 if (requestDto.UplayLink != null)
                     point.UplayLink = requestDto.UplayLink;
