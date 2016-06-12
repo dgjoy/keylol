@@ -140,7 +140,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                 if (validRatingCount > 0)
                     basicInfo.AverageRating = Math.Round(totalScore/validRatingCount, 1);
             }
-            if (point.Type == PointType.Game)
+            if (point.Type == PointType.Game && point.SteamAppId != null)
             {
                 SteamCrawlerProvider.UpdatePointPrice(point.Id);
 

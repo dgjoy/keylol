@@ -36,17 +36,8 @@ namespace Keylol.Provider.CachedDataProvider
             _redis = redis;
         }
 
-        /// <summary>
-        /// 判断指定用户是否订阅过指定目标
-        /// </summary>
-        /// <param name="userId">用户 ID</param>
-        /// <param name="targetId">目标 ID</param>
-        /// <param name="targetType">目标类型</param>
-        /// <returns>如果用户订阅过，返回 <c>true</c></returns>
-        public async Task<bool> IsSubscribedAsync(string userId, string targetId, SubscriptionTargetType targetType)
+        private async Task<string> InitUserSubscribedTargetsAsync([NotNull] string userId)
         {
-            if (userId == null || targetId == null)
-                return false;
             var cacheKey = UserSubscribedTargetsCacheKey(userId);
             var redisDb = _redis.GetDatabase();
             if (!await redisDb.KeyExistsAsync(cacheKey))
@@ -59,7 +50,55 @@ namespace Keylol.Provider.CachedDataProvider
                 }
             }
             await redisDb.KeyExpireAsync(cacheKey, CachedDataProvider.DefaultTtl);
-            return await redisDb.SetContainsAsync(cacheKey, UserSubscribedTargetCacheValue(targetId, targetType));
+            return cacheKey;
+        }
+
+        /// <summary>
+        /// 判断指定用户是否订阅过指定目标
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <param name="targetId">目标 ID</param>
+        /// <param name="targetType">目标类型</param>
+        /// <returns>如果用户订阅过，返回 <c>true</c></returns>
+        public async Task<bool> IsSubscribedAsync(string userId, string targetId, SubscriptionTargetType targetType)
+        {
+            if (userId == null || targetId == null)
+                return false;
+            var cacheKey = await InitUserSubscribedTargetsAsync(userId);
+            return await _redis.GetDatabase()
+                .SetContainsAsync(cacheKey, UserSubscribedTargetCacheValue(targetId, targetType));
+        }
+
+        /// <summary>
+        /// 获取指定用户的订阅数量（关注数量）
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <returns>用户的订阅数量</returns>
+        public async Task<long> GetSubscriptionCountAsync([NotNull] string userId)
+        {
+            var cacheKey = await InitUserSubscribedTargetsAsync(userId);
+            return await _redis.GetDatabase().SetLengthAsync(cacheKey);
+        }
+
+        /// <summary>
+        /// 获取指定用户的好友（相互关注）数量
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <returns>用户的好友数量</returns>
+        public async Task<long> GetFriendCountAsync([NotNull] string userId)
+        {
+            var cacheKey = await InitUserSubscribedTargetsAsync(userId);
+            long count = 0;
+            foreach (var member in await _redis.GetDatabase().SetMembersAsync(cacheKey))
+            {
+                var parts = ((string) member).Split(':');
+                var type = parts[0].ToCase(NameConventionCase.DashedCase, NameConventionCase.PascalCase)
+                    .ToEnum<SubscriptionTargetType>();
+                if (type == SubscriptionTargetType.User &&
+                    await IsSubscribedAsync(parts[1], userId, SubscriptionTargetType.User))
+                    count++;
+            }
+            return count;
         }
 
         /// <summary>
@@ -69,7 +108,7 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="targetType">目标类型</param>
         /// <exception cref="ArgumentNullException"><paramref name="targetId"/> 为 null</exception>
         /// <returns>目标的订阅者数量</returns>
-        public async Task<int> GetSubscriberCountAsync([NotNull] string targetId, SubscriptionTargetType targetType)
+        public async Task<long> GetSubscriberCountAsync([NotNull] string targetId, SubscriptionTargetType targetType)
         {
             if (targetId == null)
                 throw new ArgumentNullException(nameof(targetId));
@@ -79,11 +118,11 @@ namespace Keylol.Provider.CachedDataProvider
             if (cacheResult.HasValue)
             {
                 await redisDb.KeyExpireAsync(cacheKey, CachedDataProvider.DefaultTtl);
-                return (int) cacheResult;
+                return (long) cacheResult;
             }
 
             var subscriberCount = await _dbContext.Subscriptions
-                .CountAsync(s => s.TargetId == targetId && s.TargetType == targetType);
+                .LongCountAsync(s => s.TargetId == targetId && s.TargetType == targetType);
             await redisDb.StringSetAsync(cacheKey, subscriberCount, CachedDataProvider.DefaultTtl);
             return subscriberCount;
         }

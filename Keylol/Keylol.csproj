@@ -286,6 +286,9 @@
     <Compile Include="States\Aggregation\Point\Product\ProductPoint.cs" />
     <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
     <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
+    <Compile Include="States\Aggregation\User\UserLevel.cs" />
+    <Compile Include="States\Content\Article\ArticlePage.cs" />
+    <Compile Include="States\Content\ContentLevel.cs" />
     <Compile Include="States\PointQueryResult.cs" />
     <Compile Include="States\PointToCreate.cs" />
     <Compile Include="States\CurrentUser.cs" />

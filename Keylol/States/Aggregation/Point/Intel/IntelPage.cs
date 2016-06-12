@@ -170,16 +170,20 @@ namespace Keylol.States.Aggregation.Point.Intel
                 intelPage.PointCreateTime = point.CreateTime;
                 intelPage.PreOrderDate = point.PreOrderDate;
                 intelPage.ReleaseDate = point.ReleaseDate;
-                intelPage.OwnerCount = point.OwnerCount;
-                intelPage.OwnerCountVariance = point.OwnerCountVariance;
-                intelPage.TotalPlayerCount = point.TotalPlayerCount;
-                intelPage.TotalPlayerCountVariance = point.TotalPlayerCountVariance;
-                intelPage.TwoWeekPlayerCount = point.TwoWeekPlayerCount;
-                intelPage.TwoWeekPlayerCountVariance = point.TwoWeekPlayerCountVariance;
-                intelPage.Ccu = point.Ccu;
-                intelPage.AveragePlayedTime = point.AveragePlayedTime;
-                intelPage.TwoWeekAveragePlayedTime = point.TwoWeekAveragePlayedTime;
-                intelPage.MedianPlayedTime = point.MedianPlayedTime;
+
+                if (point.SteamAppId != null)
+                {
+                    intelPage.OwnerCount = point.OwnerCount;
+                    intelPage.OwnerCountVariance = point.OwnerCountVariance;
+                    intelPage.TotalPlayerCount = point.TotalPlayerCount;
+                    intelPage.TotalPlayerCountVariance = point.TotalPlayerCountVariance;
+                    intelPage.TwoWeekPlayerCount = point.TwoWeekPlayerCount;
+                    intelPage.TwoWeekPlayerCountVariance = point.TwoWeekPlayerCountVariance;
+                    intelPage.Ccu = point.Ccu;
+                    intelPage.AveragePlayedTime = point.AveragePlayedTime;
+                    intelPage.TwoWeekAveragePlayedTime = point.TwoWeekAveragePlayedTime;
+                    intelPage.MedianPlayedTime = point.MedianPlayedTime;
+                }
             }
             return intelPage;
         }

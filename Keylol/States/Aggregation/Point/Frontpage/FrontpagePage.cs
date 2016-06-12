@@ -94,8 +94,9 @@ namespace Keylol.States.Aggregation.Point.Frontpage
 
                 frontPage.ChineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability);
 
-                frontPage.AddictedUsers =
-                    await AddictedUserList.CreateAsync(currentUserId, point.SteamAppId, 1, dbContext, cachedData);
+                if (point.SteamAppId != null)
+                    frontPage.AddictedUsers =
+                        await AddictedUserList.CreateAsync(currentUserId, point.SteamAppId, 1, dbContext, cachedData);
             }
             else if (point.Type == PointType.Vendor)
             {
