@@ -19,7 +19,7 @@ namespace Keylol.States.Aggregation.Point.Product
         }
 
         /// <summary>
-        /// 创建 <see cref="ProductPointList"/>
+        /// 创建满足指定据点关系的 <see cref="ProductPointList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="pointId">据点 ID</param>
@@ -73,6 +73,60 @@ namespace Keylol.States.Aggregation.Point.Product
             var firstRecord = queryResult.FirstOrDefault();
             return new Tuple<ProductPointList, int>(result, firstRecord?.TotalCount ?? 0);
         }
+
+        /// <summary>
+        /// 创建 <see cref="ProductPointList"/>
+        /// </summary>
+        /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="pointId">据点 ID</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="ProductPointList"/></returns>
+        public static async Task<ProductPointList> CreateAsync(string currentUserId, string pointId,
+            KeylolDbContext dbContext, CachedDataProvider cachedData)
+        {
+            var queryResult = await (from relationship in dbContext.PointRelationships
+                where relationship.TargetPointId == pointId
+                group relationship.Relationship by new
+                {
+                    relationship.SourcePoint.Sid,
+                    relationship.SourcePoint.Id,
+                    relationship.SourcePoint.IdCode,
+                    relationship.SourcePoint.AvatarImage,
+                    relationship.SourcePoint.ChineseName,
+                    relationship.SourcePoint.EnglishName,
+                    relationship.SourcePoint.TitleCoverImage,
+                    relationship.SourcePoint.SteamAppId
+                }
+                into g
+                orderby g.Key.Sid descending
+                select g)
+                .ToListAsync();
+
+            var result = new ProductPointList(queryResult.Count);
+            foreach (var g in queryResult)
+            {
+                result.Add(new ProductPoint
+                {
+                    Id = g.Key.Id,
+                    IdCode = g.Key.IdCode,
+                    AvatarImage = g.Key.AvatarImage,
+                    ChineseName = g.Key.ChineseName,
+                    EnglishName = g.Key.EnglishName,
+                    TitleCoverImage = g.Key.TitleCoverImage,
+                    AverageRating = (await cachedData.Points.GetRatingsAsync(g.Key.Id)).AverageRating,
+                    Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, g.Key.Id,
+                            SubscriptionTargetType.Point),
+                    InLibrary = string.IsNullOrWhiteSpace(currentUserId) || g.Key.SteamAppId == null
+                        ? (bool?) null
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, g.Key.SteamAppId.Value),
+                    Roles = g.ToList()
+                });
+            }
+            return result;
+        }
     }
 
     /// <summary>
@@ -124,5 +178,10 @@ namespace Keylol.States.Aggregation.Point.Product
         /// 是否已入库
         /// </summary>
         public bool? InLibrary { get; set; }
+
+        /// <summary>
+        /// 与目标据点的关系
+        /// </summary>
+        public List<PointRelationshipType> Roles { get; set; }
     }
 }

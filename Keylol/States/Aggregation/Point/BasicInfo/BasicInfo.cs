@@ -144,9 +144,11 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
             {
                 SteamCrawlerProvider.UpdatePointPrice(point.Id);
 
-                basicInfo.TotalPlayedTime = (await dbContext.UserSteamGameRecords
-                    .Where(r => r.UserId == currentUserId && r.SteamAppId == point.SteamAppId)
-                    .SingleOrDefaultAsync())?.TotalPlayedTime;
+                basicInfo.TotalPlayedTime = string.IsNullOrWhiteSpace(currentUserId)
+                    ? null
+                    : (await dbContext.UserSteamGameRecords
+                        .Where(r => r.UserId == currentUserId && r.SteamAppId == point.SteamAppId)
+                        .SingleOrDefaultAsync())?.TotalPlayedTime;
 
                 basicInfo.KeylolAveragePlayedTime = Math.Round(await dbContext.UserSteamGameRecords
                     .Where(r => r.SteamAppId == point.SteamAppId)
@@ -154,7 +156,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                     .DefaultIfEmpty()
                     .AverageAsync(), 1);
 
-                basicInfo.InLibrary = string.IsNullOrWhiteSpace(currentUserId) || point.SteamAppId == null
+                basicInfo.InLibrary = string.IsNullOrWhiteSpace(currentUserId)
                     ? (bool?) null
                     : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, point.SteamAppId.Value);
             }

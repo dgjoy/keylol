@@ -85,6 +85,7 @@ namespace Keylol.States
                     result.Add(new PointQueryResult
                     {
                         Id = p.Id,
+                        Type = p.Type,
                         AvatarImage = p.AvatarImage,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName,
@@ -114,6 +115,11 @@ namespace Keylol.States
         /// ID
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// 类型
+        /// </summary>
+        public PointType Type { get; set; }
 
         /// <summary>
         /// 头像

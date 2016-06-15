@@ -31,32 +31,50 @@ namespace Keylol.Controllers.Point
             if (point == null)
                 return NotFound();
 
-            if (!string.IsNullOrWhiteSpace(requestDto.ChineseName))
+            if (requestDto.ChineseName != null)
                 point.ChineseName = requestDto.ChineseName;
 
             if (!string.IsNullOrWhiteSpace(requestDto.EnglishName))
                 point.EnglishName = requestDto.EnglishName;
 
-            if (!string.IsNullOrWhiteSpace(requestDto.ChineseAliases))
+            if (requestDto.ChineseAliases != null)
                 point.ChineseAliases = requestDto.ChineseAliases;
 
-            if (!string.IsNullOrWhiteSpace(requestDto.EnglishAliases))
+            if (requestDto.EnglishAliases != null)
                 point.EnglishAliases = requestDto.EnglishAliases;
 
-            if (Helpers.IsTrustedUrl(requestDto.HeaderImage, false))
+            if (requestDto.HeaderImage != null && Helpers.IsTrustedUrl(requestDto.HeaderImage))
                 point.HeaderImage = requestDto.HeaderImage;
 
-            if (Helpers.IsTrustedUrl(requestDto.AvatarImage, false))
+            if (requestDto.AvatarImage != null && Helpers.IsTrustedUrl(requestDto.AvatarImage))
                 point.AvatarImage = requestDto.AvatarImage;
 
-            if (Helpers.IsTrustedUrl(requestDto.Logo, false))
+            if (requestDto.Logo != null && Helpers.IsTrustedUrl(requestDto.Logo))
                 point.Logo = requestDto.Logo;
 
             if (requestDto.ThemeColor != null)
-                point.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.ThemeColor));
+            {
+                try
+                {
+                    point.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.ThemeColor));
+                }
+                catch (Exception)
+                {
+                    point.ThemeColor = string.Empty;
+                }
+            }
 
             if (requestDto.LightThemeColor != null)
-                point.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.LightThemeColor));
+            {
+                try
+                {
+                    point.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.LightThemeColor));
+                }
+                catch (Exception)
+                {
+                    point.LightThemeColor = string.Empty;
+                }
+            }
 
             if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
@@ -64,16 +82,31 @@ namespace Keylol.Controllers.Point
 
                 if (requestDto.SteamAppId != null && requestDto.SteamAppId != point.SteamAppId)
                 {
-                    if (await _dbContext.Points.AnyAsync(p => p.SteamAppId == requestDto.SteamAppId))
-                        return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamAppId), Errors.Duplicate);
-                    point.SteamAppId = requestDto.SteamAppId;
+                    if (requestDto.SteamAppId <= 0)
+                    {
+                        point.SteamAppId = null;
+                    }
+                    else
+                    {
+                        if (await _dbContext.Points.AnyAsync(p => p.SteamAppId == requestDto.SteamAppId))
+                            return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamAppId), Errors.Duplicate);
+                        point.SteamAppId = requestDto.SteamAppId;
+                    }
                 }
 
                 if (requestDto.SonkwoProductId != null && requestDto.SonkwoProductId != point.SonkwoProductId)
                 {
-                    if (await _dbContext.Points.AnyAsync(p => p.SonkwoProductId == requestDto.SonkwoProductId))
-                        return this.BadRequest(nameof(requestDto), nameof(requestDto.SonkwoProductId), Errors.Duplicate);
-                    point.SonkwoProductId = requestDto.SonkwoProductId;
+                    if (requestDto.SonkwoProductId <= 0)
+                    {
+                        point.SonkwoProductId = null;
+                    }
+                    else
+                    {
+                        if (await _dbContext.Points.AnyAsync(p => p.SonkwoProductId == requestDto.SonkwoProductId))
+                            return this.BadRequest(nameof(requestDto), nameof(requestDto.SonkwoProductId),
+                                Errors.Duplicate);
+                        point.SonkwoProductId = requestDto.SonkwoProductId;
+                    }
                 }
 
                 if (requestDto.UplayLink != null)
@@ -160,13 +193,13 @@ namespace Keylol.Controllers.Point
                         }));
                 }
 
-                if (Helpers.IsTrustedUrl(requestDto.MediaHeaderImage, false))
+                if (requestDto.MediaHeaderImage != null && Helpers.IsTrustedUrl(requestDto.MediaHeaderImage))
                     point.MediaHeaderImage = requestDto.MediaHeaderImage;
 
-                if (Helpers.IsTrustedUrl(requestDto.TitleCoverImage, false))
+                if (requestDto.TitleCoverImage != null && Helpers.IsTrustedUrl(requestDto.TitleCoverImage))
                     point.TitleCoverImage = requestDto.TitleCoverImage;
 
-                if (Helpers.IsTrustedUrl(requestDto.ThumbnailImage, false))
+                if (requestDto.ThumbnailImage != null && Helpers.IsTrustedUrl(requestDto.ThumbnailImage))
                     point.ThumbnailImage = requestDto.ThumbnailImage;
             }
 
@@ -289,14 +322,22 @@ namespace Keylol.Controllers.Point
                         }));
                 }
 
+                // 用 1989 年 6 月 4 日作为一个特殊值，触发删除操作
+
                 if (requestDto.PublishDate != null)
-                    point.PublishDate = requestDto.PublishDate;
+                    point.PublishDate = requestDto.PublishDate.Value.Date == new DateTime(1989, 6, 4)
+                        ? (DateTime?) null
+                        : requestDto.PublishDate.Value.Date;
 
                 if (requestDto.PreOrderDate != null)
-                    point.PreOrderDate = requestDto.PreOrderDate;
+                    point.PreOrderDate = requestDto.PreOrderDate.Value.Date == new DateTime(1989, 6, 4)
+                        ? (DateTime?) null
+                        : requestDto.PreOrderDate.Value.Date;
 
                 if (requestDto.ReleaseDate != null)
-                    point.ReleaseDate = requestDto.ReleaseDate;
+                    point.ReleaseDate = requestDto.ReleaseDate.Value.Date == new DateTime(1989, 6, 4)
+                        ? (DateTime?) null
+                        : requestDto.ReleaseDate.Value.Date;
 
                 var chineseAvailability = Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability) ??
                                           new ChineseAvailability
@@ -388,13 +429,13 @@ namespace Keylol.Controllers.Point
             /// <summary>
             /// Steam App ID
             /// </summary>
-            [Range(1, int.MaxValue)]
+            [Range(0, int.MaxValue)]
             public int? SteamAppId { get; set; }
 
             /// <summary>
             /// 杉果 Product ID
             /// </summary>
-            [Range(1, int.MaxValue)]
+            [Range(0, int.MaxValue)]
             public int? SonkwoProductId { get; set; }
 
             /// <summary>

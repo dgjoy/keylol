@@ -8,7 +8,6 @@ using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
-using Keylol.States.Aggregation.Point.BasicInfo;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Aggregation.Point.Intel
@@ -127,23 +126,11 @@ namespace Keylol.States.Aggregation.Point.Intel
             }
             if (point.Type == PointType.Game)
             {
-                intelPage.Platforms = (await (from relationship in dbContext.PointRelationships
+                intelPage.Platforms = await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           relationship.Relationship == PointRelationshipType.Platform
-                    select new
-                    {
-                        relationship.TargetPoint.IdCode,
-                        relationship.TargetPoint.ChineseName,
-                        relationship.TargetPoint.EnglishName
-                    })
-                    .ToListAsync())
-                    .Select(p => new SimplePoint
-                    {
-                        IdCode = p.IdCode,
-                        ChineseName = p.ChineseName,
-                        EnglishName = p.EnglishName
-                    })
-                    .ToList();
+                    select relationship.TargetPoint.IdCode)
+                    .ToListAsync();
 
                 #region 特性属性
 
@@ -191,7 +178,7 @@ namespace Keylol.States.Aggregation.Point.Intel
         /// <summary>
         /// 平台
         /// </summary>
-        public List<SimplePoint> Platforms { get; set; }
+        public List<string> Platforms { get; set; }
 
         #region 特性属性
 
