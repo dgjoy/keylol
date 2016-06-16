@@ -27,7 +27,6 @@ namespace Keylol.Models.DAL
         public DbSet<Like> Likes { get; set; }
         public DbSet<SteamBindingToken> SteamBindingTokens { get; set; }
         public DbSet<SteamBot> SteamBots { get; set; }
-        public DbSet<InvitationCode> InvitationCodes { get; set; }
         public DbSet<UserSteamGameRecord> UserSteamGameRecords { get; set; }
         public DbSet<SteamStoreName> SteamStoreNames { get; set; }
         public DbSet<Message> Messages { get; set; }
@@ -58,9 +57,6 @@ namespace Keylol.Models.DAL
             modelBuilder.Entity<IdentityUserRole>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
             
-            modelBuilder.Entity<InvitationCode>()
-                .HasOptional(c => c.UsedByUser)
-                .WithOptionalDependent(c => c.InvitationCode);
             modelBuilder.Entity<Point>()
                 .HasMany(p => p.SteamStoreNames)
                 .WithMany(n => n.Points)

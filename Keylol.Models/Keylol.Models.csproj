@@ -97,6 +97,14 @@
     <Compile Include="Migrations\201606041400063_StringPrice.Designer.cs">
       <DependentUpon>201606041400063_StringPrice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606160653166_ArticleReproductionRequirement.cs" />
+    <Compile Include="Migrations\201606160653166_ArticleReproductionRequirement.Designer.cs">
+      <DependentUpon>201606160653166_ArticleReproductionRequirement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606160950030_RemoveInvitationCode.cs" />
+    <Compile Include="Migrations\201606160950030_RemoveInvitationCode.Designer.cs">
+      <DependentUpon>201606160950030_RemoveInvitationCode.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -476,6 +484,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
+    <Compile Include="ReproductionRequirement.cs" />
     <Compile Include="UserSteamFriendRecord.cs" />
     <Compile Include="SteamStoreName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -782,6 +791,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606041400063_StringPrice.resx">
       <DependentUpon>201606041400063_StringPrice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606160653166_ArticleReproductionRequirement.resx">
+      <DependentUpon>201606160653166_ArticleReproductionRequirement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606160950030_RemoveInvitationCode.resx">
+      <DependentUpon>201606160950030_RemoveInvitationCode.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

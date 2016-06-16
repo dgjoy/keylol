@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
 using Keylol.States.Aggregation.Point.BasicInfo;
+using Keylol.StateTreeManager;
 
 namespace Keylol.States.Content.Article
 {
@@ -16,8 +18,35 @@ namespace Keylol.States.Content.Article
     /// </summary>
     public class ArticlePage
     {
+        /// <summary>
+        /// 获取一篇文章
+        /// </summary>
+        /// <param name="authorIdCode">作者识别码</param>
+        /// <param name="sidForAuthor">文章在作者名下的序号</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <returns><see cref="ArticlePage"/></returns>
+        public static async Task<ArticlePage> Get(string authorIdCode, int sidForAuthor,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,
+            [Injected] KeylolUserManager userManager)
+        {
+            return await CreateAsync(authorIdCode, sidForAuthor, StateTreeHelper.GetCurrentUserId(), dbContext,
+                cachedData, userManager);
+        }
+
+        /// <summary>
+        /// 创建 <see cref="ArticlePage"/>
+        /// </summary>
+        /// <param name="authorIdCode">作者识别码</param>
+        /// <param name="sidForAuthor">文章在作者名下的序号</param>
+        /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <returns><see cref="ArticlePage"/></returns>
         public static async Task<ArticlePage> CreateAsync(string authorIdCode, int sidForAuthor, string currentUserId,
-            KeylolDbContext dbContext, CachedDataProvider cachedData)
+            KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
         {
             var articlePage = new ArticlePage();
 
@@ -28,6 +57,11 @@ namespace Keylol.States.Content.Article
                 .SingleOrDefaultAsync();
 
             if (article == null)
+                return articlePage;
+
+            articlePage.Archived = article.Archived != ArchivedState.None;
+            if (articlePage.Archived.Value && currentUserId != article.AuthorId &&
+                !await userManager.IsInRoleAsync(currentUserId, KeylolRoles.Operator))
                 return articlePage;
 
             articlePage.PointBasicInfo =
@@ -51,19 +85,47 @@ namespace Keylol.States.Content.Article
                 ? (bool?) null
                 : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, article.AuthorId,
                     SubscriptionTargetType.User);
+            articlePage.Id = article.Id;
             articlePage.Title = article.Title;
             articlePage.Subtitle = article.Subtitle;
+            var attachedPointIds = Helpers.SafeDeserialize<List<string>>(article.AttachedPoints) ?? new List<string>();
+            articlePage.AttachedPoints = (from id in attachedPointIds
+                join point in await (from point in dbContext.Points
+                    where attachedPointIds.Contains(point.Id)
+                    select new
+                    {
+                        point.Id,
+                        point.IdCode,
+                        point.AvatarImage,
+                        point.ChineseName,
+                        point.EnglishName
+                    }).ToListAsync() on id equals point.Id
+                select new SimplePoint
+                {
+                    Id = point.Id,
+                    IdCode = point.IdCode,
+                    AvatarImage = point.AvatarImage,
+                    ChineseName = point.ChineseName,
+                    EnglishName = point.EnglishName
+                }).ToList();
             articlePage.PublishTime = article.PublishTime;
-            articlePage.Archived = article.Archived != ArchivedState.None;
             articlePage.Rejected = article.Rejected;
             articlePage.Spotlighted = article.Spotlighted;
             articlePage.Warned = article.Warned;
             articlePage.Content = article.Content;
+            articlePage.ReproductionRequirement =
+                Helpers.SafeDeserialize<ReproductionRequirement>(article.ReproductionRequirement);
             articlePage.LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(article.Id, LikeTargetType.Article);
             articlePage.Rating = article.Rating;
             articlePage.CoverImage = article.CoverImage;
             articlePage.Pros = Helpers.SafeDeserialize<List<string>>(article.Pros);
             articlePage.Cons = Helpers.SafeDeserialize<List<string>>(article.Cons);
+            var comments = await ArticleCommentList.CreateAsync(article, 1, currentUserId, true, dbContext, cachedData,
+                userManager);
+            articlePage.CommentCount = comments.Item2;
+            articlePage.LatestCommentTime = comments.Item3;
+            articlePage.CommentPageCount = comments.Item4;
+            articlePage.Comments = comments.Item1;
             return articlePage;
         }
 
@@ -123,6 +185,11 @@ namespace Keylol.States.Content.Article
         public bool? AuthorIsSubscribed { get; set; }
 
         /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
         /// 标题
         /// </summary>
         public string Title { get; set; }
@@ -136,6 +203,11 @@ namespace Keylol.States.Content.Article
         /// 发布时间
         /// </summary>
         public DateTime? PublishTime { get; set; }
+
+        /// <summary>
+        /// 关联投稿据点列表
+        /// </summary>
+        public List<SimplePoint> AttachedPoints { get; set; }
 
         /// <summary>
         /// 是否被封存
@@ -161,6 +233,11 @@ namespace Keylol.States.Content.Article
         /// 内容
         /// </summary>
         public string Content { get; set; }
+
+        /// <summary>
+        /// 转载要求
+        /// </summary>
+        public ReproductionRequirement ReproductionRequirement { get; set; }
 
         /// <summary>
         /// 认可数

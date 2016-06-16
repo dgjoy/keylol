@@ -59,6 +59,10 @@ namespace Keylol.Controllers.Article
                 article.Pros = JsonConvert.SerializeObject(requestDto.Pros ?? new List<string>());
                 article.Cons = JsonConvert.SerializeObject(requestDto.Cons ?? new List<string>());
             }
+
+            if (requestDto.ReproductionRequirement != null)
+                article.ReproductionRequirement = JsonConvert.SerializeObject(requestDto.ReproductionRequirement);
+
             _dbContext.Articles.Add(article);
             article.SidForAuthor = await _dbContext.Articles.Where(a => a.AuthorId == article.AuthorId)
                 .Select(a => a.SidForAuthor)
@@ -139,6 +143,11 @@ namespace Keylol.Controllers.Article
             /// </summary>
             [MaxLength(3)]
             public List<string> Cons { get; set; }
+
+            /// <summary>
+            /// 转载要求
+            /// </summary>
+            public ReproductionRequirement ReproductionRequirement { get; set; }
         }
     }
 }

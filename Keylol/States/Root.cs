@@ -6,6 +6,8 @@ using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation;
 using Keylol.States.Aggregation.Point;
+using Keylol.States.Content;
+using Keylol.States.Content.Article;
 using Keylol.States.Entrance;
 using Keylol.StateTreeManager;
 
@@ -30,10 +32,13 @@ namespace Keylol.States
         /// <param name="coupon"><see cref="CouponProvider"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="pointIdCode">据点识别码</param>
+        /// <param name="authorIdCode">作者识别码</param>
+        /// <param name="sidForAuthor">文章在作者名下的序号</param>
         /// <returns>完整状态树</returns>
         public static async Task<Root> Locate(string state, [Injected] KeylolUserManager userManager,
             [Injected] KeylolDbContext dbContext, [Injected] CouponProvider coupon,
-            [Injected] CachedDataProvider cachedData, string pointIdCode = null)
+            [Injected] CachedDataProvider cachedData, string pointIdCode = null, string authorIdCode = null,
+            int sidForAuthor = 0)
         {
             var root = new Root();
             var currentUserId = StateTreeHelper.GetCurrentUserId();
@@ -121,6 +126,14 @@ namespace Keylol.States
                     };
                     break;
 
+                case "content.article":
+                    root.Content = new ContentLevel
+                    {
+                        Article = await ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
+                            dbContext, cachedData, userManager)
+                    };
+                    break;
+
                 default:
                     throw new NotSupportedException("Not supported state.");
             }
@@ -142,6 +155,11 @@ namespace Keylol.States
         /// 聚合层级
         /// </summary>
         public AggregationLevel Aggregation { get; set; }
+
+        /// <summary>
+        /// 内容层级
+        /// </summary>
+        public ContentLevel Content { get; set; }
 
         /// <summary>
         /// 待开设据点

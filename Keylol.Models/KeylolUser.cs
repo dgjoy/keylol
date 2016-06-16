@@ -61,8 +61,6 @@ namespace Keylol.Models
 
         public virtual SteamBot SteamBot { get; set; }
 
-        public virtual InvitationCode InvitationCode { get; set; }
-
         public string InviterId { get; set; }
         public virtual KeylolUser Inviter { get; set; }
 

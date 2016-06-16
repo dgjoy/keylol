@@ -289,6 +289,7 @@
     <Compile Include="States\Aggregation\User\UserLevel.cs" />
     <Compile Include="States\Content\Article\ArticleComment.cs" />
     <Compile Include="States\Content\Article\ArticlePage.cs" />
+    <Compile Include="States\Content\Article\SimplePoint.cs" />
     <Compile Include="States\Content\ContentLevel.cs" />
     <Compile Include="States\PointQueryResult.cs" />
     <Compile Include="States\PointToCreate.cs" />

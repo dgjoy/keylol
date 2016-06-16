@@ -76,7 +76,7 @@ namespace Keylol
             // OAuth 认证服务器
             app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(30),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(60),
                 AuthenticationMode = AuthenticationMode.Passive,
                 TokenEndpointPath = new PathString("/oauth/token"),
                 AuthorizeEndpointPath = new PathString("/oauth/authorization"),

@@ -65,6 +65,10 @@ namespace Keylol.Controllers.Article
                 article.Cons = string.Empty;
             }
 
+            article.ReproductionRequirement = requestDto.ReproductionRequirement == null
+                ? string.Empty
+                : JsonConvert.SerializeObject(requestDto.ReproductionRequirement);
+
             await _dbContext.SaveChangesAsync();
             var oldAttachedPoints = Helpers.SafeDeserialize<List<string>>(article.AttachedPoints) ?? new List<string>();
             if (requestDto.TargetPointId != article.TargetPointId ||

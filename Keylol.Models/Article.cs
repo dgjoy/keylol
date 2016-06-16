@@ -82,6 +82,10 @@ namespace Keylol.Models
         public bool Spotlighted { get; set; } = false;
 
         public bool Warned { get; set; } = false;
+
+        [Required]
+        [MaxLength(1000)]
+        public string ReproductionRequirement { get; set; } = string.Empty;
     }
     
     public enum ArchivedState
