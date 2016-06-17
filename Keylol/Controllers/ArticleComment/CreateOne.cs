@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
@@ -7,6 +8,7 @@ using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.ArticleComment
 {
@@ -18,6 +20,7 @@ namespace Keylol.Controllers.ArticleComment
         /// <param name="requestDto">请求 DTO</param>
         [Route]
         [HttpPost]
+        [SwaggerResponse(HttpStatusCode.OK, "评论楼层号")]
         public async Task<IHttpActionResult> CreateOne([NotNull] ArticleCommentCreateOneRequestDto requestDto)
         {
             var article = await _dbContext.Articles.FindAsync(requestDto.ArticleId);
@@ -52,6 +55,7 @@ namespace Keylol.Controllers.ArticleComment
             _dbContext.ArticleComments.Add(comment);
             _dbContext.SaveChanges();
 
+            // TODO: 通知推送
 //            var articleAuthor = await _dbContext.Users.Include(u => u.SteamBot)
 //                .SingleAsync(u => u.Id == article.AuthorId);
 //            var messageNotifiedArticleAuthor = false;
@@ -109,7 +113,7 @@ namespace Keylol.Controllers.ArticleComment
 //            }
 //            await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(comment.SidForArticle);
         }
 
         /// <summary>

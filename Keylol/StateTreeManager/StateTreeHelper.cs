@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using SimpleInjector.Integration.Owin;
@@ -35,10 +36,16 @@ namespace Keylol.StateTreeManager
         }
 
         /// <summary>
+        /// 获取当前登录的用户
+        /// </summary>
+        /// <returns>当前登录的用户</returns>
+        public static IPrincipal GetCurrentUser()
+            => Global.Container.GetInstance<OwinContextProvider>().Current.Request.User;
+
+        /// <summary>
         /// 获取当前登录的用户 ID
         /// </summary>
         /// <returns>当前登录的用户 ID</returns>
-        public static string GetCurrentUserId()
-            => Global.Container.GetInstance<OwinContextProvider>().Current.Request.User.Identity.GetUserId();
+        public static string GetCurrentUserId() => GetCurrentUser().Identity.GetUserId();
     }
 }

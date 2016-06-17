@@ -25,14 +25,12 @@ namespace Keylol.States.Content.Article
         /// <param name="sidForAuthor">文章在作者名下的序号</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ArticlePage"/></returns>
         public static async Task<ArticlePage> Get(string authorIdCode, int sidForAuthor,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,
-            [Injected] KeylolUserManager userManager)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(authorIdCode, sidForAuthor, StateTreeHelper.GetCurrentUserId(), dbContext,
-                cachedData, userManager);
+            return await CreateAsync(authorIdCode, sidForAuthor, StateTreeHelper.GetCurrentUserId(),
+                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), dbContext, cachedData);
         }
 
         /// <summary>
@@ -41,12 +39,12 @@ namespace Keylol.States.Content.Article
         /// <param name="authorIdCode">作者识别码</param>
         /// <param name="sidForAuthor">文章在作者名下的序号</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="isOperator">当前登录用户是否为运维职员</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ArticlePage"/></returns>
         public static async Task<ArticlePage> CreateAsync(string authorIdCode, int sidForAuthor, string currentUserId,
-            KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
+            bool isOperator, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var articlePage = new ArticlePage();
 
@@ -60,8 +58,7 @@ namespace Keylol.States.Content.Article
                 return articlePage;
 
             articlePage.Archived = article.Archived != ArchivedState.None;
-            if (articlePage.Archived.Value && currentUserId != article.AuthorId &&
-                !await userManager.IsInRoleAsync(currentUserId, KeylolRoles.Operator))
+            if (articlePage.Archived.Value && currentUserId != article.AuthorId && !isOperator)
                 return articlePage;
 
             articlePage.PointBasicInfo =
@@ -120,8 +117,8 @@ namespace Keylol.States.Content.Article
             articlePage.CoverImage = article.CoverImage;
             articlePage.Pros = Helpers.SafeDeserialize<List<string>>(article.Pros);
             articlePage.Cons = Helpers.SafeDeserialize<List<string>>(article.Cons);
-            var comments = await ArticleCommentList.CreateAsync(article, 1, currentUserId, true, dbContext, cachedData,
-                userManager);
+            var comments = await ArticleCommentList.CreateAsync(article, 1, currentUserId, isOperator, true, dbContext,
+                cachedData);
             articlePage.CommentCount = comments.Item2;
             articlePage.LatestCommentTime = comments.Item3;
             articlePage.CommentPageCount = comments.Item4;

@@ -26,14 +26,12 @@ namespace Keylol.States.Content.Activity
         /// <param name="sidForAuthor">动态在作者名下的序号</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ActivityPage"/></returns>
         public static async Task<ActivityPage> Get(string authorIdCode, int sidForAuthor,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,
-            [Injected] KeylolUserManager userManager)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(authorIdCode, sidForAuthor, StateTreeHelper.GetCurrentUserId(), dbContext,
-                cachedData, userManager);
+            return await CreateAsync(authorIdCode, sidForAuthor, StateTreeHelper.GetCurrentUserId(),
+                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), dbContext, cachedData);
         }
 
         /// <summary>
@@ -42,12 +40,12 @@ namespace Keylol.States.Content.Activity
         /// <param name="authorIdCode">作者识别码</param>
         /// <param name="sidForAuthor">动态在作者名下的序号</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="isOperator">当前登录用户是否为运维职员</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ActivityPage"/></returns>
         public static async Task<ActivityPage> CreateAsync(string authorIdCode, int sidForAuthor, string currentUserId,
-            KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
+            bool isOperator, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var activityPage = new ActivityPage();
 
@@ -61,8 +59,7 @@ namespace Keylol.States.Content.Activity
                 return activityPage;
 
             activityPage.Archived = activity.Archived != ArchivedState.None;
-            if (activityPage.Archived.Value && currentUserId != activity.AuthorId &&
-                !await userManager.IsInRoleAsync(currentUserId, KeylolRoles.Operator))
+            if (activityPage.Archived.Value && currentUserId != activity.AuthorId && !isOperator)
                 return activityPage;
 
             activityPage.PointBasicInfo =
@@ -113,9 +110,8 @@ namespace Keylol.States.Content.Activity
                     ChineseName = point.ChineseName,
                     EnglishName = point.EnglishName
                 }).ToList();
-            var comments =
-                await ActivityCommentList.CreateAsync(activity, 1, currentUserId, true, dbContext, cachedData,
-                    userManager);
+            var comments = await ActivityCommentList.CreateAsync(activity, 1, currentUserId, isOperator, true,
+                dbContext, cachedData);
             activityPage.CommentCount = comments.Item2;
             activityPage.CommentPageCount = comments.Item3;
             activityPage.Comments = comments.Item1;

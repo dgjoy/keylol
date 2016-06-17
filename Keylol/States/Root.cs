@@ -43,6 +43,7 @@ namespace Keylol.States
         {
             var root = new Root();
             var currentUserId = StateTreeHelper.GetCurrentUserId();
+            var isOperator = StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator);
             if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
             {
                 var user = await userManager.FindByIdAsync(currentUserId);
@@ -131,7 +132,7 @@ namespace Keylol.States
                     root.Content = new ContentLevel
                     {
                         Article = await ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
-                            dbContext, cachedData, userManager)
+                            isOperator, dbContext, cachedData)
                     };
                     break;
 
@@ -139,7 +140,7 @@ namespace Keylol.States
                     root.Content = new ContentLevel
                     {
                         Activity = await ActivityPage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
-                            dbContext, cachedData, userManager)
+                            isOperator, dbContext, cachedData)
                     };
                     break;
 

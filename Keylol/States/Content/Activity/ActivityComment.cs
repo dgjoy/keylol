@@ -30,11 +30,9 @@ namespace Keylol.States.Content.Activity
         /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ActivityCommentList"/></returns>
         public static async Task<ActivityCommentList> Get(string activityId, int page,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,
-            [Injected] KeylolUserManager userManager)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
             var activity = await dbContext.Activities
                 .Include(a => a.Author)
@@ -45,8 +43,8 @@ namespace Keylol.States.Content.Activity
             if (activity == null)
                 return new ActivityCommentList(0);
 
-            return (await CreateAsync(activity, page, StateTreeHelper.GetCurrentUserId(), false, dbContext, cachedData,
-                userManager)).Item1;
+            return (await CreateAsync(activity, page, StateTreeHelper.GetCurrentUserId(),
+                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
@@ -55,14 +53,14 @@ namespace Keylol.States.Content.Activity
         /// <param name="activity">动态对象</param>
         /// <param name="page">分页页码</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="isOperator">当前登录用户是否为运维职员</param>
         /// <param name="returnMeta">是否返回元数据（总页数、总评论数）</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns>Item1 表示 <see cref="ActivityCommentList"/>， Item2 表示总评论数，Item3 表示总页数</returns>
         public static async Task<Tuple<ActivityCommentList, int, int>> CreateAsync(Models.Activity activity,
-            int page, string currentUserId, bool returnMeta, KeylolDbContext dbContext, CachedDataProvider cachedData,
-            KeylolUserManager userManager)
+            int page, string currentUserId, bool isOperator, bool returnMeta, KeylolDbContext dbContext,
+            CachedDataProvider cachedData)
         {
             var conditionQuery = from comment in dbContext.ActivityComments
                 where comment.ActivityId == activity.Id
@@ -89,8 +87,7 @@ namespace Keylol.States.Content.Activity
                     Archived = c.Archived != ArchivedState.None
                 };
                 // ReSharper disable once PossibleInvalidOperationException
-                if (!activityComment.Archived.Value || currentUserId == c.Author.Id ||
-                    await userManager.IsInRoleAsync(currentUserId, KeylolRoles.Operator))
+                if (!activityComment.Archived.Value || currentUserId == c.Author.Id || isOperator)
                 {
                     activityComment.AuthorIdCode = c.Author.IdCode;
                     activityComment.AuthorAvatarImage = c.Author.AvatarImage;

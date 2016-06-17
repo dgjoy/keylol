@@ -30,11 +30,9 @@ namespace Keylol.States.Content.Article
         /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ArticleCommentList"/></returns>
         public static async Task<ArticleCommentList> Get(string articleId, int page,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,
-            [Injected] KeylolUserManager userManager)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
             var article = await dbContext.Articles
                 .Include(a => a.Author)
@@ -45,8 +43,8 @@ namespace Keylol.States.Content.Article
             if (article == null)
                 return new ArticleCommentList(0);
 
-            return (await CreateAsync(article, page, StateTreeHelper.GetCurrentUserId(), false, dbContext, cachedData,
-                userManager)).Item1;
+            return (await CreateAsync(article, page, StateTreeHelper.GetCurrentUserId(),
+                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
@@ -55,14 +53,14 @@ namespace Keylol.States.Content.Article
         /// <param name="article">文章对象</param>
         /// <param name="page">分页页码</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="isOperator">当前登录用户是否为运维职员</param>
         /// <param name="returnMeta">是否返回元数据（总页数、总评论数、最新评论时间）</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns>Item1 表示 <see cref="ArticleCommentList"/>， Item2 表示总评论数，Item3 表示最新评论时间，Item4 表示总页数</returns>
         public static async Task<Tuple<ArticleCommentList, int, DateTime?, int>> CreateAsync(Models.Article article,
-            int page, string currentUserId, bool returnMeta, KeylolDbContext dbContext, CachedDataProvider cachedData,
-            KeylolUserManager userManager)
+            int page, string currentUserId, bool isOperator, bool returnMeta, KeylolDbContext dbContext,
+            CachedDataProvider cachedData)
         {
             var conditionQuery = from comment in dbContext.ArticleComments
                 where comment.ArticleId == article.Id
@@ -85,12 +83,12 @@ namespace Keylol.States.Content.Article
             {
                 var articleComment = new ArticleComment
                 {
+                    Id = c.Id,
                     SidForArticle = c.SidForArticle,
                     Archived = c.Archived != ArchivedState.None
                 };
                 // ReSharper disable once PossibleInvalidOperationException
-                if (!articleComment.Archived.Value || currentUserId == c.Author.Id ||
-                    await userManager.IsInRoleAsync(currentUserId, KeylolRoles.Operator))
+                if (!articleComment.Archived.Value || currentUserId == c.Author.Id || isOperator)
                 {
                     articleComment.AuthorIdCode = c.Author.IdCode;
                     articleComment.AuthorAvatarImage = c.Author.AvatarImage;
@@ -127,6 +125,11 @@ namespace Keylol.States.Content.Article
     /// </summary>
     public class ArticleComment
     {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// 作者识别码
         /// </summary>
