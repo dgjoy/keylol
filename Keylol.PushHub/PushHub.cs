@@ -43,7 +43,9 @@ namespace Keylol.PushHub
                         var requestDto =
                             serializer.Deserialize<PushHubRequestDto>(new JsonTextReader(streamReader));
 
-                        var count = 0;
+                        string authorId, entryId;
+                        FeedEntryType entryType;
+                        List<string> pointsToPush;
                         switch (requestDto.Type)
                         {
                             case ContentPushType.Article:
@@ -56,49 +58,75 @@ namespace Keylol.PushHub
                                         a.AttachedPoints,
                                         a.TargetPointId
                                     }).SingleOrDefaultAsync();
-                                if (await AddOrUpdateFeedAsync(UserStream.Name(article.AuthorId),
-                                    article.Id, FeedEntryType.ArticleId, null, dbContext))
-                                    count++;
 
-                                foreach (var subscriberId in await dbContext.Subscriptions
-                                    .Where(s => s.TargetId == article.AuthorId &&
-                                                s.TargetType == SubscriptionTargetType.User)
-                                    .Select(s => s.SubscriberId).ToListAsync())
-                                {
-                                    if (await AddOrUpdateFeedAsync(SubscriptionStream.Name(subscriberId),
-                                        article.Id, FeedEntryType.ArticleId, "author", dbContext))
-                                        count++;
-                                }
-
-                                var pointIds = Helpers.SafeDeserialize<List<string>>(article.AttachedPoints) ??
+                                authorId = article.AuthorId;
+                                entryId = article.Id;
+                                entryType = FeedEntryType.ArticleId;
+                                pointsToPush = Helpers.SafeDeserialize<List<string>>(article.AttachedPoints) ??
                                                new List<string>();
-                                pointIds.Add(article.TargetPointId);
-                                foreach (var pointId in pointIds)
-                                {
-                                    var point = await dbContext.Points.Where(p => p.Id == pointId)
-                                        .Select(p => new {p.Id}).SingleOrDefaultAsync();
-                                    if (point == null) continue;
-                                    if (await AddOrUpdateFeedAsync(PointStream.Name(point.Id),
-                                        article.Id, FeedEntryType.ArticleId, null, dbContext))
-                                        count++;
-
-                                    foreach (var subscriberId in await dbContext.Subscriptions
-                                        .Where(s => s.TargetId == point.Id &&
-                                                    s.TargetType == SubscriptionTargetType.Point)
-                                        .Select(s => s.SubscriberId).ToListAsync())
-                                    {
-                                        if (await AddOrUpdateFeedAsync(SubscriptionStream.Name(subscriberId),
-                                            article.Id, FeedEntryType.ArticleId, $"point:{point.Id}", dbContext))
-                                            count++;
-                                    }
-                                }
+                                pointsToPush.Add(article.TargetPointId);
                                 break;
                             }
+
                             case ContentPushType.Activity:
+                            {
+                                var activity = await dbContext.Activities.Where(a => a.Id == requestDto.ContentId)
+                                    .Select(a => new
+                                    {
+                                        a.Id,
+                                        a.AuthorId,
+                                        a.AttachedPoints,
+                                        a.TargetPointId
+                                    }).SingleOrDefaultAsync();
+                                authorId = activity.AuthorId;
+                                entryId = activity.Id;
+                                entryType = FeedEntryType.ActivityId;
+                                pointsToPush = Helpers.SafeDeserialize<List<string>>(activity.AttachedPoints) ??
+                                               new List<string>();
+                                pointsToPush.Add(activity.TargetPointId);
+                                break;
+                            }
+
                             case ContentPushType.ConferenceEntry:
                                 throw new NotImplementedException();
+
                             default:
                                 throw new ArgumentOutOfRangeException();
+                        }
+
+                        var count = 0;
+                        if (await AddOrUpdateFeedAsync(UserStream.Name(authorId),
+                            entryId, entryType, null, dbContext))
+                            count++;
+
+                        foreach (var subscriberId in await dbContext.Subscriptions
+                            .Where(s => s.TargetId == authorId &&
+                                        s.TargetType == SubscriptionTargetType.User)
+                            .Select(s => s.SubscriberId).ToListAsync())
+                        {
+                            if (await AddOrUpdateFeedAsync(SubscriptionStream.Name(subscriberId),
+                                entryId, entryType, "author", dbContext))
+                                count++;
+                        }
+
+                        foreach (var pointId in pointsToPush)
+                        {
+                            var point = await dbContext.Points.Where(p => p.Id == pointId)
+                                .Select(p => new {p.Id}).SingleOrDefaultAsync();
+                            if (point == null) continue;
+                            if (await AddOrUpdateFeedAsync(PointStream.Name(point.Id),
+                                entryId, entryType, null, dbContext))
+                                count++;
+
+                            foreach (var subscriberId in await dbContext.Subscriptions
+                                .Where(s => s.TargetId == point.Id &&
+                                            s.TargetType == SubscriptionTargetType.Point)
+                                .Select(s => s.SubscriberId).ToListAsync())
+                            {
+                                if (await AddOrUpdateFeedAsync(SubscriptionStream.Name(subscriberId),
+                                    entryId, entryType, $"point:{point.Id}", dbContext))
+                                    count++;
+                            }
                         }
 
                         _mqChannel.BasicAck(eventArgs.DeliveryTag, false);

@@ -24,7 +24,7 @@ namespace Keylol.Controllers.Article
         [Route]
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.OK, "文章 SidForAuthor")]
-        public async Task<IHttpActionResult> CreateOne([NotNull] CreateOrUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
         {
             var userId = User.Identity.GetUserId();
             var article = new Models.Article
@@ -50,7 +50,7 @@ namespace Keylol.Controllers.Article
 
             article.TargetPointId = targetPoint.Id;
             requestDto.AttachedPointIds = requestDto.AttachedPointIds.Select(id => id.Trim())
-                .Where(id => id != targetPoint.Id.Trim()).Distinct().ToList();
+                .Where(id => id != targetPoint.Id).Distinct().ToList();
             article.AttachedPoints = JsonConvert.SerializeObject(requestDto.AttachedPointIds);
 
             if (targetPoint.Type == PointType.Game || targetPoint.Type == PointType.Hardware)
@@ -84,7 +84,7 @@ namespace Keylol.Controllers.Article
         /// <summary>
         ///     请求 DTO（CreateOne 与 UpdateOne 共用）
         /// </summary>
-        public class CreateOrUpdateOneRequestDto
+        public class ArticleCreateOrUpdateOneRequestDto
         {
             /// <summary>
             ///     标题

@@ -25,7 +25,7 @@ namespace Keylol.Controllers.Point
         [Route("{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
-        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] UpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] PointUpdateOneRequestDto requestDto)
         {
             var point = await _dbContext.Points.FindAsync(id);
             if (point == null)
@@ -391,9 +391,9 @@ namespace Keylol.Controllers.Point
         }
 
         /// <summary>
-        /// UpdateOne request DTO
+        /// Point UpdateOne request DTO
         /// </summary>
-        public class UpdateOneRequestDto
+        public class PointUpdateOneRequestDto
         {
             /// <summary>
             /// 中文名

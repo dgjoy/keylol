@@ -204,6 +204,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\Activity\ActivityController.cs" />
+    <Compile Include="Controllers\Activity\CreateOne.cs" />
+    <Compile Include="Controllers\Activity\UpdateOne.cs" />
     <Compile Include="Controllers\Article\ArticleController.cs" />
     <Compile Include="Controllers\Article\CreateOne.cs" />
     <Compile Include="Controllers\Article\UpdateOne.cs" />

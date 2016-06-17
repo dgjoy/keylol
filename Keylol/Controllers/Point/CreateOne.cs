@@ -27,7 +27,7 @@ namespace Keylol.Controllers.Point
         /// <param name="requestDto">请求 DTO</param>
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateOne([NotNull] CreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] PointCreateOneRequestDto requestDto)
         {
             requestDto.IdCode = requestDto.IdCode.ToUpper();
 
@@ -45,7 +45,7 @@ namespace Keylol.Controllers.Point
 
             switch (requestDto.Type)
             {
-                case CreateOneRequestDto.CreateType.SteamGame:
+                case PointCreateOneRequestDto.CreateType.SteamGame:
                 {
                     if (requestDto.SteamAppId == null || requestDto.SteamAppId <= 0)
                         return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamAppId), Errors.Invalid);
@@ -369,7 +369,7 @@ namespace Keylol.Controllers.Point
                     break;
                 }
 
-                case CreateOneRequestDto.CreateType.OtherGame:
+                case PointCreateOneRequestDto.CreateType.OtherGame:
                 {
                     if (string.IsNullOrWhiteSpace(requestDto.HeaderImage))
                         return this.BadRequest(nameof(requestDto), nameof(requestDto.HeaderImage), Errors.Required);
@@ -407,7 +407,7 @@ namespace Keylol.Controllers.Point
                     break;
                 }
 
-                case CreateOneRequestDto.CreateType.Hardware:
+                case PointCreateOneRequestDto.CreateType.Hardware:
                 {
                     if (string.IsNullOrWhiteSpace(requestDto.HeaderImage))
                         return this.BadRequest(nameof(requestDto), nameof(requestDto.HeaderImage), Errors.Required);
@@ -428,7 +428,7 @@ namespace Keylol.Controllers.Point
                     break;
                 }
 
-                case CreateOneRequestDto.CreateType.Vendor:
+                case PointCreateOneRequestDto.CreateType.Vendor:
                 {
                     var point = new Models.Point
                     {
@@ -447,7 +447,7 @@ namespace Keylol.Controllers.Point
                     break;
                 }
 
-                case CreateOneRequestDto.CreateType.Category:
+                case PointCreateOneRequestDto.CreateType.Category:
                 {
                     var point = new Models.Point
                     {
@@ -501,9 +501,9 @@ namespace Keylol.Controllers.Point
         };
 
         /// <summary>
-        /// CreateOne request DTO
+        /// Point CreateOne request DTO
         /// </summary>
-        public class CreateOneRequestDto
+        public class PointCreateOneRequestDto
         {
             /// <summary>
             /// 开设据点类型

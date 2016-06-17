@@ -21,13 +21,13 @@ namespace Keylol.Controllers.Article
         /// <summary>
         ///     编辑指定文章
         /// </summary>
-        /// <param name="id">文章 Id</param>
+        /// <param name="id">文章 ID</param>
         /// <param name="requestDto">文章相关属性</param>
         [Route("{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
-        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] CreateOrUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
         {
             var article = await _dbContext.Articles.FindAsync(id);
             if (article == null)
