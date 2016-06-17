@@ -290,6 +290,8 @@
     <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
     <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
     <Compile Include="States\Aggregation\User\UserLevel.cs" />
+    <Compile Include="States\Content\Activity\ActivityComment.cs" />
+    <Compile Include="States\Content\Activity\ActivityPage.cs" />
     <Compile Include="States\Content\Article\ArticleComment.cs" />
     <Compile Include="States\Content\Article\ArticlePage.cs" />
     <Compile Include="States\Content\Article\SimplePoint.cs" />

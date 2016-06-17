@@ -7,6 +7,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation;
 using Keylol.States.Aggregation.Point;
 using Keylol.States.Content;
+using Keylol.States.Content.Activity;
 using Keylol.States.Content.Article;
 using Keylol.States.Entrance;
 using Keylol.StateTreeManager;
@@ -52,7 +53,7 @@ namespace Keylol.States
             {
                 case "entrance":
                     root.Entrance = await EntranceLevel.CreateAsync(currentUserId,
-                        States.Entrance.EntrancePage.Auto, dbContext, cachedData);
+                        States.Entrance.EntrancePage.Discovery, dbContext, cachedData);
                     break;
 
                 case "entrance.discovery":
@@ -74,7 +75,7 @@ namespace Keylol.States
                     root.Aggregation = new AggregationLevel
                     {
                         Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
-                            States.Aggregation.Point.EntrancePage.Auto, dbContext, cachedData)
+                            States.Aggregation.Point.EntrancePage.Frontpage, dbContext, cachedData)
                     };
                     break;
 
@@ -130,6 +131,14 @@ namespace Keylol.States
                     root.Content = new ContentLevel
                     {
                         Article = await ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
+                            dbContext, cachedData, userManager)
+                    };
+                    break;
+
+                case "content.activity":
+                    root.Content = new ContentLevel
+                    {
+                        Activity = await ActivityPage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
                             dbContext, cachedData, userManager)
                     };
                     break;

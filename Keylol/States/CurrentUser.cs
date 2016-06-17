@@ -56,7 +56,6 @@ namespace Keylol.States
                 AvatarImage = user.AvatarImage,
                 MessageCount = await dbContext.Messages.CountAsync(m => m.ReceiverId == user.Id && m.Unread),
                 Coupon = user.Coupon,
-                DraftCount = 0, // TODO
                 PreferredPointName = user.PreferredPointName
             };
         }
@@ -90,11 +89,6 @@ namespace Keylol.States
         /// 文券
         /// </summary>
         public int Coupon { get; set; }
-
-        /// <summary>
-        /// 草稿数
-        /// </summary>
-        public int DraftCount { get; set; }
 
         /// <summary>
         /// 据点主显名称偏好

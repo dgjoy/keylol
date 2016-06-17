@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,8 +31,7 @@ namespace Keylol.Models
 
         [Index]
         public int SidForArticle { get; set; }
-
-
+        
         public bool DismissLikeMessage { get; set; } = false;
 
         public bool DismissReplyMessage { get; set; } = false;

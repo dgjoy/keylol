@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models
 {
@@ -39,6 +35,8 @@ namespace Keylol.Models
         public bool DismissLikeMessage { get; set; } = false;
 
         public bool DismissReplyMessage { get; set; } = false;
+
+        public ArchivedState Archived { get; set; } = ArchivedState.None;
 
         public bool Warned { get; set; } = false;
     }

@@ -14,14 +14,13 @@ namespace Keylol.Controllers.Feed
         [Route("{id}")]
         [HttpDelete]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定 Feed 不存在")]
-        public async Task<IHttpActionResult> DeleteOneSlideshowEntry(int id)
+        public async Task<IHttpActionResult> DeleteOne(int id)
         {
             var feed = await _dbContext.Feeds.FindAsync(id);
             if (feed == null)
                 return NotFound();
-            // TODO 重新考虑隐藏还是删除
-//            _dbContext.Feeds.Remove(feed);
-//            await _dbContext.SaveChangesAsync();
+            _dbContext.Feeds.Remove(feed);
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

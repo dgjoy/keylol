@@ -1,4 +1,5 @@
-﻿using Keylol.States.Content.Article;
+﻿using Keylol.States.Content.Activity;
+using Keylol.States.Content.Article;
 
 namespace Keylol.States.Content
 {
@@ -11,5 +12,10 @@ namespace Keylol.States.Content
         /// 文章页
         /// </summary>
         public ArticlePage Article { get; set; }
+
+        /// <summary>
+        /// 动态页
+        /// </summary>
+        public ActivityPage Activity { get; set; }
     }
 }

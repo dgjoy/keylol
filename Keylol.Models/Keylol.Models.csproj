@@ -105,6 +105,10 @@
     <Compile Include="Migrations\201606160950030_RemoveInvitationCode.Designer.cs">
       <DependentUpon>201606160950030_RemoveInvitationCode.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606171352082_ActivityArchived.cs" />
+    <Compile Include="Migrations\201606171352082_ActivityArchived.Designer.cs">
+      <DependentUpon>201606171352082_ActivityArchived.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -797,6 +801,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606160950030_RemoveInvitationCode.resx">
       <DependentUpon>201606160950030_RemoveInvitationCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606171352082_ActivityArchived.resx">
+      <DependentUpon>201606171352082_ActivityArchived.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
