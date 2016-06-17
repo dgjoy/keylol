@@ -109,6 +109,10 @@
     <Compile Include="Migrations\201606171352082_ActivityArchived.Designer.cs">
       <DependentUpon>201606171352082_ActivityArchived.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606171744411_ArticleCommentReplyToComment.cs" />
+    <Compile Include="Migrations\201606171744411_ArticleCommentReplyToComment.Designer.cs">
+      <DependentUpon>201606171744411_ArticleCommentReplyToComment.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -804,6 +808,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606171352082_ActivityArchived.resx">
       <DependentUpon>201606171352082_ActivityArchived.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606171744411_ArticleCommentReplyToComment.resx">
+      <DependentUpon>201606171744411_ArticleCommentReplyToComment.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

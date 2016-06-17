@@ -53,7 +53,7 @@ namespace Keylol.States
             {
                 case "entrance":
                     root.Entrance = await EntranceLevel.CreateAsync(currentUserId,
-                        States.Entrance.EntrancePage.Discovery, dbContext, cachedData);
+                        States.Entrance.EntrancePage.Auto, dbContext, cachedData);
                     break;
 
                 case "entrance.discovery":
@@ -75,7 +75,7 @@ namespace Keylol.States
                     root.Aggregation = new AggregationLevel
                     {
                         Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
-                            States.Aggregation.Point.EntrancePage.Frontpage, dbContext, cachedData)
+                            States.Aggregation.Point.EntrancePage.Auto, dbContext, cachedData)
                     };
                     break;
 

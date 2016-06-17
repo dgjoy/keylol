@@ -59,16 +59,18 @@ namespace Keylol.States.Aggregation.Point
             switch (targetPage)
             {
                 case EntrancePage.Auto:
-                    if (await cachedData.Subscriptions
-                        .IsSubscribedAsync(currentUserId, point.Id, SubscriptionTargetType.Point))
-                    {
-                        result.Current = EntrancePage.Timeline;
-                    }
-                    else
-                    {
-                        result.Frontpage = await FrontpagePage.CreateAsync(point, currentUserId, dbContext, cachedData);
-                        result.Current = EntrancePage.Frontpage;
-                    }
+//                    if (await cachedData.Subscriptions
+//                        .IsSubscribedAsync(currentUserId, point.Id, SubscriptionTargetType.Point))
+//                    {
+//                        result.Current = EntrancePage.Timeline;
+//                    }
+//                    else
+//                    {
+//                        result.Frontpage = await FrontpagePage.CreateAsync(point, currentUserId, dbContext, cachedData);
+//                        result.Current = EntrancePage.Frontpage;
+//                    }
+                    result.Frontpage = await FrontpagePage.CreateAsync(point, currentUserId, dbContext, cachedData);
+                    result.Current = EntrancePage.Frontpage;
                     break;
 
                 case EntrancePage.Frontpage:

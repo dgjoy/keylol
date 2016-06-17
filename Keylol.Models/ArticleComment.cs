@@ -16,6 +16,10 @@ namespace Keylol.Models
         [MaxLength(30000)]
         public string Content { get; set; }
 
+        public string ReplyToCommentId { get; set; }
+
+        public virtual ArticleComment ReplyToComment { get; set; }
+
         [Index]
         public DateTime PublishTime { get; set; } = DateTime.Now;
 
