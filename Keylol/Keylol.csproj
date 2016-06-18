@@ -236,6 +236,7 @@
     <Compile Include="Controllers\Subscription\SubscriptionController.cs" />
     <Compile Include="Controllers\UploadSignature\CreateOne.cs" />
     <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
+    <Compile Include="Controllers\User\UpdateOne.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">

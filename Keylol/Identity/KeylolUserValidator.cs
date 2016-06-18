@@ -75,6 +75,12 @@ namespace Keylol.Identity
             if (userNameOwner != null && userNameOwner.Id != user.Id)
                 return IdentityResult.Failed(Errors.UserNameUsed);
 
+            if (user.Email != null)
+            {
+                var emailOwner = await _userManager.FindByEmailAsync(user.Email);
+                if (emailOwner != null && emailOwner.Id != user.Id)
+                    return IdentityResult.Failed(Errors.EmailUsed);
+            }
             return IdentityResult.Success;
         }
 
