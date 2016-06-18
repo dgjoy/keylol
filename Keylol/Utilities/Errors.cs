@@ -3,7 +3,8 @@
     /// <summary>
     ///     错误常量表
     /// </summary>
-    public static class Errors
+    public static class 
+        Errors
     {
         #region 通用错误
 
@@ -65,6 +66,11 @@
         ///     无效的邮箱
         /// </summary>
         public const string InvalidEmail = "invalid_email";
+
+        /// <summary>
+        /// 邮箱已被使用
+        /// </summary>
+        public const string EmailUsed = "email_used";
 
         /// <summary>
         ///     玩家标签长度不符合规范
