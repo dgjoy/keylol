@@ -74,8 +74,8 @@ namespace Keylol.States.Content.Activity
                     .Where(r => r.UserId == activity.AuthorId && r.SteamAppId == activity.TargetPoint.SteamAppId)
                     .SingleOrDefaultAsync())?.TotalPlayedTime;
             activityPage.AuthorFriendCount = await cachedData.Subscriptions.GetFriendCountAsync(activity.AuthorId);
-            activityPage.AuthorSubscriptionCount =
-                await cachedData.Subscriptions.GetSubscriptionCountAsync(activity.AuthorId);
+            activityPage.AuthorSubscribedUserCount =
+                await cachedData.Subscriptions.GetSubscribedUserCountAsync(activity.AuthorId);
             activityPage.AuthorSubscriberCount =
                 await cachedData.Subscriptions.GetSubscriberCountAsync(activity.AuthorId, SubscriptionTargetType.User);
             activityPage.AuthorSteamProfileName = activity.Author.SteamProfileName;
@@ -157,7 +157,7 @@ namespace Keylol.States.Content.Activity
         /// <summary>
         /// 作者订阅数
         /// </summary>
-        public long? AuthorSubscriptionCount { get; set; }
+        public long? AuthorSubscribedUserCount { get; set; }
 
         /// <summary>
         /// 作者听众数

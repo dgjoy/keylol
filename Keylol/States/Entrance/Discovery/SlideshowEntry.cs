@@ -37,10 +37,10 @@ namespace Keylol.States.Entrance.Discovery
         /// 创建 <see cref="SlideshowEntryList"/>
         /// </summary>
         /// <param name="page">分页页码</param>
-        /// <param name="recordPerPage">每页个数</param>
+        /// <param name="recordsPerPage">每页个数</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <returns><see cref="SlideshowEntryList"/></returns>
-        public static async Task<SlideshowEntryList> CreateAsync(int page, int recordPerPage, KeylolDbContext dbContext)
+        public static async Task<SlideshowEntryList> CreateAsync(int page, int recordsPerPage, KeylolDbContext dbContext)
         {
             return new SlideshowEntryList((await (from feed in dbContext.Feeds
                 where feed.StreamName == SlideshowStream.Name
@@ -50,7 +50,7 @@ namespace Keylol.States.Entrance.Discovery
                     feed.Id,
                     feed.Properties
                 })
-                .TakePage(page, recordPerPage)
+                .TakePage(page, recordsPerPage)
                 .ToListAsync())
                 .Select(f =>
                 {

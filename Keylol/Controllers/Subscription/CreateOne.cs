@@ -28,6 +28,8 @@ namespace Keylol.Controllers.Subscription
                     break;
 
                 case SubscriptionTargetType.User:
+                    if (subscriberId.Equals(targetId, StringComparison.OrdinalIgnoreCase))
+                        return this.BadRequest(nameof(targetId), Errors.Invalid);
                     existed = await _dbContext.Users.AnyAsync(u => u.Id == targetId);
                     break;
 

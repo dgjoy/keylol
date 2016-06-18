@@ -1,4 +1,5 @@
 ﻿using Keylol.States.Aggregation.Point;
+using Keylol.States.Aggregation.User;
 
 namespace Keylol.States.Aggregation
 {
@@ -11,5 +12,10 @@ namespace Keylol.States.Aggregation
         /// 据点层级
         /// </summary>
         public PointLevel Point { get; set; }
+
+        /// <summary>
+        /// 用户层级
+        /// </summary>
+        public UserLevel User { get; set; }
     }
 }

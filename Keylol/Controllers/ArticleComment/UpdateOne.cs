@@ -17,7 +17,7 @@ namespace Keylol.Controllers.ArticleComment
     public partial class ArticleCommentController
     {
         /// <summary>
-        /// 更新指定评论
+        /// 更新指定文章评论
         /// </summary>
         /// <param name="id">评论 ID</param>
         /// <param name="requestDto">请求 DTO</param>
