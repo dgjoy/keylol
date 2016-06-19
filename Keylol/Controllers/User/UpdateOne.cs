@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Threading.Tasks;
@@ -28,42 +27,48 @@ namespace Keylol.Controllers.User
                 return NotFound();
 
             // TODO: 昵称
-            
+
             if (requestDto.Email != null)
                 user.Email = requestDto.Email;
+
             if (requestDto.GamerTag != null)
                 user.GamerTag = requestDto.GamerTag;
+
             if (requestDto.HeaderImage != null)
                 user.HeaderImage = requestDto.HeaderImage;
+
             if (requestDto.AvatarImage != null)
                 user.AvatarImage = requestDto.AvatarImage;
+
             if (requestDto.ThemeColor != null)
-            {
                 user.ThemeColor = requestDto.ThemeColor;
-            }
+
             if (requestDto.LightThemeColor != null)
-            {
                 user.LightThemeColor = requestDto.LightThemeColor;
-            }
+
             if (requestDto.NewPassword != null)
             {
                 if (requestDto.Password == null || !await _userManager.CheckPasswordAsync(user, requestDto.Password))
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
 
-                var resultPassword =
+                var passwordResult =
                     await _userManager.ChangePasswordAsync(user.Id, requestDto.Password, requestDto.NewPassword);
-                if (!resultPassword.Succeeded)
+                if (!passwordResult.Succeeded)
                 {
-                    var error = resultPassword.Errors.First();
-                    switch (error)
+                    var passwordError = passwordResult.Errors.First();
+                    string errorPropertyName;
+                    switch (passwordError)
                     {
                         case Errors.PasswordAllWhitespace:
                         case Errors.PasswordTooShort:
-                            return this.BadRequest(nameof(requestDto), nameof(requestDto.NewPassword), error);
+                            errorPropertyName = nameof(requestDto.NewPassword);
+                            break;
+
                         default:
-                            return this.BadRequest(nameof(requestDto), nameof(requestDto.Password),
-                                Errors.InvalidPassword);
+                            errorPropertyName = nameof(requestDto.Password);
+                            break;
                     }
+                    return this.BadRequest(nameof(requestDto), errorPropertyName, passwordError);
                 }
             }
 
@@ -74,11 +79,9 @@ namespace Keylol.Controllers.User
                 user.OpenInNewWindow = requestDto.OpenInNewWindow.Value;
 
             if (requestDto.PreferredPointName != null)
-            {
                 user.PreferredPointName = requestDto.PreferredPointName.Value
                     ? PreferredPointName.English
                     : PreferredPointName.Chinese;
-            }
 
             if (requestDto.NotifyOnArtivleReplied != null)
                 user.NotifyOnArtivleReplied = requestDto.NotifyOnArtivleReplied.Value;
@@ -110,44 +113,51 @@ namespace Keylol.Controllers.User
             if (requestDto.SteamNotifyOnMissive != null)
                 user.SteamNotifyOnMissive = requestDto.SteamNotifyOnMissive.Value;
 
-
             var updateResult = await _userManager.UpdateAsync(user);
+            if (updateResult.Succeeded) return Ok();
 
-            if (!updateResult.Succeeded)
+            var updateError = updateResult.Errors.First();
+            string propertyName;
+            switch (updateError)
             {
-                var error = updateResult.Errors.First();
-                string errorName;
-                switch (error)
-                {
-                    case Errors.InvalidEmail:
-                        errorName = nameof(requestDto.Email);
-                        break;
+                case Errors.InvalidEmail:
+                    propertyName = nameof(requestDto.Email);
+                    break;
 
-                    case Errors.UserNameInvalidCharacter:
-                    case Errors.UserNameInvalidLength:
-                    case Errors.UserNameUsed:
-                        errorName = nameof(requestDto.UserName);
-                        break;
+                case Errors.UserNameInvalidCharacter:
+                case Errors.UserNameInvalidLength:
+                case Errors.UserNameUsed:
+                    propertyName = nameof(requestDto.UserName);
+                    break;
 
-                    case Errors.EmailUsed:
-                        errorName = nameof(requestDto.Email);
-                        break;
+                case Errors.GamerTagInvalidLength:
+                    propertyName = nameof(requestDto.GamerTag);
+                    break;
 
-                    case Errors.InvalidThemeColor:
-                        errorName = nameof(requestDto.ThemeColor);
-                        break;
+                case Errors.AvatarImageUntrusted:
+                    propertyName = nameof(requestDto.AvatarImage);
+                    break;
 
-                    case Errors.InvalidLightThemeColor:
-                        errorName = nameof(requestDto.LightThemeColor);
-                        break;
+                case Errors.HeaderImageUntrusted:
+                    propertyName = nameof(requestDto.HeaderImage);
+                    break;
 
-                    default:
-                        throw new InvalidOperationException();
-                }
-                return this.BadRequest(nameof(requestDto), errorName, error);
+                case Errors.EmailUsed:
+                    propertyName = nameof(requestDto.Email);
+                    break;
+
+                case Errors.InvalidThemeColor:
+                    propertyName = nameof(requestDto.ThemeColor);
+                    break;
+
+                case Errors.InvalidLightThemeColor:
+                    propertyName = nameof(requestDto.LightThemeColor);
+                    break;
+
+                default:
+                    return this.BadRequest(nameof(requestDto), updateError);
             }
-
-            return Ok();
+            return this.BadRequest(nameof(requestDto), propertyName, updateError);
         }
 
 

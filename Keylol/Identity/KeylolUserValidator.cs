@@ -64,8 +64,8 @@ namespace Keylol.Identity
 
             try
             {
-                if (user.ThemeColor != "")
-                   user.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.ThemeColor));
+                if (user.ThemeColor != string.Empty)
+                    user.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.ThemeColor));
             }
             catch (Exception)
             {
@@ -74,7 +74,7 @@ namespace Keylol.Identity
 
             try
             {
-                if (user.LightThemeColor != "")
+                if (user.LightThemeColor != string.Empty)
                     user.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.LightThemeColor));
             }
             catch (Exception)

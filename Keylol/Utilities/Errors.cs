@@ -3,7 +3,7 @@
     /// <summary>
     ///     错误常量表
     /// </summary>
-    public static class 
+    public static class
         Errors
     {
         #region 通用错误
@@ -171,6 +171,7 @@
         /// 无效的轻主题色
         /// </summary>
         public const string InvalidLightThemeColor = "invalid_light_theme_color";
+
         #endregion
     }
 }
