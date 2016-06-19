@@ -54,7 +54,7 @@ namespace Keylol.States.Entrance.Discovery
                 select article;
             var queryResult = await conditionQuery.Select(a => new
             {
-                TotalCount = returnPageCount ? conditionQuery.Count() : 1,
+                Count = returnPageCount ? conditionQuery.Count() : 1,
                 CoverImage = returnFirstCoverImage ? a.CoverImage : null,
                 a.Id,
                 a.SidForAuthor,
@@ -91,7 +91,7 @@ namespace Keylol.States.Entrance.Discovery
             var firstRecord = queryResult.FirstOrDefault(r => !string.IsNullOrWhiteSpace(r.CoverImage));
             return new Tuple<LatestArticleList, int, string>(
                 result,
-                (int) Math.Ceiling(firstRecord?.TotalCount/(double) RecordsPerPage ?? 1),
+                (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1),
                 firstRecord?.CoverImage);
         }
     }

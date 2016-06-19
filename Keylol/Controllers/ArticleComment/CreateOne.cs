@@ -54,6 +54,7 @@ namespace Keylol.Controllers.ArticleComment
 
             _dbContext.ArticleComments.Add(comment);
             await _dbContext.SaveChangesAsync();
+            await _cachedData.ArticleComments.IncreaseArticleCommentCountAsync(article.Id, 1);
 
             // TODO: 通知推送
 //            var articleAuthor = await _dbContext.Users.Include(u => u.SteamBot)

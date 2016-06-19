@@ -72,13 +72,15 @@ namespace Keylol.Models
 
         #region 邮政中心通知
 
-        public bool NotifyOnArtivleReplied { get; set; } = true;
+        public bool NotifyOnArticleReplied { get; set; } = true;
 
         public bool NotifyOnCommentReplied { get; set; } = true;
 
-        public bool NotifyOnArtivleLiked { get; set; } = true;
+        public bool NotifyOnArticleLiked { get; set; } = true;
 
         public bool NotifyOnCommentLiked    { get; set; } = true;
+
+        public bool NotifyOnSubscribed { get; set; } = true;
 
         #endregion
 
@@ -91,6 +93,8 @@ namespace Keylol.Models
         public bool SteamNotifyOnArticleLiked { get; set; } = true;
 
         public bool SteamNotifyOnCommentLiked { get; set; } = true;
+
+        public bool SteamNotifyOnSubscribed { get; set; } = true;
 
         public bool SteamNotifyOnSpotlighted { get; set; } = true;
 

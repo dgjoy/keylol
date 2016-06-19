@@ -254,8 +254,8 @@
     <Compile Include="Identity\MessageServices\KeylolSmsService.cs" />
     <Compile Include="Identity\KeylolOAuthBearerAuthenticationProvider.cs" />
     <Compile Include="Identity\MessageServices\KeylolSteamChatMessageService.cs" />
+    <Compile Include="Provider\CachedDataProvider\ActivityCommentOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\ArticleCommentOperations.cs" />
-    <Compile Include="Provider\CachedDataProvider\FeedOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\LikeOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\PointOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\SubscriptionOperations.cs" />
@@ -277,7 +277,7 @@
     <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="States\Aggregation\AggregationLevel.cs" />
-    <Compile Include="States\Aggregation\User\Edit\EditPage.cs" />
+    <Compile Include="States\Aggregation\User\EditPage.cs" />
     <Compile Include="States\Aggregation\User\People\PeoplePage.cs" />
     <Compile Include="States\Aggregation\User\People\UserEntry.cs" />
     <Compile Include="States\Aggregation\Point\BasicInfo\BasicInfo.cs" />
@@ -364,7 +364,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="States\Aggregation\User\Edit\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\keylol CN.pubxml" />

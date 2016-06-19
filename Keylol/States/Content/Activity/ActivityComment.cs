@@ -62,21 +62,19 @@ namespace Keylol.States.Content.Activity
             int page, string currentUserId, bool isOperator, bool returnMeta, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            var conditionQuery = from comment in dbContext.ActivityComments
+            var queryResult = await (from comment in dbContext.ActivityComments
                 where comment.ActivityId == activity.Id
                 orderby comment.Sid
-                select comment;
-            var queryResult = await conditionQuery.Select(c => new
-            {
-                TotalCount = returnMeta ? conditionQuery.Count() : 1,
-                Author = c.Commentator,
-                c.Id,
-                c.PublishTime,
-                c.SidForActivity,
-                c.Content,
-                c.Archived,
-                c.Warned
-            }).TakePage(page, RecordsPerPage).ToListAsync();
+                select new
+                {
+                    Author = comment.Commentator,
+                    comment.Id,
+                    comment.PublishTime,
+                    comment.SidForActivity,
+                    comment.Content,
+                    comment.Archived,
+                    comment.Warned
+                }).TakePage(page, RecordsPerPage).ToListAsync();
 
             var result = new ActivityCommentList(queryResult.Count);
             foreach (var c in queryResult)
@@ -105,10 +103,10 @@ namespace Keylol.States.Content.Activity
                 }
                 result.Add(activityComment);
             }
-            var firstRecord = queryResult.FirstOrDefault();
+            var count = await cachedData.ActivityComments.GetActivityCommentCountAsync(activity.Id);
             return new Tuple<ActivityCommentList, int, int>(result,
-                firstRecord?.TotalCount ?? 0,
-                (int) Math.Ceiling(firstRecord?.TotalCount/(double) RecordsPerPage ?? 1));
+                count,
+                count > 0 ? (int) Math.Ceiling(count/(double) RecordsPerPage) : 1);
         }
     }
 

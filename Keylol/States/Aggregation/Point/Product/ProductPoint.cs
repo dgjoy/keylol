@@ -36,7 +36,7 @@ namespace Keylol.States.Aggregation.Point.Product
                 select relationship;
             var query = conditionQuery.OrderByDescending(r => r.Sid).Select(r => new
             {
-                TotalCount = conditionQuery.Count(),
+                Count = conditionQuery.Count(),
                 r.SourcePoint.Id,
                 r.SourcePoint.IdCode,
                 r.SourcePoint.AvatarImage,
@@ -71,7 +71,7 @@ namespace Keylol.States.Aggregation.Point.Product
                 });
             }
             var firstRecord = queryResult.FirstOrDefault();
-            return new Tuple<ProductPointList, int>(result, firstRecord?.TotalCount ?? 0);
+            return new Tuple<ProductPointList, int>(result, firstRecord?.Count ?? 0);
         }
 
         /// <summary>

@@ -29,6 +29,7 @@ namespace Keylol.Provider.CachedDataProvider
             Points = new PointOperations(dbContext, redis);
             Users = new UserOperations(dbContext, redis, Subscriptions);
             ArticleComments = new ArticleCommentOperations(dbContext, redis);
+            ActivityComments = new ActivityCommentOperations(dbContext, redis);
         }
 
         /// <summary>
@@ -52,13 +53,13 @@ namespace Keylol.Provider.CachedDataProvider
         public UserOperations Users { get; set; }
 
         /// <summary>
-        /// Feed
-        /// </summary>
-        public FeedOperations Feeds { get; set; }
-
-        /// <summary>
         /// 文章评论
         /// </summary>
         public ArticleCommentOperations ArticleComments { get; set; }
+
+        /// <summary>
+        /// 动态评论
+        /// </summary>
+        public ActivityCommentOperations ActivityComments { get; set; }
     }
 }

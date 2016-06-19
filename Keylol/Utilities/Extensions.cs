@@ -65,18 +65,6 @@ namespace Keylol.Utilities
         }
 
         /// <summary>
-        ///     设置 X-Total-Record-Count Header
-        /// </summary>
-        /// <param name="headers">HttpResponseHeaders 对象</param>
-        /// <param name="totalCount">要设置的数值</param>
-        public static void SetTotalCount(this HttpResponseHeaders headers, int totalCount)
-        {
-            if (headers.Contains("X-Total-Record-Count"))
-                headers.Remove("X-Total-Record-Count");
-            headers.Add("X-Total-Record-Count", totalCount.ToString());
-        }
-
-        /// <summary>
         ///     判断 Steam 机器人是否属于“在线”状态
         /// </summary>
         /// <param name="bot">Steam 机器人实体</param>

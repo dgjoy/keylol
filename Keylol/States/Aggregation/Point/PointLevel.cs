@@ -84,26 +84,22 @@ namespace Keylol.States.Aggregation.Point
                     break;
 
                 case EntrancePage.Timeline:
-                    break;
+                    throw new NotImplementedException();
 
                 case EntrancePage.EditInfo:
                     if (await StateTreeHelper.CanAccessAsync<PointLevel>(nameof(Edit)))
-                    {
                         result.Edit = new EditLevel
                         {
                             Info = await InfoPage.CreateAsync(point, dbContext)
                         };
-                    }
                     break;
 
                 case EntrancePage.EditStyle:
                     if (await StateTreeHelper.CanAccessAsync<PointLevel>(nameof(Edit)))
-                    {
                         result.Edit = new EditLevel
                         {
                             Style = StylePage.Create(point)
                         };
-                    }
                     break;
 
                 default:

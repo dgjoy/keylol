@@ -45,6 +45,7 @@ namespace Keylol.Controllers.ActivityComment
 
             _dbContext.ActivityComments.Add(comment);
             await _dbContext.SaveChangesAsync();
+            await _cachedData.ActivityComments.IncreaseActivityCommentCountAsync(activity.Id, 1);
 
             // TODO: 楼层回复
 

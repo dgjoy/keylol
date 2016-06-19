@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,37 +8,37 @@ using Keylol.Models.DAL;
 namespace Keylol.Provider.CachedDataProvider
 {
     /// <summary>
-    /// ¸ºÔğÎÄÕÂÆÀÂÛÏà¹Ø²Ù×÷
+    /// è´Ÿè´£åŠ¨æ€è¯„è®ºç›¸å…³æ“ä½œ
     /// </summary>
-    public class ArticleCommentOperations
+    public class ActivityCommentOperations
     {
         private readonly KeylolDbContext _dbContext;
         private readonly RedisProvider _redis;
 
         /// <summary>
-        /// ´´½¨ <see cref="ArticleCommentOperations"/>
+        /// åˆ›å»º <see cref="ActivityCommentOperations"/>
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="redis"><see cref="RedisProvider"/></param>
-        public ArticleCommentOperations(KeylolDbContext dbContext, RedisProvider redis)
+        public ActivityCommentOperations(KeylolDbContext dbContext, RedisProvider redis)
         {
             _dbContext = dbContext;
             _redis = redis;
         }
 
-        private static string ArticleCommentCountCacheKey(string articleId) => $"article-comment-count:{articleId}";
+        private static string ActivityCommentCountCacheKey(string activityId) => $"activity-comment-count:{activityId}";
 
         /// <summary>
-        /// »ñÈ¡Ö¸¶¨ÎÄÕÂµÄÆÀÂÛÊı
+        /// è·å–æŒ‡å®šåŠ¨æ€çš„è¯„è®ºæ•°
         /// </summary>
-        /// <param name="articleId">ÎÄÕÂ ID</param>
-        /// <exception cref="ArgumentNullException"><paramref name="articleId"/> Îª null</exception>
-        /// <returns>ÎÄÕÂµÄÆÀÂÛÊı</returns>
-        public async Task<int> GetArticleCommentCountAsync([NotNull] string articleId)
+        /// <param name="activityId">åŠ¨æ€ ID</param>
+        /// <exception cref="ArgumentNullException"><paramref name="activityId"/> ä¸º null</exception>
+        /// <returns>åŠ¨æ€çš„è¯„è®ºæ•°</returns>
+        public async Task<int> GetActivityCommentCountAsync([NotNull] string activityId)
         {
-            if (articleId == null)
-                throw new ArgumentNullException(nameof(articleId));
-            var cacheKey = ArticleCommentCountCacheKey(articleId);
+            if (activityId == null)
+                throw new ArgumentNullException(nameof(activityId));
+            var cacheKey = ActivityCommentCountCacheKey(activityId);
             var redisDb = _redis.GetDatabase();
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
@@ -47,21 +47,21 @@ namespace Keylol.Provider.CachedDataProvider
                 return (int) cacheResult;
             }
 
-            var commentCount = await _dbContext.ArticleComments
-                .Where(c => c.ArticleId == articleId)
+            var commentCount = await _dbContext.ActivityComments
+                .Where(c => c.ActivityId == activityId)
                 .CountAsync();
             await redisDb.StringSetAsync(cacheKey, commentCount, CachedDataProvider.DefaultTtl);
             return commentCount;
         }
 
         /// <summary>
-        /// Ôö¼ÓÖ¸¶¨ÎÄÕÂµÄÆÀÂÛÊı
+        /// å¢åŠ æŒ‡å®šåŠ¨æ€çš„è¯„è®ºæ•°
         /// </summary>
-        /// <param name="articleId">ÎÄÕÂ ID</param>
-        /// <param name="value">ÊıÁ¿±ä»¯</param>
-        public async Task IncreaseArticleCommentCountAsync([NotNull] string articleId, long value)
+        /// <param name="activityId">åŠ¨æ€ ID</param>
+        /// <param name="value">æ•°é‡å˜åŒ–</param>
+        public async Task IncreaseActivityCommentCountAsync([NotNull] string activityId, long value)
         {
-            var cacheKey = ArticleCommentCountCacheKey(articleId);
+            var cacheKey = ActivityCommentCountCacheKey(activityId);
             var redisDb = _redis.GetDatabase();
             if (await redisDb.KeyExistsAsync(cacheKey))
             {

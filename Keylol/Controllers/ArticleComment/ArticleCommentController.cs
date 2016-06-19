@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using Keylol.Identity;
 using Keylol.Models.DAL;
+using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.Controllers.ArticleComment
 {
@@ -13,6 +14,7 @@ namespace Keylol.Controllers.ArticleComment
     {
         private readonly KeylolDbContext _dbContext;
         private readonly KeylolUserManager _userManager;
+        private readonly CachedDataProvider _cachedData;
 
         /// <summary>
         ///     创建 <see cref="ArticleCommentController" />
@@ -23,10 +25,13 @@ namespace Keylol.Controllers.ArticleComment
         /// <param name="userManager">
         ///     <see cref="KeylolUserManager" />
         /// </param>
-        public ArticleCommentController(KeylolDbContext dbContext, KeylolUserManager userManager)
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        public ArticleCommentController(KeylolDbContext dbContext, KeylolUserManager userManager,
+            CachedDataProvider cachedData)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _cachedData = cachedData;
         }
     }
 }

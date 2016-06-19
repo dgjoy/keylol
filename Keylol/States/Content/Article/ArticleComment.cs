@@ -62,21 +62,19 @@ namespace Keylol.States.Content.Article
             int page, string currentUserId, bool isOperator, bool returnMeta, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            var conditionQuery = from comment in dbContext.ArticleComments
+            var queryResult = await (from comment in dbContext.ArticleComments
                 where comment.ArticleId == article.Id
                 orderby comment.Sid
-                select comment;
-            var queryResult = await conditionQuery.Select(c => new
-            {
-                TotalCount = returnMeta ? conditionQuery.Count() : 1,
-                Author = c.Commentator,
-                c.Id,
-                c.PublishTime,
-                c.SidForArticle,
-                c.Content,
-                c.Archived,
-                c.Warned
-            }).TakePage(page, RecordsPerPage).ToListAsync();
+                select new
+                {
+                    Author = comment.Commentator,
+                    comment.Id,
+                    comment.PublishTime,
+                    comment.SidForArticle,
+                    comment.Content,
+                    comment.Archived,
+                    comment.Warned
+                }).TakePage(page, RecordsPerPage).ToListAsync();
 
             var result = new ArticleCommentList(queryResult.Count);
             foreach (var c in queryResult)
@@ -106,17 +104,17 @@ namespace Keylol.States.Content.Article
                 }
                 result.Add(articleComment);
             }
-            var firstRecord = queryResult.FirstOrDefault();
             var latestCommentTime = returnMeta
                 ? await (from comment in dbContext.ArticleComments
                     where comment.ArticleId == article.Id
                     orderby comment.Sid descending
                     select comment.PublishTime).FirstOrDefaultAsync()
                 : default(DateTime);
+            var count = await cachedData.ArticleComments.GetArticleCommentCountAsync(article.Id);
             return new Tuple<ArticleCommentList, int, DateTime?, int>(result,
-                firstRecord?.TotalCount ?? 0,
+                count,
                 latestCommentTime == default(DateTime) ? (DateTime?) null : latestCommentTime,
-                (int) Math.Ceiling(firstRecord?.TotalCount/(double) RecordsPerPage ?? 1));
+                count > 0 ? (int) Math.Ceiling(count/(double) RecordsPerPage) : 1);
         }
     }
 

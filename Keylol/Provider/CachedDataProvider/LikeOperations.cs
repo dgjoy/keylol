@@ -143,7 +143,7 @@ namespace Keylol.Provider.CachedDataProvider
             return await redisDb.SetContainsAsync(cacheKey, UserLikedTargetCacheValue(targetId, targetType));
         }
 
-        private async Task IncreaseUserLikeCount([NotNull] string userId, long value)
+        private async Task IncreaseUserLikeCountAsync([NotNull] string userId, long value)
         {
             var cacheKey = UserLikeCountCacheKey(userId);
             var redisDb = _redis.GetDatabase();
@@ -156,7 +156,7 @@ namespace Keylol.Provider.CachedDataProvider
             }
         }
 
-        private async Task IncreaseTargetLikeCount([NotNull] string targetId, LikeTargetType targetType, long value)
+        private async Task IncreaseTargetLikeCountAsync([NotNull] string targetId, LikeTargetType targetType, long value)
         {
             var cacheKey = TargetLikeCountCacheKey(targetId, targetType);
             var redisDb = _redis.GetDatabase();
@@ -229,8 +229,8 @@ namespace Keylol.Provider.CachedDataProvider
             var redisDb = _redis.GetDatabase();
             await redisDb.SetAddAsync(UserLikedTargetsCacheKey(operatorId),
                 UserLikedTargetCacheValue(targetId, targetType));
-            await IncreaseUserLikeCount(likeReceiverId, 1);
-            await IncreaseTargetLikeCount(targetId, targetType, 1);
+            await IncreaseUserLikeCountAsync(likeReceiverId, 1);
+            await IncreaseTargetLikeCountAsync(targetId, targetType, 1);
         }
 
         /// <summary>
@@ -295,8 +295,8 @@ namespace Keylol.Provider.CachedDataProvider
             {
                 await redisDb.SetRemoveAsync(cacheKey, UserLikedTargetCacheValue(like.TargetId, like.TargetType));
             }
-            await IncreaseUserLikeCount(likeReceiverId, -likes.Count);
-            await IncreaseTargetLikeCount(targetId, targetType, -likes.Count);
+            await IncreaseUserLikeCountAsync(likeReceiverId, -likes.Count);
+            await IncreaseTargetLikeCountAsync(targetId, targetType, -likes.Count);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace Keylol.States.Entrance.Discovery
                 select point;
             var queryResult = await conditionQuery.Select(p => new
             {
-                TotalCount = returnPageCount ? conditionQuery.Count() : 1,
+                Count = returnPageCount ? conditionQuery.Count() : 1,
                 HeaderImage = returnFirstHeaderImage ? p.HeaderImage : null,
                 p.Id,
                 p.IdCode,
@@ -92,7 +92,7 @@ namespace Keylol.States.Entrance.Discovery
             var firstRecord = queryResult.FirstOrDefault(r => !string.IsNullOrWhiteSpace(r.HeaderImage));
             return new Tuple<OnSalePointList, int, string>(
                 result,
-                (int) Math.Ceiling(firstRecord?.TotalCount/(double) RecordsPerPage ?? 1),
+                (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1),
                 firstRecord?.HeaderImage);
         }
     }

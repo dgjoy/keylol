@@ -55,7 +55,7 @@ namespace Keylol.States.Entrance.Points
                 select point;
             var queryResult = await conditionQuery.Select(p => new
             {
-                TotalCount = returnPageCount ? conditionQuery.Count() : 1,
+                Count = returnPageCount ? conditionQuery.Count() : 1,
                 p.Id,
                 p.IdCode,
                 p.AvatarImage,
@@ -89,7 +89,7 @@ namespace Keylol.States.Entrance.Points
             var firstRecord = queryResult.FirstOrDefault();
             return new Tuple<RecentPointList, int>(
                 result,
-                (int) Math.Ceiling(firstRecord?.TotalCount/(double) RecordsPerPage ?? 1));
+                (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1));
         }
     }
 

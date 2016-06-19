@@ -4,7 +4,6 @@ using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation.User.Dossier;
-using Keylol.States.Aggregation.User.Edit;
 using Keylol.States.Aggregation.User.People;
 using Keylol.States.Aggregation.User.Timeline;
 using Keylol.StateTreeManager;
@@ -87,9 +86,7 @@ namespace Keylol.States.Aggregation.User
 
                 case EntrancePage.Edit:
                     if (await StateTreeHelper.CanAccessAsync<UserLevel>(nameof(Edit)))
-                    {
-                        throw new NotImplementedException();
-                    }
+                        result.Edit = await EditPage.CreateAsync(user, currentUserId, userManager);
                     break;
 
                 default:

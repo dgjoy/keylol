@@ -41,7 +41,7 @@ namespace Keylol.States.Aggregation.User.People
                 case UserRelationship.Friend:
                 {
                     var friendIds = await cachedData.Subscriptions.GetFriendsAsync(userId);
-                    var friendCount = friendIds.Count > 0 ? friendIds.Count : 1;
+                    var friendCount = friendIds.Count;
                     friendIds.Reverse();
                     var skip = RecordsPerPage*(page - 1);
                     friendIds = friendIds.Skip(skip).Take(RecordsPerPage).ToList();
@@ -76,7 +76,7 @@ namespace Keylol.States.Aggregation.User.People
                         });
                     }
                     return new Tuple<UserEntryList, int>(result,
-                        (int) Math.Ceiling(friendCount/(double) RecordsPerPage));
+                        friendCount > 0 ? (int) Math.Ceiling(friendCount/(double) RecordsPerPage) : 1);
                 }
 
                 case UserRelationship.SubscribedUser:
@@ -113,9 +113,8 @@ namespace Keylol.States.Aggregation.User.People
                         });
                     }
                     var count = await cachedData.Subscriptions.GetSubscribedUserCountAsync(userId);
-                    count = count > 0 ? count : 1;
                     return new Tuple<UserEntryList, int>(result,
-                        (int) Math.Ceiling(count/(double) RecordsPerPage));
+                        count > 0 ? (int) Math.Ceiling(count/(double) RecordsPerPage) : 1);
                 }
 
                 case UserRelationship.Subscriber:
@@ -152,9 +151,8 @@ namespace Keylol.States.Aggregation.User.People
                     }
                     var count =
                         await cachedData.Subscriptions.GetSubscriberCountAsync(userId, SubscriptionTargetType.User);
-                    count = count > 0 ? count : 1;
                     return new Tuple<UserEntryList, int>(result,
-                        (int) Math.Ceiling(count/(double) RecordsPerPage));
+                        count > 0 ? (int) Math.Ceiling(count/(double) RecordsPerPage) : 1);
                 }
 
                 default:
