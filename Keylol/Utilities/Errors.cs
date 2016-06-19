@@ -162,6 +162,15 @@
         /// </summary>
         public const string SteamDlcNotSupported = "steam_dlc_not_supported";
 
+        /// <summary>
+        /// 无效的主题色
+        /// </summary>
+        public const string InvalidThemeColor = "invalid_theme_color";
+
+        /// <summary>
+        /// 无效的轻主题色
+        /// </summary>
+        public const string InvalidLightThemeColor = "invalid_light_theme_color";
         #endregion
     }
 }

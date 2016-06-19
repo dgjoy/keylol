@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -60,6 +61,26 @@ namespace Keylol.Identity
 
             if (!Helpers.IsTrustedUrl(user.HeaderImage))
                 return IdentityResult.Failed(Errors.HeaderImageUntrusted);
+
+            try
+            {
+                if (user.ThemeColor != "")
+                   user.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.ThemeColor));
+            }
+            catch (Exception)
+            {
+                return IdentityResult.Failed(Errors.InvalidThemeColor);
+            }
+
+            try
+            {
+                if (user.LightThemeColor != "")
+                    user.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.LightThemeColor));
+            }
+            catch (Exception)
+            {
+                return IdentityResult.Failed(Errors.InvalidLightThemeColor);
+            }
 
             var idCodeOwner = await _userManager.FindByIdCodeAsync(user.IdCode);
             if (idCodeOwner == null && IsIdCodeReserved(user.IdCode))

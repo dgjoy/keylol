@@ -41,60 +41,37 @@ namespace Keylol.Controllers.User
                 user.Email = requestDto.Email;
             if (requestDto.GamerTag != null)
                 user.GamerTag = requestDto.GamerTag;
-            if (requestDto.HeaderImage != null && Helpers.IsTrustedUrl(requestDto.HeaderImage))
+            if (requestDto.HeaderImage != null)
                 user.HeaderImage = requestDto.HeaderImage;
-            if (requestDto.AvatarImage != null && Helpers.IsTrustedUrl(requestDto.AvatarImage))
+            if (requestDto.AvatarImage != null)
                 user.AvatarImage = requestDto.AvatarImage;
             if (requestDto.ThemeColor != null)
             {
-                try
-                {
-                    user.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.ThemeColor));
-                }
-                catch (Exception)
-                {
-                    user.ThemeColor = string.Empty;
-                }
-                
+                user.ThemeColor = requestDto.ThemeColor;
             }
             if (requestDto.LightThemeColor != null)
             {
-                try
-                {
-                    user.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(requestDto.LightThemeColor));
-                }
-                catch (Exception)
-                {
-                    user.LightThemeColor = string.Empty;
-                }
+                user.LightThemeColor = requestDto.LightThemeColor;
             }
             if (requestDto.NewPassword != null)
             {
-                if (requestDto.Password == null)
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.InvalidPassword);
-
-                if (await _userManager.CheckPasswordAsync(user, requestDto.Password))
-                {
-                    var resultPassword =
-                        await _userManager.ChangePasswordAsync(user.Id, requestDto.Password, requestDto.NewPassword);
-                    if (!resultPassword.Succeeded)
-                    {
-                        var error = resultPassword.Errors.First();
-                        switch (error)
-                        {
-                            case Errors.PasswordAllWhitespace:
-                            case Errors.PasswordTooShort:
-                                return this.BadRequest(nameof(requestDto), nameof(requestDto.NewPassword), error);
-                            default:
-                                return this.BadRequest(nameof(requestDto), nameof(requestDto.Password),
-                                    Errors.InvalidPassword);
-                        }
-                    }
-
-                }
-                else
-                {
+                if (requestDto.Password == null ||!await _userManager.CheckPasswordAsync(user, requestDto.Password))
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
+
+                var resultPassword =
+                    await _userManager.ChangePasswordAsync(user.Id, requestDto.Password, requestDto.NewPassword);
+                if (!resultPassword.Succeeded)
+                {
+                    var error = resultPassword.Errors.First();
+                    switch (error)
+                    {
+                        case Errors.PasswordAllWhitespace:
+                        case Errors.PasswordTooShort:
+                            return this.BadRequest(nameof(requestDto), nameof(requestDto.NewPassword), error);
+                        default:
+                            return this.BadRequest(nameof(requestDto), nameof(requestDto.Password),
+                                Errors.InvalidPassword);
+                    }
                 }
             }
            
@@ -121,6 +98,12 @@ namespace Keylol.Controllers.User
                     case Errors.EmailUsed:
                         errorName = nameof(requestDto.Email);
                         break;
+                    case Errors.InvalidThemeColor:
+                        errorName = nameof(requestDto.ThemeColor);
+                        break;
+                    case Errors.InvalidLightThemeColor:
+                        errorName = nameof(requestDto.LightThemeColor);
+                        break;
                     default:
                         throw new InvalidOperationException();
                 }
@@ -139,7 +122,6 @@ namespace Keylol.Controllers.User
             /// <summary>
             /// 昵称
             /// </summary>
-            [MaxLength(16)]
             public string UserName { get; set; }
 
 
@@ -151,32 +133,27 @@ namespace Keylol.Controllers.User
             /// <summary>
             /// 玩家标签
             /// </summary>
-            [MaxLength(100)]
             public string GamerTag { get; set; }
 
 
             /// <summary>
             /// 页眉照片
             /// </summary>
-            [MaxLength(256)]
             public string HeaderImage { get; set; }
 
             /// <summary>
             /// 头像图表
             /// </summary>
-            [MaxLength(256)]
             public string AvatarImage { get; set; }
 
             /// <summary>
             /// 主题色
             /// </summary>
-            [MaxLength(7)]
             public string ThemeColor { get; set; }
 
             /// <summary>
             /// 轻主题色
             /// </summary>
-            [MaxLength(7)]
             public string LightThemeColor { get; set; }
 
             /// <summary>
