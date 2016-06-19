@@ -132,7 +132,7 @@ namespace Keylol.States.Shared
                             ? (bool?) null
                             : await cachedData.Users.IsFriendAsync(currentUserId, a.AuthorId);
                         card.PublishTime = a.PublishTime;
-                        card.ContentType = TimelineCardContentType.Article;
+                        card.ContentType = TimelineCardContentType.Activity;
                         card.ContentId = feed.Entry;
                         card.SidForAuthor = a.SidForAuthor;
                         card.CoverImage = a.CoverImage;
