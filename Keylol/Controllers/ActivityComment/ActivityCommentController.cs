@@ -6,6 +6,8 @@ namespace Keylol.Controllers.ActivityComment
     /// <summary>
     /// 动态评论 Controller
     /// </summary>
+    [Authorize]
+    [RoutePrefix("activity-comment")]
     public partial class ActivityCommentController : ApiController
     {
         private readonly KeylolDbContext _dbContext;
