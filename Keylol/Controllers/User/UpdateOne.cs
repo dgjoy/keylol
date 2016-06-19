@@ -68,10 +68,36 @@ namespace Keylol.Controllers.User
                     user.LightThemeColor = string.Empty;
                 }
             }
-            if (requestDto.NewPassword != null || requestDto.LockoutEnabled != null)
+            if (requestDto.NewPassword != null)
             {
-                //todo password 
+                if (requestDto.Password == null)
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.InvalidPassword);
+
+                if (await _userManager.CheckPasswordAsync(user, requestDto.Password))
+                {
+                    var resultPassword =
+                        await _userManager.ChangePasswordAsync(user.Id, requestDto.Password, requestDto.NewPassword);
+                    if (!resultPassword.Succeeded)
+                    {
+                        var error = resultPassword.Errors.First();
+                        switch (error)
+                        {
+                            case Errors.PasswordAllWhitespace:
+                            case Errors.PasswordTooShort:
+                                return this.BadRequest(nameof(requestDto), nameof(requestDto.NewPassword), error);
+                            default:
+                                return this.BadRequest(nameof(requestDto), nameof(requestDto.Password),
+                                    Errors.InvalidPassword);
+                        }
+                    }
+
+                }
+                else
+                {
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
+                }
             }
+           
             if(requestDto.LockoutEnabled !=null)
                 user.LockoutEnabled = requestDto.LockoutEnabled.Value;
 
@@ -162,6 +188,7 @@ namespace Keylol.Controllers.User
             /// 口令
             /// </summary>
             public string NewPassword { get; set; }
+            
 
             /// <summary>
             /// 登录保护
