@@ -31,8 +31,8 @@ namespace Keylol.States.Aggregation.User.People
         /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns>Item1 表示 <see cref="UserEntryList"/>，Item2 表示总数，Item3 表示总页数</returns>
-        public static async Task<Tuple<UserEntryList, int, int>> CreateAsync(string userId, string currentUserId,
+        /// <returns>Item1 表示 <see cref="UserEntryList"/>，Item2 表示总页数</returns>
+        public static async Task<Tuple<UserEntryList, int>> CreateAsync(string userId, string currentUserId,
             UserRelationship relationship, bool returnCount, int page, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
@@ -41,24 +41,23 @@ namespace Keylol.States.Aggregation.User.People
                 case UserRelationship.Friend:
                 {
                     var friendIds = await cachedData.Subscriptions.GetFriendsAsync(userId);
+                    var friendCount = friendIds.Count > 0 ? friendIds.Count : 1;
                     friendIds.Reverse();
                     var skip = RecordsPerPage*(page - 1);
                     friendIds = friendIds.Skip(skip).Take(RecordsPerPage).ToList();
-                    var conditionQuery = from user in dbContext.Users
-                        where friendIds.Contains(user.Id)
-                        select user;
                     var queryResult = (from id in friendIds
-                        join user in await conditionQuery.Select(u => new
-                        {
-                            Count = returnCount ? conditionQuery.Count() : 1,
-                            u.Id,
-                            u.IdCode,
-                            u.AvatarImage,
-                            u.UserName,
-                            u.GamerTag,
-                            ArticleCount = dbContext.Articles.Count(a => a.AuthorId == u.Id),
-                            ActivityCount = dbContext.Activities.Count(a => a.AuthorId == u.Id)
-                        }).ToListAsync() on id equals user.Id
+                        join user in await (from user in dbContext.Users
+                            where friendIds.Contains(user.Id)
+                            select new
+                            {
+                                user.Id,
+                                user.IdCode,
+                                user.AvatarImage,
+                                user.UserName,
+                                user.GamerTag,
+                                ArticleCount = dbContext.Articles.Count(a => a.AuthorId == user.Id),
+                                ActivityCount = dbContext.Activities.Count(a => a.AuthorId == user.Id)
+                            }).ToListAsync() on id equals user.Id
                         select user).ToList();
 
                     var result = new UserEntryList(queryResult.Count);
@@ -76,24 +75,19 @@ namespace Keylol.States.Aggregation.User.People
                             LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id)
                         });
                     }
-                    var firstRecord = queryResult.FirstOrDefault();
-                    return new Tuple<UserEntryList, int, int>(result,
-                        firstRecord?.Count ?? 0,
-                        (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1));
+                    return new Tuple<UserEntryList, int>(result,
+                        (int) Math.Ceiling(friendCount/(double) RecordsPerPage));
                 }
 
                 case UserRelationship.SubscribedUser:
                 {
-                    var conditionQuery = from subscription in dbContext.Subscriptions
+                    var queryResult = await (from subscription in dbContext.Subscriptions
                         where subscription.SubscriberId == userId &&
                               subscription.TargetType == SubscriptionTargetType.User
-                        select subscription;
-                    var queryResult = await (from subscription in conditionQuery
                         join user in dbContext.Users on subscription.TargetId equals user.Id
                         orderby subscription.Sid descending
                         select new
                         {
-                            Count = returnCount ? conditionQuery.Count() : 1,
                             user.Id,
                             user.IdCode,
                             user.AvatarImage,
@@ -118,30 +112,28 @@ namespace Keylol.States.Aggregation.User.People
                             LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id)
                         });
                     }
-                    var firstRecord = queryResult.FirstOrDefault();
-                    return new Tuple<UserEntryList, int, int>(result,
-                        firstRecord?.Count ?? 0,
-                        (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1));
+                    var count = await cachedData.Subscriptions.GetSubscribedUserCountAsync(userId);
+                    count = count > 0 ? count : 1;
+                    return new Tuple<UserEntryList, int>(result,
+                        (int) Math.Ceiling(count/(double) RecordsPerPage));
                 }
 
                 case UserRelationship.Subscriber:
                 {
-                    var conditionQuery = from subscription in dbContext.Subscriptions
+                    var queryResult = await (from subscription in dbContext.Subscriptions
                         where subscription.TargetId == userId &&
                               subscription.TargetType == SubscriptionTargetType.User
                         orderby subscription.Sid descending
-                        select subscription;
-                    var queryResult = await conditionQuery.Select(s => new
-                    {
-                        Count = returnCount ? conditionQuery.Count() : 1,
-                        s.Subscriber.Id,
-                        s.Subscriber.IdCode,
-                        s.Subscriber.AvatarImage,
-                        s.Subscriber.UserName,
-                        s.Subscriber.GamerTag,
-                        ArticleCount = dbContext.Articles.Count(a => a.AuthorId == s.SubscriberId),
-                        ActivityCount = dbContext.Activities.Count(a => a.AuthorId == s.SubscriberId)
-                    }).TakePage(page, RecordsPerPage).ToListAsync();
+                        select new
+                        {
+                            subscription.Subscriber.Id,
+                            subscription.Subscriber.IdCode,
+                            subscription.Subscriber.AvatarImage,
+                            subscription.Subscriber.UserName,
+                            subscription.Subscriber.GamerTag,
+                            ArticleCount = dbContext.Articles.Count(a => a.AuthorId == subscription.SubscriberId),
+                            ActivityCount = dbContext.Activities.Count(a => a.AuthorId == subscription.SubscriberId)
+                        }).TakePage(page, RecordsPerPage).ToListAsync();
 
                     var result = new UserEntryList(queryResult.Count);
                     foreach (var u in queryResult)
@@ -158,10 +150,11 @@ namespace Keylol.States.Aggregation.User.People
                             LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id)
                         });
                     }
-                    var firstRecord = queryResult.FirstOrDefault();
-                    return new Tuple<UserEntryList, int, int>(result,
-                        firstRecord?.Count ?? 0,
-                        (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1));
+                    var count =
+                        await cachedData.Subscriptions.GetSubscriberCountAsync(userId, SubscriptionTargetType.User);
+                    count = count > 0 ? count : 1;
+                    return new Tuple<UserEntryList, int>(result,
+                        (int) Math.Ceiling(count/(double) RecordsPerPage));
                 }
 
                 default:

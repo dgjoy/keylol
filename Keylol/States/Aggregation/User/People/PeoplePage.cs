@@ -92,22 +92,14 @@ namespace Keylol.States.Aggregation.User.People
                 true, 1, dbContext, cachedData);
             return new PeoplePage
             {
-                FriendCount = friends.Item2,
-                FriendPageCount = friends.Item3,
+                FriendPageCount = friends.Item2,
                 Friends = friends.Item1,
-                SubscribedUserCount = subscribedUsers.Item2,
-                SubscribedUserPageCount = subscribedUsers.Item3,
+                SubscribedUserPageCount = subscribedUsers.Item2,
                 SubscribedUsers = subscribedUsers.Item1,
-                SubscriberCount = subscribers.Item2,
-                SubscriberPageCount = subscribers.Item3,
+                SubscriberPageCount = subscribers.Item2,
                 Subscribers = subscribers.Item1
             };
         }
-
-        /// <summary>
-        /// 好友总数
-        /// </summary>
-        public int? FriendCount { get; set; }
 
         /// <summary>
         /// 好友总页数
@@ -120,11 +112,6 @@ namespace Keylol.States.Aggregation.User.People
         public UserEntryList Friends { get; set; }
 
         /// <summary>
-        /// 订阅的用户总数
-        /// </summary>
-        public int? SubscribedUserCount { get; set; }
-
-        /// <summary>
         /// 订阅的用户总页数
         /// </summary>
         public int? SubscribedUserPageCount { get; set; }
@@ -133,11 +120,6 @@ namespace Keylol.States.Aggregation.User.People
         /// 订阅的用户列表
         /// </summary>
         public UserEntryList SubscribedUsers { get; set; }
-
-        /// <summary>
-        /// 听众总数
-        /// </summary>
-        public int? SubscriberCount { get; set; }
 
         /// <summary>
         /// 听众总页数
