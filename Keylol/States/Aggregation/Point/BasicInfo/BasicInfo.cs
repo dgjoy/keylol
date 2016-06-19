@@ -29,6 +29,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
             var basicInfo = new BasicInfo
             {
                 Id = point.Id,
+                IdCode = point.IdCode,
                 Logo = point.Logo,
                 ThemeColor = point.ThemeColor,
                 LightThemeColor = point.LightThemeColor,
@@ -167,6 +168,11 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         /// ID
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// 识别码
+        /// </summary>
+        public string IdCode { get; set; }
 
         /// <summary>
         /// Logo

@@ -25,6 +25,8 @@ namespace Keylol.States.Aggregation.User.Dossier
             KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
         {
             var subscribedPoints = await SubscribedPointList.CreateAsync(user.Id, 1, 3, true, dbContext);
+            var selectedArticles =
+                await SelectedArticleList.CreateAsync(user.Id, 1, 8, true, currentUserId, dbContext, cachedData);
             var dossierPage = new DossierPage
             {
                 Coupon = user.Coupon,
@@ -35,7 +37,9 @@ namespace Keylol.States.Aggregation.User.Dossier
                 SpotlightCount = await dbContext.Articles.CountAsync(a => a.AuthorId == user.Id && a.Spotlighted),
                 IsOperator = await userManager.IsInRoleAsync(user.Id, KeylolRoles.Operator),
                 SubscribedPointCount = subscribedPoints.Item2,
-                SubscribedPoints = subscribedPoints.Item1
+                SubscribedPoints = subscribedPoints.Item1,
+                ArticleCount = selectedArticles.Item2,
+                SelectedArticles = selectedArticles.Item1
             };
             return dossierPage;
         }
@@ -79,5 +83,15 @@ namespace Keylol.States.Aggregation.User.Dossier
         /// 订阅的据点列表
         /// </summary>
         public SubscribedPointList SubscribedPoints { get; set; }
+
+        /// <summary>
+        /// 发表的文章总数
+        /// </summary>
+        public int? ArticleCount { get; set; }
+
+        /// <summary>
+        /// 文集文章列表
+        /// </summary>
+        public SelectedArticleList SelectedArticles { get; set; }
     }
 }
