@@ -52,6 +52,8 @@ namespace Keylol.Models
 
         public DateTime SteamBindingTime { get; set; }
 
+        public bool OpenInNewWindow { get; set; } = false;
+
         public PreferredPointName PreferredPointName { get; set; } = PreferredPointName.Chinese;
 
         [Index]
@@ -67,8 +69,20 @@ namespace Keylol.Models
         public DateTime LastDailyRewardTime { get; set; } = DateTime.Now;
 
         public int FreeLike { get; set; } = 5;
-        
-        #region Steam bot notification options
+
+        #region 邮政中心通知
+
+        public bool NotifyOnArtivleReplied { get; set; } = true;
+
+        public bool NotifyOnCommentReplied { get; set; } = true;
+
+        public bool NotifyOnArtivleLiked { get; set; } = true;
+
+        public bool NotifyOnCommentLiked    { get; set; } = true;
+
+        #endregion
+
+        #region Steam 机器人通知
 
         public bool SteamNotifyOnArticleReplied { get; set; } = true;
 
@@ -77,6 +91,10 @@ namespace Keylol.Models
         public bool SteamNotifyOnArticleLiked { get; set; } = true;
 
         public bool SteamNotifyOnCommentLiked { get; set; } = true;
+
+        public bool SteamNotifyOnSpotlighted { get; set; } = true;
+
+        public bool SteamNotifyOnMissive { get; set; } = true;
 
         #endregion
     }

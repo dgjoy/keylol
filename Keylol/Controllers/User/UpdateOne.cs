@@ -195,6 +195,8 @@ namespace Keylol.Controllers.User
             /// </summary>
             public bool? LockoutEnabled { get; set; }
 
+
+
         }
 
 

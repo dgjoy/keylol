@@ -113,6 +113,10 @@
     <Compile Include="Migrations\201606171744411_ArticleCommentReplyToComment.Designer.cs">
       <DependentUpon>201606171744411_ArticleCommentReplyToComment.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606191000187_AddUserPreferences.cs" />
+    <Compile Include="Migrations\201606191000187_AddUserPreferences.Designer.cs">
+      <DependentUpon>201606191000187_AddUserPreferences.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -811,6 +815,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606171744411_ArticleCommentReplyToComment.resx">
       <DependentUpon>201606171744411_ArticleCommentReplyToComment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606191000187_AddUserPreferences.resx">
+      <DependentUpon>201606191000187_AddUserPreferences.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
