@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using System.Data.Entity;
-using System.Drawing;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Keylol.Controllers.Point;
 using Keylol.Models;
-using Keylol.ServiceBase;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
 using Swashbuckle.Swagger.Annotations;
 
 
@@ -29,14 +21,14 @@ namespace Keylol.Controllers.User
         [Route("{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "你是从火星来的吗？")]
-        public async Task<IHttpActionResult> UpdateOne(string id,[NotNull] UserUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] UserUpdateOneRequestDto requestDto)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
 
-            //todo 昵称
-            //
+            // TODO: 昵称
+            
             if (requestDto.Email != null)
                 user.Email = requestDto.Email;
             if (requestDto.GamerTag != null)
@@ -55,7 +47,7 @@ namespace Keylol.Controllers.User
             }
             if (requestDto.NewPassword != null)
             {
-                if (requestDto.Password == null ||!await _userManager.CheckPasswordAsync(user, requestDto.Password))
+                if (requestDto.Password == null || !await _userManager.CheckPasswordAsync(user, requestDto.Password))
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
 
                 var resultPassword =
@@ -74,9 +66,50 @@ namespace Keylol.Controllers.User
                     }
                 }
             }
-           
-            if(requestDto.LockoutEnabled !=null)
+
+            if (requestDto.LockoutEnabled != null)
                 user.LockoutEnabled = requestDto.LockoutEnabled.Value;
+
+            if (requestDto.OpenInNewWindow != null)
+                user.OpenInNewWindow = requestDto.OpenInNewWindow.Value;
+
+            if (requestDto.PreferredPointName != null)
+            {
+                user.PreferredPointName = requestDto.PreferredPointName.Value
+                    ? PreferredPointName.English
+                    : PreferredPointName.Chinese;
+            }
+
+            if (requestDto.NotifyOnArtivleReplied != null)
+                user.NotifyOnArtivleReplied = requestDto.NotifyOnArtivleReplied.Value;
+
+            if (requestDto.NotifyOnCommentReplied != null)
+                user.NotifyOnCommentReplied = requestDto.NotifyOnCommentReplied.Value;
+
+            if (requestDto.NotifyOnArtivleLiked != null)
+                user.NotifyOnArtivleLiked = requestDto.NotifyOnArtivleLiked.Value;
+
+            if (requestDto.NotifyOnCommentLiked != null)
+                user.NotifyOnCommentLiked = requestDto.NotifyOnCommentLiked.Value;
+
+            if (requestDto.SteamNotifyOnArticleReplied != null)
+                user.SteamNotifyOnArticleReplied = requestDto.SteamNotifyOnArticleReplied.Value;
+
+            if (requestDto.SteamNotifyOnCommentReplied != null)
+                user.SteamNotifyOnCommentReplied = requestDto.SteamNotifyOnCommentReplied.Value;
+
+            if (requestDto.SteamNotifyOnArticleLiked != null)
+                user.SteamNotifyOnArticleLiked = requestDto.SteamNotifyOnArticleLiked.Value;
+
+            if (requestDto.SteamNotifyOnCommentLiked != null)
+                user.SteamNotifyOnCommentLiked = requestDto.SteamNotifyOnCommentLiked.Value;
+
+            if (requestDto.SteamNotifyOnSpotlighted != null)
+                user.SteamNotifyOnSpotlighted = requestDto.SteamNotifyOnSpotlighted.Value;
+
+            if (requestDto.SteamNotifyOnMissive != null)
+                user.SteamNotifyOnMissive = requestDto.SteamNotifyOnMissive.Value;
+
 
             var updateResult = await _userManager.UpdateAsync(user);
 
@@ -95,15 +128,19 @@ namespace Keylol.Controllers.User
                     case Errors.UserNameUsed:
                         errorName = nameof(requestDto.UserName);
                         break;
+
                     case Errors.EmailUsed:
                         errorName = nameof(requestDto.Email);
                         break;
+
                     case Errors.InvalidThemeColor:
                         errorName = nameof(requestDto.ThemeColor);
                         break;
+
                     case Errors.InvalidLightThemeColor:
                         errorName = nameof(requestDto.LightThemeColor);
                         break;
+
                     default:
                         throw new InvalidOperationException();
                 }
@@ -165,17 +202,72 @@ namespace Keylol.Controllers.User
             /// 口令
             /// </summary>
             public string NewPassword { get; set; }
-            
+
 
             /// <summary>
             /// 登录保护
             /// </summary>
             public bool? LockoutEnabled { get; set; }
 
+            /// <summary>
+            /// 新窗口打开
+            /// </summary>
+            public bool? OpenInNewWindow { get; set; }
 
+            /// <summary>
+            /// 主选外语
+            /// </summary>
+            public bool? PreferredPointName { get; set; }
 
+            /// <summary>
+            /// 邮局，文章收到评论
+            /// </summary>
+            public bool? NotifyOnArtivleReplied { get; set; }
+
+            /// <summary>
+            /// 邮局，评论被回复
+            /// </summary>
+            public bool? NotifyOnCommentReplied { get; set; }
+
+            /// <summary>
+            /// 邮局，文章获得认可
+            /// </summary>
+            public bool? NotifyOnArtivleLiked { get; set; }
+
+            /// <summary>
+            /// 邮局，评论获得认可
+            /// </summary>
+            public bool? NotifyOnCommentLiked { get; set; }
+
+            /// <summary>
+            /// Steam机器人，文章收到评论
+            /// </summary>
+            public bool? SteamNotifyOnArticleReplied { get; set; }
+
+            /// <summary>
+            /// Steam机器人，评论被回复
+            /// </summary>
+            public bool? SteamNotifyOnCommentReplied { get; set; }
+
+            /// <summary>
+            /// Steam机器人，文章获得认可
+            /// </summary>
+            public bool? SteamNotifyOnArticleLiked { get; set; }
+
+            /// <summary>
+            /// Steam机器人，评论获得认可
+            /// </summary>
+            public bool? SteamNotifyOnCommentLiked { get; set; }
+
+            /// <summary>
+            /// Steam机器人，萃选推选
+            /// </summary>
+            public bool? SteamNotifyOnSpotlighted { get; set; }
+
+            /// <summary>
+            /// Steam机器人，系统公函
+            /// </summary>
+            public bool? SteamNotifyOnMissive { get; set; }
         }
-
-
     }
 }
