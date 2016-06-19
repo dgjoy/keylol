@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -13,7 +14,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
     /// <summary>
     /// 近畿据点列表
     /// </summary>
-    public class SimilarPointList : List<SimilarPoint>
+    public class SimilarPointList : List<PointBasicInfo>
     {
         /// <summary>
         /// 获取近畿据点列表
@@ -62,7 +63,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
             var result = new SimilarPointList();
             foreach (var p in queryResult)
             {
-                result.Add(new SimilarPoint
+                result.Add(new PointBasicInfo
                 {
                     Id = p.Id,
                     IdCode = p.IdCode,
@@ -82,56 +83,5 @@ namespace Keylol.States.Aggregation.Point.Frontpage
             }
             return result;
         }
-    }
-
-    /// <summary>
-    /// 近畿据点
-    /// </summary>
-    public class SimilarPoint
-    {
-        /// <summary>
-        /// ID
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 识别码
-        /// </summary>
-        public string IdCode { get; set; }
-
-        /// <summary>
-        /// 头像
-        /// </summary>
-        public string AvatarImage { get; set; }
-
-        /// <summary>
-        /// 中文名
-        /// </summary>
-        public string ChineseName { get; set; }
-
-        /// <summary>
-        /// 英文名
-        /// </summary>
-        public string EnglishName { get; set; }
-
-        /// <summary>
-        /// 标题封面
-        /// </summary>
-        public string TitleCoverImage { get; set; }
-
-        /// <summary>
-        /// 平均评分
-        /// </summary>
-        public double? AverageRating { get; set; }
-
-        /// <summary>
-        /// 是否已订阅
-        /// </summary>
-        public bool? Subscribed { get; set; }
-
-        /// <summary>
-        /// 是否已入库
-        /// </summary>
-        public bool? InLibrary { get; set; }
     }
 }

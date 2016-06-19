@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
 
-namespace Keylol.States.Entrance.Timeline
+namespace Keylol.States.Entrance
 {
     /// <summary>
     /// 入口 - 轨道
@@ -16,11 +17,27 @@ namespace Keylol.States.Entrance.Timeline
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns>是日优惠据点列表</returns>
+        /// <returns><see cref="TimelinePage"/></returns>
         public static async Task<TimelinePage> Get([Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
             return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
+        }
+
+        /// <summary>
+        /// 获取时间轴卡片列表
+        /// </summary>
+        /// <param name="before">起始位置</param>
+        /// <param name="take">获取数量</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="TimelineCardList"/></returns>
+        public static async Task<TimelineCardList> GetCards(int before, int take, [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData)
+        {
+            var currentUserId = StateTreeHelper.GetCurrentUserId();
+            return await TimelineCardList.CreateAsync(SubscriptionStream.Name(currentUserId), currentUserId,
+                take, dbContext, cachedData, before);
         }
 
         /// <summary>
@@ -35,13 +52,14 @@ namespace Keylol.States.Entrance.Timeline
         {
             return new TimelinePage
             {
-                Test = "测试属性"
+                Cards = await TimelineCardList.CreateAsync(SubscriptionStream.Name(currentUserId), currentUserId,
+                    12, dbContext, cachedData)
             };
         }
 
         /// <summary>
-        /// 测试属性
+        /// 卡片列表
         /// </summary>
-        public string Test { get; set; }
+        public TimelineCardList Cards { get; set; }
     }
 }

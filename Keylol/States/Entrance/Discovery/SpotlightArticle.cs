@@ -33,6 +33,7 @@ namespace Keylol.States.Entrance.Discovery
             SpotlightArticleStream.ArticleCategory spotlightArticleCategory, KeylolDbContext dbContext,
             CachedDataProvider cachedData, int before = int.MaxValue)
         {
+            if (take > 50) take = 50;
             var streamName = SpotlightArticleStream.Name(spotlightArticleCategory);
             var queryResult = await (from feed in dbContext.Feeds
                 where feed.StreamName == streamName && feed.Id < before

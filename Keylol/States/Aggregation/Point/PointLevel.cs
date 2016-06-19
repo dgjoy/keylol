@@ -8,7 +8,6 @@ using Keylol.States.Aggregation.Point.Edit;
 using Keylol.States.Aggregation.Point.Frontpage;
 using Keylol.States.Aggregation.Point.Intel;
 using Keylol.States.Aggregation.Point.Product;
-using Keylol.States.Aggregation.Point.Timeline;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -52,7 +51,7 @@ namespace Keylol.States.Aggregation.Point
                 return new PointLevel();
             var result = new PointLevel
             {
-                BasicInfo = await Point.BasicInfo.BasicInfo.CreateAsync(currentUserId, point, dbContext, cachedData)
+                BasicInfo = await Shared.PointBasicInfo.CreateAsync(currentUserId, point, dbContext, cachedData)
             };
             switch (targetPage)
             {
@@ -84,7 +83,8 @@ namespace Keylol.States.Aggregation.Point
                     break;
 
                 case EntrancePage.Timeline:
-                    throw new NotImplementedException();
+                    result.Timeline = await TimelinePage.CreateAsync(point.Id, currentUserId, dbContext, cachedData);
+                    break;
 
                 case EntrancePage.EditInfo:
                     if (await StateTreeHelper.CanAccessAsync<PointLevel>(nameof(Edit)))
@@ -111,7 +111,7 @@ namespace Keylol.States.Aggregation.Point
         /// <summary>
         /// 据点基础信息
         /// </summary>
-        public BasicInfo.BasicInfo BasicInfo { get; set; }
+        public Shared.PointBasicInfo BasicInfo { get; set; }
 
         /// <summary>
         /// 当前页面

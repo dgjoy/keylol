@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -13,7 +14,7 @@ namespace Keylol.States.Entrance.Discovery
     /// <summary>
     /// 精选据点列表
     /// </summary>
-    public class SpotlightPointList : List<SpotlightPoint>
+    public class SpotlightPointList : List<PointBasicInfo>
     {
         private SpotlightPointList(int capacity) : base(capacity)
         {
@@ -83,7 +84,7 @@ namespace Keylol.States.Entrance.Discovery
             var result = new SpotlightPointList(queryResult.Count);
             foreach (var p in queryResult)
             {
-                result.Add(new SpotlightPoint
+                result.Add(new PointBasicInfo
                 {
                     Id = p.Id,
                     IdCode = p.IdCode,
@@ -126,175 +127,5 @@ namespace Keylol.States.Entrance.Discovery
             }
             return result;
         }
-    }
-
-    /// <summary>
-    /// 精选据点
-    /// </summary>
-    public class SpotlightPoint
-    {
-        /// <summary>
-        /// ID
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 识别码
-        /// </summary>
-        public string IdCode { get; set; }
-
-        /// <summary>
-        /// 头像
-        /// </summary>
-        public string AvatarImage { get; set; }
-
-        /// <summary>
-        /// 英文名
-        /// </summary>
-        public string EnglishName { get; set; }
-
-        /// <summary>
-        /// 中文名
-        /// </summary>
-        public string ChineseName { get; set; }
-
-        /// <summary>
-        /// 平均评分
-        /// </summary>
-        public double? AverageRating { get; set; }
-
-        #region 商店信息
-
-        /// <summary>
-        /// Steam App ID
-        /// </summary>
-        public int? SteamAppId { get; set; }
-
-        /// <summary>
-        /// Steam 价格
-        /// </summary>
-        public double? SteamPrice { get; set; }
-
-        /// <summary>
-        /// Steam 折后价格
-        /// </summary>
-        public double? SteamDiscountedPrice { get; set; }
-
-        /// <summary>
-        /// 杉果 Product ID
-        /// </summary>
-        public int? SonkwoProductId { get; set; }
-
-        /// <summary>
-        /// 杉果价格
-        /// </summary>
-        public double? SonkwoPrice { get; set; }
-
-        /// <summary>
-        /// 杉果折后价格
-        /// </summary>
-        public double? SonkwoDiscountedPrice { get; set; }
-
-        /// <summary>
-        /// Uplay 链接
-        /// </summary>
-        public string UplayLink { get; set; }
-
-        /// <summary>
-        /// Uplay 价格
-        /// </summary>
-        public string UplayPrice { get; set; }
-
-        /// <summary>
-        /// Xbox 链接
-        /// </summary>
-        public string XboxLink { get; set; }
-
-        /// <summary>
-        /// Xbox 价格
-        /// </summary>
-        public string XboxPrice { get; set; }
-
-        /// <summary>
-        /// PlayStation 链接
-        /// </summary>
-        public string PlayStationLink { get; set; }
-
-        /// <summary>
-        /// PlayStation 价格
-        /// </summary>
-        public string PlayStationPrice { get; set; }
-
-        /// <summary>
-        /// Origin 链接
-        /// </summary>
-        public string OriginLink { get; set; }
-
-        /// <summary>
-        /// Origin 价格
-        /// </summary>
-        public string OriginPrice { get; set; }
-
-        /// <summary>
-        /// Windows Store 链接
-        /// </summary>
-        public string WindowsStoreLink { get; set; }
-
-        /// <summary>
-        /// Windows Store 价格
-        /// </summary>
-        public string WindowsStorePrice { get; set; }
-
-        /// <summary>
-        /// App Store 链接
-        /// </summary>
-        public string AppStoreLink { get; set; }
-
-        /// <summary>
-        /// App Store 价格
-        /// </summary>
-        public string AppStorePrice { get; set; }
-
-        /// <summary>
-        /// Google Play 链接
-        /// </summary>
-        public string GooglePlayLink { get; set; }
-
-        /// <summary>
-        /// Google Play 价格
-        /// </summary>
-        public string GooglePlayPrice { get; set; }
-
-        /// <summary>
-        /// Gog 链接
-        /// </summary>
-        public string GogLink { get; set; }
-
-        /// <summary>
-        /// GOG 价格
-        /// </summary>
-        public string GogPrice { get; set; }
-
-        /// <summary>
-        /// 战网链接
-        /// </summary>
-        public string BattleNetLink { get; set; }
-
-        /// <summary>
-        /// 战网价格
-        /// </summary>
-        public string BattleNetPrice { get; set; }
-
-        #endregion
-
-        /// <summary>
-        /// 是否已订阅
-        /// </summary>
-        public bool? Subscribed { get; set; }
-
-        /// <summary>
-        /// 是否已入库
-        /// </summary>
-        public bool? InLibrary { get; set; }
     }
 }

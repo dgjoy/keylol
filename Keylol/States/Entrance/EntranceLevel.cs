@@ -4,9 +4,7 @@ using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Entrance.Discovery;
 using Keylol.States.Entrance.Points;
-using Keylol.States.Entrance.Timeline;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance
 {
@@ -67,7 +65,8 @@ namespace Keylol.States.Entrance
                     break;
 
                 case EntrancePage.Timeline:
-                    result.Timeline = await TimelinePage.CreateAsync(currentUserId, dbContext, cachedData);
+                    if (await StateTreeHelper.CanAccessAsync<EntranceLevel>(nameof(Timeline)))
+                        result.Timeline = await TimelinePage.CreateAsync(currentUserId, dbContext, cachedData);
                     break;
 
                 default:
@@ -94,6 +93,7 @@ namespace Keylol.States.Entrance
         /// <summary>
         /// 轨道
         /// </summary>
+        [Authorize]
         public TimelinePage Timeline { get; set; }
     }
 

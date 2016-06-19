@@ -5,7 +5,6 @@ using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation.User.Dossier;
 using Keylol.States.Aggregation.User.People;
-using Keylol.States.Aggregation.User.Timeline;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -82,7 +81,8 @@ namespace Keylol.States.Aggregation.User
                     break;
 
                 case EntrancePage.Timeline:
-                    throw new NotImplementedException();
+                    result.Timeline = await TimelinePage.CreateAsync(user.Id, currentUserId, dbContext, cachedData);
+                    break;
 
                 case EntrancePage.Edit:
                     if (await StateTreeHelper.CanAccessAsync<UserLevel>(nameof(Edit)))

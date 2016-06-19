@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
-using Keylol.States.Aggregation.Point.BasicInfo;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Entrance.Points
@@ -45,8 +45,9 @@ namespace Keylol.States.Entrance.Points
         public static async Task<OutpostPointList> CreateAsync(string currentUserId, int take, KeylolDbContext dbContext,
             CachedDataProvider cachedData, int before = int.MaxValue)
         {
+            if (take > 50) take = 50;
             var queryResult = await (from feed in dbContext.Feeds
-                where feed.StreamName == OutpostStream.Name
+                where feed.StreamName == OutpostStream.Name && feed.Id < before
                 join point in dbContext.Points on feed.Entry equals point.Id
                 orderby feed.Id descending
                 select new
@@ -155,7 +156,7 @@ namespace Keylol.States.Entrance.Points
                     GogPrice = p.GogPrice,
                     BattleNetLink = p.BattleNetLink,
                     BattleNetPrice = p.BattleNetPrice,
-                    Categories = p.Categories.Select(c => new SimplePoint
+                    Categories = p.Categories.Select(c => new PointBasicInfo
                     {
                         IdCode = c.IdCode,
                         ChineseName = string.IsNullOrWhiteSpace(c.ChineseName) ? c.EnglishName : c.ChineseName
@@ -409,7 +410,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// 类型
         /// </summary>
-        public List<SimplePoint> Categories { get; set; }
+        public List<PointBasicInfo> Categories { get; set; }
 
         /// <summary>
         /// 是否已订阅

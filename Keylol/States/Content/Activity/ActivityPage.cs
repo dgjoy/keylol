@@ -8,7 +8,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
-using Keylol.States.Aggregation.Point.BasicInfo;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using SimplePoint = Keylol.States.Content.Article.SimplePoint;
 
@@ -63,7 +63,7 @@ namespace Keylol.States.Content.Activity
                 return activityPage;
 
             activityPage.PointBasicInfo =
-                await BasicInfo.CreateAsync(currentUserId, activity.TargetPoint, dbContext, cachedData);
+                await Shared.PointBasicInfo.CreateAsync(currentUserId, activity.TargetPoint, dbContext, cachedData);
             activityPage.AuthorId = activity.Author.Id;
             activityPage.AuthorIdCode = activity.Author.IdCode;
             activityPage.AuthorAvatarImage = activity.Author.AvatarImage;
@@ -84,9 +84,9 @@ namespace Keylol.States.Content.Activity
                 : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, activity.AuthorId,
                     SubscriptionTargetType.User);
             activityPage.Id = activity.Id;
-            activityPage.PublishTime = activity.PublishTime;
             activityPage.Rejected = activity.Rejected;
             activityPage.Warned = activity.Warned;
+            activityPage.PublishTime = activity.PublishTime;
             activityPage.Rating = activity.Rating;
             activityPage.Content = activity.Content;
             activityPage.CoverImage = activity.CoverImage;
@@ -122,7 +122,7 @@ namespace Keylol.States.Content.Activity
         /// <summary>
         /// 据点基本信息
         /// </summary>
-        public BasicInfo PointBasicInfo { get; set; }
+        public PointBasicInfo PointBasicInfo { get; set; }
 
         /// <summary>
         /// 作者 ID
@@ -180,11 +180,6 @@ namespace Keylol.States.Content.Activity
         public string Id { get; set; }
 
         /// <summary>
-        /// 发布时间
-        /// </summary>
-        public DateTime? PublishTime { get; set; }
-
-        /// <summary>
         /// 是否被封存
         /// </summary>
         public bool? Archived { get; set; }
@@ -198,6 +193,11 @@ namespace Keylol.States.Content.Activity
         /// 是否被警告
         /// </summary>
         public bool? Warned { get; set; }
+
+        /// <summary>
+        /// 发布时间
+        /// </summary>
+        public DateTime? PublishTime { get; set; }
 
         /// <summary>
         /// 评分

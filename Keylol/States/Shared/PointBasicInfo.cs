@@ -8,25 +8,25 @@ using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 
-namespace Keylol.States.Aggregation.Point.BasicInfo
+namespace Keylol.States.Shared
 {
     /// <summary>
     /// 据点基础信息
     /// </summary>
-    public class BasicInfo
+    public class PointBasicInfo
     {
         /// <summary>
-        /// 创建 <see cref="BasicInfo"/>
+        /// 创建 <see cref="PointBasicInfo"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="point">据点对象</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns><see cref="BasicInfo"/></returns>
-        public static async Task<BasicInfo> CreateAsync(string currentUserId, Models.Point point,
+        /// <returns><see cref="PointBasicInfo"/></returns>
+        public static async Task<PointBasicInfo> CreateAsync(string currentUserId, Point point,
             KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            var basicInfo = new BasicInfo
+            var basicInfo = new PointBasicInfo
             {
                 Id = point.Id,
                 IdCode = point.IdCode,
@@ -64,7 +64,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         IdCode = p.IdCode,
                         ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
@@ -82,7 +82,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         IdCode = p.IdCode,
                         ChineseName = p.ChineseName,
@@ -192,7 +192,7 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         /// <summary>
         /// 据点类型
         /// </summary>
-        public PointType Type { get; set; }
+        public PointType? Type { get; set; }
 
         /// <summary>
         /// 头部图
@@ -217,17 +217,22 @@ namespace Keylol.States.Aggregation.Point.BasicInfo
         /// <summary>
         /// 类型
         /// </summary>
-        public List<SimplePoint> Categories { get; set; }
+        public List<PointBasicInfo> Categories { get; set; }
 
         /// <summary>
         /// 厂商
         /// </summary>
-        public List<SimplePoint> Vendors { get; set; }
+        public List<PointBasicInfo> Vendors { get; set; }
 
         /// <summary>
         /// 标题封面
         /// </summary>
         public string TitleCoverImage { get; set; }
+
+        /// <summary>
+        /// 缩略图
+        /// </summary>
+        public string ThumbnailImage { get; set; }
 
         /// <summary>
         /// 当前用户在档时间

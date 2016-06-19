@@ -7,6 +7,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -15,7 +16,7 @@ namespace Keylol.States.Entrance.Discovery
     /// <summary>
     /// 是日优惠据点列表
     /// </summary>
-    public class OnSalePointList : List<OnSalePoint>
+    public class OnSalePointList : List<PointBasicInfo>
     {
         private const int RecordsPerPage = 10;
 
@@ -75,7 +76,7 @@ namespace Keylol.States.Entrance.Discovery
             var result = new OnSalePointList(queryResult.Count);
             foreach (var p in queryResult)
             {
-                result.Add(new OnSalePoint
+                result.Add(new PointBasicInfo
                 {
                     IdCode = p.IdCode,
                     ThumbnailImage = p.ThumbnailImage,
@@ -95,51 +96,5 @@ namespace Keylol.States.Entrance.Discovery
                 (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1),
                 firstRecord?.HeaderImage);
         }
-    }
-
-    /// <summary>
-    /// 是日优惠据点
-    /// </summary>
-    public class OnSalePoint
-    {
-        /// <summary>
-        /// 识别码
-        /// </summary>
-        public string IdCode { get; set; }
-
-        /// <summary>
-        /// 缩略图
-        /// </summary>
-        public string ThumbnailImage { get; set; }
-
-        /// <summary>
-        /// 中文名
-        /// </summary>
-        public string ChineseName { get; set; }
-
-        /// <summary>
-        /// 英文名
-        /// </summary>
-        public string EnglishName { get; set; }
-
-        /// <summary>
-        /// 平均评分
-        /// </summary>
-        public double? AverageRating { get; set; }
-
-        /// <summary>
-        /// Steam 价格
-        /// </summary>
-        public double? SteamPrice { get; set; }
-
-        /// <summary>
-        /// Steam 折后价格
-        /// </summary>
-        public double? SteamDiscountedPrice { get; set; }
-
-        /// <summary>
-        /// 是否已入库
-        /// </summary>
-        public bool? InLibrary { get; set; }
     }
 }

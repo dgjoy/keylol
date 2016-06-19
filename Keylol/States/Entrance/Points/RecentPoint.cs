@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Entrance.Points
 {
     /// <summary>
     /// 最近有动态的据点列表
     /// </summary>
-    public class RecentPointList : List<RecentPoint>
+    public class RecentPointList : List<PointBasicInfo>
     {
         private const int RecordsPerPage = 12;
 
@@ -68,7 +68,7 @@ namespace Keylol.States.Entrance.Points
             var result = new RecentPointList(queryResult.Count);
             foreach (var p in queryResult)
             {
-                result.Add(new RecentPoint
+                result.Add(new PointBasicInfo
                 {
                     Id = p.Id,
                     IdCode = p.IdCode,
@@ -91,56 +91,5 @@ namespace Keylol.States.Entrance.Points
                 result,
                 (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1));
         }
-    }
-
-    /// <summary>
-    /// 最近有动态的据点
-    /// </summary>
-    public class RecentPoint
-    {
-        /// <summary>
-        /// ID
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 识别码
-        /// </summary>
-        public string IdCode { get; set; }
-
-        /// <summary>
-        /// 头像
-        /// </summary>
-        public string AvatarImage { get; set; }
-
-        /// <summary>
-        /// 中文名
-        /// </summary>
-        public string ChineseName { get; set; }
-
-        /// <summary>
-        /// 英文名
-        /// </summary>
-        public string EnglishName { get; set; }
-
-        /// <summary>
-        /// 标题封面
-        /// </summary>
-        public string TitleCoverImage { get; set; }
-
-        /// <summary>
-        /// 平均评分
-        /// </summary>
-        public double? AverageRating { get; set; }
-
-        /// <summary>
-        /// 是否已订阅
-        /// </summary>
-        public bool? Subscribed { get; set; }
-
-        /// <summary>
-        /// 是否已入库
-        /// </summary>
-        public bool? InLibrary { get; set; }
     }
 }

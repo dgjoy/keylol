@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.ServiceBase;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Aggregation.Point.Edit
@@ -56,7 +57,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
@@ -75,7 +76,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
@@ -120,7 +121,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
@@ -140,7 +141,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
@@ -160,7 +161,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
@@ -180,7 +181,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
@@ -210,7 +211,7 @@ namespace Keylol.States.Aggregation.Point.Edit
                         relationship.TargetPoint.EnglishName
                     })
                     .ToListAsync())
-                    .Select(p => new SimplePoint
+                    .Select(p => new PointBasicInfo
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
@@ -305,37 +306,37 @@ namespace Keylol.States.Aggregation.Point.Edit
         /// <summary>
         /// 开发厂据点列表
         /// </summary>
-        public List<SimplePoint> DeveloperPoints { get; set; }
+        public List<PointBasicInfo> DeveloperPoints { get; set; }
 
         /// <summary>
         /// 发行商据点列表
         /// </summary>
-        public List<SimplePoint> PublisherPoints { get; set; }
+        public List<PointBasicInfo> PublisherPoints { get; set; }
 
         /// <summary>
         /// 代理商据点列表
         /// </summary>
-        public List<SimplePoint> ResellerPoints { get; set; }
+        public List<PointBasicInfo> ResellerPoints { get; set; }
 
         /// <summary>
         /// 流派据点列表
         /// </summary>
-        public List<SimplePoint> GenrePoints { get; set; }
+        public List<PointBasicInfo> GenrePoints { get; set; }
 
         /// <summary>
         /// 特性据点列表
         /// </summary>
-        public List<SimplePoint> TagPoints { get; set; }
+        public List<PointBasicInfo> TagPoints { get; set; }
 
         /// <summary>
         /// 系列据点列表
         /// </summary>
-        public List<SimplePoint> SeriesPoints { get; set; }
+        public List<PointBasicInfo> SeriesPoints { get; set; }
 
         /// <summary>
         /// 制造厂据点列表
         /// </summary>
-        public List<SimplePoint> ManufacturerPoints { get; set; }
+        public List<PointBasicInfo> ManufacturerPoints { get; set; }
 
         /// <summary>
         /// 据点创建时间

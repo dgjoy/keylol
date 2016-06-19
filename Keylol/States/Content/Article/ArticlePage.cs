@@ -8,7 +8,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
-using Keylol.States.Aggregation.Point.BasicInfo;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Content.Article
@@ -62,7 +62,7 @@ namespace Keylol.States.Content.Article
                 return articlePage;
 
             articlePage.PointBasicInfo =
-                await BasicInfo.CreateAsync(currentUserId, article.TargetPoint, dbContext, cachedData);
+                await Shared.PointBasicInfo.CreateAsync(currentUserId, article.TargetPoint, dbContext, cachedData);
             articlePage.AuthorId = article.Author.Id;
             articlePage.AuthorIdCode = article.Author.IdCode;
             articlePage.AuthorAvatarImage = article.Author.AvatarImage;
@@ -129,7 +129,7 @@ namespace Keylol.States.Content.Article
         /// <summary>
         /// 据点基本信息
         /// </summary>
-        public BasicInfo PointBasicInfo { get; set; }
+        public PointBasicInfo PointBasicInfo { get; set; }
 
         /// <summary>
         /// 作者 ID

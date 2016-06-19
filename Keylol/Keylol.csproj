@@ -280,11 +280,10 @@
     <Compile Include="States\Aggregation\User\EditPage.cs" />
     <Compile Include="States\Aggregation\User\People\PeoplePage.cs" />
     <Compile Include="States\Aggregation\User\People\UserEntry.cs" />
-    <Compile Include="States\Aggregation\Point\BasicInfo\BasicInfo.cs" />
-    <Compile Include="States\Aggregation\Point\BasicInfo\SimplePoint.cs" />
+    <Compile Include="States\Aggregation\User\TimelinePage.cs" />
+    <Compile Include="States\Shared\PointBasicInfo.cs" />
     <Compile Include="States\Aggregation\Point\Edit\EditLevel.cs" />
     <Compile Include="States\Aggregation\Point\Edit\InfoPage.cs" />
-    <Compile Include="States\Aggregation\Point\Edit\SimplePoint.cs" />
     <Compile Include="States\Aggregation\Point\Edit\StylePage.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\AddictedUser.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\FrontpagePage.cs" />
@@ -298,12 +297,11 @@
     <Compile Include="States\Aggregation\Point\PointLevel.cs" />
     <Compile Include="States\Aggregation\Point\Product\ProductPoint.cs" />
     <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
-    <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
+    <Compile Include="States\Aggregation\Point\TimelinePage.cs" />
     <Compile Include="States\Aggregation\User\BasicInfo.cs" />
     <Compile Include="States\Aggregation\User\Dossier\DossierPage.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SelectedArticle.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SubscribedPoint.cs" />
-    <Compile Include="States\Aggregation\User\Timeline\TimelinePage.cs" />
     <Compile Include="States\Aggregation\User\UserLevel.cs" />
     <Compile Include="States\Content\Activity\ActivityComment.cs" />
     <Compile Include="States\Content\Activity\ActivityPage.cs" />
@@ -311,6 +309,7 @@
     <Compile Include="States\Content\Article\ArticlePage.cs" />
     <Compile Include="States\Content\Article\SimplePoint.cs" />
     <Compile Include="States\Content\ContentLevel.cs" />
+    <Compile Include="States\Shared\TimelineCard.cs" />
     <Compile Include="States\PointQueryResult.cs" />
     <Compile Include="States\PointToCreate.cs" />
     <Compile Include="States\CurrentUser.cs" />
@@ -327,7 +326,7 @@
     <Compile Include="States\Entrance\Points\RecentPlayedPoint.cs" />
     <Compile Include="States\Entrance\Points\RecentPoint.cs" />
     <Compile Include="States\Entrance\Points\SpotlightUser.cs" />
-    <Compile Include="States\Entrance\Timeline\TimelinePage.cs" />
+    <Compile Include="States\Entrance\TimelinePage.cs" />
     <Compile Include="States\RelatedPoint.cs" />
     <Compile Include="States\Root.cs" />
     <Compile Include="StateTreeManager\AppBuilderExtensions.cs" />
@@ -364,9 +363,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="States\Aggregation\User\Edit\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\keylol CN.pubxml" />

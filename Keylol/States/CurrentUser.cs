@@ -56,7 +56,8 @@ namespace Keylol.States
                 AvatarImage = user.AvatarImage,
                 MessageCount = await dbContext.Messages.CountAsync(m => m.ReceiverId == user.Id && m.Unread),
                 Coupon = user.Coupon,
-                PreferredPointName = user.PreferredPointName
+                PreferredPointName = user.PreferredPointName,
+                OpenInNewWindow = user.OpenInNewWindow
             };
         }
 
@@ -94,5 +95,10 @@ namespace Keylol.States
         /// 据点主显名称偏好
         /// </summary>
         public PreferredPointName PreferredPointName { get; set; }
+
+        /// <summary>
+        /// 是否在新窗打开
+        /// </summary>
+        public bool OpenInNewWindow { get; set; }
     }
 }
