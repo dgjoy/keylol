@@ -37,8 +37,8 @@ namespace Keylol.Controllers.ActivityComment
                 ActivityId = activity.Id,
                 CommentatorId = userId,
                 Content = requestDto.Content,
-                SidForActivity = await _dbContext.ArticleComments.Where(c => c.ArticleId == activity.Id)
-                    .Select(c => c.SidForArticle)
+                SidForActivity = await _dbContext.ActivityComments.Where(c => c.ActivityId == activity.Id)
+                    .Select(c => c.SidForActivity)
                     .DefaultIfEmpty(0)
                     .MaxAsync() + 1
             };

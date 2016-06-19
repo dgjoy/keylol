@@ -8,7 +8,7 @@ namespace Keylol.Controllers.ArticleComment
     ///     评论 Controller
     /// </summary>
     [Authorize]
-    [RoutePrefix("comment")]
+    [RoutePrefix("article-comment")]
     public partial class ArticleCommentController : ApiController
     {
         private readonly KeylolDbContext _dbContext;
