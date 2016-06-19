@@ -225,6 +225,7 @@
     <Compile Include="Controllers\Feed\UpdateOneSlideshowEntry.cs" />
     <Compile Include="Controllers\Feed\CreateOneSlideshowEntry.cs" />
     <Compile Include="Controllers\Feed\FeedController.cs" />
+    <Compile Include="Controllers\Like\LikeController.cs" />
     <Compile Include="Controllers\Point\CreateOne.cs" />
     <Compile Include="Controllers\Point\PointController.cs" />
     <Compile Include="Controllers\Point\UpdateOne.cs" />
