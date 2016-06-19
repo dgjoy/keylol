@@ -70,14 +70,23 @@ namespace Keylol.Provider.CachedDataProvider
         }
 
         /// <summary>
-        /// 获取指定用户的订阅数量（关注数量）
+        /// 获取指定用户的关注数量（订阅的用户数）
         /// </summary>
         /// <param name="userId">用户 ID</param>
-        /// <returns>用户的订阅数量</returns>
-        public async Task<long> GetSubscriptionCountAsync([NotNull] string userId)
+        /// <returns>用户的关注数量</returns>
+        public async Task<long> GetSubscribedUserCountAsync([NotNull] string userId)
         {
             var cacheKey = await InitUserSubscribedTargetsAsync(userId);
-            return await _redis.GetDatabase().SetLengthAsync(cacheKey);
+            long count = 0;
+            foreach (var member in await _redis.GetDatabase().SetMembersAsync(cacheKey))
+            {
+                var parts = ((string)member).Split(':');
+                var type = parts[0].ToCase(NameConventionCase.DashedCase, NameConventionCase.PascalCase)
+                    .ToEnum<SubscriptionTargetType>();
+                if (type == SubscriptionTargetType.User)
+                    count++;
+            }
+            return count;
         }
 
         /// <summary>

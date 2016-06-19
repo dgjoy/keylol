@@ -15,7 +15,7 @@ namespace Keylol.Controllers.ArticleComment
     public partial class ArticleCommentController
     {
         /// <summary>
-        ///     创建一条评论
+        ///     创建一条文章评论
         /// </summary>
         /// <param name="requestDto">请求 DTO</param>
         [Route]
@@ -53,7 +53,7 @@ namespace Keylol.Controllers.ArticleComment
             }
 
             _dbContext.ArticleComments.Add(comment);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             // TODO: 通知推送
 //            var articleAuthor = await _dbContext.Users.Include(u => u.SteamBot)

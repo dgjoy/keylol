@@ -10,5 +10,9 @@ namespace Keylol.States.Aggregation.User
     /// </summary>
     public class UserLevel
     {
+        /// <summary>
+        /// 用户基础信息
+        /// </summary>
+        public BasicInfo BasicInfo { get; set; }
     }
 }

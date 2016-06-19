@@ -204,6 +204,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ActivityComment\ActivityCommentController.cs" />
+    <Compile Include="Controllers\ActivityComment\CreateOne.cs" />
     <Compile Include="Controllers\Activity\ActivityController.cs" />
     <Compile Include="Controllers\Activity\CreateOne.cs" />
     <Compile Include="Controllers\Activity\UpdateOne.cs" />
@@ -293,6 +295,10 @@
     <Compile Include="States\Aggregation\Point\Product\ProductPoint.cs" />
     <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
     <Compile Include="States\Aggregation\Point\Timeline\TimelinePage.cs" />
+    <Compile Include="States\Aggregation\User\BasicInfo.cs" />
+    <Compile Include="States\Aggregation\User\Dossier\DossierPage.cs" />
+    <Compile Include="States\Aggregation\User\Dossier\SelectedArticle.cs" />
+    <Compile Include="States\Aggregation\User\Dossier\SubscribedPoint.cs" />
     <Compile Include="States\Aggregation\User\UserLevel.cs" />
     <Compile Include="States\Content\Activity\ActivityComment.cs" />
     <Compile Include="States\Content\Activity\ActivityPage.cs" />
