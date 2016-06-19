@@ -25,6 +25,7 @@ namespace Keylol.States.Aggregation.User
             return new BasicInfo
             {
                 Id = user.Id,
+                IdCode = user.IdCode,
                 HeaderImage = user.HeaderImage,
                 AvatarImage = user.AvatarImage,
                 UserName = user.UserName,
@@ -33,7 +34,7 @@ namespace Keylol.States.Aggregation.User
                 IsFriend = string.IsNullOrWhiteSpace(currentUserId)
                     ? (bool?) null
                     : await cachedData.Users.IsFriendAsync(currentUserId, user.Id),
-                IsSubscribed = string.IsNullOrWhiteSpace(currentUserId)
+                Subscribed = string.IsNullOrWhiteSpace(currentUserId)
                     ? (bool?) null
                     : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, user.Id,
                         SubscriptionTargetType.User),
@@ -49,6 +50,11 @@ namespace Keylol.States.Aggregation.User
         /// ID
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// 识别码
+        /// </summary>
+        public string IdCode { get; set; }
 
         /// <summary>
         /// 页眉图片
@@ -83,7 +89,7 @@ namespace Keylol.States.Aggregation.User
         /// <summary>
         /// 是否已订阅
         /// </summary>
-        public bool? IsSubscribed { get; set; }
+        public bool? Subscribed { get; set; }
 
         /// <summary>
         /// 好友数

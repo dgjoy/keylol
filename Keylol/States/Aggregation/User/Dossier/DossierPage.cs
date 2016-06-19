@@ -4,6 +4,7 @@ using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.StateTreeManager;
 
 namespace Keylol.States.Aggregation.User.Dossier
 {
@@ -12,6 +13,23 @@ namespace Keylol.States.Aggregation.User.Dossier
     /// </summary>
     public class DossierPage
     {
+        /// <summary>
+        /// 获取指定用户的档案页
+        /// </summary>
+        /// <param name="userIdCode">用户识别码</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <returns><see cref="DossierPage"/></returns>
+        public static async Task<DossierPage> Get(string userIdCode, [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
+        {
+            var user = await userManager.FindByIdCodeAsync(userIdCode);
+            if (user == null)
+                return new DossierPage();
+            return await CreateAsync(user, StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager);
+        }
+
         /// <summary>
         /// 创建 <see cref="DossierPage"/>
         /// </summary>

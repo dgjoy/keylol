@@ -6,11 +6,13 @@ using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation;
 using Keylol.States.Aggregation.Point;
+using Keylol.States.Aggregation.User;
 using Keylol.States.Content;
 using Keylol.States.Content.Activity;
 using Keylol.States.Content.Article;
 using Keylol.States.Entrance;
 using Keylol.StateTreeManager;
+using EntrancePage = Keylol.States.Aggregation.User.EntrancePage;
 
 namespace Keylol.States
 {
@@ -34,12 +36,13 @@ namespace Keylol.States
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="pointIdCode">据点识别码</param>
         /// <param name="authorIdCode">作者识别码</param>
+        /// <param name="userIdCode">用户识别码</param>
         /// <param name="sidForAuthor">文章在作者名下的序号</param>
         /// <returns>完整状态树</returns>
         public static async Task<Root> Locate(string state, [Injected] KeylolUserManager userManager,
             [Injected] KeylolDbContext dbContext, [Injected] CouponProvider coupon,
             [Injected] CachedDataProvider cachedData, string pointIdCode = null, string authorIdCode = null,
-            int sidForAuthor = 0)
+            string userIdCode = null, int sidForAuthor = 0)
         {
             var root = new Root();
             var currentUserId = StateTreeHelper.GetCurrentUserId();
@@ -125,6 +128,46 @@ namespace Keylol.States
                     {
                         Point = await PointLevel.CreateAsync(currentUserId, pointIdCode,
                             States.Aggregation.Point.EntrancePage.EditStyle, dbContext, cachedData)
+                    };
+                    break;
+
+                case "aggregation.user":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        User = await UserLevel.CreateAsync(currentUserId, userIdCode, EntrancePage.Auto,
+                            dbContext, cachedData, userManager)
+                    };
+                    break;
+
+                case "aggregation.user.dossier":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        User = await UserLevel.CreateAsync(currentUserId, userIdCode, EntrancePage.Dossier,
+                            dbContext, cachedData, userManager)
+                    };
+                    break;
+
+                case "aggregation.user.people":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        User = await UserLevel.CreateAsync(currentUserId, userIdCode, EntrancePage.People,
+                            dbContext, cachedData, userManager)
+                    };
+                    break;
+
+                case "aggregation.user.timeline":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        User = await UserLevel.CreateAsync(currentUserId, userIdCode, EntrancePage.Timeline,
+                            dbContext, cachedData, userManager)
+                    };
+                    break;
+
+                case "aggregation.user.edit":
+                    root.Aggregation = new AggregationLevel
+                    {
+                        User = await UserLevel.CreateAsync(currentUserId, userIdCode, EntrancePage.Edit,
+                            dbContext, cachedData, userManager)
                     };
                     break;
 

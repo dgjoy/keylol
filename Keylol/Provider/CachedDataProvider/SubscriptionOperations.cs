@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -96,18 +97,28 @@ namespace Keylol.Provider.CachedDataProvider
         /// <returns>用户的好友数量</returns>
         public async Task<long> GetFriendCountAsync([NotNull] string userId)
         {
+            return (await GetFriendsAsync(userId)).Count;
+        }
+
+        /// <summary>
+        /// 获取指定用户的好友列表
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <returns>用户的好友 ID 列表</returns>
+        public async Task<List<string>> GetFriendsAsync([NotNull] string userId)
+        {
             var cacheKey = await InitUserSubscribedTargetsAsync(userId);
-            long count = 0;
+            var result = new List<string>();
             foreach (var member in await _redis.GetDatabase().SetMembersAsync(cacheKey))
             {
-                var parts = ((string) member).Split(':');
+                var parts = ((string)member).Split(':');
                 var type = parts[0].ToCase(NameConventionCase.DashedCase, NameConventionCase.PascalCase)
                     .ToEnum<SubscriptionTargetType>();
                 if (type == SubscriptionTargetType.User &&
                     await IsSubscribedAsync(parts[1], userId, SubscriptionTargetType.User))
-                    count++;
+                    result.Add(parts[1]);
             }
-            return count;
+            return result;
         }
 
         /// <summary>
@@ -151,7 +162,7 @@ namespace Keylol.Provider.CachedDataProvider
         }
 
         /// <summary>
-        /// 添加一个新订阅
+        /// 添加一个新订阅（如果已经订阅，不会进行任何操作）
         /// </summary>
         /// <param name="subscriberId">订阅者 ID</param>
         /// <param name="targetId">目标 ID</param>
@@ -183,7 +194,7 @@ namespace Keylol.Provider.CachedDataProvider
         }
 
         /// <summary>
-        /// 撤销一个订阅者已有的订阅
+        /// 撤销一个订阅者已有的订阅（如果没有订阅，不会进行任何操作）
         /// </summary>
         /// <param name="subscriberId">订阅者 ID</param>
         /// <param name="targetId">目标 ID</param>

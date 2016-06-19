@@ -2,7 +2,6 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation.Point.Edit;
@@ -29,11 +28,10 @@ namespace Keylol.States.Aggregation.Point
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="PointLevel"/></returns>
         public static async Task<PointLevel> Get(string entrance, string pointIdCode,
-            [Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.GetCurrentUserId(),
-                pointIdCode, entrance.ToEnum<EntrancePage>(), dbContext, cachedData);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), pointIdCode,
+                entrance.ToEnum<EntrancePage>(), dbContext, cachedData);
         }
 
         /// <summary>
@@ -51,7 +49,7 @@ namespace Keylol.States.Aggregation.Point
         {
             var point = await dbContext.Points.Where(p => p.IdCode == pointIdCode).SingleOrDefaultAsync();
             if (point == null)
-                return null;
+                return new PointLevel();
             var result = new PointLevel
             {
                 BasicInfo = await Point.BasicInfo.BasicInfo.CreateAsync(currentUserId, point, dbContext, cachedData)
@@ -89,17 +87,23 @@ namespace Keylol.States.Aggregation.Point
                     break;
 
                 case EntrancePage.EditInfo:
-                    result.Edit = new EditLevel
+                    if (await StateTreeHelper.CanAccessAsync<PointLevel>(nameof(Edit)))
                     {
-                        Info = await InfoPage.CreateAsync(point, dbContext)
-                    };
+                        result.Edit = new EditLevel
+                        {
+                            Info = await InfoPage.CreateAsync(point, dbContext)
+                        };
+                    }
                     break;
 
                 case EntrancePage.EditStyle:
-                    result.Edit = new EditLevel
+                    if (await StateTreeHelper.CanAccessAsync<PointLevel>(nameof(Edit)))
                     {
-                        Style = StylePage.Create(point)
-                    };
+                        result.Edit = new EditLevel
+                        {
+                            Style = StylePage.Create(point)
+                        };
+                    }
                     break;
 
                 default:
@@ -151,7 +155,7 @@ namespace Keylol.States.Aggregation.Point
     public enum EntrancePage
     {
         /// <summary>
-        /// 自动（根据登录状态）
+        /// 自动（根据订阅状态）
         /// </summary>
         Auto,
 

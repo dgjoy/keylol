@@ -277,6 +277,9 @@
     <Compile Include="Services\Validators\ClientValidator.cs" />
     <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="States\Aggregation\AggregationLevel.cs" />
+    <Compile Include="States\Aggregation\User\Edit\EditPage.cs" />
+    <Compile Include="States\Aggregation\User\People\PeoplePage.cs" />
+    <Compile Include="States\Aggregation\User\People\UserEntry.cs" />
     <Compile Include="States\Aggregation\Point\BasicInfo\BasicInfo.cs" />
     <Compile Include="States\Aggregation\Point\BasicInfo\SimplePoint.cs" />
     <Compile Include="States\Aggregation\Point\Edit\EditLevel.cs" />
@@ -300,6 +303,7 @@
     <Compile Include="States\Aggregation\User\Dossier\DossierPage.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SelectedArticle.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SubscribedPoint.cs" />
+    <Compile Include="States\Aggregation\User\Timeline\TimelinePage.cs" />
     <Compile Include="States\Aggregation\User\UserLevel.cs" />
     <Compile Include="States\Content\Activity\ActivityComment.cs" />
     <Compile Include="States\Content\Activity\ActivityPage.cs" />
