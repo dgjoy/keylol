@@ -47,11 +47,16 @@ namespace Keylol.States.Aggregation.Point.Frontpage
 
             if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
+                var briefReviews = await BriefReviewList.CreateAsync(point, 1, true, dbContext, cachedData);
+                frontPage.BriefReviewCount = briefReviews.Item2;
+                frontPage.BriefReviewPageCount = briefReviews.Item3;
+                frontPage.BriefReviews = briefReviews.Item1;
                 frontPage.MediaHeaderImage = point.MediaHeaderImage;
                 frontPage.Media = Helpers.SafeDeserialize<List<PointMedia>>(point.Media);
-
                 frontPage.SimilarPoints =
                     await SimilarPointList.CreateAsync(point.Id, currentUserId, 1, dbContext, cachedData);
+                frontPage.SelectedArticles =
+                    await SelectedArticleList.CreateAsync(point.Id, 1, 4, currentUserId, dbContext, cachedData);
             }
 
             if (point.Type == PointType.Game)
@@ -209,6 +214,21 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         public ChineseAvailability ChineseAvailability { get; set; }
 
         /// <summary>
+        /// 简评总数
+        /// </summary>
+        public int? BriefReviewCount { get; set; }
+
+        /// <summary>
+        /// 简评总页数
+        /// </summary>
+        public int? BriefReviewPageCount { get; set; }
+
+        /// <summary>
+        /// 简评列表
+        /// </summary>
+        public BriefReviewList BriefReviews { get; set; }
+
+        /// <summary>
         /// 媒体中心头部图
         /// </summary>
         public string MediaHeaderImage { get; set; }
@@ -227,6 +247,11 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         /// 近畿据点
         /// </summary>
         public SimilarPointList SimilarPoints { get; set; }
+
+        /// <summary>
+        /// 文选
+        /// </summary>
+        public SelectedArticleList SelectedArticles { get; set; }
 
         /// <summary>
         /// 开发的作品
