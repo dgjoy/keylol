@@ -25,12 +25,13 @@ namespace Keylol.States.Shared
         /// <param name="streamName">Feed 流名称</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="take">获取数量</param>
+        /// <param name="ignoreRejected">忽略退稿状态</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="before">起始位置</param>
         /// <returns><see cref="TimelineCardList"/></returns>
         public static async Task<TimelineCardList> CreateAsync(string streamName, string currentUserId, int take,
-            KeylolDbContext dbContext, CachedDataProvider cachedData, int before = int.MaxValue)
+            bool ignoreRejected, KeylolDbContext dbContext, CachedDataProvider cachedData, int before = int.MaxValue)
         {
             if (take > 50) take = 50;
             var feeds = await dbContext.Feeds.Where(f => f.StreamName == streamName && f.Id < before)
@@ -63,13 +64,15 @@ namespace Keylol.States.Shared
                                 article.Subtitle,
                                 article.Rating,
                                 article.AttachedPoints,
+                                article.Archived,
+                                article.Rejected,
                                 PointId = article.TargetPointId,
                                 PointIdCode = article.TargetPoint.IdCode,
                                 PointAvatarImage = article.TargetPoint.AvatarImage,
                                 PointChineseName = article.TargetPoint.ChineseName,
                                 PointEnglishName = article.TargetPoint.EnglishName
                             }).SingleOrDefaultAsync();
-                        if (a == null)
+                        if (a == null || a.Archived != ArchivedState.None || (!ignoreRejected && a.Rejected))
                             continue;
                         card.AuthorIdCode = a.AuthorIdCode;
                         card.AuthorAvatarImage = a.AuthorAvatarImage;
@@ -117,13 +120,15 @@ namespace Keylol.States.Shared
                                 activity.Content,
                                 activity.Rating,
                                 activity.AttachedPoints,
+                                activity.Archived,
+                                activity.Rejected,
                                 PointId = activity.TargetPointId,
                                 PointIdCode = activity.TargetPoint.IdCode,
                                 PointAvatarImage = activity.TargetPoint.AvatarImage,
                                 PointChineseName = activity.TargetPoint.ChineseName,
                                 PointEnglishName = activity.TargetPoint.EnglishName
                             }).SingleOrDefaultAsync();
-                        if (a == null)
+                        if (a == null || a.Archived != ArchivedState.None || (!ignoreRejected && a.Rejected))
                             continue;
                         card.AuthorIdCode = a.AuthorIdCode;
                         card.AuthorAvatarImage = a.AuthorAvatarImage;

@@ -53,7 +53,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         {
             var queryResult = await (from activity in dbContext.Activities
                 where activity.TargetPointId == point.Id && activity.Rating != null &&
-                      activity.Archived == ArchivedState.None
+                      activity.Archived == ArchivedState.None && activity.Rejected == false
                 orderby dbContext.Likes
                     .Count(l => l.TargetId == activity.Id && l.TargetType == LikeTargetType.Activity) descending
                 select new

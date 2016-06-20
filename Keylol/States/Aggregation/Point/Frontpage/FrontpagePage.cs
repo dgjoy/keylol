@@ -136,6 +136,11 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                 frontPage.PlatformProducts = platformProducts.Item1;
             }
 
+            var latestArticles = await LatestArticleList.CreateAsync(point.Id, 1, true, true, dbContext, cachedData);
+            frontPage.LatestArticleHeaderImage = latestArticles.Item3;
+            frontPage.LatestArticlePageCount = latestArticles.Item2;
+            frontPage.LatestArticles = latestArticles.Item1;
+
             return frontPage;
         }
 
@@ -252,6 +257,21 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         /// 文选
         /// </summary>
         public SelectedArticleList SelectedArticles { get; set; }
+
+        /// <summary>
+        /// 最新文章头部图
+        /// </summary>
+        public string LatestArticleHeaderImage { get; set; }
+
+        /// <summary>
+        /// 最新文章总页数
+        /// </summary>
+        public int LatestArticlePageCount { get; set; }
+
+        /// <summary>
+        /// 最新文章列表
+        /// </summary>
+        public LatestArticleList LatestArticles { get; set; }
 
         /// <summary>
         /// 开发的作品

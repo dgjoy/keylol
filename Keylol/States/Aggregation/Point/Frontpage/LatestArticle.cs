@@ -9,7 +9,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
-namespace Keylol.States.Entrance.Discovery
+namespace Keylol.States.Aggregation.Point.Frontpage
 {
     /// <summary>
     /// 最新文章列表
@@ -23,33 +23,38 @@ namespace Keylol.States.Entrance.Discovery
         }
 
         /// <summary>
-        /// 获取指定页码的最新文章列表
+        /// 获取指定据点的最新文章列表
         /// </summary>
+        /// <param name="pointId">据点 ID</param>
         /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="LatestArticleList"/></returns>
-        public static async Task<LatestArticleList> Get(int page, [Injected] KeylolDbContext dbContext,
+        public static async Task<LatestArticleList> Get(string pointId, int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return (await CreateAsync(page, false, false, dbContext, cachedData)).Item1;
+            return (await CreateAsync(pointId, page, false, false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
         /// 创建 <see cref="LatestArticleList"/>
         /// </summary>
+        /// <param name="pointId">据点 ID</param>
         /// <param name="page">分页页码</param>
         /// <param name="returnPageCount">是否返回总页数</param>
         /// <param name="returnFirstCoverImage">是否返回第一篇文章封面图</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns>Item1 表示 <see cref="LatestArticleList"/>，Item2 表示总页数，Item3 表示第一篇文章封面图</returns>
-        public static async Task<Tuple<LatestArticleList, int, string>> CreateAsync(int page, bool returnPageCount,
-            bool returnFirstCoverImage, KeylolDbContext dbContext, CachedDataProvider cachedData)
+        public static async Task<Tuple<LatestArticleList, int, string>> CreateAsync(string pointId, int page,
+            bool returnPageCount, bool returnFirstCoverImage, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            var conditionQuery = from article in dbContext.Articles
-                where article.Rejected == false && article.Archived == ArchivedState.None
-                orderby article.Sid descending
+            var streamName = PointStream.Name(pointId);
+            var conditionQuery = from feed in dbContext.Feeds
+                where feed.StreamName == streamName && feed.EntryType == FeedEntryType.ArticleId
+                join article in dbContext.Articles on feed.Entry equals article.Id
+                where article.Archived == ArchivedState.None && article.Rejected == false
+                orderby feed.Id descending
                 select article;
             var queryResult = await conditionQuery.Select(a => new
             {

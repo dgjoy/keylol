@@ -51,7 +51,7 @@ namespace Keylol.States.Aggregation.User.Dossier
             CachedDataProvider cachedData)
         {
             var queryResult = await (from article in dbContext.Articles
-                where article.AuthorId == userId
+                where article.AuthorId == userId && article.Archived == ArchivedState.None
                 orderby dbContext.Likes
                     .Count(l => l.TargetId == article.Id && l.TargetType == LikeTargetType.Article) descending
                 select new

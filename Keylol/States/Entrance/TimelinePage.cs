@@ -37,7 +37,7 @@ namespace Keylol.States.Entrance
         {
             var currentUserId = StateTreeHelper.GetCurrentUserId();
             return await TimelineCardList.CreateAsync(SubscriptionStream.Name(currentUserId), currentUserId,
-                take, dbContext, cachedData, before);
+                take, false, dbContext, cachedData, before);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Keylol.States.Entrance
             return new TimelinePage
             {
                 Cards = await TimelineCardList.CreateAsync(SubscriptionStream.Name(currentUserId), currentUserId,
-                    12, dbContext, cachedData)
+                    12, false, dbContext, cachedData)
             };
         }
 

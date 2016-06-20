@@ -47,7 +47,8 @@ namespace Keylol.States.Aggregation.Point.Frontpage
             int recordsPerPage, string currentUserId, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var queryResult = await (from article in dbContext.Articles
-                where article.TargetPointId == pointId
+                where article.TargetPointId == pointId && article.Archived == ArchivedState.None &&
+                      article.Rejected == false
                 orderby dbContext.Likes
                     .Count(l => l.TargetId == article.Id && l.TargetType == LikeTargetType.Article) descending
                 select new

@@ -43,7 +43,7 @@ namespace Keylol.States.Aggregation.Point
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
             return await TimelineCardList.CreateAsync(PointStream.Name(pointId), StateTreeHelper.GetCurrentUserId(),
-                take, dbContext, cachedData, before);
+                take, false, dbContext, cachedData, before);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Keylol.States.Aggregation.Point
             return new TimelinePage
             {
                 Cards = await TimelineCardList.CreateAsync(PointStream.Name(pointId), currentUserId,
-                    12, dbContext, cachedData)
+                    12, false, dbContext, cachedData)
             };
         }
 

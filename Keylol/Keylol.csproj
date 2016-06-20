@@ -279,6 +279,7 @@
     <Compile Include="Provider\GeetestProvider.cs" />
     <Compile Include="States\Aggregation\AggregationLevel.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\BriefReview.cs" />
+    <Compile Include="States\Aggregation\Point\Frontpage\LatestArticle.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\SelectedArticle.cs" />
     <Compile Include="States\Aggregation\User\EditPage.cs" />
     <Compile Include="States\Aggregation\User\People\PeoplePage.cs" />

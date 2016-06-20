@@ -38,6 +38,7 @@ namespace Keylol.States.Entrance.Discovery
             var queryResult = await (from feed in dbContext.Feeds
                 where feed.StreamName == streamName && feed.Id < before
                 join article in dbContext.Articles on feed.Entry equals article.Id
+                where article.Rejected == false && article.Archived == ArchivedState.None
                 orderby feed.Id descending
                 select new
                 {
