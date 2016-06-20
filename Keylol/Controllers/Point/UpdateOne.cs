@@ -196,6 +196,19 @@ namespace Keylol.Controllers.Point
                 if (requestDto.MediaHeaderImage != null && Helpers.IsTrustedUrl(requestDto.MediaHeaderImage))
                     point.MediaHeaderImage = requestDto.MediaHeaderImage;
 
+                if (requestDto.Media != null)
+                {
+                    var media = requestDto.Media;
+                    // 检测 Video, Screenshot, Artwork 是否是可信来源
+                    Uri uriReslult;
+                    if (requestDto.Media.Any(m => m.Type == PointMedia.MediaType.Video
+                        ? !Uri.TryCreate(m.Link, UriKind.Absolute, out uriReslult)
+                        : !Helpers.IsTrustedUrl(m.Link, false)))
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.Media), Errors.Invalid);
+                    // 序列化成 JSON 存储数据库
+                    point.Media = JsonConvert.SerializeObject(media);
+                }
+
                 if (requestDto.TitleCoverImage != null && Helpers.IsTrustedUrl(requestDto.TitleCoverImage))
                     point.TitleCoverImage = requestDto.TitleCoverImage;
 
@@ -708,6 +721,11 @@ namespace Keylol.Controllers.Point
             /// 媒体中心封面
             /// </summary>
             public string MediaHeaderImage { get; set; }
+
+            /// <summary>
+            /// 媒体中心媒体链接
+            /// </summary>
+            public List<PointMedia> Media { get; set; }
 
             /// <summary>
             /// 标题封面
