@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
-using JetBrains.Annotations;
 using Keylol.Models;
-using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 
 namespace Keylol.Controllers.Like
@@ -12,13 +10,14 @@ namespace Keylol.Controllers.Like
         /// <summary>
         ///     创建一个认可
         /// </summary>
-        /// <param name="requestDto">认可相关属性</param>
+        /// <param name="targetId">目标 ID</param>
+        /// <param name="targetType">目标类型</param>
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateOne([NotNull] LikeCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne(string targetId, LikeTargetType targetType)
         {
             var operatorId = User.Identity.GetUserId();
-            await _cachedData.Likes.AddAsync(operatorId, requestDto.TargetId, requestDto.TargetType);
+            await _cachedData.Likes.AddAsync(operatorId, targetId, targetType);
             return Ok();
 
 //            if (@operator.FreeLike <= 0 && !await _coupon.CanTriggerEventAsync(operatorId, CouponEvent.发出认可))
@@ -138,23 +137,6 @@ namespace Keylol.Controllers.Like
 //            _dbContext.Likes.Add(like);
 //            await _dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
 //            return Created($"like/{like.Id}", free ? "Free" : string.Empty);
-        }
-
-        /// <summary>
-        ///     请求 DTO
-        /// </summary>
-        public class LikeCreateOneRequestDto
-        {
-            /// <summary>
-            ///     目标 Id
-            /// </summary>
-            [Required]
-            public string TargetId { get; set; }
-
-            /// <summary>
-            ///     目标类型
-            /// </summary>
-            public LikeTargetType TargetType { get; set; }
         }
     }
 }
