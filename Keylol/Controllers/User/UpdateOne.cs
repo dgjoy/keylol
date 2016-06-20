@@ -29,7 +29,8 @@ namespace Keylol.Controllers.User
             if (user == null)
                 return NotFound();
 
-            if (User.Identity.GetUserId() != user.Id && !User.IsInRole(KeylolRoles.Operator))
+            var currentUserId = User.Identity.GetUserId();
+            if (currentUserId != user.Id && !User.IsInRole(KeylolRoles.Operator))
                 return Unauthorized();
 
             if (requestDto.Email != null)
@@ -52,11 +53,11 @@ namespace Keylol.Controllers.User
 
             if (requestDto.NewPassword != null)
             {
-                if (requestDto.Password == null || !await _userManager.CheckPasswordAsync(user, requestDto.Password))
+                if (currentUserId == user.Id &&
+                    (requestDto.Password == null || !await _userManager.CheckPasswordAsync(user, requestDto.Password)))
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.Password), Errors.Invalid);
 
-                var passwordResult =
-                    await _userManager.ChangePasswordAsync(user.Id, requestDto.Password, requestDto.NewPassword);
+                var passwordResult = await _userManager.ChangePasswordAsync(user, requestDto.NewPassword, false);
                 if (!passwordResult.Succeeded)
                 {
                     var passwordError = passwordResult.Errors.First();

@@ -125,6 +125,10 @@
     <Compile Include="Migrations\201606191953290_AddUserNotifyOnSubscribed.Designer.cs">
       <DependentUpon>201606191953290_AddUserNotifyOnSubscribed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606201222227_MessageCountWithMoreIndexes.cs" />
+    <Compile Include="Migrations\201606201222227_MessageCountWithMoreIndexes.Designer.cs">
+      <DependentUpon>201606201222227_MessageCountWithMoreIndexes.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -832,6 +836,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606191953290_AddUserNotifyOnSubscribed.resx">
       <DependentUpon>201606191953290_AddUserNotifyOnSubscribed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606201222227_MessageCountWithMoreIndexes.resx">
+      <DependentUpon>201606201222227_MessageCountWithMoreIndexes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

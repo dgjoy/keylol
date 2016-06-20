@@ -112,5 +112,20 @@ namespace Keylol.Identity
                 await SteamChatMessageService.SendAsync(msg);
             }
         }
+
+        /// <summary>
+        /// 修改指定用户的密码
+        /// </summary>
+        /// <param name="user">用户</param>
+        /// <param name="newPassword">新密码</param>
+        /// <param name="updateUser">是否执行 UpdateAsync(user)</param>
+        /// <returns>修改结果，<see cref="IdentityResult"/></returns>
+        public async Task<IdentityResult> ChangePasswordAsync(KeylolUser user, string newPassword,
+            bool updateUser = true)
+        {
+            var userPasswordStore = Store as IUserPasswordStore<KeylolUser, string>;
+            var result = await UpdatePassword(userPasswordStore, user, newPassword);
+            return result.Succeeded && updateUser ? await UpdateAsync(user) : result;
+        }
     }
 }

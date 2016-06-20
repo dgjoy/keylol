@@ -42,7 +42,9 @@ namespace Keylol.States.Aggregation.User
                 SubscribedUserCount = await cachedData.Subscriptions.GetSubscribedUserCountAsync(user.Id),
                 SubscriberCount =
                     await cachedData.Subscriptions.GetSubscriberCountAsync(user.Id, SubscriptionTargetType.User),
-                SteamProfileName = user.SteamProfileName
+                SteamProfileName = user.SteamProfileName,
+                ThemeColor = user.ThemeColor,
+                LightThemeColor = user.LightThemeColor
             };
         }
 
@@ -110,5 +112,15 @@ namespace Keylol.States.Aggregation.User
         /// Steam 昵称
         /// </summary>
         public string SteamProfileName { get; set; }
+
+        /// <summary>
+        /// 主题色
+        /// </summary>
+        public string ThemeColor { get; set; }
+
+        /// <summary>
+        /// 轻主题色
+        /// </summary>
+        public string LightThemeColor { get; set; }
     }
 }

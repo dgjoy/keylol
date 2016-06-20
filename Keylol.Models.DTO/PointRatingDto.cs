@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace Keylol.Models.DTO
 {
@@ -40,20 +39,9 @@ namespace Keylol.Models.DTO
         public int FiveStarCount { get; set; }
 
         /// <summary>
-        /// 总实际评分个数（每个用户只算一个实际评分，取其打出的所有评分的平均值）
+        /// 平均评分，如果评价不足，使用 null
         /// </summary>
         [DataMember]
-        public int TotalCount { get; set; }
-
-        /// <summary>
-        /// 总实际得分
-        /// </summary>
-        [DataMember]
-        public int TotalScore { get; set; }
-
-        /// <summary>
-        /// 平均评分，如果评价不足，返回 <c>null</c>
-        /// </summary>
-        public double? AverageRating => TotalCount < 5 ? (double?) null : Math.Round(TotalScore/(double) TotalCount, 1);
+        public double? AverageRating { get; set; }
     }
 }

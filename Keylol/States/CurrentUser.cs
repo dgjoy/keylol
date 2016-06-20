@@ -50,6 +50,7 @@ namespace Keylol.States
 
             return new CurrentUser
             {
+                Id = user.Id,
                 UserName = user.UserName,
                 IdCode = user.IdCode,
                 Roles = (await userManager.GetRolesAsync(user.Id)).ToList(),
@@ -60,6 +61,11 @@ namespace Keylol.States
                 OpenInNewWindow = user.OpenInNewWindow
             };
         }
+
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
 
         /// <summary>
         /// 用户名（昵称）

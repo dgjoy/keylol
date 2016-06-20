@@ -21,6 +21,7 @@ namespace Keylol.Models
         [Index]
         public PointType Type { get; set; }
 
+        [Index]
         public DateTime CreateTime { get; set; } = DateTime.Now;
 
         [Index]
@@ -156,48 +157,35 @@ namespace Keylol.Models
         #endregion
 
         #region 特性属性
-
-        [Index]
+        
         public bool MultiPlayer { get; set; }
-
-        [Index]
+        
         public bool SinglePlayer { get; set; }
-
-        [Index]
+        
         public bool Coop { get; set; }
-
-        [Index]
+        
         public bool CaptionsAvailable { get; set; }
-
-        [Index]
+        
         public bool CommentaryAvailable { get; set; }
-
-        [Index]
+        
         public bool IncludeLevelEditor { get; set; }
-
-        [Index]
+        
         public bool Achievements { get; set; }
-
-        [Index]
+        
         public bool Cloud { get; set; }
-
-        [Index]
+        
         public bool LocalCoop { get; set; }
-
-        [Index]
+        
         public bool SteamTradingCards { get; set; }
-
-        [Index]
+        
         public bool SteamWorkshop { get; set; }
-
-        [Index]
+        
         public bool InAppPurchases { get; set; }
 
         #endregion
 
         public DateTime? PublishDate { get; set; }
-
-        [Index]
+        
         public DateTime? ReleaseDate { get; set; }
 
         public DateTime? PreOrderDate { get; set; }

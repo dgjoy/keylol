@@ -87,7 +87,6 @@ namespace Keylol.States.Shared
                         card.CoverImage = a.CoverImage;
                         card.Title = a.Title;
                         card.Subtitle = a.Subtitle;
-                        card.Rating = a.Rating;
                         card.AttachedPointCount = Helpers.SafeDeserialize<List<string>>(a.AttachedPoints)?.Count + 1 ??
                                                   1;
                         card.LikeCount =

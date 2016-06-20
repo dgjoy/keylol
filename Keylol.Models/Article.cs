@@ -53,6 +53,7 @@ namespace Keylol.Models
         /// <summary>
         /// 只有在收稿据点为游戏、硬件类型时填写
         /// </summary>
+        [Index]
         public int? Rating { get; set; }
 
         /// <summary>

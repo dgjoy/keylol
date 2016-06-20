@@ -17,6 +17,7 @@ namespace Keylol.Models
         [Index]
         public int SteamAppId { get; set; }
 
+        [Index]
         public double TotalPlayedTime { get; set; } = 0;
 
         [Index]

@@ -12,6 +12,7 @@ namespace Keylol.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Sid { get; set; }
 
+        [Index]
         public PointRelationshipType Relationship { get; set; }
 
         /// <summary>

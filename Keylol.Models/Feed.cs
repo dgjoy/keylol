@@ -13,8 +13,10 @@ namespace Keylol.Models
         [MaxLength(128)]
         public string StreamName { get; set; }
 
+        [Index]
         public DateTime Time { get; set; } = DateTime.Now;
 
+        [Index]
         public FeedEntryType EntryType { get; set; }
 
         [Index]

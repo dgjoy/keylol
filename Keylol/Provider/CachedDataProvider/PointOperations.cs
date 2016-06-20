@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Keylol.Models.DAL;
@@ -13,7 +16,7 @@ namespace Keylol.Provider.CachedDataProvider
     {
         private readonly KeylolDbContext _dbContext;
         private readonly RedisProvider _redis;
-        private readonly Random _random = new Random();
+        private static readonly TimeSpan RatingUpdatePeriod = TimeSpan.FromHours(12);
 
         /// <summary>
         /// ´´½¨ <see cref="PointOperations"/>
@@ -43,24 +46,61 @@ namespace Keylol.Provider.CachedDataProvider
             var redisDb = _redis.GetDatabase();
             var cacheResult = await redisDb.StringGetAsync(cacheKey);
             if (cacheResult.HasValue)
-            {
-                await redisDb.KeyExpireAsync(cacheKey, CachedDataProvider.DefaultTtl);
                 return RedisProvider.Deserialize<PointRatingsDto>(cacheResult);
-            }
 
-            // TODO
-            var rating = new PointRatingsDto
+            var ratings = new PointRatingsDto();
+            var userRatings = new Dictionary<string, UserRating>();
+            foreach (var ratingEntry in await _dbContext.Articles
+                .Where(a => a.TargetPointId == pointId && a.Rating != null)
+                .Select(a => new {a.AuthorId, a.Rating})
+                .Union(_dbContext.Activities
+                    .Where(a => a.TargetPointId == pointId && a.Rating != null)
+                    .Select(a => new {a.AuthorId, a.Rating}))
+                .ToListAsync())
             {
-                OneStarCount = _random.Next(0, 100),
-                TwoStarCount = _random.Next(0, 100),
-                ThreeStarCount = _random.Next(0, 100),
-                FourStarCount = _random.Next(0, 100),
-                FiveStarCount = _random.Next(0, 100),
-                TotalScore = _random.Next(200, 1001),
-                TotalCount = 100
-            };
-//                await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(rating), DefaultTtl);
-            return rating;
+                switch (ratingEntry.Rating.Value)
+                {
+                    case 1:
+                        ratings.OneStarCount++;
+                        break;
+
+                    case 2:
+                        ratings.TwoStarCount++;
+                        break;
+
+                    case 3:
+                        ratings.ThreeStarCount++;
+                        break;
+
+                    case 4:
+                        ratings.FourStarCount++;
+                        break;
+
+                    case 5:
+                        ratings.FiveStarCount++;
+                        break;
+
+                    default:
+                        continue;
+                }
+                UserRating userRating;
+                if (!userRatings.TryGetValue(ratingEntry.AuthorId, out userRating))
+                    userRatings[ratingEntry.AuthorId] = userRating = new UserRating();
+                userRating.Count++;
+                userRating.Total += ratingEntry.Rating.Value;
+            }
+            ratings.AverageRating = userRatings.Count < 3
+                ? (double?) null
+                : Math.Round(userRatings.Values.Sum(r => r.Total*2/(double) r.Count)/userRatings.Count, 1);
+            await redisDb.StringSetAsync(cacheKey, RedisProvider.Serialize(ratings), RatingUpdatePeriod);
+            return ratings;
+        }
+
+        private class UserRating
+        {
+            public int Total { get; set; }
+
+            public int Count { get; set; }
         }
     }
 }
