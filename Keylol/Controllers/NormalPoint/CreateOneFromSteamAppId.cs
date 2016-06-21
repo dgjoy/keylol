@@ -67,6 +67,7 @@ namespace Keylol.Controllers.NormalPoint
             {
                 var cookieContainer = new CookieContainer();
                 cookieContainer.Add(new Uri("http://store.steampowered.com/"), new Cookie("birthtime", "-473410799"));
+                cookieContainer.Add(new Uri("http://store.steampowered.com/"), new Cookie("mature_content", "1"));
                 using (var httpClientHandler = new HttpClientHandler {CookieContainer = cookieContainer})
                 using (var httpClient = new HttpClient(httpClientHandler) {Timeout = TimeSpan.FromSeconds(30)})
                 {
