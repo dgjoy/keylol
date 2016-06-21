@@ -302,7 +302,7 @@
     <Compile Include="States\Aggregation\Point\Product\ProductPoint.cs" />
     <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
     <Compile Include="States\Aggregation\Point\TimelinePage.cs" />
-    <Compile Include="States\Aggregation\User\BasicInfo.cs" />
+    <Compile Include="States\Shared\UserBasicInfo.cs" />
     <Compile Include="States\Aggregation\User\Dossier\DossierPage.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SelectedArticle.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SubscribedPoint.cs" />

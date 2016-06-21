@@ -5,6 +5,7 @@ using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation.User.Dossier;
 using Keylol.States.Aggregation.User.People;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -50,7 +51,7 @@ namespace Keylol.States.Aggregation.User
                 return new UserLevel();
             var result = new UserLevel
             {
-                BasicInfo = await BasicInfo.CreateAsync(currentUserId, user, dbContext, cachedData)
+                BasicInfo = await UserBasicInfo.CreateAsync(currentUserId, user, dbContext, cachedData)
             };
             switch (targetPage)
             {
@@ -98,7 +99,7 @@ namespace Keylol.States.Aggregation.User
         /// <summary>
         /// 用户基础信息
         /// </summary>
-        public BasicInfo BasicInfo { get; set; }
+        public UserBasicInfo BasicInfo { get; set; }
 
         /// <summary>
         /// 当前页面
