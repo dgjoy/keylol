@@ -91,7 +91,10 @@ namespace Keylol.States.Shared
                                                   1;
                         card.LikeCount =
                             await cachedData.Likes.GetTargetLikeCountAsync(feed.Entry, LikeTargetType.Article);
-                        card.CommentCount = await cachedData.ArticleComments.GetArticleCommentCountAsync(feed.Entry);
+                        card.Liked = string.IsNullOrWhiteSpace(currentUserId)
+                            ? (bool?) null
+                            : await cachedData.Likes.IsLikedAsync(currentUserId, feed.Entry, LikeTargetType.Article);
+                            card.CommentCount = await cachedData.ArticleComments.GetArticleCommentCountAsync(feed.Entry);
                         targetPointId = a.PointId;
                         card.AttachedPoints.Add(new PointBasicInfo
                         {
@@ -146,6 +149,9 @@ namespace Keylol.States.Shared
                                                   1;
                         card.LikeCount =
                             await cachedData.Likes.GetTargetLikeCountAsync(feed.Entry, LikeTargetType.Activity);
+                        card.Liked = string.IsNullOrWhiteSpace(currentUserId)
+                            ? (bool?) null
+                            : await cachedData.Likes.IsLikedAsync(currentUserId, feed.Entry, LikeTargetType.Activity);
                         card.CommentCount = await cachedData.ActivityComments.GetActivityCommentCountAsync(feed.Entry);
                         targetPointId = a.PointId;
                         card.AttachedPoints.Add(new PointBasicInfo
@@ -280,6 +286,11 @@ namespace Keylol.States.Shared
         /// 认可数
         /// </summary>
         public int? LikeCount { get; set; }
+
+        /// <summary>
+        /// 是否认可过
+        /// </summary>
+        public bool? Liked { get; set; }
 
         /// <summary>
         /// 评论数

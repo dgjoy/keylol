@@ -36,20 +36,22 @@ namespace Keylol.States.Aggregation.Point.Frontpage
             var point = await dbContext.Points.FindAsync(pointId);
             if (point == null)
                 return new BriefReviewList(0);
-            return (await CreateAsync(point, page, false, dbContext, cachedData)).Item1;
+            return
+                (await CreateAsync(point, StateTreeHelper.GetCurrentUserId(), page, false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
         /// 创建 <see cref="BriefReviewList"/>
         /// </summary>
         /// <param name="point">据点对象</param>
+        /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="page">分页页码</param>
         /// <param name="returnCount">是否返回总数</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns>Item1 表示 <see cref="BriefReviewList"/>，Item2 表示总数，Item3 表示总页数</returns>
-        public static async Task<Tuple<BriefReviewList, int, int>> CreateAsync(Models.Point point, int page,
-            bool returnCount, KeylolDbContext dbContext, CachedDataProvider cachedData)
+        public static async Task<Tuple<BriefReviewList, int, int>> CreateAsync(Models.Point point, string currentUserId,
+            int page, bool returnCount, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var queryResult = await (from activity in dbContext.Activities
                 where activity.TargetPointId == point.Id && activity.Rating != null &&
@@ -88,6 +90,9 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                     SidForAuthor = a.SidForAuthor,
                     Rating = a.Rating,
                     LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(a.Id, LikeTargetType.Activity),
+                    Liked = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Likes.IsLikedAsync(currentUserId, a.Id, LikeTargetType.Activity),
                     Content = a.Content
                 });
             }
@@ -137,6 +142,11 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         /// 认可数
         /// </summary>
         public int? LikeCount { get; set; }
+
+        /// <summary>
+        /// 是否认可过
+        /// </summary>
+        public bool? Liked { get; set; }
 
         /// <summary>
         /// 内容

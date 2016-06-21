@@ -122,6 +122,9 @@ namespace Keylol.States.Content.Activity
             activityPage.CommentPageCount = comments.Item3;
             activityPage.Comments = comments.Item1;
             activityPage.LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(activity.Id, LikeTargetType.Article);
+            activityPage.Liked = string.IsNullOrWhiteSpace(currentUserId)
+                ? (bool?) null
+                : await cachedData.Likes.IsLikedAsync(currentUserId, activity.Id, LikeTargetType.Activity);
             return activityPage;
         }
 
@@ -204,5 +207,10 @@ namespace Keylol.States.Content.Activity
         /// 认可数
         /// </summary>
         public int? LikeCount { get; set; }
+
+        /// <summary>
+        /// 是否认可过
+        /// </summary>
+        public bool? Liked { get; set; }
     }
 }

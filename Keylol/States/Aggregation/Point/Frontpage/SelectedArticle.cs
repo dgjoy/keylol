@@ -11,7 +11,7 @@ using Keylol.Utilities;
 namespace Keylol.States.Aggregation.Point.Frontpage
 {
     /// <summary>
-    /// 文选文章列表
+    /// 据点文集文章列表
     /// </summary>
     public class SelectedArticleList : List<SelectedArticle>
     {
@@ -20,7 +20,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         }
 
         /// <summary>
-        /// 获取指定据点的文选
+        /// 获取指定据点的文集
         /// </summary>
         /// <param name="pointId">据点 ID</param>
         /// <param name="page">分页页码</param>
@@ -88,7 +88,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
     }
 
     /// <summary>
-    /// 文选文章
+    /// 据点文集文章
     /// </summary>
     public class SelectedArticle
     {

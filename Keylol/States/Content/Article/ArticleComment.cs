@@ -98,6 +98,9 @@ namespace Keylol.States.Content.Article
                             .SingleOrDefaultAsync())?.TotalPlayedTime;
                     articleComment.LikeCount =
                         await cachedData.Likes.GetTargetLikeCountAsync(c.Id, LikeTargetType.ArticleComment);
+                    articleComment.Liked = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Likes.IsLikedAsync(currentUserId, c.Id, LikeTargetType.ArticleComment);
                     articleComment.PublishTime = c.PublishTime;
                     articleComment.Content = c.Content;
                     articleComment.Warned = c.Warned;
@@ -152,6 +155,11 @@ namespace Keylol.States.Content.Article
         /// 认可数
         /// </summary>
         public int? LikeCount { get; set; }
+
+        /// <summary>
+        /// 是否认可过
+        /// </summary>
+        public bool? Liked { get; set; }
 
         /// <summary>
         /// 发布时间

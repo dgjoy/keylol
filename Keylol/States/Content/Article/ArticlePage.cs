@@ -119,6 +119,9 @@ namespace Keylol.States.Content.Article
             articlePage.ReproductionRequirement =
                 Helpers.SafeDeserialize<ReproductionRequirement>(article.ReproductionRequirement);
             articlePage.LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(article.Id, LikeTargetType.Article);
+            articlePage.Liked = string.IsNullOrWhiteSpace(currentUserId)
+                ? (bool?) null
+                : await cachedData.Likes.IsLikedAsync(currentUserId, article.Id, LikeTargetType.Article);
             articlePage.Rating = article.Rating;
             articlePage.CoverImage = article.CoverImage;
             articlePage.Pros = Helpers.SafeDeserialize<List<string>>(article.Pros);
@@ -206,6 +209,11 @@ namespace Keylol.States.Content.Article
         /// 认可数
         /// </summary>
         public int? LikeCount { get; set; }
+
+        /// <summary>
+        /// 是否认可过
+        /// </summary>
+        public bool? Liked { get; set; }
 
         /// <summary>
         /// 评分
