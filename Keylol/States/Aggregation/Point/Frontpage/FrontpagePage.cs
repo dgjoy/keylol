@@ -47,7 +47,8 @@ namespace Keylol.States.Aggregation.Point.Frontpage
 
             if (point.Type == PointType.Game || point.Type == PointType.Hardware)
             {
-                var briefReviews = await BriefReviewList.CreateAsync(point, 1, true, dbContext, cachedData);
+                var briefReviews =
+                    await BriefReviewList.CreateAsync(point, currentUserId, 1, true, dbContext, cachedData);
                 frontPage.BriefReviewCount = briefReviews.Item2;
                 frontPage.BriefReviewPageCount = briefReviews.Item3;
                 frontPage.BriefReviews = briefReviews.Item1;

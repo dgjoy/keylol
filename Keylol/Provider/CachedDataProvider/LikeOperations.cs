@@ -177,7 +177,8 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="targetType">目标类型</param>
         /// <returns>认可成功返回 <c>true</c></returns>
         /// <exception cref="ArgumentNullException">有参数为 null</exception>
-        public async Task<bool> AddAsync([NotNull] string operatorId, [NotNull] string targetId, LikeTargetType targetType)
+        public async Task<bool> AddAsync([NotNull] string operatorId, [NotNull] string targetId,
+            LikeTargetType targetType)
         {
             if (operatorId == null)
                 throw new ArgumentNullException(nameof(operatorId));
@@ -218,6 +219,9 @@ namespace Keylol.Provider.CachedDataProvider
                 default:
                     throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null);
             }
+
+            if (operatorId == likeReceiverId)
+                return false;
 
             _dbContext.Likes.Add(new Like
             {

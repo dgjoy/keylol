@@ -285,6 +285,7 @@
     <Compile Include="States\Aggregation\User\People\PeoplePage.cs" />
     <Compile Include="States\Aggregation\User\People\UserEntry.cs" />
     <Compile Include="States\Aggregation\User\TimelinePage.cs" />
+    <Compile Include="States\Content\Article\RecommendedArticle.cs" />
     <Compile Include="States\PostOffice\MissivePage.cs" />
     <Compile Include="States\PostOffice\PostOfficeLevel.cs" />
     <Compile Include="States\PostOffice\PostOfficeMessage.cs" />

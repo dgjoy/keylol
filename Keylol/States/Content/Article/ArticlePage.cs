@@ -126,6 +126,8 @@ namespace Keylol.States.Content.Article
             articlePage.CoverImage = article.CoverImage;
             articlePage.Pros = Helpers.SafeDeserialize<List<string>>(article.Pros);
             articlePage.Cons = Helpers.SafeDeserialize<List<string>>(article.Cons);
+            articlePage.RecommendedArticles =
+                await RecommendedArticleList.CreateAsync(article.Id, article.AuthorId, article.TargetPointId, dbContext);
             var comments = await ArticleCommentList.CreateAsync(article, 1, currentUserId, isOperator, true, dbContext,
                 cachedData);
             articlePage.CommentCount = comments.Item2;
@@ -234,6 +236,11 @@ namespace Keylol.States.Content.Article
         /// 缺点
         /// </summary>
         public List<string> Cons { get; set; }
+
+        /// <summary>
+        /// 推荐文章
+        /// </summary>
+        public RecommendedArticleList RecommendedArticles { get; set; }
 
         /// <summary>
         /// 评论数
