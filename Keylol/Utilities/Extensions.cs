@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -225,6 +224,24 @@ namespace Keylol.Utilities
 
             var skip = recordsPerPage*(page - 1);
             return source.Skip(() => skip).Take(() => recordsPerPage);
+        }
+
+        /// <summary>
+        /// 查询结果热加载邮政消息相关属性
+        /// </summary>
+        public static IQueryable<Message> IncludeRelated(this DbSet<Message> messages)
+        {
+            return messages.Include(m => m.Article)
+                .Include(m => m.Article.Author)
+                .Include(m => m.Activity)
+                .Include(m => m.Activity.Author)
+                .Include(m => m.Operator)
+                .Include(m => m.ArticleComment)
+                .Include(m => m.ArticleComment.Article)
+                .Include(m => m.ArticleComment.Article.Author)
+                .Include(m => m.ActivityComment)
+                .Include(m => m.ActivityComment.Activity)
+                .Include(m => m.ActivityComment.Activity.Author);
         }
     }
 

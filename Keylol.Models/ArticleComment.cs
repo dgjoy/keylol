@@ -16,6 +16,10 @@ namespace Keylol.Models
         [MaxLength(30000)]
         public string Content { get; set; }
 
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(30000)]
+        public string UnstyledContent { get; set; } = string.Empty;
+
         public string ReplyToCommentId { get; set; }
 
         public virtual ArticleComment ReplyToComment { get; set; }

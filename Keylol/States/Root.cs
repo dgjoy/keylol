@@ -11,6 +11,7 @@ using Keylol.States.Content;
 using Keylol.States.Content.Activity;
 using Keylol.States.Content.Article;
 using Keylol.States.Entrance;
+using Keylol.States.PostOffice;
 using Keylol.StateTreeManager;
 using EntrancePage = Keylol.States.Aggregation.User.EntrancePage;
 
@@ -187,6 +188,46 @@ namespace Keylol.States
                     };
                     break;
 
+                case "post-office.unread":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                        root.PostOffice = new PostOfficeLevel
+                        {
+                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                        };
+                    break;
+
+                case "post-office.social-activity.comment":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                        root.PostOffice = new PostOfficeLevel
+                        {
+                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                        };
+                    break;
+
+                case "post-office.social-activity.like":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                        root.PostOffice = new PostOfficeLevel
+                        {
+                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                        };
+                    break;
+
+                case "post-office.social-activity.subscriber":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                        root.PostOffice = new PostOfficeLevel
+                        {
+                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                        };
+                    break;
+
+                case "post-office.missive":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                        root.PostOffice = new PostOfficeLevel
+                        {
+                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                        };
+                    break;
+
                 default:
                     throw new NotSupportedException("Not supported state.");
             }
@@ -213,6 +254,12 @@ namespace Keylol.States
         /// 内容层级
         /// </summary>
         public ContentLevel Content { get; set; }
+
+        /// <summary>
+        /// 邮政中心
+        /// </summary>
+        [Authorize]
+        public PostOfficeLevel PostOffice { get; set; }
 
         /// <summary>
         /// 待开设据点

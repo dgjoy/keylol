@@ -141,6 +141,10 @@
     <Compile Include="Migrations\201606210955056_MessageRemoveUser.Designer.cs">
       <DependentUpon>201606210955056_MessageRemoveUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606211337493_ArticleCommentUnstyledContent.cs" />
+    <Compile Include="Migrations\201606211337493_ArticleCommentUnstyledContent.Designer.cs">
+      <DependentUpon>201606211337493_ArticleCommentUnstyledContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -860,6 +864,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606210955056_MessageRemoveUser.resx">
       <DependentUpon>201606210955056_MessageRemoveUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606211337493_ArticleCommentUnstyledContent.resx">
+      <DependentUpon>201606211337493_ArticleCommentUnstyledContent.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

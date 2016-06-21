@@ -167,8 +167,9 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="subscriberId">订阅者 ID</param>
         /// <param name="targetId">目标 ID</param>
         /// <param name="targetType">目标类型</param>
+        /// <returns>订阅成功返回 <c>true</c></returns>
         /// <exception cref="ArgumentNullException">有参数为 null</exception>
-        public async Task AddAsync([NotNull] string subscriberId, [NotNull] string targetId,
+        public async Task<bool> AddAsync([NotNull] string subscriberId, [NotNull] string targetId,
             SubscriptionTargetType targetType)
         {
             if (subscriberId == null)
@@ -177,7 +178,7 @@ namespace Keylol.Provider.CachedDataProvider
                 throw new ArgumentNullException(nameof(targetId));
 
             if (subscriberId == targetId || await IsSubscribedAsync(subscriberId, targetId, targetType))
-                return;
+                return false;
 
             _dbContext.Subscriptions.Add(new Subscription
             {
@@ -191,6 +192,7 @@ namespace Keylol.Provider.CachedDataProvider
             await redisDb.SetAddAsync(UserSubscribedTargetsCacheKey(subscriberId),
                 UserSubscribedTargetCacheValue(targetId, targetType));
             await IncreaseSubscriberCountAsync(targetId, targetType, 1);
+            return true;
         }
 
         /// <summary>

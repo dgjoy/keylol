@@ -23,7 +23,9 @@ namespace Keylol.Controllers.ArticleComment
         [SwaggerResponse(HttpStatusCode.OK, "评论楼层号")]
         public async Task<IHttpActionResult> CreateOne([NotNull] ArticleCommentCreateOneRequestDto requestDto)
         {
-            var article = await _dbContext.Articles.FindAsync(requestDto.ArticleId);
+            var article = await _dbContext.Articles.Include(a => a.Author)
+                .Where(a => a.Id == requestDto.ArticleId)
+                .SingleOrDefaultAsync();
             if (article == null)
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.ArticleId), Errors.NonExistent);
 
@@ -37,6 +39,7 @@ namespace Keylol.Controllers.ArticleComment
                 ArticleId = article.Id,
                 CommentatorId = userId,
                 Content = requestDto.Content,
+                UnstyledContent = PlainTextFormatter.FlattenHtml(requestDto.Content, false),
                 SidForArticle = await _dbContext.ArticleComments.Where(c => c.ArticleId == article.Id)
                     .Select(c => c.SidForArticle)
                     .DefaultIfEmpty(0)
@@ -46,6 +49,7 @@ namespace Keylol.Controllers.ArticleComment
             if (requestDto.ReplyToComment != null)
             {
                 var replyToComment = await _dbContext.ArticleComments
+                    .Include(c => c.Commentator)
                     .Where(c => c.ArticleId == article.Id && c.SidForArticle == requestDto.ReplyToComment)
                     .SingleOrDefaultAsync();
                 if (replyToComment != null)
@@ -56,63 +60,55 @@ namespace Keylol.Controllers.ArticleComment
             await _dbContext.SaveChangesAsync();
             await _cachedData.ArticleComments.IncreaseArticleCommentCountAsync(article.Id, 1);
 
-            // TODO: 通知推送
-//            var articleAuthor = await _dbContext.Users.Include(u => u.SteamBot)
-//                .SingleAsync(u => u.Id == article.AuthorId);
-//            var messageNotifiedArticleAuthor = false;
-//            var steamNotifiedArticleAuthor = false;
-//            const int truncateContentTo = 512;
-//            var truncatedContent = truncateContentTo < comment.Content.Length
-//                ? $"{comment.Content.Substring(0, truncateContentTo)} …"
-//                : comment.Content;
-//            foreach (var replyToUser in
-//                commentReplies.Where(
-//                    cr => !(cr.Comment.CommentatorId == comment.CommentatorId || cr.Comment.IgnoreNewComments))
-//                    .Select(cr => cr.Comment.Commentator)
-//                    .Distinct())
-//            {
-//                if (replyToUser.Id == articleAuthor.Id)
-//                {
-//                    messageNotifiedArticleAuthor = true;
-//                    steamNotifiedArticleAuthor = replyToUser.SteamNotifyOnCommentReplied;
-//                }
-//
-//                // 邮政中心
-//                var message = _dbContext.Messages.Create();
-//                message.Type = MessageType.CommentReply;
-//                message.OperatorId = comment.CommentatorId;
-//                message.ReceiverId = replyToUser.Id;
-//                message.CommentId = comment.Id;
-//                _dbContext.Messages.Add(message);
-//
-//                if (!replyToUser.SteamNotifyOnCommentReplied)
-//                    continue;
-//
-//                // Steam 通知
-//                await _userManager.SendSteamChatMessageAsync(replyToUser,
-//                    $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
-//            }
-//            if (!(comment.CommentatorId == article.PrincipalId || article.IgnoreNewComments))
-//            {
-//                if (!messageNotifiedArticleAuthor)
-//                {
-//                    // 邮政中心
-//                    var message = _dbContext.Messages.Create();
-//                    message.Type = MessageType.ArticleComment;
-//                    message.OperatorId = comment.CommentatorId;
-//                    message.ReceiverId = articleAuthor.Id;
-//                    message.CommentId = comment.Id;
-//                    _dbContext.Messages.Add(message);
-//                }
-//
-//                if (!steamNotifiedArticleAuthor && articleAuthor.SteamNotifyOnArticleReplied)
-//                {
-//                    // Steam 通知
-//                    await _userManager.SendSteamChatMessageAsync(articleAuthor,
-//                        $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n{truncatedContent}\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
-//                }
-//            }
-//            await _dbContext.SaveChangesAsync();
+            var messageNotifiedArticleAuthor = false;
+            var steamNotifiedArticleAuthor = false;
+            var unstyledContentWithNewLine = PlainTextFormatter.FlattenHtml(comment.Content, true);
+            unstyledContentWithNewLine = unstyledContentWithNewLine.Length > 512
+                ? $"{unstyledContentWithNewLine.Substring(0, 512)} …"
+                : unstyledContentWithNewLine;
+            if (comment.ReplyToComment != null && comment.ReplyToComment.CommentatorId != comment.CommentatorId &&
+                !comment.ReplyToComment.DismissReplyMessage)
+            {
+                if (comment.ReplyToComment.Commentator.NotifyOnCommentReplied)
+                {
+                    messageNotifiedArticleAuthor = comment.ReplyToComment.CommentatorId == article.AuthorId;
+                    _dbContext.Messages.Add(new Message
+                    {
+                        Type = MessageType.ArticleCommentReply,
+                        OperatorId = comment.CommentatorId,
+                        ReceiverId = comment.ReplyToComment.CommentatorId,
+                        ArticleCommentId = comment.Id
+                    });
+                }
+
+                if (comment.ReplyToComment.Commentator.SteamNotifyOnCommentReplied)
+                {
+                    steamNotifiedArticleAuthor = comment.ReplyToComment.CommentatorId == article.AuthorId;
+                    await _userManager.SendSteamChatMessageAsync(comment.ReplyToComment.Commentator,
+                        $"@{comment.Commentator.UserName} 回复了你在 《{article.Title}》 下的评论：\n\n{unstyledContentWithNewLine}\n\nhttps://www.keylol.com/article/{article.Author.IdCode}/{article.SidForAuthor}#{comment.SidForArticle}");
+                }
+            }
+
+            if (comment.CommentatorId != article.AuthorId && !article.DismissCommentMessage)
+            {
+                if (!messageNotifiedArticleAuthor && article.Author.NotifyOnArticleReplied)
+                {
+                    _dbContext.Messages.Add(new Message
+                    {
+                        Type = MessageType.ArticleComment,
+                        OperatorId = comment.CommentatorId,
+                        ReceiverId = article.AuthorId,
+                        ArticleCommentId = comment.Id
+                    });
+                }
+
+                if (!steamNotifiedArticleAuthor && article.Author.SteamNotifyOnArticleReplied)
+                {
+                    await _userManager.SendSteamChatMessageAsync(article.Author,
+                        $"@{comment.Commentator.UserName} 评论了你的文章 《{article.Title}》：\n\n{unstyledContentWithNewLine}\n\nhttps://www.keylol.com/article/{article.Author.IdCode}/{article.SidForAuthor}#{comment.SidForArticle}");
+                }
+            }
+            await _dbContext.SaveChangesAsync();
 
             return Ok(comment.SidForArticle);
         }

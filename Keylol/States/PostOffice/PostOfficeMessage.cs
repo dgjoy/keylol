@@ -54,7 +54,7 @@ namespace Keylol.States.PostOffice
                 }
                 else if (m.ArticleCommentId != null)
                 {
-                    item.CommentContent = CollapseCommentContent(m.ArticleComment.Content, true);
+                    item.CommentContent = CollapseCommentContent(m.ArticleComment.UnstyledContent);
                     item.CommentSidForParent = m.ArticleComment.SidForArticle;
                     item.ArticleAuthorIdCode = m.ArticleComment.Article.Author.IdCode;
                     item.ArticleSidForAuthor = m.ArticleComment.Article.SidForAuthor;
@@ -62,7 +62,7 @@ namespace Keylol.States.PostOffice
                 }
                 else if (m.ActivityCommentId != null)
                 {
-                    item.CommentContent = CollapseCommentContent(m.ActivityComment.Content, false);
+                    item.CommentContent = CollapseCommentContent(m.ActivityComment.Content);
                     item.CommentSidForParent = m.ActivityComment.SidForActivity;
                     item.ArticleAuthorIdCode = m.ActivityComment.Activity.Author.IdCode;
                     item.ArticleSidForAuthor = m.ActivityComment.Activity.SidForAuthor;
@@ -77,24 +77,25 @@ namespace Keylol.States.PostOffice
             return result;
         }
 
-        private static string CollapseActivityContent(Activity activity)
+        /// <summary>
+        /// 折叠动态内容
+        /// </summary>
+        /// <param name="activity">动态对象</param>
+        /// <returns>折叠后的动态内容</returns>
+        public static string CollapseActivityContent(Activity activity)
         {
             var content = string.IsNullOrWhiteSpace(activity.CoverImage) ? activity.Content : $"{activity.Content}〔附图〕";
-            return activity.Content.Length > 60 ? activity.Content.Substring(0, 60) : content;
+            return activity.Content.Length > 50 ? activity.Content.Substring(0, 50) : content;
         }
 
-        private static string CollapseCommentContent(string content, bool isHtml)
+        private static string CollapseCommentContent(string content)
         {
-            if (isHtml)
-            {
-                // TODO: HTML 摘要提取
-            }
-            return content.Length > 60 ? content.Substring(0, 200) : content;
+            return content.Length > 200 ? content.Substring(0, 200) : content;
         }
 
         private static string CollapleArticleTitle(string title)
         {
-            return title.Length > 60 ? title.Substring(0, 60) : title;
+            return title.Length > 50 ? title.Substring(0, 50) : title;
         }
     }
 

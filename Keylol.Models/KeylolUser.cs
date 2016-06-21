@@ -76,9 +76,13 @@ namespace Keylol.Models
 
         public bool NotifyOnCommentReplied { get; set; } = true;
 
+        public bool NotifyOnActivityReplied { get; set; } = true;
+
         public bool NotifyOnArticleLiked { get; set; } = true;
 
         public bool NotifyOnCommentLiked    { get; set; } = true;
+
+        public bool NotifyOnActivityLiked { get; set; } = true;
 
         public bool NotifyOnSubscribed { get; set; } = true;
 
@@ -90,9 +94,13 @@ namespace Keylol.Models
 
         public bool SteamNotifyOnCommentReplied { get; set; } = true;
 
+        public bool SteamNotifyOnActivityReplied { get; set; } = true;
+
         public bool SteamNotifyOnArticleLiked { get; set; } = true;
 
         public bool SteamNotifyOnCommentLiked { get; set; } = true;
+
+        public bool SteamNotifyOnActivityLiked { get; set; } = true;
 
         public bool SteamNotifyOnSubscribed { get; set; } = true;
 

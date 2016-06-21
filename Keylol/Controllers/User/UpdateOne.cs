@@ -94,6 +94,9 @@ namespace Keylol.Controllers.User
             if (requestDto.NotifyOnCommentReplied != null)
                 user.NotifyOnCommentReplied = requestDto.NotifyOnCommentReplied.Value;
 
+            if (requestDto.NotifyOnActivityReplied != null)
+                user.NotifyOnActivityReplied = requestDto.NotifyOnActivityReplied.Value;
+
             if (requestDto.NotifyOnArticleLiked != null)
                 user.NotifyOnArticleLiked = requestDto.NotifyOnArticleLiked.Value;
 
@@ -108,6 +111,9 @@ namespace Keylol.Controllers.User
 
             if (requestDto.SteamNotifyOnCommentReplied != null)
                 user.SteamNotifyOnCommentReplied = requestDto.SteamNotifyOnCommentReplied.Value;
+
+            if (requestDto.SteamNotifyOnActivityReplied != null)
+                user.SteamNotifyOnActivityReplied = requestDto.SteamNotifyOnActivityReplied.Value;
 
             if (requestDto.SteamNotifyOnArticleLiked != null)
                 user.SteamNotifyOnArticleLiked = requestDto.SteamNotifyOnArticleLiked.Value;
@@ -248,6 +254,11 @@ namespace Keylol.Controllers.User
             public bool? NotifyOnCommentReplied { get; set; }
 
             /// <summary>
+            /// 邮政中心提醒 - 动态收到评论
+            /// </summary>
+            public bool? NotifyOnActivityReplied { get; set; }
+
+            /// <summary>
             /// 邮政中心提醒 - 文章获得认可
             /// </summary>
             public bool? NotifyOnArticleLiked { get; set; }
@@ -271,6 +282,11 @@ namespace Keylol.Controllers.User
             /// Steam 机器人提醒 - 评论被回复
             /// </summary>
             public bool? SteamNotifyOnCommentReplied { get; set; }
+
+            /// <summary>
+            /// Steam 机器人提醒 - 动态收到评论
+            /// </summary>
+            public bool? SteamNotifyOnActivityReplied { get; set; }
 
             /// <summary>
             /// Steam 机器人提醒 - 文章获得认可

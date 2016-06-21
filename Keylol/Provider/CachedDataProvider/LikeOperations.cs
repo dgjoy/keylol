@@ -175,8 +175,9 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="operatorId">认可操作者 ID</param>
         /// <param name="targetId">目标 ID</param>
         /// <param name="targetType">目标类型</param>
+        /// <returns>认可成功返回 <c>true</c></returns>
         /// <exception cref="ArgumentNullException">有参数为 null</exception>
-        public async Task AddAsync([NotNull] string operatorId, [NotNull] string targetId, LikeTargetType targetType)
+        public async Task<bool> AddAsync([NotNull] string operatorId, [NotNull] string targetId, LikeTargetType targetType)
         {
             if (operatorId == null)
                 throw new ArgumentNullException(nameof(operatorId));
@@ -184,7 +185,7 @@ namespace Keylol.Provider.CachedDataProvider
                 throw new ArgumentNullException(nameof(targetId));
 
             if (await IsLikedAsync(operatorId, targetId, targetType))
-                return;
+                return false;
 
             string likeReceiverId;
             switch (targetType)
@@ -231,6 +232,7 @@ namespace Keylol.Provider.CachedDataProvider
                 UserLikedTargetCacheValue(targetId, targetType));
             await IncreaseUserLikeCountAsync(likeReceiverId, 1);
             await IncreaseTargetLikeCountAsync(targetId, targetType, 1);
+            return true;
         }
 
         /// <summary>

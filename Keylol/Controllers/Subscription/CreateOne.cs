@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
@@ -21,6 +22,7 @@ namespace Keylol.Controllers.Subscription
         {
             var subscriberId = User.Identity.GetUserId();
             bool existed;
+            KeylolUser targetUser = null;
             switch (targetType)
             {
                 case SubscriptionTargetType.Point:
@@ -30,7 +32,8 @@ namespace Keylol.Controllers.Subscription
                 case SubscriptionTargetType.User:
                     if (subscriberId.Equals(targetId, StringComparison.OrdinalIgnoreCase))
                         return this.BadRequest(nameof(targetId), Errors.Invalid);
-                    existed = await _dbContext.Users.AnyAsync(u => u.Id == targetId);
+                    targetUser = await _userManager.FindByIdAsync(targetId);
+                    existed = targetUser != null;
                     break;
 
                 case SubscriptionTargetType.Conference:
@@ -42,7 +45,32 @@ namespace Keylol.Controllers.Subscription
             }
             if (!existed)
                 return this.BadRequest(nameof(targetId), Errors.NonExistent);
-            await _cachedData.Subscriptions.AddAsync(subscriberId, targetId, targetType);
+            var succeed = await _cachedData.Subscriptions.AddAsync(subscriberId, targetId, targetType);
+            if (targetType == SubscriptionTargetType.User && succeed)
+            {
+                Debug.Assert(targetUser != null, "targetUser != null");
+                var subscriberCount =
+                    (int) await _cachedData.Subscriptions.GetSubscriberCountAsync(targetId, targetType);
+                if (targetUser.NotifyOnSubscribed)
+                {
+                    _dbContext.Messages.Add(new Message
+                    {
+                        Type = MessageType.NewSubscriber,
+                        OperatorId = subscriberId,
+                        ReceiverId = targetId,
+                        Count = subscriberCount
+                    });
+                    await _dbContext.SaveChangesAsync();
+                }
+                if (targetUser.SteamNotifyOnSubscribed)
+                {
+                    var subscriber = await _userManager.FindByIdAsync(subscriberId);
+                    await _userManager.SendSteamChatMessageAsync(targetUser,
+                        await _cachedData.Users.IsFriendAsync(subscriberId, targetId)
+                            ? $"用户 {subscriber.UserName} 成为了你的第 {subscriberCount} 位听众，并开始与你互相关注。换句话说，你们已经成为好友啦！"
+                            : $"用户 {subscriber.UserName} 关注了你并成为你的第 {subscriberCount} 位听众，你们之间互相关注后会成为好友。");
+                }
+            }
             return Ok();
         }
     }

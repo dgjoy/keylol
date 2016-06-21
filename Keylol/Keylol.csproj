@@ -358,6 +358,7 @@
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Utilities\KeylolUserIdProvider.cs" />
     <Compile Include="Utilities\LogHubAppender.cs" />
+    <Compile Include="Utilities\PlainTextFormatter.cs" />
     <Compile Include="Utilities\PredicateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

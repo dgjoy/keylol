@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using JetBrains.Annotations;
 using Keylol.Identity;
@@ -36,6 +33,7 @@ namespace Keylol.Controllers.ArticleComment
                 return Unauthorized();
 
             comment.Content = requestDto.Content;
+            comment.UnstyledContent = PlainTextFormatter.FlattenHtml(requestDto.Content, false);
             if (requestDto.ReplyToComment != null)
             {
                 var replyToComment = await _dbContext.ArticleComments
@@ -50,7 +48,6 @@ namespace Keylol.Controllers.ArticleComment
             }
 
             await _dbContext.SaveChangesAsync();
-            // TODO: 通知推送
             return Ok();
         }
 
