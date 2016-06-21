@@ -36,13 +36,18 @@ namespace Keylol.Models
         public string ArticleId { get; set; }
         public virtual Article Article { get; set; }
 
-        public string CommentId { get; set; }
-        public virtual ArticleComment Comment { get; set; }
+        public string ActivityId { get; set; }
+        public virtual Activity Activity { get; set; }
 
-        public string UserId { get; set; }
-        public virtual KeylolUser User { get; set; }
+        public string ArticleCommentId { get; set; }
+        public virtual ArticleComment ArticleComment { get; set; }
+
+        public string ActivityCommentId { get; set; }
+        public virtual ActivityComment ActivityComment { get; set; }
 
         public int Count { get; set; }
+
+        public int SecondCount { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         public string Reasons { get; set; } = string.Empty;
@@ -82,7 +87,7 @@ namespace Keylol.Models
         ActivityArchiveCancel,
         ActivityCommentArchive,
         ActivityCommentArchiveCancel,
-        ArtivityRejection,
+        ActivityRejection,
         ActivityRejectionCancel,
         ActivityWarning,
         ActivityWarningCancel,
@@ -133,7 +138,25 @@ namespace Keylol.Models
             }
         }
 
-        public static bool HasCommentProperty(this MessageType type)
+        public static bool HasActivityProperty(this MessageType type)
+        {
+            switch (type)
+            {
+                case MessageType.ActivityLike:
+                case MessageType.ActivityArchive:
+                case MessageType.ActivityArchiveCancel:
+                case MessageType.ActivityRejection:
+                case MessageType.ActivityRejectionCancel:
+                case MessageType.ActivityWarning:
+                case MessageType.ActivityWarningCancel:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public static bool HasArticleCommentProperty(this MessageType type)
         {
             switch (type)
             {
@@ -151,21 +174,42 @@ namespace Keylol.Models
             }
         }
 
+        public static bool HasActivityCommentProperty(this MessageType type)
+        {
+            switch (type)
+            {
+                case MessageType.ActivityCommentLike:
+                case MessageType.ActivityComment:
+                case MessageType.ActivityCommentReply:
+                case MessageType.ActivityCommentArchive:
+                case MessageType.ActivityCommentArchiveCancel:
+                case MessageType.ActivityCommentWarning:
+                case MessageType.ActivityCommentWarningCancel:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
         public static bool HasReasonProperty(this MessageType type)
         {
             switch (type)
             {
-                case MessageType.ArticleArchiveCancel:
-                case MessageType.ArticleRejectionCancel:
-                case MessageType.Spotlight:
-                case MessageType.SpotlightCancel:
-                case MessageType.ArticleWarningCancel:
-                case MessageType.ArticleCommentArchiveCancel:
-                case MessageType.ArticleCommentWarningCancel:
-                    return false;
+                case MessageType.ArticleArchive:
+                case MessageType.ArticleRejection:
+                case MessageType.ArticleWarning:
+                case MessageType.ActivityArchive:
+                case MessageType.ActivityRejection:
+                case MessageType.ActivityWarning:
+                case MessageType.ArticleCommentArchive:
+                case MessageType.ArticleCommentWarning:
+                case MessageType.ActivityCommentArchive:
+                case MessageType.ActivityCommentWarning:
+                    return true;
 
                 default:
-                    return true;
+                    return false;
             }
         }
     }

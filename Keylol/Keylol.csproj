@@ -285,6 +285,14 @@
     <Compile Include="States\Aggregation\User\People\PeoplePage.cs" />
     <Compile Include="States\Aggregation\User\People\UserEntry.cs" />
     <Compile Include="States\Aggregation\User\TimelinePage.cs" />
+    <Compile Include="States\PostOffice\MissivePage.cs" />
+    <Compile Include="States\PostOffice\PostOfficeLevel.cs" />
+    <Compile Include="States\PostOffice\PostOfficeMessage.cs" />
+    <Compile Include="States\PostOffice\SocialActivity\CommentPage.cs" />
+    <Compile Include="States\PostOffice\SocialActivity\LikePage.cs" />
+    <Compile Include="States\PostOffice\SocialActivity\SocialActivityLevel.cs" />
+    <Compile Include="States\PostOffice\SocialActivity\SubscriberPage.cs" />
+    <Compile Include="States\PostOffice\UnreadPage.cs" />
     <Compile Include="States\Shared\PointBasicInfo.cs" />
     <Compile Include="States\Aggregation\Point\Edit\EditLevel.cs" />
     <Compile Include="States\Aggregation\Point\Edit\InfoPage.cs" />
@@ -302,7 +310,7 @@
     <Compile Include="States\Aggregation\Point\Product\ProductPoint.cs" />
     <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
     <Compile Include="States\Aggregation\Point\TimelinePage.cs" />
-    <Compile Include="States\Aggregation\User\BasicInfo.cs" />
+    <Compile Include="States\Shared\UserBasicInfo.cs" />
     <Compile Include="States\Aggregation\User\Dossier\DossierPage.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SelectedArticle.cs" />
     <Compile Include="States\Aggregation\User\Dossier\SubscribedPoint.cs" />
@@ -367,9 +375,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="States\Aggregation\PostOffice\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\keylol CN.pubxml" />

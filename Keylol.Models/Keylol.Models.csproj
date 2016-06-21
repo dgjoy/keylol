@@ -129,6 +129,18 @@
     <Compile Include="Migrations\201606201222227_MessageCountWithMoreIndexes.Designer.cs">
       <DependentUpon>201606201222227_MessageCountWithMoreIndexes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606210539550_MessageActivitySecondCount.cs" />
+    <Compile Include="Migrations\201606210539550_MessageActivitySecondCount.Designer.cs">
+      <DependentUpon>201606210539550_MessageActivitySecondCount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606210638063_MessageActivityComment.cs" />
+    <Compile Include="Migrations\201606210638063_MessageActivityComment.Designer.cs">
+      <DependentUpon>201606210638063_MessageActivityComment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606210955056_MessageRemoveUser.cs" />
+    <Compile Include="Migrations\201606210955056_MessageRemoveUser.Designer.cs">
+      <DependentUpon>201606210955056_MessageRemoveUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -839,6 +851,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606201222227_MessageCountWithMoreIndexes.resx">
       <DependentUpon>201606201222227_MessageCountWithMoreIndexes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606210539550_MessageActivitySecondCount.resx">
+      <DependentUpon>201606210539550_MessageActivitySecondCount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606210638063_MessageActivityComment.resx">
+      <DependentUpon>201606210638063_MessageActivityComment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606210955056_MessageRemoveUser.resx">
+      <DependentUpon>201606210955056_MessageRemoveUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

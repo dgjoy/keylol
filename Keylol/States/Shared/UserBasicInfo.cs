@@ -4,25 +4,25 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 
-namespace Keylol.States.Aggregation.User
+namespace Keylol.States.Shared
 {
     /// <summary>
     /// 用户基础信息
     /// </summary>
-    public class BasicInfo
+    public class UserBasicInfo
     {
         /// <summary>
-        /// 创建 <see cref="BasicInfo"/>
+        /// 创建 <see cref="UserBasicInfo"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="user">用户对象</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns><see cref="BasicInfo"/></returns>
-        public static async Task<BasicInfo> CreateAsync(string currentUserId, KeylolUser user, KeylolDbContext dbContext,
+        /// <returns><see cref="UserBasicInfo"/></returns>
+        public static async Task<UserBasicInfo> CreateAsync(string currentUserId, KeylolUser user, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            return new BasicInfo
+            return new UserBasicInfo
             {
                 Id = user.Id,
                 IdCode = user.IdCode,

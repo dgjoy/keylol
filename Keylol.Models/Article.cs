@@ -84,7 +84,7 @@ namespace Keylol.Models
 
         public bool Warned { get; set; } = false;
 
-        [Required]
+        [Required(AllowEmptyStrings = true)]
         [MaxLength(1000)]
         public string ReproductionRequirement { get; set; } = string.Empty;
     }

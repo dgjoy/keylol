@@ -62,26 +62,32 @@ namespace Keylol.States.Content.Article
                 return articlePage;
 
             articlePage.PointBasicInfo =
-                await Shared.PointBasicInfo.CreateAsync(currentUserId, article.TargetPoint, dbContext, cachedData);
-            articlePage.AuthorId = article.Author.Id;
-            articlePage.AuthorIdCode = article.Author.IdCode;
-            articlePage.AuthorAvatarImage = article.Author.AvatarImage;
-            articlePage.AuthorUserName = article.Author.UserName;
+                await PointBasicInfo.CreateAsync(currentUserId, article.TargetPoint, dbContext, cachedData);
+            articlePage.AuthorBasicInfo = new UserBasicInfo
+            {
+                Id = article.Author.Id,
+                IdCode = article.Author.IdCode,
+                AvatarImage = article.Author.AvatarImage,
+                UserName = article.Author.UserName,
+                FriendCount = await cachedData.Subscriptions.GetFriendCountAsync(article.AuthorId),
+                SubscribedUserCount = await cachedData.Subscriptions
+                    .GetSubscribedUserCountAsync(article.AuthorId),
+                SubscriberCount = await cachedData.Subscriptions
+                    .GetSubscriberCountAsync(article.AuthorId, SubscriptionTargetType.User),
+                SteamProfileName = article.Author.SteamProfileName,
+                IsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                    ? (bool?) null
+                    : await cachedData.Users.IsFriendAsync(currentUserId, article.AuthorId),
+                Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                    ? (bool?) null
+                    : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, article.AuthorId,
+                        SubscriptionTargetType.User)
+            };
             articlePage.AuthorPlayedTime = article.TargetPoint.SteamAppId == null
                 ? null
                 : (await dbContext.UserSteamGameRecords
                     .Where(r => r.UserId == article.AuthorId && r.SteamAppId == article.TargetPoint.SteamAppId)
                     .SingleOrDefaultAsync())?.TotalPlayedTime;
-            articlePage.AuthorFriendCount = await cachedData.Subscriptions.GetFriendCountAsync(article.AuthorId);
-            articlePage.AuthorSubscribedUserCount =
-                await cachedData.Subscriptions.GetSubscribedUserCountAsync(article.AuthorId);
-            articlePage.AuthorSubscriberCount =
-                await cachedData.Subscriptions.GetSubscriberCountAsync(article.AuthorId, SubscriptionTargetType.User);
-            articlePage.AuthorSteamProfileName = article.Author.SteamProfileName;
-            articlePage.AuthorIsSubscribed = string.IsNullOrWhiteSpace(currentUserId)
-                ? (bool?) null
-                : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, article.AuthorId,
-                    SubscriptionTargetType.User);
             articlePage.Id = article.Id;
             articlePage.Title = article.Title;
             articlePage.Subtitle = article.Subtitle;
@@ -132,54 +138,14 @@ namespace Keylol.States.Content.Article
         public PointBasicInfo PointBasicInfo { get; set; }
 
         /// <summary>
-        /// 作者 ID
+        /// 作者基本信息
         /// </summary>
-        public string AuthorId { get; set; }
-
-        /// <summary>
-        /// 作者识别码
-        /// </summary>
-        public string AuthorIdCode { get; set; }
-
-        /// <summary>
-        /// 作者头像
-        /// </summary>
-        public string AuthorAvatarImage { get; set; }
-
-        /// <summary>
-        /// 作者用户名
-        /// </summary>
-        public string AuthorUserName { get; set; }
+        public UserBasicInfo AuthorBasicInfo { get; set; }
 
         /// <summary>
         /// 作者在档时间
         /// </summary>
         public double? AuthorPlayedTime { get; set; }
-
-        /// <summary>
-        /// 作者好友数
-        /// </summary>
-        public long? AuthorFriendCount { get; set; }
-
-        /// <summary>
-        /// 作者订阅数
-        /// </summary>
-        public long? AuthorSubscribedUserCount { get; set; }
-
-        /// <summary>
-        /// 作者听众数
-        /// </summary>
-        public long? AuthorSubscriberCount { get; set; }
-
-        /// <summary>
-        /// 作者 Steam 昵称
-        /// </summary>
-        public string AuthorSteamProfileName { get; set; }
-
-        /// <summary>
-        /// 是否已订阅作者
-        /// </summary>
-        public bool? AuthorIsSubscribed { get; set; }
 
         /// <summary>
         /// ID
