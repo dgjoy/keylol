@@ -23,7 +23,7 @@ namespace Keylol.Controllers.User
         [AllowAnonymous]
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateOne([NotNull] CreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] UserCreateOneRequestDto requestDto)
         {
             if (!await _geetest.ValidateAsync(requestDto.GeetestChallenge,
                 requestDto.GeetestSeccode,
@@ -113,7 +113,7 @@ namespace Keylol.Controllers.User
         /// <summary>
         ///     请求 DTO
         /// </summary>
-        public class CreateOneRequestDto
+        public class UserCreateOneRequestDto
         {
             /// <summary>
             ///     识别码

@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
+using Keylol.States.Content.Activity;
+using Keylol.StateTreeManager;
 
 namespace Keylol.States.Shared
 {
@@ -15,6 +18,11 @@ namespace Keylol.States.Shared
     /// </summary>
     public class TimelineCardList : List<TimelineCard>
     {
+        /// <summary>
+        /// 定位器名称
+        /// </summary>
+        public static string LocatorName() => "activityId";
+
         private TimelineCardList(int capacity) : base(capacity)
         {
         }
@@ -222,6 +230,27 @@ namespace Keylol.States.Shared
             } while (feeds.Count >= take && result.Count < feeds.Count/2);
             return result;
         }
+
+        /// <summary>
+        /// 获取指定动态评论列表（用于轨道卡片）
+        /// </summary>
+        /// <param name="activityId">动态 ID</param>
+        /// <param name="take">获取数量</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="before">起始位置</param>
+        /// <returns><see cref="ActivityCommentList"/></returns>
+        public static async Task<ActivityCommentList> GetComments(string activityId, int take,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, int before = int.MaxValue)
+        {
+            return await ActivityCommentList.CreateAsync(activityId, StateTreeHelper.GetCurrentUserId(),
+                before, take, StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), dbContext, cachedData);
+        }
+
+        /// <summary>
+        /// 评论列表
+        /// </summary>
+        public ActivityCommentList Comments { get; set; }
     }
 
     /// <summary>

@@ -62,6 +62,9 @@ namespace Keylol.States.Content.Article
             int page, string currentUserId, bool isOperator, bool returnMeta, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
+            if (article.Archived != ArchivedState.None && currentUserId != article.AuthorId && !isOperator)
+                return new Tuple<ArticleCommentList, int, DateTime?, int>(new ArticleCommentList(0), 0, null, 0);
+
             var queryResult = await (from comment in dbContext.ArticleComments
                 where comment.ArticleId == article.Id
                 orderby comment.Sid
@@ -72,6 +75,8 @@ namespace Keylol.States.Content.Article
                     comment.PublishTime,
                     comment.SidForArticle,
                     comment.Content,
+                    comment.ReplyToComment,
+                    ReplyToCommentAuthor = comment.ReplyToComment.Commentator,
                     comment.Archived,
                     comment.Warned
                 }).TakePage(page, RecordsPerPage).ToListAsync();
@@ -103,6 +108,19 @@ namespace Keylol.States.Content.Article
                         : await cachedData.Likes.IsLikedAsync(currentUserId, c.Id, LikeTargetType.ArticleComment);
                     articleComment.PublishTime = c.PublishTime;
                     articleComment.Content = c.Content;
+                    if (c.ReplyToComment != null)
+                    {
+                        articleComment.ReplyToComment = new ArticleComment
+                        {
+                            SidForArticle = c.ReplyToComment.SidForArticle,
+                            AuthorAvatarImage = c.ReplyToCommentAuthor.AvatarImage,
+                            AuthorUserName = c.ReplyToCommentAuthor.UserName,
+                            AuthorIdCode = c.ReplyToCommentAuthor.IdCode,
+                            Content = c.ReplyToComment.UnstyledContent.Length > 150
+                                ? c.ReplyToComment.UnstyledContent.Substring(0, 150)
+                                : c.ReplyToComment.UnstyledContent
+                        };
+                    }
                     articleComment.Warned = c.Warned;
                 }
                 result.Add(articleComment);
@@ -170,6 +188,11 @@ namespace Keylol.States.Content.Article
         /// 楼层号
         /// </summary>
         public int SidForArticle { get; set; }
+
+        /// <summary>
+        /// 被回复的评论
+        /// </summary>
+        public ArticleComment ReplyToComment { get; set; }
 
         /// <summary>
         /// 内容

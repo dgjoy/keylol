@@ -62,12 +62,18 @@ namespace Keylol.States.Content.Activity
             int page, string currentUserId, bool isOperator, bool returnMeta, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
+            if (activity.Archived != ArchivedState.None && currentUserId != activity.AuthorId && !isOperator)
+                return new Tuple<ActivityCommentList, int, int>(new ActivityCommentList(0), 0, 0);
+
             var queryResult = await (from comment in dbContext.ActivityComments
                 where comment.ActivityId == activity.Id
                 orderby comment.Sid
                 select new
                 {
-                    Author = comment.Commentator,
+                    AuthorIdCode = comment.Commentator.IdCode,
+                    AuthorAvatarImage = comment.Commentator.AvatarImage,
+                    AuthorUserName = comment.Commentator.UserName,
+                    AuthorId = comment.CommentatorId,
                     comment.Id,
                     comment.PublishTime,
                     comment.SidForActivity,
@@ -85,15 +91,15 @@ namespace Keylol.States.Content.Activity
                     Archived = c.Archived != ArchivedState.None
                 };
                 // ReSharper disable once PossibleInvalidOperationException
-                if (!activityComment.Archived.Value || currentUserId == c.Author.Id || isOperator)
+                if (!activityComment.Archived.Value || currentUserId == c.AuthorId || isOperator)
                 {
-                    activityComment.AuthorIdCode = c.Author.IdCode;
-                    activityComment.AuthorAvatarImage = c.Author.AvatarImage;
-                    activityComment.AuthorUserName = c.Author.UserName;
+                    activityComment.AuthorIdCode = c.AuthorIdCode;
+                    activityComment.AuthorAvatarImage = c.AuthorAvatarImage;
+                    activityComment.AuthorUserName = c.AuthorUserName;
                     activityComment.AuthorPlayedTime = activity.TargetPoint.SteamAppId == null
                         ? null
                         : (await dbContext.UserSteamGameRecords
-                            .Where(r => r.UserId == c.Author.Id && r.SteamAppId == activity.TargetPoint.SteamAppId)
+                            .Where(r => r.UserId == c.AuthorId && r.SteamAppId == activity.TargetPoint.SteamAppId)
                             .SingleOrDefaultAsync())?.TotalPlayedTime;
                     activityComment.LikeCount =
                         await cachedData.Likes.GetTargetLikeCountAsync(c.Id, LikeTargetType.ActivityComment);
@@ -110,6 +116,71 @@ namespace Keylol.States.Content.Activity
             return new Tuple<ActivityCommentList, int, int>(result,
                 count,
                 count > 0 ? (int) Math.Ceiling(count/(double) RecordsPerPage) : 1);
+        }
+
+        /// <summary>
+        /// 创建 <see cref="ActivityCommentList"/>
+        /// </summary>
+        /// <param name="activityId">动态 ID</param>
+        /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="before">起始位置</param>
+        /// <param name="take">获取数量</param>
+        /// <param name="isOperator">当前登录用户是否为运维职员</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="ActivityCommentList"/></returns>
+        public static async Task<ActivityCommentList> CreateAsync(string activityId, string currentUserId,
+            int before, int take, bool isOperator, KeylolDbContext dbContext, CachedDataProvider cachedData)
+        {
+            var activity = await dbContext.Activities.FindAsync(activityId);
+            if (activity == null ||
+                (activity.Archived != ArchivedState.None && currentUserId != activity.AuthorId && !isOperator))
+                return new ActivityCommentList(0);
+
+            var queryResult = await (from comment in dbContext.ActivityComments
+                where comment.ActivityId == activity.Id && comment.Sid < before
+                orderby comment.Sid descending
+                select new
+                {
+                    AuthorIdCode = comment.Commentator.IdCode,
+                    AuthorAvatarImage = comment.Commentator.AvatarImage,
+                    AuthorUserName = comment.Commentator.UserName,
+                    AuthorId = comment.CommentatorId,
+                    comment.Id,
+                    comment.PublishTime,
+                    comment.SidForActivity,
+                    comment.Content,
+                    comment.Archived,
+                    comment.Warned
+                }).Take(take).ToListAsync();
+
+            var result = new ActivityCommentList(queryResult.Count);
+            foreach (var c in queryResult)
+            {
+                var activityComment = new ActivityComment
+                {
+                    SidForActivity = c.SidForActivity,
+                    Archived = c.Archived != ArchivedState.None
+                };
+                // ReSharper disable once PossibleInvalidOperationException
+                if (!activityComment.Archived.Value || currentUserId == c.AuthorId || isOperator)
+                {
+                    activityComment.AuthorIdCode = c.AuthorIdCode;
+                    activityComment.AuthorAvatarImage = c.AuthorAvatarImage;
+                    activityComment.AuthorUserName = c.AuthorUserName;
+                    activityComment.LikeCount =
+                        await cachedData.Likes.GetTargetLikeCountAsync(c.Id, LikeTargetType.ActivityComment);
+                    activityComment.Liked = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Likes.IsLikedAsync(currentUserId, c.Id, LikeTargetType.ActivityComment);
+                    activityComment.PublishTime = c.PublishTime;
+                    activityComment.Content = c.Content;
+                    activityComment.Warned = c.Warned;
+                }
+                result.Add(activityComment);
+            }
+            result.Reverse();
+            return result;
         }
     }
 

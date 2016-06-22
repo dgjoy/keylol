@@ -142,21 +142,33 @@ namespace Keylol.Utilities
                     }
                     else
                     {
-                        if (elNode.IsBlock && sb.Length > 0)
+                        if (IsBlock(elNode) && sb.Length > 0)
                         {
                             RemoveTrailingWhitespace(sb);
                             sb.Append(_keepNewLine ? Environment.NewLine : " ");
                         }
 
-                        AddContents(sb, el, elNode.IsBlock);
-                        RemoveTrailingWhitespace(sb);
+                        if (elNode.NodeName == "SPOILER")
+                        {
+                            sb.Append("〔剧透〕");
+                        }
+                        else
+                        {
+                            AddContents(sb, el, IsBlock(elNode));
+                            RemoveTrailingWhitespace(sb);
+                        }
 
-                        if (!elNode.IsBlock) continue;
+                        if (!IsBlock(elNode)) continue;
                         sb.Append(_keepNewLine ? Environment.NewLine : " ");
                         skipWhitespace = true;
                     }
                 }
             }
+        }
+
+        private static bool IsBlock(IDomElement node)
+        {
+            return node.IsBlock || node.NodeName == "SPOILER";
         }
 
         /// <summary>

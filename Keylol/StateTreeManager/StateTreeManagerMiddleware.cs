@@ -215,16 +215,29 @@ namespace Keylol.StateTreeManager
                 else
                 {
                     var value = query[parameter.Name] ??
-                                query[parameter.Name.ToCase(NameConventionCase.CamelCase, NameConventionCase.SnakeCase)];
+                                query[
+                                    parameter.Name.ToCase(NameConventionCase.CamelCase, NameConventionCase.SnakeCase)
+                                    ];
                     if (value != null)
+                    {
                         arguments.Add(CastType(value, parameter.ParameterType));
+                    }
                     else if (locators.ContainsKey(parameter.Name))
+                    {
                         arguments.Add(CastType(locators[parameter.Name], parameter.ParameterType));
+                    }
                     else
-                        arguments.Add(Type.Missing);
+                    {
+                        if (parameter.HasDefaultValue)
+                            arguments.Add(Type.Missing);
+                        else
+                            throw new ArgumentException("Missing parameter does not have a default value.",
+                                parameter.Name);
+                    }
                 }
             }
-            if (getMethod.ReturnType.IsGenericType && getMethod.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
+            if (getMethod.ReturnType.IsGenericType &&
+                getMethod.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
             {
                 dynamic task = getMethod.Invoke(null, arguments.ToArray());
                 return await task;
