@@ -125,11 +125,12 @@ namespace Keylol.States.PostOffice
         /// 折叠动态内容
         /// </summary>
         /// <param name="activity">动态对象</param>
+        /// <param name="maxLength">保留的最大长度</param>
         /// <returns>折叠后的动态内容</returns>
-        public static string CollapseActivityContent(Activity activity)
+        public static string CollapseActivityContent(Activity activity, int maxLength = 50)
         {
             var content = string.IsNullOrWhiteSpace(activity.CoverImage) ? activity.Content : $"{activity.Content}〔附图〕";
-            return activity.Content.Length > 50 ? $"{activity.Content.Substring(0, 50)} …" : content;
+            return activity.Content.Length > maxLength ? $"{activity.Content.Substring(0, maxLength)} …" : content;
         }
 
         private static string CollapseCommentContent(string content)

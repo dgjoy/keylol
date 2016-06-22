@@ -206,15 +206,19 @@
   <ItemGroup>
     <Compile Include="Controllers\ActivityComment\ActivityCommentController.cs" />
     <Compile Include="Controllers\ActivityComment\CreateOne.cs" />
+    <Compile Include="Controllers\ActivityComment\UpdateOneModeration.cs" />
     <Compile Include="Controllers\Activity\ActivityController.cs" />
     <Compile Include="Controllers\Activity\CreateOne.cs" />
     <Compile Include="Controllers\Activity\UpdateOne.cs" />
+    <Compile Include="Controllers\Activity\UpdateOneModeration.cs" />
     <Compile Include="Controllers\ArticleComment\UpdateOne.cs" />
+    <Compile Include="Controllers\ArticleComment\UpdateOneModeration.cs" />
     <Compile Include="Controllers\Article\ArticleController.cs" />
     <Compile Include="Controllers\Article\CreateOne.cs" />
     <Compile Include="Controllers\Article\UpdateOne.cs" />
     <Compile Include="Controllers\ArticleComment\ArticleCommentController.cs" />
     <Compile Include="Controllers\ArticleComment\CreateOne.cs" />
+    <Compile Include="Controllers\Article\UpdateOneModeration.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Feed\CreateOneOutpostPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightPoint.cs" />
