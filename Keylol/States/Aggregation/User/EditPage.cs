@@ -49,13 +49,17 @@ namespace Keylol.States.Aggregation.User
                 UseEnglishPointName = user.PreferredPointName == PreferredPointName.English,
                 NotifyOnArticleReplied = user.NotifyOnArticleReplied,
                 NotifyOnCommentReplied = user.NotifyOnCommentReplied,
+                NotifyOnActivityReplied = user.NotifyOnActivityReplied,
                 NotifyOnArticleLiked = user.NotifyOnArticleLiked,
                 NotifyOnCommentLiked = user.NotifyOnCommentLiked,
+                NotifyOnActivityLiked = user.NotifyOnActivityLiked,
                 NotifyOnSubscribed = user.NotifyOnSubscribed,
                 SteamNotifyOnArticleReplied = user.SteamNotifyOnArticleReplied,
                 SteamNotifyOnCommentReplied = user.SteamNotifyOnCommentReplied,
+                SteamNotifyOnActivityReplied = user.SteamNotifyOnActivityReplied,
                 SteamNotifyOnArticleLiked = user.SteamNotifyOnArticleLiked,
                 SteamNotifyOnCommentLiked = user.SteamNotifyOnCommentLiked,
+                SteamNotifyOnActivityLiked = user.SteamNotifyOnActivityLiked,
                 SteamNotifyOnSubscribed = user.SteamNotifyOnSubscribed,
                 SteamNotifyOnSpotlighted = user.SteamNotifyOnSpotlighted,
                 SteamNotifyOnMissive = user.SteamNotifyOnMissive
@@ -98,6 +102,11 @@ namespace Keylol.States.Aggregation.User
         public bool? NotifyOnCommentReplied { get; set; }
 
         /// <summary>
+        /// 邮政中心提醒 - 动态收到评论
+        /// </summary>
+        public bool? NotifyOnActivityReplied { get; set; }
+
+        /// <summary>
         /// 邮政中心提醒 - 文章获得认可
         /// </summary>
         public bool? NotifyOnArticleLiked { get; set; }
@@ -106,6 +115,11 @@ namespace Keylol.States.Aggregation.User
         /// 邮政中心提醒 - 评论获得认可
         /// </summary>
         public bool? NotifyOnCommentLiked { get; set; }
+
+        /// <summary>
+        /// 邮政中心提醒 - 动态获得认可
+        /// </summary>
+        public bool? NotifyOnActivityLiked { get; set; }
 
         /// <summary>
         /// 邮政中心提醒 - 新听众
@@ -123,6 +137,11 @@ namespace Keylol.States.Aggregation.User
         public bool? SteamNotifyOnCommentReplied { get; set; }
 
         /// <summary>
+        /// Steam 机器人提醒 - 动态收到评论
+        /// </summary>
+        public bool? SteamNotifyOnActivityReplied { get; set; }
+
+        /// <summary>
         /// Steam 机器人提醒 - 文章获得认可
         /// </summary>
         public bool? SteamNotifyOnArticleLiked { get; set; }
@@ -131,6 +150,11 @@ namespace Keylol.States.Aggregation.User
         /// Steam 机器人提醒 - 评论获得认可
         /// </summary>
         public bool? SteamNotifyOnCommentLiked { get; set; }
+
+        /// <summary>
+        /// Steam 机器人提醒 - 动态获得认可
+        /// </summary>
+        public bool? SteamNotifyOnActivityLiked { get; set; }
 
         /// <summary>
         /// Steam 机器人提醒 - 新听众

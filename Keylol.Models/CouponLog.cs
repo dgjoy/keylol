@@ -38,7 +38,7 @@ namespace Keylol.Models
         新注册,
         应邀注册,
         发布文章,
-        发布简评,
+        [Obsolete] 发布简评,
         发出认可,
         获得认可,
         每日访问,

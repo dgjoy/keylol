@@ -63,7 +63,11 @@ namespace Keylol.States.PostOffice
                     Unread = m.Unread
                 };
 
-                if (!m.Type.IsMissiveMessage())
+                if (m.Type.IsMissiveMessage())
+                {
+                    item.Id = m.Id;
+                }
+                else
                 {
                     item.OperatorIdCode = m.Operator.IdCode;
                     item.OperatorAvatarImage = m.Operator.AvatarImage;
@@ -102,7 +106,7 @@ namespace Keylol.States.PostOffice
                 }
 
                 if (m.Count > 0) item.Count = m.Count;
-                if (m.SecondCount > 0) item.SecondCount = m.Count;
+                if (m.SecondCount > 0) item.SecondCount = m.SecondCount;
 
                 result.Add(item);
                 m.Unread = false;
@@ -125,17 +129,17 @@ namespace Keylol.States.PostOffice
         public static string CollapseActivityContent(Activity activity)
         {
             var content = string.IsNullOrWhiteSpace(activity.CoverImage) ? activity.Content : $"{activity.Content}〔附图〕";
-            return activity.Content.Length > 50 ? activity.Content.Substring(0, 50) : content;
+            return activity.Content.Length > 50 ? $"{activity.Content.Substring(0, 50)} …" : content;
         }
 
         private static string CollapseCommentContent(string content)
         {
-            return content.Length > 200 ? content.Substring(0, 200) : content;
+            return content.Length > 200 ? $"{content.Substring(0, 200)} …" : content;
         }
 
         private static string CollapleArticleTitle(string title)
         {
-            return title.Length > 50 ? title.Substring(0, 50) : title;
+            return title.Length > 50 ? $"{title.Substring(0, 50)} …" : title;
         }
     }
 
@@ -144,6 +148,11 @@ namespace Keylol.States.PostOffice
     /// </summary>
     public class PostOfficeMessage
     {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// 操作人识别码
         /// </summary>

@@ -17,7 +17,7 @@ namespace Keylol.Controllers.Article
     [RoutePrefix("article")]
     public partial class ArticleController : ApiController
     {
-//        private readonly CouponProvider _coupon;
+        private readonly CouponProvider _coupon;
         private readonly KeylolDbContext _dbContext;
         private readonly IModel _mqChannel;
         private readonly KeylolUserManager _userManager;
@@ -41,7 +41,7 @@ namespace Keylol.Controllers.Article
             KeylolUserManager userManager)
         {
             _mqChannel = mqChannel;
-//            _coupon = coupon;
+            _coupon = coupon;
             _dbContext = dbContext;
             _userManager = userManager;
         }

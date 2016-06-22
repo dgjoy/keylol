@@ -24,9 +24,13 @@ namespace Keylol.Controllers.Article
         [Route]
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.OK, "文章 SidForAuthor")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "用户文券不足")]
         public async Task<IHttpActionResult> CreateOne([NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
         {
             var userId = User.Identity.GetUserId();
+            if (!await _coupon.CanTriggerEventAsync(userId, CouponEvent.发布文章))
+                return Unauthorized();
+
             var article = new Models.Article
             {
                 AuthorId = userId,
@@ -68,6 +72,8 @@ namespace Keylol.Controllers.Article
                 .DefaultIfEmpty(0)
                 .MaxAsync() + 1;
             await _dbContext.SaveChangesAsync();
+            await _coupon.UpdateAsync(await _userManager.FindByIdAsync(userId), CouponEvent.发布文章,
+                new {ArticleId = article.Id});
             _mqChannel.SendMessage(string.Empty, MqClientProvider.PushHubRequestQueue, new PushHubRequestDto
             {
                 Type = ContentPushType.Article,

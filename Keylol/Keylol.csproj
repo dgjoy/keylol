@@ -286,6 +286,11 @@
     <Compile Include="States\Aggregation\User\People\UserEntry.cs" />
     <Compile Include="States\Aggregation\User\TimelinePage.cs" />
     <Compile Include="States\Content\Article\RecommendedArticle.cs" />
+    <Compile Include="States\Coupon\CouponLevel.cs" />
+    <Compile Include="States\Coupon\Detail\CouponLog.cs" />
+    <Compile Include="States\Coupon\Detail\DetailPage.cs" />
+    <Compile Include="States\Coupon\Ranking\RankingPage.cs" />
+    <Compile Include="States\Coupon\Ranking\RankingUser.cs" />
     <Compile Include="States\PostOffice\MissivePage.cs" />
     <Compile Include="States\PostOffice\PostOfficeLevel.cs" />
     <Compile Include="States\PostOffice\PostOfficeMessage.cs" />

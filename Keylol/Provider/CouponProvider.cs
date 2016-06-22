@@ -124,9 +124,6 @@ namespace Keylol.Provider
                 case CouponEvent.发布文章:
                     return -3;
 
-                case CouponEvent.发布简评:
-                    return -1;
-
                 case CouponEvent.发出认可:
                     return -1;
 

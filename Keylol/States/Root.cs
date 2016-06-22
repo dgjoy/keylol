@@ -10,6 +10,9 @@ using Keylol.States.Aggregation.User;
 using Keylol.States.Content;
 using Keylol.States.Content.Activity;
 using Keylol.States.Content.Article;
+using Keylol.States.Coupon;
+using Keylol.States.Coupon.Detail;
+using Keylol.States.Coupon.Ranking;
 using Keylol.States.Entrance;
 using Keylol.States.PostOffice;
 using Keylol.States.PostOffice.SocialActivity;
@@ -190,7 +193,7 @@ namespace Keylol.States
                     break;
 
                 case "post-office.unread":
-                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(PostOffice)))
                         root.PostOffice = new PostOfficeLevel
                         {
                             Unread = await UnreadPage.CreateAsync(currentUserId, dbContext)
@@ -198,7 +201,7 @@ namespace Keylol.States
                     break;
 
                 case "post-office.social-activity.comment":
-                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(PostOffice)))
                         root.PostOffice = new PostOfficeLevel
                         {
                             SocialActivity = new SocialActivityLevel
@@ -209,7 +212,7 @@ namespace Keylol.States
                     break;
 
                 case "post-office.social-activity.like":
-                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(PostOffice)))
                         root.PostOffice = new PostOfficeLevel
                         {
                             SocialActivity = new SocialActivityLevel
@@ -220,7 +223,7 @@ namespace Keylol.States
                     break;
 
                 case "post-office.social-activity.subscriber":
-                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(PostOffice)))
                         root.PostOffice = new PostOfficeLevel
                         {
                             SocialActivity = new SocialActivityLevel
@@ -231,10 +234,26 @@ namespace Keylol.States
                     break;
 
                 case "post-office.missive":
-                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(PostOffice)))
                         root.PostOffice = new PostOfficeLevel
                         {
                             Missive = await MissivePage.CreateAsync(currentUserId, dbContext)
+                        };
+                    break;
+
+                case "coupon.detail":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(Coupon)))
+                        root.Coupon = new CouponLevel
+                        {
+                            Detail = await DetailPage.CreateAsync(currentUserId, dbContext, userManager)
+                        };
+                    break;
+
+                case "coupon.ranking":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(Coupon)))
+                        root.Coupon = new CouponLevel
+                        {
+                            Ranking = await RankingPage.CreateAsync(currentUserId, dbContext, cachedData)
                         };
                     break;
 
@@ -270,6 +289,12 @@ namespace Keylol.States
         /// </summary>
         [Authorize]
         public PostOfficeLevel PostOffice { get; set; }
+
+        /// <summary>
+        /// 文券中心
+        /// </summary>
+        [Authorize]
+        public CouponLevel Coupon { get; set; }
 
         /// <summary>
         /// 待开设据点
