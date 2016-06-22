@@ -63,6 +63,7 @@ namespace Keylol.States.Entrance.Discovery
                 AuthorAvatarImage = a.Author.AvatarImage,
                 AuthorUserName = a.Author.UserName,
                 PointIdCode = a.TargetPoint.IdCode,
+                PointType = a.TargetPoint.Type,
                 PointAvatarImage = a.TargetPoint.AvatarImage,
                 PointChineseName = a.TargetPoint.ChineseName,
                 PointEnglishName = a.TargetPoint.EnglishName
@@ -83,6 +84,7 @@ namespace Keylol.States.Entrance.Discovery
                     AuthorUserName = a.AuthorUserName,
                     PointIdCode = a.PointIdCode,
                     PointAvatarImage = a.PointAvatarImage,
+                    PointType = a.PointType,
                     PointChineseName = a.PointChineseName,
                     PointEnglishName = a.PointEnglishName
                 });
@@ -149,6 +151,11 @@ namespace Keylol.States.Entrance.Discovery
         /// 收稿据点头像
         /// </summary>
         public string PointAvatarImage { get; set; }
+
+        /// <summary>
+        /// 收稿据点类型
+        /// </summary>
+        public PointType PointType { get; set; }
 
         /// <summary>
         /// 收稿据点中文名

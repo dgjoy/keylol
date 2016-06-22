@@ -81,6 +81,7 @@ namespace Keylol.States.Shared
                                     PointId = article.TargetPointId,
                                     PointIdCode = article.TargetPoint.IdCode,
                                     PointAvatarImage = article.TargetPoint.AvatarImage,
+                                    PointType = article.TargetPoint.Type,
                                     PointChineseName = article.TargetPoint.ChineseName,
                                     PointEnglishName = article.TargetPoint.EnglishName
                                 }).SingleOrDefaultAsync();
@@ -111,6 +112,7 @@ namespace Keylol.States.Shared
                             targetPointId = a.PointId;
                             card.AttachedPoints.Add(new PointBasicInfo
                             {
+                                Type = a.PointType,
                                 IdCode = a.PointIdCode,
                                 AvatarImage = a.PointAvatarImage,
                                 ChineseName = a.PointChineseName,
@@ -140,6 +142,7 @@ namespace Keylol.States.Shared
                                     PointId = activity.TargetPointId,
                                     PointIdCode = activity.TargetPoint.IdCode,
                                     PointAvatarImage = activity.TargetPoint.AvatarImage,
+                                    PointType = activity.TargetPoint.Type,
                                     PointChineseName = activity.TargetPoint.ChineseName,
                                     PointEnglishName = activity.TargetPoint.EnglishName
                                 }).SingleOrDefaultAsync();
@@ -172,6 +175,7 @@ namespace Keylol.States.Shared
                             targetPointId = a.PointId;
                             card.AttachedPoints.Add(new PointBasicInfo
                             {
+                                Type = a.PointType,
                                 IdCode = a.PointIdCode,
                                 AvatarImage = a.PointAvatarImage,
                                 ChineseName = a.PointChineseName,
@@ -212,12 +216,14 @@ namespace Keylol.States.Shared
                                 where pointIds.Contains(point.Id)
                                 select new
                                 {
+                                    point.Type,
                                     point.IdCode,
                                     point.AvatarImage,
                                     point.ChineseName,
                                     point.EnglishName
                                 }).ToListAsync()).Select(p => new PointBasicInfo
                                 {
+                                    Type = p.Type,
                                     IdCode = p.IdCode,
                                     AvatarImage = p.AvatarImage,
                                     ChineseName = p.ChineseName,

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -14,9 +15,9 @@ namespace Keylol.States.Aggregation.User.Dossier
     /// <summary>
     /// 订阅的据点列表
     /// </summary>
-    public class SubscribedPointList : List<SubscribedPoint>
+    public class SubscribedPointList : List<PointBasicInfo>
     {
-        private SubscribedPointList([NotNull] IEnumerable<SubscribedPoint> collection) : base(collection)
+        private SubscribedPointList([NotNull] IEnumerable<PointBasicInfo> collection) : base(collection)
         {
         }
 
@@ -53,14 +54,16 @@ namespace Keylol.States.Aggregation.User.Dossier
                 select new
                 {
                     Count = returnCount ? conditionQuery.Count() : 1,
+                    point.Type,
                     point.IdCode,
                     point.AvatarImage,
                     point.ChineseName,
                     point.EnglishName
                 }).TakePage(page, recordsPerPage).ToListAsync();
 
-            var result = new SubscribedPointList(queryResult.Select(p => new SubscribedPoint
+            var result = new SubscribedPointList(queryResult.Select(p => new PointBasicInfo()
             {
+                Type = p.Type,
                 IdCode = p.IdCode,
                 AvatarImage = p.AvatarImage,
                 ChineseName = p.ChineseName,
@@ -69,31 +72,5 @@ namespace Keylol.States.Aggregation.User.Dossier
             var firstRecord = queryResult.FirstOrDefault();
             return new Tuple<SubscribedPointList, int>(result, firstRecord?.Count ?? 0);
         }
-    }
-
-    /// <summary>
-    /// 订阅的据点
-    /// </summary>
-    public class SubscribedPoint
-    {
-        /// <summary>
-        /// 识别码
-        /// </summary>
-        public string IdCode { get; set; }
-
-        /// <summary>
-        /// 头像
-        /// </summary>
-        public string AvatarImage { get; set; }
-
-        /// <summary>
-        /// 中文名
-        /// </summary>
-        public string ChineseName { get; set; }
-
-        /// <summary>
-        /// 英文名
-        /// </summary>
-        public string EnglishName { get; set; }
     }
 }

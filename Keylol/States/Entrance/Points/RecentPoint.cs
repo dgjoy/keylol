@@ -57,6 +57,7 @@ namespace Keylol.States.Entrance.Points
             {
                 Count = returnPageCount ? conditionQuery.Count() : 1,
                 p.Id,
+                p.Type,
                 p.IdCode,
                 p.AvatarImage,
                 p.ChineseName,
@@ -71,6 +72,7 @@ namespace Keylol.States.Entrance.Points
                 result.Add(new PointBasicInfo
                 {
                     Id = p.Id,
+                    Type = p.Type,
                     IdCode = p.IdCode,
                     AvatarImage = p.AvatarImage,
                     ChineseName = p.ChineseName,

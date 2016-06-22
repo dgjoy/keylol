@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States
@@ -12,9 +13,9 @@ namespace Keylol.States
     /// <summary>
     /// 关联投稿据点列表
     /// </summary>
-    public class RelatedPointList : List<RelatedPoint>
+    public class RelatedPointList : List<PointBasicInfo>
     {
-        private RelatedPointList([NotNull] IEnumerable<RelatedPoint> collection) : base(collection)
+        private RelatedPointList([NotNull] IEnumerable<PointBasicInfo> collection) : base(collection)
         {
         }
 
@@ -46,43 +47,19 @@ namespace Keylol.States
                 select new
                 {
                     relationship.TargetPoint.Id,
+                    relationship.TargetPoint.Type,
                     relationship.TargetPoint.AvatarImage,
                     relationship.TargetPoint.ChineseName,
                     relationship.TargetPoint.EnglishName
                 }).Distinct().Take(10).ToListAsync())
-                .Select(p => new RelatedPoint
+                .Select(p => new PointBasicInfo
                 {
                     Id = p.Id,
+                    Type = p.Type,
                     AvatarImage = p.AvatarImage,
                     ChineseName = p.ChineseName,
                     EnglishName = p.EnglishName
                 }));
         }
-    }
-
-    /// <summary>
-    /// 关联投稿据点
-    /// </summary>
-    public class RelatedPoint
-    {
-        /// <summary>
-        /// ID
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 头像
-        /// </summary>
-        public string AvatarImage { get; set; }
-
-        /// <summary>
-        /// 中文名
-        /// </summary>
-        public string ChineseName { get; set; }
-
-        /// <summary>
-        /// 英文名
-        /// </summary>
-        public string EnglishName { get; set; }
     }
 }

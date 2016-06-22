@@ -97,14 +97,16 @@ namespace Keylol.States.Content.Article
                     where attachedPointIds.Contains(point.Id)
                     select new
                     {
+                        point.Type,
                         point.Id,
                         point.IdCode,
                         point.AvatarImage,
                         point.ChineseName,
                         point.EnglishName
                     }).ToListAsync() on id equals point.Id
-                select new SimplePoint
+                select new PointBasicInfo
                 {
+                    Type = point.Type,
                     Id = point.Id,
                     IdCode = point.IdCode,
                     AvatarImage = point.AvatarImage,
@@ -175,7 +177,7 @@ namespace Keylol.States.Content.Article
         /// <summary>
         /// 关联投稿据点列表
         /// </summary>
-        public List<SimplePoint> AttachedPoints { get; set; }
+        public List<PointBasicInfo> AttachedPoints { get; set; }
 
         /// <summary>
         /// 是否被封存

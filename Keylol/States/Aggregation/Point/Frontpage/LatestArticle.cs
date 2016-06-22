@@ -68,6 +68,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                 AuthorAvatarImage = a.Author.AvatarImage,
                 AuthorUserName = a.Author.UserName,
                 PointIdCode = a.TargetPoint.IdCode,
+                PointType = a.TargetPoint.Type,
                 PointAvatarImage = a.TargetPoint.AvatarImage,
                 PointChineseName = a.TargetPoint.ChineseName,
                 PointEnglishName = a.TargetPoint.EnglishName
@@ -87,6 +88,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                     AuthorAvatarImage = a.AuthorAvatarImage,
                     AuthorUserName = a.AuthorUserName,
                     PointIdCode = a.PointIdCode,
+                    PointType = a.PointType,
                     PointAvatarImage = a.PointAvatarImage,
                     PointChineseName = a.PointChineseName,
                     PointEnglishName = a.PointEnglishName
@@ -149,6 +151,11 @@ namespace Keylol.States.Aggregation.Point.Frontpage
         /// 收稿据点识别码
         /// </summary>
         public string PointIdCode { get; set; }
+        
+        /// <summary>
+        /// 收稿据点类型
+        /// </summary>
+        public PointType PointType { get; set; }
 
         /// <summary>
         /// 收稿据点头像

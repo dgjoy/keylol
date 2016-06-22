@@ -61,7 +61,8 @@ namespace Keylol.States.Aggregation.Point.Edit
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
-                        ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
                     })
                     .ToList();
 
@@ -80,7 +81,8 @@ namespace Keylol.States.Aggregation.Point.Edit
                     {
                         Id = p.Id,
                         AvatarImage = p.AvatarImage,
-                        ChineseName = string.IsNullOrWhiteSpace(p.ChineseName) ? p.EnglishName : p.ChineseName
+                        ChineseName = p.ChineseName,
+                        EnglishName = p.EnglishName
                     })
                     .ToList();
             }

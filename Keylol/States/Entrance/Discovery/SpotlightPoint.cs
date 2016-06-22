@@ -52,6 +52,7 @@ namespace Keylol.States.Entrance.Discovery
                 select new
                 {
                     point.Id,
+                    point.Type,
                     point.IdCode,
                     point.AvatarImage,
                     point.EnglishName,
@@ -87,6 +88,7 @@ namespace Keylol.States.Entrance.Discovery
                 result.Add(new PointBasicInfo
                 {
                     Id = p.Id,
+                    Type = p.Type,
                     IdCode = p.IdCode,
                     AvatarImage = p.AvatarImage,
                     EnglishName = p.EnglishName,
