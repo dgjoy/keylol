@@ -39,7 +39,7 @@ namespace Keylol.States.Shared
         /// <param name="before">起始位置</param>
         /// <returns><see cref="TimelineCardList"/></returns>
         public static async Task<TimelineCardList> CreateAsync(string streamName, string currentUserId, int take,
-            bool ignoreRejected, KeylolDbContext dbContext, CachedDataProvider cachedData, int before = int.MaxValue)
+            bool ignoreRejected, KeylolDbContext dbContext, CachedDataProvider cachedData, long before = long.MaxValue)
         {
             if (take > 50) take = 50;
             var result = new TimelineCardList(20);
@@ -261,7 +261,7 @@ namespace Keylol.States.Shared
         /// <summary>
         /// Feed ID
         /// </summary>
-        public int? FeedId { get; set; }
+        public long? FeedId { get; set; }
 
         /// <summary>
         /// 作者基本信息

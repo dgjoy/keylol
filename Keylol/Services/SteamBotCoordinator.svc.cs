@@ -219,6 +219,7 @@ namespace Keylol.Services
                     {
                         // 用户此前删除了机器人好友，重新设定当前机器人为绑定的机器人
                         user.SteamBotId = botId;
+                        user.SteamBindingTime = DateTime.Now;
                         await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
                         await Task.Delay(TimeSpan.FromSeconds(3));
                         await Client.SendChatMessage(botId, userSteamId,

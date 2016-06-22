@@ -182,7 +182,7 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// Feed ID
         /// </summary>
-        public int FeedId { get; set; }
+        public long? FeedId { get; set; }
 
         /// <summary>
         /// ID

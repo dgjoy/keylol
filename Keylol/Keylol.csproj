@@ -238,6 +238,7 @@
     <Compile Include="Controllers\Subscription\SubscriptionController.cs" />
     <Compile Include="Controllers\UploadSignature\CreateOne.cs" />
     <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
+    <Compile Include="Controllers\User\CreateOne.cs" />
     <Compile Include="Controllers\User\UpdateOne.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
@@ -352,6 +353,7 @@
     <Compile Include="StateTreeManager\Exceptions.cs" />
     <Compile Include="StateTreeManager\StateTreeHelper.cs" />
     <Compile Include="StateTreeManager\StateTreeManagerMiddleware.cs" />
+    <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Utilities\DataAnnotationAttributes.cs" />
     <Compile Include="Utilities\Errors.cs" />
     <Compile Include="Utilities\Extensions.cs" />

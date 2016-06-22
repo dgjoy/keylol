@@ -24,10 +24,6 @@ namespace Keylol.Provider
     /// </summary>
     public class SteamCrawlerProvider
     {
-        private readonly KeylolDbContext _dbContext;
-        private readonly KeylolUserManager _userManager;
-        private readonly CachedDataProvider.CachedDataProvider _cachedData;
-        private readonly RedisProvider _redis;
         private static readonly string ApiKey = ConfigurationManager.AppSettings["steamWebApiKey"] ?? string.Empty;
         private static readonly HttpClient HttpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(20)};
         private static readonly TimeSpan SilenceTime = TimeSpan.FromMinutes(8);
@@ -50,22 +46,6 @@ namespace Keylol.Provider
             => $"crawler-stamp:point-steam-spy:{pointId}";
 
         private static string OnSalePointsCrawlerStampCacheKey() => "crawler-stamp:on-sale-points";
-
-        /// <summary>
-        /// 创建 <see cref="SteamCrawlerProvider"/>
-        /// </summary>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="redis"><see cref="RedisProvider"/></param>
-        public SteamCrawlerProvider(KeylolDbContext dbContext, KeylolUserManager userManager,
-            CachedDataProvider.CachedDataProvider cachedData, RedisProvider redis)
-        {
-            _dbContext = dbContext;
-            _userManager = userManager;
-            _cachedData = cachedData;
-            _redis = redis;
-        }
 
         /// <summary>
         /// 异步抓取指定用户的游戏记录 (fire-and-forget)
@@ -100,16 +80,6 @@ namespace Keylol.Provider
                     await UpdateUserSteamFrinedsAsync(userId, dbContext, userManager, redis);
                 }
             });
-        }
-
-        /// <summary>
-        /// 抓取指定用户的 Steam App 库
-        /// </summary>
-        /// <param name="userId">用户 ID</param>
-        /// <returns>如果抓取成功，返回 <c>true</c></returns>
-        public async Task<bool> UpdateUserSteamGameRecordsAsync(string userId)
-        {
-            return await UpdateUserSteamGameRecordsAsync(userId, _dbContext, _userManager, _redis, _cachedData);
         }
 
         /// <summary>
@@ -159,7 +129,16 @@ namespace Keylol.Provider
             });
         }
 
-        private static async Task<bool> UpdateUserSteamGameRecordsAsync([NotNull] string userId,
+        /// <summary>
+        /// 抓取指定用户的 Steam App 库
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="redis"><see cref="RedisProvider"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider.CachedDataProvider"/></param>
+        /// <returns>如果抓取成功，返回 <c>true</c></returns>
+        public static async Task<bool> UpdateUserSteamGameRecordsAsync([NotNull] string userId,
             KeylolDbContext dbContext, KeylolUserManager userManager, RedisProvider redis,
             CachedDataProvider.CachedDataProvider cachedData)
         {

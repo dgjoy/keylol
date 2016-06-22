@@ -532,7 +532,7 @@ namespace Keylol.Controllers.Point
             /// 识别码
             /// </summary>
             [Required]
-            [RegularExpression(@"^[A-Za-z0-9]{5}$")]
+            [RegularExpression(Constants.IdCodeConstraint)]
             public string IdCode { get; set; }
 
             /// <summary>

@@ -6,7 +6,7 @@ namespace Keylol.Models
 {
     public class Feed
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Index]
         [Required]

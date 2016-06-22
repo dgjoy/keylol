@@ -10,7 +10,7 @@ namespace Keylol.Models
 
         [Index(IsUnique = true, IsClustered = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int Sid { get; set; }
+        public long Sid { get; set; }
 
         [Index]
         public DateTime Time { get; set; } = DateTime.Now;

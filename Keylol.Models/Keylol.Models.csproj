@@ -149,6 +149,10 @@
     <Compile Include="Migrations\201606220814279_ArticleCommentRowVersion.Designer.cs">
       <DependentUpon>201606220814279_ArticleCommentRowVersion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606222101068_LongId.cs" />
+    <Compile Include="Migrations\201606222101068_LongId.Designer.cs">
+      <DependentUpon>201606222101068_LongId.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -874,6 +878,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606220814279_ArticleCommentRowVersion.resx">
       <DependentUpon>201606220814279_ArticleCommentRowVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606222101068_LongId.resx">
+      <DependentUpon>201606222101068_LongId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

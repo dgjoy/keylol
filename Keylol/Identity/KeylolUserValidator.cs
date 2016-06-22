@@ -8,6 +8,7 @@ using Keylol.Models;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
+using Constants = Keylol.Utilities.Constants;
 
 namespace Keylol.Identity
 {
@@ -39,69 +40,95 @@ namespace Keylol.Identity
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (!Regex.IsMatch(user.IdCode, @"^[A-Z0-9]{5}$"))
-                return IdentityResult.Failed(Errors.InvalidIdCode);
+            // IdCode
+
+            var idCodeOwner = await _userManager.FindByIdCodeAsync(user.IdCode);
+            if (idCodeOwner == null)
+            {
+                if (!Regex.IsMatch(user.IdCode, Constants.IdCodeConstraint))
+                    return IdentityResult.Failed(Errors.InvalidIdCode);
+
+                if (IsIdCodeReserved(user.IdCode))
+                    return IdentityResult.Failed(Errors.IdCodeReserved);
+            }
+            else if (idCodeOwner.Id != user.Id)
+            {
+                return IdentityResult.Failed(Errors.IdCodeUsed);
+            }
+
+            // UserName
 
             if (user.UserName.Length < 3 || user.UserName.Length > 16)
                 return IdentityResult.Failed(Errors.UserNameInvalidLength);
 
-            if (!Regex.IsMatch(user.UserName, @"^[0-9A-Za-z\u4E00-\u9FCC]+$"))
+            if (!Regex.IsMatch(user.UserName, Constants.UserNameConstraint))
                 return IdentityResult.Failed(Errors.UserNameInvalidCharacter);
 
+            var userNameOwner = await _userManager.FindByNameAsync(user.UserName);
+            if (userNameOwner != null && userNameOwner.Id != user.Id)
+                return IdentityResult.Failed(Errors.UserNameUsed);
+
+            // Email
+
             if (string.IsNullOrWhiteSpace(user.Email))
+            {
                 user.Email = null;
-            if (!new EmailAddressAttribute().IsValid(user.Email))
-                return IdentityResult.Failed(Errors.InvalidEmail);
+            }
+            else
+            {
+                if (!new EmailAddressAttribute().IsValid(user.Email))
+                    return IdentityResult.Failed(Errors.InvalidEmail);
+
+                var emailOwner = await _userManager.FindByEmailAsync(user.Email);
+                if (emailOwner != null && emailOwner.Id != user.Id)
+                    return IdentityResult.Failed(Errors.EmailUsed);
+            }
+
+            // GamerTag
 
             if (user.GamerTag.Length > 40)
                 return IdentityResult.Failed(Errors.GamerTagInvalidLength);
 
-            if (!Helpers.IsTrustedUrl(user.AvatarImage))
+            // AvatarImage
+
+            if (string.IsNullOrWhiteSpace(user.AvatarImage))
+                user.AvatarImage = string.Empty;
+            else if (!Helpers.IsTrustedUrl(user.AvatarImage))
                 return IdentityResult.Failed(Errors.AvatarImageUntrusted);
 
-            if (!Helpers.IsTrustedUrl(user.HeaderImage))
+            // HeaderImage
+
+            if (string.IsNullOrWhiteSpace(user.HeaderImage))
+                user.HeaderImage = string.Empty;
+            else if (!Helpers.IsTrustedUrl(user.HeaderImage))
                 return IdentityResult.Failed(Errors.HeaderImageUntrusted);
+
+            // ThemeColor
 
             try
             {
-                if (user.ThemeColor != string.Empty)
-                    user.ThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.ThemeColor));
+                user.ThemeColor = string.IsNullOrWhiteSpace(user.ThemeColor)
+                    ? string.Empty
+                    : ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.ThemeColor));
             }
             catch (Exception)
             {
                 return IdentityResult.Failed(Errors.InvalidThemeColor);
             }
 
+            // LightThemeColor
+
             try
             {
-                if (user.LightThemeColor != string.Empty)
-                    user.LightThemeColor = ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.LightThemeColor));
+                user.LightThemeColor = string.IsNullOrWhiteSpace(user.LightThemeColor)
+                    ? string.Empty
+                    : ColorTranslator.ToHtml(ColorTranslator.FromHtml(user.LightThemeColor));
             }
             catch (Exception)
             {
                 return IdentityResult.Failed(Errors.InvalidLightThemeColor);
             }
 
-            var idCodeOwner = await _userManager.FindByIdCodeAsync(user.IdCode);
-            if (idCodeOwner == null && IsIdCodeReserved(user.IdCode))
-            {
-                return IdentityResult.Failed(Errors.IdCodeUsed);
-            }
-            if (idCodeOwner != null && idCodeOwner.Id != user.Id)
-            {
-                return IdentityResult.Failed(Errors.IdCodeUsed);
-            }
-
-            var userNameOwner = await _userManager.FindByNameAsync(user.UserName);
-            if (userNameOwner != null && userNameOwner.Id != user.Id)
-                return IdentityResult.Failed(Errors.UserNameUsed);
-
-            if (user.Email != null)
-            {
-                var emailOwner = await _userManager.FindByEmailAsync(user.Email);
-                if (emailOwner != null && emailOwner.Id != user.Id)
-                    return IdentityResult.Failed(Errors.EmailUsed);
-            }
             return IdentityResult.Success;
         }
 

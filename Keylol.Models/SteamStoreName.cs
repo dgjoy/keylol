@@ -11,7 +11,7 @@ namespace Keylol.Models
 
         [Index(IsUnique = true, IsClustered = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int Sid { get; set; }
+        public long Sid { get; set; }
 
         [Required]
         [MaxLength(256)]

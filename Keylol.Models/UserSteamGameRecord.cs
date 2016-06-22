@@ -6,7 +6,7 @@ namespace Keylol.Models
 {
     public class UserSteamGameRecord
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         public string UserId { get; set; }

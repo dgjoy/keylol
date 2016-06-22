@@ -45,7 +45,7 @@ namespace Keylol.Models.Migrations
             bool suppressTransaction = false)
         {
             migration.AddOperation(
-                new SqlOperation($"CREATE SEQUENCE {sequenceName} AS int START WITH 1 INCREMENT BY 1 NO CACHE")
+                new SqlOperation($"CREATE SEQUENCE {sequenceName} AS bigint START WITH 1 INCREMENT BY 1 NO CACHE")
                 {
                     SuppressTransaction = suppressTransaction
                 });

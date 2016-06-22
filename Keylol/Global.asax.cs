@@ -107,9 +107,6 @@ namespace Keylol
                 return new RetryPolicy<SoapFaultWebServiceTransientErrorDetectionStrategy>(strategy);
             });
 
-            // Steam Crawler
-            Container.RegisterPerOwinRequest<SteamCrawlerProvider>();
-
             // HttpConfiguration / Web API Controllers
             var httpConfiguration = new HttpConfiguration();
             Container.RegisterWebApiControllers(httpConfiguration);

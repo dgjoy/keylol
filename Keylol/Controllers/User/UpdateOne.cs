@@ -143,14 +143,15 @@ namespace Keylol.Controllers.User
             string propertyName;
             switch (updateError)
             {
-                case Errors.InvalidEmail:
-                    propertyName = nameof(requestDto.Email);
-                    break;
-
                 case Errors.UserNameInvalidCharacter:
                 case Errors.UserNameInvalidLength:
                 case Errors.UserNameUsed:
                     propertyName = nameof(requestDto.UserName);
+                    break;
+
+                case Errors.InvalidEmail:
+                case Errors.EmailUsed:
+                    propertyName = nameof(requestDto.Email);
                     break;
 
                 case Errors.GamerTagInvalidLength:
@@ -163,10 +164,6 @@ namespace Keylol.Controllers.User
 
                 case Errors.HeaderImageUntrusted:
                     propertyName = nameof(requestDto.HeaderImage);
-                    break;
-
-                case Errors.EmailUsed:
-                    propertyName = nameof(requestDto.Email);
                     break;
 
                 case Errors.InvalidThemeColor:

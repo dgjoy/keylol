@@ -48,6 +48,11 @@
         public const string IdCodeUsed = "id_code_used";
 
         /// <summary>
+        ///     识别码已被保留
+        /// </summary>
+        public const string IdCodeReserved = "id_code_reserved";
+
+        /// <summary>
         ///     用户名长度不符合规范
         /// </summary>
         public const string UserNameInvalidLength = "user_name_invalid_length";

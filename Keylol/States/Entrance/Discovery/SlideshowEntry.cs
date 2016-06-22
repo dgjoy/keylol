@@ -112,7 +112,7 @@ namespace Keylol.States.Entrance.Discovery
         /// <summary>
         /// Feed ID
         /// </summary>
-        public int? FeedId { get; set; }
+        public long? FeedId { get; set; }
 
         /// <summary>
         /// 主标题

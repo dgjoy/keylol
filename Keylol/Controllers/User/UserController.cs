@@ -2,7 +2,6 @@
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
-using Keylol.Provider.CachedDataProvider;
 using Microsoft.Owin;
 using SimpleInjector.Integration.Owin;
 
@@ -17,10 +16,8 @@ namespace Keylol.Controllers.User
     {
         private readonly CouponProvider _coupon;
         private readonly KeylolDbContext _dbContext;
-        private readonly GeetestProvider _geetest;
         private readonly OneTimeTokenProvider _oneTimeToken;
         private readonly IOwinContext _owinContext;
-        private readonly CachedDataProvider _cachedData;
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
@@ -28,12 +25,6 @@ namespace Keylol.Controllers.User
         /// </summary>
         /// <param name="coupon">
         ///     <see cref="CouponProvider" />
-        /// </param>
-        /// <param name="cachedData">
-        ///     <see cref="CachedDataProvider" />
-        /// </param>
-        /// <param name="geetest">
-        ///     <see cref="GeetestProvider" />
         /// </param>
         /// <param name="owinContextProvider">
         ///     <see cref="OwinContextProvider" />
@@ -47,13 +38,10 @@ namespace Keylol.Controllers.User
         /// <param name="oneTimeToken">
         ///     <see cref="OneTimeTokenProvider" />
         /// </param>
-        public UserController(CouponProvider coupon, CachedDataProvider cachedData, GeetestProvider geetest,
-            OwinContextProvider owinContextProvider, KeylolDbContext dbContext, KeylolUserManager userManager,
-            OneTimeTokenProvider oneTimeToken)
+        public UserController(CouponProvider coupon, OwinContextProvider owinContextProvider, KeylolDbContext dbContext,
+            KeylolUserManager userManager, OneTimeTokenProvider oneTimeToken)
         {
             _coupon = coupon;
-            _cachedData = cachedData;
-            _geetest = geetest;
             _dbContext = dbContext;
             _userManager = userManager;
             _oneTimeToken = oneTimeToken;
