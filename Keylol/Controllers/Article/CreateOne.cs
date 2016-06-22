@@ -31,10 +31,9 @@ namespace Keylol.Controllers.Article
             {
                 AuthorId = userId,
                 Title = requestDto.Title,
-                Content = requestDto.Content,
+                Content = SanitizeRichText(requestDto.Content),
                 CoverImage = requestDto.CoverImage
             };
-            SanitizeArticle(article);
 
             if (!string.IsNullOrWhiteSpace(requestDto.Subtitle))
                 article.Subtitle = requestDto.Subtitle;
@@ -76,7 +75,8 @@ namespace Keylol.Controllers.Article
             });
             _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
-                ArticleId = article.Id
+                ContentType = ImageGarageRequestContentType.Article,
+                ContentId = article.Id
             });
             return Ok(article.SidForAuthor);
         }

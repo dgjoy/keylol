@@ -43,8 +43,8 @@ namespace Keylol.Models.DTO
         [EnumMember] Activity,
 
         /// <summary>
-        /// 专题讨论
+        /// 认可
         /// </summary>
-        [EnumMember] ConferenceEntry
+        [EnumMember] Like
     }
 }

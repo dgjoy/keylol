@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Controllers.Article;
 using Keylol.Identity;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
@@ -32,7 +33,7 @@ namespace Keylol.Controllers.ArticleComment
             if (comment.CommentatorId != userId && !User.IsInRole(KeylolRoles.Operator))
                 return Unauthorized();
 
-            comment.Content = requestDto.Content;
+            comment.Content = ArticleController.SanitizeRichText(requestDto.Content);
             comment.UnstyledContent = PlainTextFormatter.FlattenHtml(requestDto.Content, false);
             if (requestDto.ReplyToComment != null)
             {

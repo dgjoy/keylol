@@ -7,10 +7,10 @@ namespace Keylol.Models.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.KeylolUsers", "NotifyOnActivityReplied", c => c.Boolean(nullable: false));
-            AddColumn("dbo.KeylolUsers", "NotifyOnActivityLiked", c => c.Boolean(nullable: false));
-            AddColumn("dbo.KeylolUsers", "SteamNotifyOnActivityReplied", c => c.Boolean(nullable: false));
-            AddColumn("dbo.KeylolUsers", "SteamNotifyOnActivityLiked", c => c.Boolean(nullable: false));
+            AddColumn("dbo.KeylolUsers", "NotifyOnActivityReplied", c => c.Boolean(nullable: false, defaultValue: true));
+            AddColumn("dbo.KeylolUsers", "NotifyOnActivityLiked", c => c.Boolean(nullable: false, defaultValue: true));
+            AddColumn("dbo.KeylolUsers", "SteamNotifyOnActivityReplied", c => c.Boolean(nullable: false, defaultValue: true));
+            AddColumn("dbo.KeylolUsers", "SteamNotifyOnActivityLiked", c => c.Boolean(nullable: false, defaultValue: true));
             AddColumn("dbo.ArticleComments", "UnstyledContent", c => c.String(nullable: false));
             Sql(@"UPDATE ArticleComments SET UnstyledContent = Content");
         }

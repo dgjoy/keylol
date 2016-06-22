@@ -23,6 +23,12 @@ namespace Keylol.ImageGarage.ServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticle", ReplyAction="http://tempuri.org/IImageGarageCoordinator/UpdateArticleResponse")]
         void UpdateArticle(string id, string content, string coverImage, byte[] rowVersion);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/FindArticleComment", ReplyAction="http://tempuri.org/IImageGarageCoordinator/FindArticleCommentResponse")]
+        Keylol.Models.DTO.ArticleCommentDto FindArticleComment(string id);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticleComment", ReplyAction="http://tempuri.org/IImageGarageCoordinator/UpdateArticleCommentResponse")]
+        void UpdateArticleComment(string id, string content, byte[] rowVersion);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -62,6 +68,14 @@ namespace Keylol.ImageGarage.ServiceReference {
         
         public void UpdateArticle(string id, string content, string coverImage, byte[] rowVersion) {
             base.Channel.UpdateArticle(id, content, coverImage, rowVersion);
+        }
+        
+        public Keylol.Models.DTO.ArticleCommentDto FindArticleComment(string id) {
+            return base.Channel.FindArticleComment(id);
+        }
+        
+        public void UpdateArticleComment(string id, string content, byte[] rowVersion) {
+            base.Channel.UpdateArticleComment(id, content, rowVersion);
         }
     }
 }

@@ -16,6 +16,9 @@ namespace Keylol.Models
         [MaxLength(30000)]
         public string Content { get; set; }
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         [Required(AllowEmptyStrings = true)]
         [MaxLength(30000)]
         public string UnstyledContent { get; set; } = string.Empty;

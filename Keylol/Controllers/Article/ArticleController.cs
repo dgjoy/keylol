@@ -46,7 +46,7 @@ namespace Keylol.Controllers.Article
             _userManager = userManager;
         }
 
-        private static void SanitizeArticle(Models.Article article)
+        public static string SanitizeRichText(string html)
         {
             Config.HtmlEncoder = new HtmlEncoderMinimum();
             var sanitizer =
@@ -60,7 +60,7 @@ namespace Keylol.Controllers.Article
                     new[] {"src", "alt", "width", "height", "data-non-image", "href", "style"},
                     null,
                     new[] {"text-align"});
-            var dom = CQ.Create(sanitizer.Sanitize(article.Content));
+            var dom = CQ.Create(sanitizer.Sanitize(html));
             foreach (var img in dom["img"])
             {
                 if (string.IsNullOrWhiteSpace(img.Attributes["src"]))
@@ -75,7 +75,7 @@ namespace Keylol.Controllers.Article
                     img.RemoveAttribute("src");
                 }
             }
-            article.Content = dom.Render();
+            return dom.Render();
         }
     }
 }

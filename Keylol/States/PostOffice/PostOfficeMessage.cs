@@ -90,7 +90,7 @@ namespace Keylol.States.PostOffice
                     item.CommentSidForParent = m.ArticleComment.SidForArticle;
                     item.ArticleAuthorIdCode = m.ArticleComment.Article.Author.IdCode;
                     item.ArticleSidForAuthor = m.ArticleComment.Article.SidForAuthor;
-                    item.ArticleTitle = CollapleArticleTitle(m.Article.Title);
+                    item.ArticleTitle = CollapleArticleTitle(m.ArticleComment.Article.Title);
                 }
                 else if (m.ActivityCommentId != null)
                 {

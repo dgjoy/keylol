@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
@@ -64,14 +65,43 @@ namespace Keylol.ImageGarage
                         var serializer = new JsonSerializer();
                         var requestDto =
                             serializer.Deserialize<ImageGarageRequestDto>(new JsonTextReader(streamReader));
-                        var article = _coordinator.Operations.FindArticle(requestDto.ArticleId);
-                        if (article == null)
+
+                        string content, coverImage, title;
+                        byte[] rowVersion;
+                        switch (requestDto.ContentType)
                         {
-                            _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
-                            _logger.Warn($"Article {requestDto.ArticleId} doesn't exist.");
-                            return;
+                            case ImageGarageRequestContentType.Article:
+                                var article = _coordinator.Operations.FindArticle(requestDto.ContentId);
+                                if (article == null)
+                                {
+                                    _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
+                                    _logger.Warn($"Article {requestDto.ContentId} doesn't exist.");
+                                    return;
+                                }
+                                content = article.Content;
+                                title = article.Title;
+                                coverImage = article.CoverImage;
+                                rowVersion = article.RowVersion;
+                                break;
+
+                            case ImageGarageRequestContentType.ArticleComment:
+                                var comment = _coordinator.Operations.FindArticleComment(requestDto.ContentId);
+                                if (comment == null)
+                                {
+                                    _mqChannel.BasicNack(eventArgs.DeliveryTag, false, false);
+                                    _logger.Warn($"ArticleComment {requestDto.ContentId} doesn't exist.");
+                                    return;
+                                }
+                                content = comment.Content;
+                                coverImage = null;
+                                title = comment.Id;
+                                rowVersion = comment.RowVersion;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(requestDto.ContentType));
                         }
-                        var dom = CQ.Create(article.Content);
+
+                        var dom = CQ.Create(content);
                         var downloadCount = 0;
                         var uploadCache = new Dictionary<string, string>();
                         foreach (var img in dom["img"])
@@ -89,24 +119,38 @@ namespace Keylol.ImageGarage
                             img.Attributes["article-image-src"] = url;
                             img.RemoveAttribute("src");
                         }
-                        if (!Helpers.IsTrustedUrl(article.CoverImage))
+                        if (!Helpers.IsTrustedUrl(coverImage))
                         {
                             string url;
-                            if (!uploadCache.TryGetValue(article.CoverImage, out url))
+                            Debug.Assert(coverImage != null, "coverImage != null");
+                            if (!uploadCache.TryGetValue(coverImage, out url))
                             {
-                                url = await UploadFromUrlAsync(article.CoverImage);
-                                uploadCache[article.CoverImage] = url;
+                                url = await UploadFromUrlAsync(coverImage);
+                                uploadCache[coverImage] = url;
                                 downloadCount++;
                             }
                             if (!string.IsNullOrWhiteSpace(url))
-                                article.CoverImage = url;
+                                coverImage = url;
                         }
-                        article.Content = dom.Render();
-                        _coordinator.Operations.UpdateArticle(article.Id, article.Content, article.CoverImage,
-                            article.RowVersion);
+                        switch (requestDto.ContentType)
+                        {
+                            case ImageGarageRequestContentType.Article:
+                                _coordinator.Operations.UpdateArticle(requestDto.ContentId, content, coverImage,
+                                    rowVersion);
+                                _logger.Info(
+                                    $"Article \"{title}\" ({requestDto.ContentId}) finished, {downloadCount} images downloaded.");
+                                break;
+
+                            case ImageGarageRequestContentType.ArticleComment:
+                                _coordinator.Operations.UpdateArticleComment(requestDto.ContentId, content, rowVersion);
+                                _logger.Info(
+                                    $"ArticleComment ({title}) finished, {downloadCount} images downloaded.");
+                                break;
+
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(requestDto.ContentType));
+                        }
                         _mqChannel.BasicAck(eventArgs.DeliveryTag, false);
-                        _logger.Info(
-                            $"Article \"{article.Title}\" ({requestDto.ArticleId}) finished, {downloadCount} images downloaded.");
                     }
                 }
                 catch (FaultException e)
@@ -159,9 +203,7 @@ namespace Keylol.ImageGarage
                 request.Timeout = 10000;
                 request.ReadWriteTimeout = 60000;
                 using (var response = await request.GetResponseAsync())
-                using (var ms = new MemoryStream(response.ContentLength > 0
-                    ? (int) response.ContentLength
-                    : 0))
+                using (var ms = new MemoryStream(response.ContentLength > 0 ? (int) response.ContentLength : 0))
                 {
                     var extension = MimeTypeToFileExtension(response.ContentType?.Split(';')[0]);
                     if (extension == null) // 不支持的类型

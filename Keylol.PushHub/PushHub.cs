@@ -43,9 +43,10 @@ namespace Keylol.PushHub
                         var requestDto =
                             serializer.Deserialize<PushHubRequestDto>(new JsonTextReader(streamReader));
 
-                        string authorId, entryId;
+                        string entryId;
                         FeedEntryType entryType;
                         List<string> pointsToPush;
+                        List<UserToPush> usersToPush = new List<UserToPush>();
                         switch (requestDto.Type)
                         {
                             case ContentPushType.Article:
@@ -57,9 +58,12 @@ namespace Keylol.PushHub
                                         a.AuthorId,
                                         a.AttachedPoints,
                                         a.TargetPointId
-                                    }).SingleOrDefaultAsync();
-
-                                authorId = article.AuthorId;
+                                    }).SingleAsync();
+                                usersToPush.Add(new UserToPush
+                                {
+                                    UserId = article.AuthorId,
+                                    SubscriberTimelineReason = "author"
+                                });
                                 entryId = article.Id;
                                 entryType = FeedEntryType.ArticleId;
                                 pointsToPush = Helpers.SafeDeserialize<List<string>>(article.AttachedPoints) ??
@@ -77,8 +81,12 @@ namespace Keylol.PushHub
                                         a.AuthorId,
                                         a.AttachedPoints,
                                         a.TargetPointId
-                                    }).SingleOrDefaultAsync();
-                                authorId = activity.AuthorId;
+                                    }).SingleAsync();
+                                usersToPush.Add(new UserToPush
+                                {
+                                    UserId = activity.AuthorId,
+                                    SubscriberTimelineReason = "author"
+                                });
                                 entryId = activity.Id;
                                 entryType = FeedEntryType.ActivityId;
                                 pointsToPush = Helpers.SafeDeserialize<List<string>>(activity.AttachedPoints) ??
@@ -87,27 +95,54 @@ namespace Keylol.PushHub
                                 break;
                             }
 
-                            case ContentPushType.ConferenceEntry:
-                                throw new NotImplementedException();
+                            case ContentPushType.Like:
+                            {
+                                var like = await dbContext.Likes.FindAsync(requestDto.ContentId);
+                                entryId = like.TargetId;
+                                pointsToPush = new List<string>();
+                                usersToPush.Add(new UserToPush
+                                {
+                                    UserId = like.OperatorId,
+                                    UserTimelineReason = "like",
+                                    SubscriberTimelineReason = $"like:{like.OperatorId}"
+                                });
+                                switch (like.TargetType)
+                                {
+                                    case LikeTargetType.Article:
+                                        entryType = FeedEntryType.ArticleId;
+                                        break;
+                                    case LikeTargetType.Activity:
+                                        entryType = FeedEntryType.ActivityId;
+                                        break;
+                                    default:
+                                        _mqChannel.BasicAck(eventArgs.DeliveryTag, false);
+                                        return;
+                                }
+                                break;
+                            }
 
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
 
                         var count = 0;
-                        if (await AddOrUpdateFeedAsync(UserStream.Name(authorId),
-                            entryId, entryType, null, dbContext))
-                            count++;
-
-                        foreach (var subscriberId in await dbContext.Subscriptions
-                            .Where(s => s.TargetId == authorId &&
-                                        s.TargetType == SubscriptionTargetType.User)
-                            .Select(s => s.SubscriberId).ToListAsync())
+                        foreach (var user in usersToPush)
                         {
-                            if (await AddOrUpdateFeedAsync(SubscriptionStream.Name(subscriberId),
-                                entryId, entryType, "author", dbContext))
+                            if (await AddOrUpdateFeedAsync(UserStream.Name(user.UserId),
+                                entryId, entryType, user.UserTimelineReason, dbContext))
                                 count++;
+
+                            foreach (var subscriberId in await dbContext.Subscriptions
+                                .Where(s => s.TargetId == user.UserId &&
+                                            s.TargetType == SubscriptionTargetType.User)
+                                .Select(s => s.SubscriberId).ToListAsync())
+                            {
+                                if (await AddOrUpdateFeedAsync(SubscriptionStream.Name(subscriberId),
+                                    entryId, entryType, user.SubscriberTimelineReason, dbContext))
+                                    count++;
+                            }
                         }
+
 
                         foreach (var pointId in pointsToPush)
                         {
@@ -175,7 +210,48 @@ namespace Keylol.PushHub
                     Helpers.SafeDeserialize<SubscriptionStream.FeedProperties>(feed.Properties) ??
                     new SubscriptionStream.FeedProperties();
                 properties.Reasons = properties.Reasons ?? new List<string>();
-                if (!properties.Reasons.Contains(reason))
+                bool reasonExisted;
+                string likeOperatorId = null;
+                var reasonParts = reason.Split(':');
+                if (reasonParts.Length == 2 && reasonParts[0] == "like") likeOperatorId = reasonParts[1];
+                if (likeOperatorId == null)
+                {
+                    reasonExisted = properties.Reasons.Contains(reason);
+                }
+                else
+                {
+                    if (properties.Reasons.Count > 0)
+                    {
+                        var indexToRemove = -1;
+                        for (var i = 0; i < properties.Reasons.Count; i++)
+                        {
+                            var currentReason = properties.Reasons[i];
+                            var parts = currentReason.Split(':');
+                            if (parts.Length != 2 || parts[0] != "like") continue;
+                            var currentSubscriberCount = await dbContext.Subscriptions.LongCountAsync(
+                                s => s.TargetId == parts[1] && s.TargetType == SubscriptionTargetType.User);
+                            var newSubscriberCount = await dbContext.Subscriptions.LongCountAsync(
+                                s => s.TargetId == likeOperatorId && s.TargetType == SubscriptionTargetType.User);
+                            if (newSubscriberCount >= currentSubscriberCount)
+                                indexToRemove = i;
+                            break;
+                        }
+                        if (indexToRemove >= 0)
+                        {
+                            properties.Reasons.RemoveAt(indexToRemove);
+                            reasonExisted = false;
+                        }
+                        else
+                        {
+                            reasonExisted = true;
+                        }
+                    }
+                    else
+                    {
+                        reasonExisted = false;
+                    }
+                }
+                if (!reasonExisted)
                 {
                     properties.Reasons.Add(reason);
                     feed.Properties = JsonConvert.SerializeObject(properties);
@@ -183,6 +259,15 @@ namespace Keylol.PushHub
             }
             await dbContext.SaveChangesAsync();
             return added;
+        }
+
+        private class UserToPush
+        {
+            public string UserId { get; set; }
+
+            public string UserTimelineReason { get; set; }
+
+            public string SubscriberTimelineReason { get; set; }
         }
     }
 }

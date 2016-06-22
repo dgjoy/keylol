@@ -4,8 +4,11 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
+using Keylol.Controllers.Article;
 using Keylol.Identity;
 using Keylol.Models;
+using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -38,7 +41,7 @@ namespace Keylol.Controllers.ArticleComment
             {
                 ArticleId = article.Id,
                 CommentatorId = userId,
-                Content = requestDto.Content,
+                Content = ArticleController.SanitizeRichText(requestDto.Content),
                 UnstyledContent = PlainTextFormatter.FlattenHtml(requestDto.Content, false),
                 SidForArticle = await _dbContext.ArticleComments.Where(c => c.ArticleId == article.Id)
                     .Select(c => c.SidForArticle)
@@ -109,7 +112,11 @@ namespace Keylol.Controllers.ArticleComment
                 }
             }
             await _dbContext.SaveChangesAsync();
-
+            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            {
+                ContentType = ImageGarageRequestContentType.ArticleComment,
+                ContentId = comment.Id
+            });
             return Ok(comment.SidForArticle);
         }
 

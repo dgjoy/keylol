@@ -66,6 +66,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArticleCommentDto.cs" />
     <Compile Include="ArticleDto.cs" />
     <Compile Include="PushHubRequestDto.cs" />
     <Compile Include="ImageGarageRequestDto.cs" />

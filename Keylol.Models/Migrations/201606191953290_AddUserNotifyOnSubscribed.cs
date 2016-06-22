@@ -7,8 +7,8 @@ namespace Keylol.Models.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.KeylolUsers", "NotifyOnSubscribed", c => c.Boolean(nullable: false));
-            AddColumn("dbo.KeylolUsers", "SteamNotifyOnSubscribed", c => c.Boolean(nullable: false));
+            AddColumn("dbo.KeylolUsers", "NotifyOnSubscribed", c => c.Boolean(nullable: false, defaultValue: true));
+            AddColumn("dbo.KeylolUsers", "SteamNotifyOnSubscribed", c => c.Boolean(nullable: false, defaultValue: true));
         }
         
         public override void Down()

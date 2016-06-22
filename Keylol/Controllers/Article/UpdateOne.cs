@@ -39,9 +39,8 @@ namespace Keylol.Controllers.Article
 
             article.Title = requestDto.Title;
             article.Subtitle = string.IsNullOrWhiteSpace(requestDto.Subtitle) ? string.Empty : requestDto.Subtitle;
-            article.Content = requestDto.Content;
+            article.Content = SanitizeRichText(requestDto.Content);
             article.CoverImage = requestDto.CoverImage;
-            SanitizeArticle(article);
 
             var targetPoint = await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId)
                 .Select(p => new
@@ -87,7 +86,8 @@ namespace Keylol.Controllers.Article
             }
             _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
-                ArticleId = article.Id
+                ContentType = ImageGarageRequestContentType.Article,
+                ContentId = article.Id
             });
             return Ok();
         }

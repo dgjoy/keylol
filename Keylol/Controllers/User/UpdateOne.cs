@@ -103,6 +103,9 @@ namespace Keylol.Controllers.User
             if (requestDto.NotifyOnCommentLiked != null)
                 user.NotifyOnCommentLiked = requestDto.NotifyOnCommentLiked.Value;
 
+            if (requestDto.NotifyOnActivityLiked != null)
+                user.NotifyOnActivityLiked = requestDto.NotifyOnActivityLiked.Value;
+
             if (requestDto.NotifyOnSubscribed != null)
                 user.NotifyOnSubscribed = requestDto.NotifyOnSubscribed.Value;
 
@@ -120,6 +123,9 @@ namespace Keylol.Controllers.User
 
             if (requestDto.SteamNotifyOnCommentLiked != null)
                 user.SteamNotifyOnCommentLiked = requestDto.SteamNotifyOnCommentLiked.Value;
+
+            if (requestDto.SteamNotifyOnActivityLiked != null)
+                user.SteamNotifyOnActivityLiked = requestDto.SteamNotifyOnActivityLiked.Value;
 
             if (requestDto.SteamNotifyOnSubscribed != null)
                 user.SteamNotifyOnSubscribed = requestDto.SteamNotifyOnSubscribed.Value;
@@ -269,6 +275,11 @@ namespace Keylol.Controllers.User
             public bool? NotifyOnCommentLiked { get; set; }
 
             /// <summary>
+            /// 邮政中心提醒 - 动态获得认可
+            /// </summary>
+            public bool? NotifyOnActivityLiked { get; set; }
+
+            /// <summary>
             /// 邮政中心提醒 - 新听众
             /// </summary>
             public bool? NotifyOnSubscribed { get; set; }
@@ -297,6 +308,11 @@ namespace Keylol.Controllers.User
             /// Steam 机器人提醒 - 评论获得认可
             /// </summary>
             public bool? SteamNotifyOnCommentLiked { get; set; }
+
+            /// <summary>
+            /// Steam 机器人提醒 - 动态获得认可
+            /// </summary>
+            public bool? SteamNotifyOnActivityLiked { get; set; }
 
             /// <summary>
             /// Steam 机器人提醒 - 新听众

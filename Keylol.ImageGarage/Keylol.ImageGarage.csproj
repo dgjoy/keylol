@@ -100,6 +100,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\Keylol.Models.DTO.ArticleCommentDto.datasource" />
     <None Include="Properties\DataSources\Keylol.Models.DTO.ArticleDto.datasource" />
   </ItemGroup>
   <ItemGroup>

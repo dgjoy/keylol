@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
+using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.States.PostOffice;
 using Microsoft.AspNet.Identity;
 
@@ -21,9 +23,16 @@ namespace Keylol.Controllers.Like
         public async Task<IHttpActionResult> CreateOne(string targetId, LikeTargetType targetType)
         {
             var operatorId = User.Identity.GetUserId();
-            var succeed = await _cachedData.Likes.AddAsync(operatorId, targetId, targetType);
-            if (succeed)
+            var likeId = await _cachedData.Likes.AddAsync(operatorId, targetId, targetType);
+            if (likeId != null)
             {
+                if (targetType == LikeTargetType.Article || targetType == LikeTargetType.Activity)
+                    _mqChannel.SendMessage(string.Empty, MqClientProvider.PushHubRequestQueue, new PushHubRequestDto
+                    {
+                        Type = ContentPushType.Like,
+                        ContentId = likeId
+                    });
+
                 KeylolUser targetUser;
                 bool notify, steamNotify;
                 MessageType messageType;

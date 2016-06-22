@@ -175,9 +175,9 @@ namespace Keylol.Provider.CachedDataProvider
         /// <param name="operatorId">认可操作者 ID</param>
         /// <param name="targetId">目标 ID</param>
         /// <param name="targetType">目标类型</param>
-        /// <returns>认可成功返回 <c>true</c></returns>
+        /// <returns>认可成功返回认可 ID，失败返回 <c>null</c></returns>
         /// <exception cref="ArgumentNullException">有参数为 null</exception>
-        public async Task<bool> AddAsync([NotNull] string operatorId, [NotNull] string targetId,
+        public async Task<string> AddAsync([NotNull] string operatorId, [NotNull] string targetId,
             LikeTargetType targetType)
         {
             if (operatorId == null)
@@ -186,7 +186,7 @@ namespace Keylol.Provider.CachedDataProvider
                 throw new ArgumentNullException(nameof(targetId));
 
             if (await IsLikedAsync(operatorId, targetId, targetType))
-                return false;
+                return null;
 
             string likeReceiverId;
             switch (targetType)
@@ -221,14 +221,15 @@ namespace Keylol.Provider.CachedDataProvider
             }
 
             if (operatorId == likeReceiverId)
-                return false;
+                return null;
 
-            _dbContext.Likes.Add(new Like
+            var like = new Like
             {
                 OperatorId = operatorId,
                 TargetId = targetId,
                 TargetType = targetType
-            });
+            };
+            _dbContext.Likes.Add(like);
             await _dbContext.SaveChangesAsync();
 
             var redisDb = _redis.GetDatabase();
@@ -236,7 +237,7 @@ namespace Keylol.Provider.CachedDataProvider
                 UserLikedTargetCacheValue(targetId, targetType));
             await IncreaseUserLikeCountAsync(likeReceiverId, 1);
             await IncreaseTargetLikeCountAsync(targetId, targetType, 1);
-            return true;
+            return like.Id;
         }
 
         /// <summary>
