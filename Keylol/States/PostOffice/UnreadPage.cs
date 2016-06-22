@@ -1,10 +1,6 @@
-﻿using System;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Keylol.Models.DAL;
 using Keylol.StateTreeManager;
-using Keylol.Utilities;
 
 namespace Keylol.States.PostOffice
 {
@@ -13,38 +9,42 @@ namespace Keylol.States.PostOffice
     /// </summary>
     public class UnreadPage
     {
-        private const int RecordsPerPage = 10;
-
         /// <summary>
-        /// 获取未读消息列表
+        /// 获取未读消息页
         /// </summary>
-        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <returns><see cref="UnreadPage"/></returns>
-        public static async Task<UnreadPage> Get(int page, [Injected] KeylolDbContext dbContext)
+        public static async Task<UnreadPage> Get([Injected] KeylolDbContext dbContext)
         {
-            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, dbContext);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext);
+        }
+
+        /// <summary>
+        /// 获取消息列表
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="dbContext"></param>
+        /// <returns></returns>
+        public static async Task<PostOfficeMessageList> GetMessages(int page, [Injected] KeylolDbContext dbContext)
+        {
+            return (await PostOfficeMessageList.CreateAsync(typeof(UnreadPage), StateTreeHelper.GetCurrentUserId(),
+                page, false, dbContext)).Item1;
         }
 
         /// <summary>
         /// 创建 <see cref="UnreadPage"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
-        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <returns><see cref="MissivePage"/></returns>
-        public static async Task<UnreadPage> CreateAsync(string currentUserId, int page, KeylolDbContext dbContext)
+        /// <returns><see cref="UnreadPage"/></returns>
+        public static async Task<UnreadPage> CreateAsync(string currentUserId, KeylolDbContext dbContext)
         {
-            var count = await dbContext.Messages.CountAsync(m => m.ReceiverId == currentUserId);
+            var messages = await PostOfficeMessageList.CreateAsync(typeof(UnreadPage), currentUserId, 1, true,
+                dbContext);
             return new UnreadPage
             {
-                MessagePageCount = count > 0 ? (int) Math.Ceiling(count/(double) RecordsPerPage) : 1,
-                Messages = PostOfficeMessageList.Create(await dbContext.Messages.IncludeRelated()
-                    .Where(m => m.ReceiverId == currentUserId)
-                    .OrderByDescending(m => m.Unread)
-                    .ThenByDescending(m => m.Sid)
-                    .TakePage(page, RecordsPerPage)
-                    .ToListAsync())
+                MessagePageCount = messages.Item2,
+                Messages = messages.Item1
             };
         }
 

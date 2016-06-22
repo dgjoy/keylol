@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Keylol.Models;
+using Keylol.Models.DAL;
+using Keylol.States.PostOffice.SocialActivity;
+using Keylol.Utilities;
 
 namespace Keylol.States.PostOffice
 {
@@ -10,6 +16,8 @@ namespace Keylol.States.PostOffice
     /// </summary>
     public class PostOfficeMessageList : List<PostOfficeMessage>
     {
+        private const int RecordsPerPage = 10;
+
         private PostOfficeMessageList(int capacity) : base(capacity)
         {
         }
@@ -17,10 +25,34 @@ namespace Keylol.States.PostOffice
         /// <summary>
         /// 创建 <see cref="PostOfficeMessageList"/>
         /// </summary>
-        /// <param name="messages">邮政消息对象列表</param>
-        /// <returns><see cref="PostOfficeMessageList"/></returns>
-        public static PostOfficeMessageList Create(List<Message> messages)
+        /// <param name="pageType">邮政页面类型</param>
+        /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="page">分页页码</param>
+        /// <param name="returnPageCount">是否返回总页数</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <returns>Item1 表示 <see cref="PostOfficeMessageList"/>，Item2 表示总页数</returns>
+        public static async Task<Tuple<PostOfficeMessageList, int>> CreateAsync(Type pageType, string currentUserId,
+            int page, bool returnPageCount, KeylolDbContext dbContext)
         {
+            Expression<Func<Message, bool>> condition;
+            if (pageType == typeof(UnreadPage))
+                condition = m => m.ReceiverId == currentUserId;
+            else if (pageType == typeof(CommentPage))
+                condition = m => m.ReceiverId == currentUserId && (int) m.Type >= 100 && (int) m.Type <= 199;
+            else if (pageType == typeof(LikePage))
+                condition = m => m.ReceiverId == currentUserId && m.Type >= 0 && (int) m.Type <= 99;
+            else if (pageType == typeof(SubscriberPage))
+                condition = m => m.ReceiverId == currentUserId && (int) m.Type >= 300 && (int) m.Type <= 399;
+            else if (pageType == typeof(MissivePage))
+                condition = m => m.ReceiverId == currentUserId && (int) m.Type >= 200 && (int) m.Type <= 299;
+            else throw new ArgumentOutOfRangeException(nameof(pageType));
+
+            var messages = await dbContext.Messages.IncludeRelated()
+                .Where(condition)
+                .OrderByDescending(m => m.Unread)
+                .ThenByDescending(m => m.Sid)
+                .TakePage(page, RecordsPerPage)
+                .ToListAsync();
             var result = new PostOfficeMessageList(messages.Count);
             foreach (var m in messages)
             {
@@ -73,8 +105,16 @@ namespace Keylol.States.PostOffice
                 if (m.SecondCount > 0) item.SecondCount = m.Count;
 
                 result.Add(item);
+                m.Unread = false;
             }
-            return result;
+            await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+            var pageCount = 1;
+            if (returnPageCount)
+            {
+                var totalCount = await dbContext.Messages.CountAsync(condition);
+                pageCount = totalCount > 0 ? (int) Math.Ceiling(totalCount/(double) RecordsPerPage) : 1;
+            }
+            return new Tuple<PostOfficeMessageList, int>(result, pageCount);
         }
 
         /// <summary>

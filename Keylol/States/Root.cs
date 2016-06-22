@@ -12,6 +12,7 @@ using Keylol.States.Content.Activity;
 using Keylol.States.Content.Article;
 using Keylol.States.Entrance;
 using Keylol.States.PostOffice;
+using Keylol.States.PostOffice.SocialActivity;
 using Keylol.StateTreeManager;
 using EntrancePage = Keylol.States.Aggregation.User.EntrancePage;
 
@@ -192,7 +193,7 @@ namespace Keylol.States
                     if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
                         root.PostOffice = new PostOfficeLevel
                         {
-                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                            Unread = await UnreadPage.CreateAsync(currentUserId, dbContext)
                         };
                     break;
 
@@ -200,7 +201,10 @@ namespace Keylol.States
                     if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
                         root.PostOffice = new PostOfficeLevel
                         {
-                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                            SocialActivity = new SocialActivityLevel
+                            {
+                                Comment = await CommentPage.CreateAsync(currentUserId, dbContext)
+                            }
                         };
                     break;
 
@@ -208,7 +212,10 @@ namespace Keylol.States
                     if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
                         root.PostOffice = new PostOfficeLevel
                         {
-                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                            SocialActivity = new SocialActivityLevel
+                            {
+                                Like = await LikePage.CreateAsync(currentUserId, dbContext)
+                            }
                         };
                     break;
 
@@ -216,7 +223,10 @@ namespace Keylol.States
                     if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
                         root.PostOffice = new PostOfficeLevel
                         {
-                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                            SocialActivity = new SocialActivityLevel
+                            {
+                                Subscriber = await SubscriberPage.CreateAsync(currentUserId, dbContext)
+                            }
                         };
                     break;
 
@@ -224,7 +234,7 @@ namespace Keylol.States
                     if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
                         root.PostOffice = new PostOfficeLevel
                         {
-                            Unread = await UnreadPage.CreateAsync(currentUserId, 1, dbContext)
+                            Missive = await MissivePage.CreateAsync(currentUserId, dbContext)
                         };
                     break;
 

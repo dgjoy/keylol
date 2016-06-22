@@ -32,6 +32,7 @@ namespace Keylol.Services
                     Id = article.Id,
                     Content = article.Content,
                     Title = article.Title,
+                    CoverImage = article.CoverImage,
                     RowVersion = article.RowVersion
                 };
             }
