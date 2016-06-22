@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -35,15 +36,12 @@ namespace Keylol.Controllers.Activity
             if (Helpers.IsTrustedUrl(requestDto.CoverImage, false))
                 activity.CoverImage = requestDto.CoverImage;
 
-            var targetPoint = await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId)
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Type
-                }).SingleOrDefaultAsync();
+            var targetPoint =
+                await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId).SingleOrDefaultAsync();
             if (targetPoint == null)
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetPointId), Errors.NonExistent);
 
+            targetPoint.LastActivityTime = DateTime.Now;
             activity.TargetPointId = targetPoint.Id;
             if (targetPoint.Type == PointType.Game || targetPoint.Type == PointType.Hardware)
             {

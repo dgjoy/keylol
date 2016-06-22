@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -42,15 +43,12 @@ namespace Keylol.Controllers.Article
             if (!string.IsNullOrWhiteSpace(requestDto.Subtitle))
                 article.Subtitle = requestDto.Subtitle;
 
-            var targetPoint = await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId)
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Type
-                }).SingleOrDefaultAsync();
+            var targetPoint =
+                await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId).SingleOrDefaultAsync();
             if (targetPoint == null)
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.TargetPointId), Errors.NonExistent);
 
+            targetPoint.LastActivityTime = DateTime.Now;
             article.TargetPointId = targetPoint.Id;
             requestDto.AttachedPointIds = requestDto.AttachedPointIds.Select(id => id.Trim())
                 .Where(id => id != targetPoint.Id).Distinct().ToList();
