@@ -46,20 +46,24 @@ namespace Keylol.Controllers.Article
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// 净化富文本
+        /// </summary>
+        /// <param name="html">HTML 代码</param>
+        /// <returns>净化后的 HTML 代码</returns>
         public static string SanitizeRichText(string html)
         {
             Config.HtmlEncoder = new HtmlEncoderMinimum();
-            var sanitizer =
-                new HtmlSanitizer(
-                    new[]
-                    {
-                        "br", "span", "a", "img", "b", "strong", "i", "strike", "u", "p", "blockquote", "h1", "hr",
-                        "comment", "spoiler", "table", "colgroup", "col", "thead", "tr", "th", "tbody", "td"
-                    },
-                    null,
-                    new[] {"src", "alt", "width", "height", "data-non-image", "href", "style"},
-                    null,
-                    new[] {"text-align"});
+            var sanitizer = new HtmlSanitizer(
+                new[]
+                {
+                    "br", "span", "a", "img", "b", "strong", "i", "strike", "u", "p", "blockquote", "h1", "hr",
+                    "comment", "spoiler", "table", "colgroup", "col", "thead", "tr", "th", "tbody", "td"
+                },
+                null,
+                new[] {"src", "alt", "width", "height", "data-non-image", "href", "style"},
+                null,
+                new[] {"text-align"});
             var dom = CQ.Create(sanitizer.Sanitize(html));
             foreach (var img in dom["img"])
             {
@@ -76,6 +80,17 @@ namespace Keylol.Controllers.Article
                 }
             }
             return dom.Render();
+        }
+
+        /// <summary>
+        /// 如果图片属于自有存储，则提取出来替换 Schema，否则返回原图
+        /// </summary>
+        /// <param name="coverImage">封面图</param>
+        /// <returns>净化后的封面图</returns>
+        public static string SanitizeCoverImage(string coverImage)
+        {
+            var fileName = UpyunProvider.ExtractFileName(coverImage);
+            return string.IsNullOrWhiteSpace(fileName) ? coverImage : $"keylol://{fileName}";
         }
     }
 }

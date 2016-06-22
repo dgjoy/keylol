@@ -6,6 +6,8 @@ using System.Web.Http;
 using JetBrains.Annotations;
 using Keylol.Controllers.Article;
 using Keylol.Identity;
+using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -49,6 +51,11 @@ namespace Keylol.Controllers.ArticleComment
             }
 
             await _dbContext.SaveChangesAsync();
+            _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
+            {
+                ContentType = ImageGarageRequestContentType.ArticleComment,
+                ContentId = comment.Id
+            });
             return Ok();
         }
 

@@ -27,7 +27,8 @@ namespace Keylol.Controllers.Article
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
-        public async Task<IHttpActionResult> UpdateOne(string id, [NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOne(string id,
+            [NotNull] ArticleCreateOrUpdateOneRequestDto requestDto)
         {
             var article = await _dbContext.Articles.FindAsync(id);
             if (article == null)
@@ -40,7 +41,7 @@ namespace Keylol.Controllers.Article
             article.Title = requestDto.Title;
             article.Subtitle = string.IsNullOrWhiteSpace(requestDto.Subtitle) ? string.Empty : requestDto.Subtitle;
             article.Content = SanitizeRichText(requestDto.Content);
-            article.CoverImage = requestDto.CoverImage;
+            article.CoverImage = SanitizeCoverImage(requestDto.CoverImage);
 
             var targetPoint = await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId)
                 .Select(p => new

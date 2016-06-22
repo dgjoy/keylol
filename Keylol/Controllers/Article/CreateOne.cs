@@ -32,7 +32,7 @@ namespace Keylol.Controllers.Article
                 AuthorId = userId,
                 Title = requestDto.Title,
                 Content = SanitizeRichText(requestDto.Content),
-                CoverImage = requestDto.CoverImage
+                CoverImage = SanitizeCoverImage(requestDto.CoverImage)
             };
 
             if (!string.IsNullOrWhiteSpace(requestDto.Subtitle))

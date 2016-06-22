@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using ChannelAdam.ServiceModel;
@@ -63,8 +64,7 @@ namespace Keylol.ImageGarage
                     using (var streamReader = new StreamReader(new MemoryStream(eventArgs.Body)))
                     {
                         var serializer = new JsonSerializer();
-                        var requestDto =
-                            serializer.Deserialize<ImageGarageRequestDto>(new JsonTextReader(streamReader));
+                        var requestDto = serializer.Deserialize<ImageGarageRequestDto>(new JsonTextReader(streamReader));
 
                         string content, coverImage, title;
                         byte[] rowVersion;
@@ -194,6 +194,8 @@ namespace Keylol.ImageGarage
         {
             try
             {
+                url = Regex.Replace(url, @"^\/\/", "http://");
+                if (!Regex.IsMatch(url, @"^https?:\/\/")) url = $"http://{url}";
                 var request = WebRequest.CreateHttp(url);
                 request.Referer = url;
                 request.UserAgent =

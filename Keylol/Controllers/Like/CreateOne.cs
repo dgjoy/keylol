@@ -107,14 +107,36 @@ namespace Keylol.Controllers.Like
                 }
                 if (notify)
                 {
-                    _dbContext.Messages.Add(new Message
+                    var message = new Message
                     {
                         Type = messageType,
                         OperatorId = operatorId,
                         ReceiverId = targetUser.Id,
                         Count = await _cachedData.Likes.GetUserLikeCountAsync(targetUser.Id),
                         SecondCount = await _cachedData.Likes.GetTargetLikeCountAsync(targetId, targetType)
-                    });
+                    };
+                    switch (targetType)
+                    {
+                        case LikeTargetType.Article:
+                            message.ArticleId = targetId;
+                            break;
+
+                        case LikeTargetType.ArticleComment:
+                            message.ArticleCommentId = targetId;
+                            break;
+
+                        case LikeTargetType.Activity:
+                            message.ActivityId = targetId;
+                            break;
+
+                        case LikeTargetType.ActivityComment:
+                            message.ActivityCommentId = targetId;
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null);
+                    }
+                    _dbContext.Messages.Add(message);
                     await _dbContext.SaveChangesAsync();
                 }
                 if (steamNotify)
