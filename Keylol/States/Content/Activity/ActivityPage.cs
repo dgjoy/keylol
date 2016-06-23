@@ -127,7 +127,8 @@ namespace Keylol.States.Content.Activity
             activityPage.CommentCount = comments.Item2;
             activityPage.CommentPageCount = comments.Item3;
             activityPage.Comments = comments.Item1;
-            activityPage.LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(activity.Id, LikeTargetType.Article);
+            activityPage.LikeCount =
+                await cachedData.Likes.GetTargetLikeCountAsync(activity.Id, LikeTargetType.Activity);
             activityPage.Liked = string.IsNullOrWhiteSpace(currentUserId)
                 ? (bool?) null
                 : await cachedData.Likes.IsLikedAsync(currentUserId, activity.Id, LikeTargetType.Activity);

@@ -259,7 +259,7 @@ namespace Keylol.Services
                 }
                 else if (user.SteamBotId == botId)
                 {
-                    // 会员与自己的机器人不再为好友时，解除绑定
+                    // 会员与自己的机器人不再为好友时，解除机器人绑定
                     user.SteamBotId = null;
                     await dbContext.SaveChangesAsync();
                 }

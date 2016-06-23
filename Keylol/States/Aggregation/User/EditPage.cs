@@ -43,7 +43,8 @@ namespace Keylol.States.Aggregation.User
             return new EditPage
             {
                 Email = user.Email,
-                SteamBotSid = user.SteamBot.Sid,
+                SteamBotName = $"其乐机器人 Keylol.com #{user.SteamBot.Sid}",
+                SteamBotSteamId = user.SteamBot.SteamId,
                 LockoutEnabled = user.LockoutEnabled,
                 OpenInNewWindow = user.OpenInNewWindow,
                 UseEnglishPointName = user.PreferredPointName == PreferredPointName.English,
@@ -72,9 +73,14 @@ namespace Keylol.States.Aggregation.User
         public string Email { get; set; }
 
         /// <summary>
-        /// Steam 机器人序号
+        /// Steam 机器人名称
         /// </summary>
-        public int? SteamBotSid { get; set; }
+        public string SteamBotName { get; set; }
+
+        /// <summary>
+        /// Steam 机器人 Steam ID 3
+        /// </summary>
+        public string SteamBotSteamId { get; set; }
 
         /// <summary>
         /// 登录保护

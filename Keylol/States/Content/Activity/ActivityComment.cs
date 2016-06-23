@@ -87,6 +87,7 @@ namespace Keylol.States.Content.Activity
             {
                 var activityComment = new ActivityComment
                 {
+                    Id = c.Id,
                     SidForActivity = c.SidForActivity,
                     Archived = c.Archived != ArchivedState.None
                 };
@@ -159,6 +160,7 @@ namespace Keylol.States.Content.Activity
             {
                 var activityComment = new ActivityComment
                 {
+                    Id = c.Id,
                     SidForActivity = c.SidForActivity,
                     Archived = c.Archived != ArchivedState.None
                 };
@@ -189,6 +191,11 @@ namespace Keylol.States.Content.Activity
     /// </summary>
     public class ActivityComment
     {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// 作者识别码
         /// </summary>

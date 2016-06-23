@@ -491,7 +491,7 @@ namespace Keylol.Controllers.DatabaseMigration
         }
 
         /// <summary>
-        /// 旧文章评论富文本化，回复关系关联，UnstyledContent 填充，每次调用填充 500 条评论
+        /// 旧文章评论富文本化，回复关系关联，UnstyledContent 填充
         /// </summary>
         [Route("migrate-7")]
         [HttpPost]
@@ -515,7 +515,7 @@ namespace Keylol.Controllers.DatabaseMigration
                     if (replyToCommentId != null)
                         comment.ReplyToCommentId = replyToCommentId;
                 }
-                comment.Content = $"<p>{Regex.Replace(comment.Content, @"\r\n?|\n", "<br>")}<p>";
+                comment.Content = $"<p>{Regex.Replace(comment.Content, @"\r\n?|\n", "<br>")}</p>";
                 comment.UnstyledContent = PlainTextFormatter.FlattenHtml(comment.Content, false);
             }
             await _dbContext.SaveChangesAsync();

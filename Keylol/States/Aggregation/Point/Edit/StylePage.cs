@@ -34,13 +34,21 @@ namespace Keylol.States.Aggregation.Point.Edit
         public static StylePage Create(Models.Point point)
         {
             if (point.Type != PointType.Game && point.Type != PointType.Hardware)
-                return new StylePage();
+                return new StylePage
+                {
+                    Nothing = true
+                };
             return new StylePage
             {
                 MediaHeaderImage = point.MediaHeaderImage,
                 ThumbnailImage = point.ThumbnailImage
             };
         }
+
+        /// <summary>
+        /// 是否不包含任何有用信息
+        /// </summary>
+        public bool? Nothing { get; set; }
 
         /// <summary>
         /// 媒体中心头部图
