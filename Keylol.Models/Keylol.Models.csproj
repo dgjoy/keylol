@@ -153,6 +153,10 @@
     <Compile Include="Migrations\201606222101068_LongId.Designer.cs">
       <DependentUpon>201606222101068_LongId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606230612220_ReplysNoForeignKey.cs" />
+    <Compile Include="Migrations\201606230612220_ReplysNoForeignKey.Designer.cs">
+      <DependentUpon>201606230612220_ReplysNoForeignKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -881,6 +885,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606222101068_LongId.resx">
       <DependentUpon>201606222101068_LongId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606230612220_ReplysNoForeignKey.resx">
+      <DependentUpon>201606230612220_ReplysNoForeignKey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

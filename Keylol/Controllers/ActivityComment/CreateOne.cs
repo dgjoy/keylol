@@ -79,7 +79,7 @@ namespace Keylol.Controllers.ActivityComment
 
             foreach (var replyToUser in replyToComments
                 .Where(c => c.CommentatorId != comment.CommentatorId && !c.DismissReplyMessage)
-                .Select(c => c.Commentator))
+                .Select(c => c.Commentator).Distinct())
             {
                 if (replyToUser.NotifyOnCommentReplied)
                 {
