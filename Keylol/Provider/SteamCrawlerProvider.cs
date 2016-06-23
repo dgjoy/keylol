@@ -25,7 +25,7 @@ namespace Keylol.Provider
     public class SteamCrawlerProvider
     {
         private static readonly string ApiKey = ConfigurationManager.AppSettings["steamWebApiKey"] ?? string.Empty;
-        private static readonly HttpClient HttpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(20)};
+        private static readonly HttpClient HttpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(60)};
         private static readonly TimeSpan SilenceTime = TimeSpan.FromMinutes(8);
         private static readonly TimeSpan PointPriceUpdatePeriod = TimeSpan.FromDays(1);
         private static readonly TimeSpan UserSteamGameRecordsUpdatePeriod = TimeSpan.FromHours(12);
@@ -340,7 +340,7 @@ namespace Keylol.Provider
                 if (point.SteamAppId == null) return true;
                 var result = JToken.Parse(await HttpClient.GetStringAsync(
                     $"http://steamspy.com/api.php?request=appdetails&appid={point.SteamAppId}"));
-                if (result["name"] == null) return true;
+                if (result["name"] == null || (string) result["name"] == "Results are hidden") return true;
                 point.OwnerCount = (int) result["owners"];
                 point.OwnerCountVariance = (int) result["owners_variance"];
                 point.TotalPlayerCount = (int) result["players_forever"];
