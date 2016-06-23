@@ -180,7 +180,7 @@ namespace Keylol.States
                     root.Content = new ContentLevel
                     {
                         Article = await ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
-                            isOperator, dbContext, cachedData)
+                            isOperator, dbContext, cachedData, userManager)
                     };
                     break;
 
@@ -188,7 +188,7 @@ namespace Keylol.States
                     root.Content = new ContentLevel
                     {
                         Activity = await ActivityPage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
-                            isOperator, dbContext, cachedData)
+                            isOperator, dbContext, cachedData, userManager)
                     };
                     break;
 

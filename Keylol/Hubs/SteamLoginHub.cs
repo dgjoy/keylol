@@ -40,6 +40,8 @@ namespace Keylol.Hubs
         /// 通知新的登录用 One-time Token
         /// </summary>
         /// <param name="token">登录用 One-time Token</param>
-        void OnLoginOneTimeToken(string token);
+        /// <param name="userName">用户名</param>
+        /// <param name="avatarImage">头像</param>
+        void OnLoginOneTimeToken(string token, string userName, string avatarImage);
     }
 }

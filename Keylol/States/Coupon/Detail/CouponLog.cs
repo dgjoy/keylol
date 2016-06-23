@@ -19,7 +19,7 @@ namespace Keylol.States.Coupon.Detail
     /// </summary>
     public class CouponLogList : List<CouponLog>
     {
-        private const int RecordsPerPage = 10;
+        private const int RecordsPerPage = 20;
 
         private CouponLogList(int capacity) : base(capacity)
         {

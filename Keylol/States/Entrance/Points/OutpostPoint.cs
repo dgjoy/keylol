@@ -7,6 +7,7 @@ using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Shared;
 using Keylol.StateTreeManager;
+using Keylol.Utilities;
 
 namespace Keylol.States.Entrance.Points
 {
@@ -22,32 +23,30 @@ namespace Keylol.States.Entrance.Points
         /// <summary>
         /// 获取哨所据点列表
         /// </summary>
-        /// <param name="before">起始位置</param>
+        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="OutpostPointList"/></returns>
-        public async Task<OutpostPointList> Get(int before, [Injected] KeylolDbContext dbContext,
+        public static async Task<OutpostPointList> Get(int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return
-                await CreateAsync(StateTreeHelper.GetCurrentUserId(), 12, dbContext, cachedData, before);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, 12, dbContext, cachedData);
         }
 
         /// <summary>
         /// 创建 <see cref="OutpostPointList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
-        /// <param name="take">获取数量</param>
+        /// <param name="page">分页页码</param>
+        /// <param name="recordsPerPage">每页数量</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="before">起始位置</param>
         /// <returns><see cref="OutpostPointList"/></returns>
-        public static async Task<OutpostPointList> CreateAsync(string currentUserId, int take, KeylolDbContext dbContext,
-            CachedDataProvider cachedData, int before = int.MaxValue)
+        public static async Task<OutpostPointList> CreateAsync(string currentUserId, int page, int recordsPerPage,
+            KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            if (take > 50) take = 50;
             var queryResult = await (from feed in dbContext.Feeds
-                where feed.StreamName == OutpostStream.Name && feed.Id < before
+                where feed.StreamName == OutpostStream.Name
                 join point in dbContext.Points on feed.Entry equals point.Id
                 orderby feed.Id descending
                 select new
@@ -105,7 +104,7 @@ namespace Keylol.States.Entrance.Points
                             relationship.TargetPoint.EnglishName
                         }).ToList()
                 })
-                .Take(() => take)
+                .TakePage(page, recordsPerPage)
                 .ToListAsync();
             var result = new OutpostPointList(queryResult.Count);
             foreach (var p in queryResult)

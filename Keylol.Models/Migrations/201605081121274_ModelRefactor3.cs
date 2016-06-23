@@ -134,7 +134,7 @@ namespace Keylol.Models.Migrations
             CreateIndex("dbo.Likes", "TargetId");
             CreateIndex("dbo.SteamBindingTokens", "Sid", unique: true);
 
-            // 需要人工在 SSMS 中设置以下 Sid 为 Clustered Index
+            // TODO: 需要人工在 SSMS 中设置以下 Sid 为 Clustered Index
             // Points.Sid
             // SteamStoreNames.Sid
             // Replies.Sid

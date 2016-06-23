@@ -25,12 +25,14 @@ namespace Keylol.States.Content.Activity
         /// <param name="sidForAuthor">动态在作者名下的序号</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ActivityPage"/></returns>
         public static async Task<ActivityPage> Get(string authorIdCode, int sidForAuthor,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,
+            [Injected] KeylolUserManager userManager)
         {
             return await CreateAsync(authorIdCode, sidForAuthor, StateTreeHelper.GetCurrentUserId(),
-                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), dbContext, cachedData);
+                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), dbContext, cachedData, userManager);
         }
 
         /// <summary>
@@ -42,9 +44,10 @@ namespace Keylol.States.Content.Activity
         /// <param name="isOperator">当前登录用户是否为运维职员</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ActivityPage"/></returns>
         public static async Task<ActivityPage> CreateAsync(string authorIdCode, int sidForAuthor, string currentUserId,
-            bool isOperator, KeylolDbContext dbContext, CachedDataProvider cachedData)
+            bool isOperator, KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
         {
             var activityPage = new ActivityPage();
 
@@ -74,15 +77,17 @@ namespace Keylol.States.Content.Activity
                     .GetSubscribedUserCountAsync(activity.AuthorId),
                 SubscriberCount = await cachedData.Subscriptions
                     .GetSubscriberCountAsync(activity.AuthorId, SubscriptionTargetType.User),
-                SteamProfileName = activity.Author.SteamProfileName,
                 IsFriend = string.IsNullOrWhiteSpace(currentUserId)
                     ? (bool?) null
                     : await cachedData.Users.IsFriendAsync(currentUserId, activity.AuthorId),
                 Subscribed = string.IsNullOrWhiteSpace(currentUserId)
                     ? (bool?) null
                     : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, activity.AuthorId,
-                        SubscriptionTargetType.User)
+                        SubscriptionTargetType.User),
+                SteamId = await userManager.GetSteamIdAsync(activity.AuthorId)
             };
+            if (!string.IsNullOrWhiteSpace(activityPage.AuthorBasicInfo.SteamId))
+                activityPage.AuthorBasicInfo.SteamProfileName = activity.Author.SteamProfileName;
             activityPage.AuthorPlayedTime = activity.TargetPoint.SteamAppId == null
                 ? null
                 : (await dbContext.UserSteamGameRecords

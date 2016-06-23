@@ -52,6 +52,8 @@ namespace Keylol.Controllers.ActivityComment
             await _cachedData.ActivityComments.IncreaseActivityCommentCountAsync(activity.Id, 1);
             
             var matches = Regex.Matches(comment.Content, "^(?:#(\\d+)[ \\t]*)+(?:$|[ \\t]+)", RegexOptions.Multiline);
+            if (matches.Count <= 0) return Ok(comment.SidForActivity);
+
             var sidForActivities = (from Match match in matches
                 from Capture capture in match.Groups[1].Captures
                 select int.Parse(capture.Value)).ToList();

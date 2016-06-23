@@ -412,5 +412,10 @@ namespace Keylol.States.Shared
         /// 旗下作品数
         /// </summary>
         public int? ProductCount { get; set; }
+
+        /// <summary>
+        /// Feed ID
+        /// </summary>
+        public long? FeedId { get; set; }
     }
 }

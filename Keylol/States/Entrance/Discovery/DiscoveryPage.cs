@@ -26,43 +26,43 @@ namespace Keylol.States.Entrance.Discovery
         /// <summary>
         /// 获取精选评测
         /// </summary>
-        /// <param name="before">起始位置</param>
+        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="SpotlightArticleList"/></returns>
-        public static async Task<SpotlightArticleList> GetSpotlightReviews(int before,
+        public static async Task<SpotlightArticleList> GetSpotlightReviews(int page,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), 12,
-                SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData, before);
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), page, 12,
+                SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData);
         }
 
         /// <summary>
         /// 获取精选研究
         /// </summary>
-        /// <param name="before">起始位置</param>
+        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="SpotlightArticleList"/></returns>
-        public static async Task<SpotlightArticleList> GetSpotlightStudies(int before,
+        public static async Task<SpotlightArticleList> GetSpotlightStudies(int page,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), 12,
-                SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData, before);
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), page, 12,
+                SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData);
         }
 
         /// <summary>
         /// 获取精选谈论
         /// </summary>
-        /// <param name="before">起始位置</param>
+        /// <param name="page">分页页码</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="SpotlightArticleList"/></returns>
-        public static async Task<SpotlightArticleList> GetSpotlightStories(int before,
+        public static async Task<SpotlightArticleList> GetSpotlightStories(int page,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), 12,
-                SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData, before);
+            return await SpotlightArticleList.CreateAsync(StateTreeHelper.GetCurrentUserId(), page, 12,
+                SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData);
         }
 
         /// <summary>
@@ -81,14 +81,14 @@ namespace Keylol.States.Entrance.Discovery
             {
                 SlideshowEntries = await SlideshowEntryList.CreateAsync(1, 4, dbContext),
                 SpotlightPoints = await SpotlightPointList.CreateAsync(currentUserId, 1, 30, dbContext, cachedData),
-                SpotlightReviews = await SpotlightArticleList.CreateAsync(currentUserId, 4,
+                SpotlightReviews = await SpotlightArticleList.CreateAsync(currentUserId, 1, 4,
                     SpotlightArticleStream.ArticleCategory.Review, dbContext, cachedData),
-                SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId, 4,
+                SpotlightStudies = await SpotlightArticleList.CreateAsync(currentUserId, 1, 4,
                     SpotlightArticleStream.ArticleCategory.Study, dbContext, cachedData),
                 OnSalePointHeaderImage = onSalePoints.Item3,
                 OnSalePointPageCount = onSalePoints.Item2,
                 OnSalePoints = onSalePoints.Item1,
-                SpotlightStories = await SpotlightArticleList.CreateAsync(currentUserId, 4,
+                SpotlightStories = await SpotlightArticleList.CreateAsync(currentUserId, 1, 4,
                     SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData),
                 LatestArticleHeaderImage = latestArticles.Item3,
                 LatestArticlePageCount = latestArticles.Item2,

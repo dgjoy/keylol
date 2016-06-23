@@ -1,9 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using JetBrains.Annotations;
-using Keylol.Models;
-using Newtonsoft.Json;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.Feed
@@ -14,7 +11,7 @@ namespace Keylol.Controllers.Feed
         /// 置顶一个 Feed（置顶相当于删除重推送，Feed ID 将会发生变化）
         /// </summary>
         /// <param name="id">Feed ID</param>
-        [Route("slideshow-entry/top/{id}")]
+        [Route("top/{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定 Feed 不存在")]
         public async Task<IHttpActionResult> UpdateOneToTop(int id)

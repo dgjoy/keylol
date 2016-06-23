@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
@@ -18,11 +19,12 @@ namespace Keylol.States.Shared
         /// <param name="user">用户对象</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="UserBasicInfo"/></returns>
-        public static async Task<UserBasicInfo> CreateAsync(string currentUserId, KeylolUser user, KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+        public static async Task<UserBasicInfo> CreateAsync(string currentUserId, KeylolUser user,
+            KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
         {
-            return new UserBasicInfo
+            var basicInfo = new UserBasicInfo
             {
                 Id = user.Id,
                 IdCode = user.IdCode,
@@ -42,10 +44,13 @@ namespace Keylol.States.Shared
                 SubscribedUserCount = await cachedData.Subscriptions.GetSubscribedUserCountAsync(user.Id),
                 SubscriberCount =
                     await cachedData.Subscriptions.GetSubscriberCountAsync(user.Id, SubscriptionTargetType.User),
-                SteamProfileName = user.SteamProfileName,
                 ThemeColor = user.ThemeColor,
-                LightThemeColor = user.LightThemeColor
+                LightThemeColor = user.LightThemeColor,
+                SteamId = await userManager.GetSteamIdAsync(user.Id)
             };
+            if (!string.IsNullOrWhiteSpace(basicInfo.SteamId))
+                basicInfo.SteamProfileName = user.SteamProfileName;
+            return basicInfo;
         }
 
         /// <summary>
@@ -107,6 +112,11 @@ namespace Keylol.States.Shared
         /// 听众数
         /// </summary>
         public long? SubscriberCount { get; set; }
+
+        /// <summary>
+        /// Steam ID 3
+        /// </summary>
+        public string SteamId { get; set; }
 
         /// <summary>
         /// Steam 昵称

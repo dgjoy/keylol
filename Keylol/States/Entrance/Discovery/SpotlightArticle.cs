@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.Utilities;
 using Newtonsoft.Json;
 
 namespace Keylol.States.Entrance.Discovery
@@ -23,20 +24,19 @@ namespace Keylol.States.Entrance.Discovery
         /// 创建 <see cref="SpotlightArticleList"/>
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
-        /// <param name="take">获取数量</param>
+        /// <param name="page">分页页码</param>
+        /// <param name="recordsPerPage">每页数量</param>
         /// <param name="spotlightArticleCategory">文章分类</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="before">起始位置</param>
         /// <returns><see cref="SpotlightArticleList"/></returns>
-        public static async Task<SpotlightArticleList> CreateAsync(string currentUserId, int take,
+        public static async Task<SpotlightArticleList> CreateAsync(string currentUserId, int page, int recordsPerPage,
             SpotlightArticleStream.ArticleCategory spotlightArticleCategory, KeylolDbContext dbContext,
-            CachedDataProvider cachedData, int before = int.MaxValue)
+            CachedDataProvider cachedData)
         {
-            if (take > 50) take = 50;
             var streamName = SpotlightArticleStream.Name(spotlightArticleCategory);
             var queryResult = await (from feed in dbContext.Feeds
-                where feed.StreamName == streamName && feed.Id < before
+                where feed.StreamName == streamName
                 join article in dbContext.Articles on feed.Entry equals article.Id
                 where article.Rejected == false && article.Archived == ArchivedState.None
                 orderby feed.Id descending
@@ -60,7 +60,7 @@ namespace Keylol.States.Entrance.Discovery
                     PointEnglishName = article.TargetPoint.EnglishName,
                     PointSteamAppId = article.TargetPoint.SteamAppId
                 })
-                .Take(() => take)
+                .TakePage(page, recordsPerPage)
                 .ToListAsync();
             var result = new SpotlightArticleList(queryResult.Count);
             foreach (var a in queryResult)

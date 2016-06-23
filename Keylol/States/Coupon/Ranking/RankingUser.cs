@@ -15,7 +15,7 @@ namespace Keylol.States.Coupon.Ranking
     /// </summary>
     public class RankingUserList : List<RankingUser>
     {
-        private const int RecordsPerPage = 10;
+        private const int RecordsPerPage = 15;
 
         private RankingUserList(int capacity) : base(capacity)
         {
@@ -46,11 +46,12 @@ namespace Keylol.States.Coupon.Ranking
         public static async Task<Tuple<RankingUserList, int>> CreateAsync(string currentUserId, int page,
             bool returnMyRanking, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
-            if (page > 10) page = 10;
+            if (page > 7) page = 7;
             var queryResult = await dbContext.Users.OrderByDescending(u => u.Coupon).Select(u => new
             {
                 u.Id,
                 u.IdCode,
+                u.UserName,
                 u.AvatarImage,
                 u.GamerTag,
                 u.Coupon
@@ -70,6 +71,7 @@ namespace Keylol.States.Coupon.Ranking
                     {
                         IdCode = g.User.IdCode,
                         AvatarImage = g.User.AvatarImage,
+                        UserName = g.User.UserName,
                         GamerTag = g.User.GamerTag
                     },
                     Coupon = g.User.Coupon,

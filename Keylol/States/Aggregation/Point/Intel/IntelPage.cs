@@ -129,23 +129,24 @@ namespace Keylol.States.Aggregation.Point.Intel
                 intelPage.Platforms = await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           relationship.Relationship == PointRelationshipType.Platform
+                    orderby relationship.Sid descending
                     select relationship.TargetPoint.IdCode)
                     .ToListAsync();
 
                 #region 特性属性
 
-                intelPage.MultiPlayer = point.MultiPlayer ? true : (bool?)null;
-                intelPage.SinglePlayer = point.SinglePlayer ? true : (bool?)null;
-                intelPage.Coop = point.Coop ? true : (bool?)null;
-                intelPage.CaptionsAvailable = point.CaptionsAvailable ? true : (bool?)null;
-                intelPage.CommentaryAvailable = point.CommentaryAvailable ? true : (bool?)null;
-                intelPage.IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?)null;
-                intelPage.Achievements = point.Achievements ? true : (bool?)null;
-                intelPage.Cloud = point.Cloud ? true : (bool?)null;
-                intelPage.LocalCoop = point.LocalCoop ? true : (bool?)null;
-                intelPage.SteamTradingCards = point.SteamTradingCards ? true : (bool?)null;
-                intelPage.SteamWorkshop = point.SteamWorkshop ? true : (bool?)null;
-                intelPage.InAppPurchases = point.InAppPurchases ? true : (bool?)null;
+                intelPage.MultiPlayer = point.MultiPlayer ? true : (bool?) null;
+                intelPage.SinglePlayer = point.SinglePlayer ? true : (bool?) null;
+                intelPage.Coop = point.Coop ? true : (bool?) null;
+                intelPage.CaptionsAvailable = point.CaptionsAvailable ? true : (bool?) null;
+                intelPage.CommentaryAvailable = point.CommentaryAvailable ? true : (bool?) null;
+                intelPage.IncludeLevelEditor = point.IncludeLevelEditor ? true : (bool?) null;
+                intelPage.Achievements = point.Achievements ? true : (bool?) null;
+                intelPage.Cloud = point.Cloud ? true : (bool?) null;
+                intelPage.LocalCoop = point.LocalCoop ? true : (bool?) null;
+                intelPage.SteamTradingCards = point.SteamTradingCards ? true : (bool?) null;
+                intelPage.SteamWorkshop = point.SteamWorkshop ? true : (bool?) null;
+                intelPage.InAppPurchases = point.InAppPurchases ? true : (bool?) null;
 
                 #endregion
 

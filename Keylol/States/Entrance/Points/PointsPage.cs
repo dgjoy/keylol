@@ -36,7 +36,7 @@ namespace Keylol.States.Entrance.Points
             var recentPoints = await RecentPointList.CreateAsync(currentUserId, 1, true, dbContext, cachedData);
             return new PointsPage
             {
-                OutpostPoints = await OutpostPointList.CreateAsync(currentUserId, 15, dbContext, cachedData),
+                OutpostPoints = await OutpostPointList.CreateAsync(currentUserId, 1, 15, dbContext, cachedData),
                 RecentPlayedPointHeaderImage = recentPlayedPoints.Item2,
                 RecentPlayedPoints = recentPlayedPoints.Item1,
                 InterestedPoints = await InterestedPointList.CreateAsync(currentUserId, 1, dbContext),

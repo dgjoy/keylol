@@ -30,7 +30,9 @@ namespace Keylol.PushHub
 
         protected override void OnStart(string[] args)
         {
-            _mqChannel.BasicQos(0, 5, false);
+            // TODO: 迁移完成后恢复 QoS
+//            _mqChannel.BasicQos(0, 5, false);
+            _mqChannel.BasicQos(0, 1, false);
             var consumer = new EventingBasicConsumer(_mqChannel);
             consumer.Received += async (sender, eventArgs) =>
             {

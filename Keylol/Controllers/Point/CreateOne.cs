@@ -60,14 +60,12 @@ namespace Keylol.Controllers.Point
                             new Cookie("birthtime", "-473410799"));
                         cookieContainer.Add(new Uri("http://store.steampowered.com/"),
                             new Cookie("mature_content", "1"));
-                        var request =
-                            WebRequest.CreateHttp(
-                                $"http://store.steampowered.com/app/{requestDto.SteamAppId}/?l=english&cc=us");
-                        var picsRequest =
-                            WebRequest.CreateHttp(
-                                $"https://steampics-mckay.rhcloud.com/info?apps={requestDto.SteamAppId}");
-                        picsRequest.AutomaticDecompression =
-                            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                        var request = WebRequest.CreateHttp(
+                            $"http://store.steampowered.com/app/{requestDto.SteamAppId}/?l=english&cc=us");
+                        var picsRequest = WebRequest.CreateHttp(
+                            $"https://steampics-mckay.rhcloud.com/info?apps={requestDto.SteamAppId}");
+                        picsRequest.AutomaticDecompression = request.AutomaticDecompression
+                            = DecompressionMethods.Deflate | DecompressionMethods.GZip;
                         picsRequest.CookieContainer = request.CookieContainer = cookieContainer;
                         picsRequest.Timeout = request.Timeout = 30000;
                         var picsAwaiter = picsRequest.GetResponseAsync();
@@ -241,10 +239,22 @@ namespace Keylol.Controllers.Point
                             var media = new List<PointMedia>(screenshots.Length);
                             foreach (var screenshot in screenshots)
                             {
+                                string link;
                                 var match = Regex.Match(screenshot.Attributes["src"], @"ss_([^\/]*)\.\d+x\d+\.jpg");
-                                if (!match.Success) continue;
-                                var link =
-                                    $"keylol://steam/app-screenshots/{requestDto.SteamAppId}-{match.Groups[1].Value}";
+                                if (match.Success)
+                                {
+                                    link = $"keylol://steam/app-screenshots/{point.SteamAppId}-{match.Groups[1].Value}";
+                                }
+                                else
+                                {
+                                    match = Regex.Match(screenshot.Attributes["src"],
+                                        $@"{point.SteamAppId}\/([^\/]*?)\.");
+                                    if (match.Success)
+                                        link =
+                                            $"keylol://steam/app-resources/{point.SteamAppId}/{match.Groups[1].Value}.jpg";
+                                    else
+                                        continue;
+                                }
                                 if (string.IsNullOrWhiteSpace(point.HeaderImage))
                                 {
                                     point.HeaderImage = link;
@@ -356,10 +366,16 @@ namespace Keylol.Controllers.Point
                                 var picsRoot = JToken.Parse(await sr.ReadToEndAsync());
                                 if (!(bool) picsRoot["success"])
                                     throw new Exception();
-                                point.ThumbnailImage =
-                                    $"keylol://steam/app-thumbnails/{requestDto.SteamAppId}-{(string) picsRoot["apps"][requestDto.SteamAppId.ToString()]["common"]["logo"]}";
-                                point.AvatarImage =
-                                    $"keylol://steam/app-icons/{requestDto.SteamAppId}-{(string) picsRoot["apps"][requestDto.SteamAppId.ToString()]["common"]["icon"]}";
+                                var thumbnailImageHash =
+                                    (string) picsRoot["apps"][point.SteamAppId.ToString()]["common"]["logo"];
+                                if (!string.IsNullOrWhiteSpace(thumbnailImageHash))
+                                    point.ThumbnailImage =
+                                        $"keylol://steam/app-thumbnails/{point.SteamAppId}-{thumbnailImageHash}";
+                                var avatarImageHash =
+                                    (string) picsRoot["apps"][point.SteamAppId.ToString()]["common"]["icon"];
+                                point.AvatarImage = string.IsNullOrWhiteSpace(avatarImageHash)
+                                    ? string.Empty
+                                    : $"keylol://steam/app-icons/{point.SteamAppId}-{avatarImageHash}";
                                 await _dbContext.SaveChangesAsync();
                             }
                         }
@@ -477,7 +493,7 @@ namespace Keylol.Controllers.Point
         /// <summary>
         /// 特性据点关联黑名单
         /// </summary>
-        private static readonly List<string> TagBlacklist = new List<string>
+        public static readonly List<string> TagBlacklist = new List<string>
         {
             "Action",
             "Indie",
@@ -496,6 +512,7 @@ namespace Keylol.Controllers.Point
             "Massively Multiplayer",
             "Demos",
             "Virtual Reality",
+            "VR",
             "Racing",
             "Simulation",
             "Sports",

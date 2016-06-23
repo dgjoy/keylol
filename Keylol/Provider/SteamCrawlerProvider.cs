@@ -346,7 +346,7 @@ namespace Keylol.Provider
                 point.TotalPlayerCount = (int) result["players_forever"];
                 point.TotalPlayerCountVariance = (int) result["players_forever_variance"];
                 point.TwoWeekPlayerCount = (int) result["players_2weeks"];
-                point.TwoWeekAveragePlayedTime = (int) result["players_2weeks_variance"];
+                point.TwoWeekPlayerCountVariance = (int) result["players_2weeks_variance"];
                 point.AveragePlayedTime = (int) result["average_forever"];
                 point.TwoWeekAveragePlayedTime = (int) result["average_2weeks"];
                 point.MedianPlayedTime = (int) result["median_forever"];

@@ -8,7 +8,6 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.States.Entrance.Points

@@ -51,6 +51,7 @@ namespace Keylol.States.Entrance.Discovery
                 orderby feed.Id descending
                 select new
                 {
+                    FeedId = feed.Id,
                     point.Id,
                     point.Type,
                     point.IdCode,
@@ -87,6 +88,7 @@ namespace Keylol.States.Entrance.Discovery
             {
                 result.Add(new PointBasicInfo
                 {
+                    FeedId = p.FeedId,
                     Id = p.Id,
                     Type = p.Type,
                     IdCode = p.IdCode,

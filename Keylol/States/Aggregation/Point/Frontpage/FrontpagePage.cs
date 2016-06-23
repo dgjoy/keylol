@@ -65,6 +65,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
                 frontPage.Platforms = await (from relationship in dbContext.PointRelationships
                     where relationship.SourcePointId == point.Id &&
                           relationship.Relationship == PointRelationshipType.Platform
+                    orderby relationship.Sid descending
                     select relationship.TargetPoint.IdCode)
                     .ToListAsync();
 

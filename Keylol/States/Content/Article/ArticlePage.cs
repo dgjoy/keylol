@@ -25,12 +25,14 @@ namespace Keylol.States.Content.Article
         /// <param name="sidForAuthor">文章在作者名下的序号</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ArticlePage"/></returns>
         public static async Task<ArticlePage> Get(string authorIdCode, int sidForAuthor,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,
+            [Injected] KeylolUserManager userManager)
         {
             return await CreateAsync(authorIdCode, sidForAuthor, StateTreeHelper.GetCurrentUserId(),
-                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), dbContext, cachedData);
+                StateTreeHelper.GetCurrentUser().IsInRole(KeylolRoles.Operator), dbContext, cachedData, userManager);
         }
 
         /// <summary>
@@ -42,9 +44,10 @@ namespace Keylol.States.Content.Article
         /// <param name="isOperator">当前登录用户是否为运维职员</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="ArticlePage"/></returns>
         public static async Task<ArticlePage> CreateAsync(string authorIdCode, int sidForAuthor, string currentUserId,
-            bool isOperator, KeylolDbContext dbContext, CachedDataProvider cachedData)
+            bool isOperator, KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
         {
             var articlePage = new ArticlePage();
 
@@ -81,8 +84,11 @@ namespace Keylol.States.Content.Article
                 Subscribed = string.IsNullOrWhiteSpace(currentUserId)
                     ? (bool?) null
                     : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, article.AuthorId,
-                        SubscriptionTargetType.User)
+                        SubscriptionTargetType.User),
+                SteamId = await userManager.GetSteamIdAsync(article.AuthorId)
             };
+            if (!string.IsNullOrWhiteSpace(articlePage.AuthorBasicInfo.SteamId))
+                articlePage.AuthorBasicInfo.SteamProfileName = article.Author.SteamProfileName;
             articlePage.AuthorPlayedTime = article.TargetPoint.SteamAppId == null
                 ? null
                 : (await dbContext.UserSteamGameRecords

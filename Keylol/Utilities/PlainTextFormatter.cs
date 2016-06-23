@@ -31,6 +31,7 @@ namespace Keylol.Utilities
         /// <returns>扁平化后的文本</returns>
         public static string FlattenHtml(string html, bool keepNewLine)
         {
+            Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
             return CQ.Create($"<div>{html}</div>").Render(keepNewLine ? DefaultKeepNewLine : DefaultRemoveNewLine);
         }
 

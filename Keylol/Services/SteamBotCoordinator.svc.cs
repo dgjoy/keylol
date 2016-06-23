@@ -318,7 +318,7 @@ namespace Keylol.Services
                             var loginToken = await _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1),
                                 OneTimeTokenPurpose.UserLogin);
                             NotificationProvider.Hub<SteamLoginHub, ISteamLoginHubClient>()
-                                .Client(connectionId).OnLoginOneTimeToken(loginToken);
+                                .Client(connectionId).OnLoginOneTimeToken(loginToken, user.UserName, user.AvatarImage);
                             await Client.SendChatMessage(botId, senderSteamId, "欢迎回来，你已成功登录其乐社区。");
                         }
                         catch (Exception)

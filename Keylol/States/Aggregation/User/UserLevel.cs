@@ -51,7 +51,7 @@ namespace Keylol.States.Aggregation.User
                 return new UserLevel();
             var result = new UserLevel
             {
-                BasicInfo = await UserBasicInfo.CreateAsync(currentUserId, user, dbContext, cachedData)
+                BasicInfo = await UserBasicInfo.CreateAsync(currentUserId, user, dbContext, cachedData, userManager)
             };
             switch (targetPage)
             {
