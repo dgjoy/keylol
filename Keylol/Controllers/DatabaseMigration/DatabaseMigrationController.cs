@@ -126,101 +126,246 @@ namespace Keylol.Controllers.DatabaseMigration
                     Type = PointType.Platform,
                     IdCode = "BTNET",
                     EnglishName = "Battle.net",
-                    ChineseName = "战网"
+                    ChineseName = "战网",
+                    ThemeColor = "#019ED3",
+                    LightThemeColor = "#01CEE9",
+                    AvatarImage = "keylol://db9679abd9d6b6365fa01e571b6f43bd.png",
+                    HeaderImage = "keylol://e95b1ee1d9493df1064a7746423f0061.png",
+                    Logo = "keylol://3482cd4b646b643c784aaaef6092bb2e.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "PLYSN",
-                    EnglishName = "PlayStation"
+                    EnglishName = "PlayStation",
+                    ThemeColor = "#164DB2",
+                    LightThemeColor = "#4671CA",
+                    AvatarImage = "keylol://10bd9b82e38ba5b186bf52293fc7e593.png",
+                    HeaderImage = "keylol://4c896df6713995a17e9aef1690337421.png",
+                    Logo = "keylol://9479272ac21e0256b1dc56f60ee7ac47.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "MSBOX",
-                    EnglishName = "Xbox"
+                    EnglishName = "Xbox",
+                    ThemeColor = "#107C10",
+                    LightThemeColor = "#76BC31",
+                    AvatarImage = "keylol://2a12ef3e280c9a81c8f8c70c0845881b.png",
+                    HeaderImage = "keylol://49378769ecce9fbbe9548537acff2a00.png",
+                    Logo = "keylol://f0fe148e3db9a1eb2be0aa1279941b7a.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "APIOS",
-                    EnglishName = "iOS"
+                    EnglishName = "iOS",
+                    ThemeColor = "#262626",
+                    LightThemeColor = "#9E9E9E",
+                    AvatarImage = "keylol://bf3c8b8bf71fef89bc77bc80f7754b8f.png",
+                    HeaderImage = "keylol://ece9a690b758e023a7d4f9765fd4ab37.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "ANDRD",
-                    EnglishName = "Android"
+                    EnglishName = "Android",
+                    ChineseName = "安卓",
+                    ThemeColor = "#72A441",
+                    LightThemeColor = "#6AB344",
+                    AvatarImage = "keylol://8e350bbdf59ef6a2a012acc577d24f41.png",
+                    HeaderImage = "keylol://27f7096fb3b112fb3d3b1f7477908889.png",
+                    Logo = "keylol://000a00ef8181dd0fa045fb7945062138.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "MSUWP",
                     EnglishName = "Windows UWP",
-                    ChineseName = "Windows 通用应用"
+                    ChineseName = "Windows 通用应用",
+                    ThemeColor = "#004A8C",
+                    LightThemeColor = "#0078D7",
+                    AvatarImage = "keylol://d0eb0713755cae9687a8c2a1b2d97ac0.png",
+                    HeaderImage = "keylol://a2c2d81989ea4cf7bf0bb88b4c44f536.jpg",
+                    Logo = "keylol://9aca888b6614fb1f550c4f295c509f0d.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "GMBYA",
-                    EnglishName = "GBA"
+                    EnglishName = "GBA",
+                    ThemeColor = "#682C9E",
+                    LightThemeColor = "#C66BFF",
+                    AvatarImage = "keylol://c6d539233246f730845e8fb61ed7241f.png",
+                    HeaderImage = "keylol://7b6c31c104466cfb5d8dbbfcea301c9c.png",
+                    Logo = "keylol://4fa981d82262d8f8c6a614f28246ca8a.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "NTDDS",
-                    EnglishName = "NDS"
+                    EnglishName = "NDS",
+                    ThemeColor = "#292929",
+                    LightThemeColor = "#979799",
+                    AvatarImage = "keylol://54430472e52966097b12f547941714fd.png",
+                    HeaderImage = "keylol://def88a37b6e902101e7dbdec7ce185e7.jpg",
+                    Logo = "keylol://ed98a984f87197fe6bcd2c1fedeb6916.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "NT3DS",
-                    EnglishName = "3DS"
+                    EnglishName = "3DS",
+                    ThemeColor = "#231916",
+                    LightThemeColor = "#D0000F",
+                    AvatarImage = "keylol://b0fca4bb8bd6407680f9eff77b745cce.png",
+                    HeaderImage = "keylol://def88a37b6e902101e7dbdec7ce185e7.jpg",
+                    Logo = "keylol://92818f5c5aa23f03235687a1fae7ab07.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "NDWII",
-                    EnglishName = "Wii"
+                    EnglishName = "Wii",
+                    ThemeColor = "#231916",
+                    LightThemeColor = "#999999",
+                    AvatarImage = "keylol://58d32678ffe16b9ba88c36d52a44fcbe.png",
+                    HeaderImage = "keylol://49bc2ce68780c2042021118ec855ec39.jpg",
+                    Logo = "keylol://c92782037317d8dab462fd20f1aab7d1.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "NWIIU",
-                    EnglishName = "WiiU"
+                    EnglishName = "WiiU",
+                    ThemeColor = "#0097CB",
+                    LightThemeColor = "#8D8D8D",
+                    AvatarImage = "keylol://dfdfdf25b2f343c5e96a30f4b12cd151.png",
+                    HeaderImage = "keylol://49bc2ce68780c2042021118ec855ec39.jpg",
+                    Logo = "keylol://bdcfeb2c40a19ad2cb7cb9c0f4297ebc.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "SYPSP",
-                    EnglishName = "PSP"
+                    EnglishName = "PSP",
+                    ThemeColor = "#000",
+                    LightThemeColor = "#636363",
+                    AvatarImage = "keylol://cb6e6ac22426f95ce39ddf85394c20f2.png",
+                    HeaderImage = "keylol://59d1af5c46b92e15a609f1b22783e71d.png",
+                    Logo = "keylol://3bf8927587d36b247ebf2d018a59badd.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "CLENT",
                     EnglishName = "Independent Client",
-                    ChineseName = "独立客户端"
+                    ChineseName = "独立客户端",
+                    AvatarImage = "keylol://672a23c6096429911440f66f2dfdb301.png"
                 },
                 new Models.Point
                 {
                     Type = PointType.Platform,
                     IdCode = "WEBBD",
                     EnglishName = "Browser-Based",
-                    ChineseName = "网页载体"
+                    ChineseName = "网页载体",
+                    AvatarImage = "keylol://57cbae033e037f7b76fbd1a2d795a90e.png"
                 }
             };
+            var steamPoint = await _dbContext.Points.SingleAsync(p => p.IdCode == "STEAM");
+            steamPoint.AvatarImage = "keylol://0db6b9b30b44b578ea2b9882ab676e74.png";
+            steamPoint.HeaderImage = "keylol://8fb9c1064940b5bf64ae10293e7e4cd0.png";
+            steamPoint.Logo = "keylol://7051b0229858b80bfbe98ca798ec80d5.png";
+            var originPoint = await _dbContext.Points.SingleAsync(p => p.IdCode == "ORGIN");
+            originPoint.AvatarImage = "keylol://89c8a71ebfecb58db7a289ae657a0128.png";
+            originPoint.HeaderImage = "keylol://68a51de472b626b1629490df7c672b25.jpg";
+            originPoint.Logo = "keylol://529c00e4ede639b5b4d7c9e5a3f8ee3a.png";
+            var uplayPoint = await _dbContext.Points.SingleAsync(p => p.IdCode == "UPLAY");
+            uplayPoint.AvatarImage = "keylol://f910950f90d8e24826247c1ff6ccc4b3.png";
+            uplayPoint.HeaderImage = "keylol://12981a7b9caef22230df2ad0462af879.png";
+            uplayPoint.Logo = "keylol://777d8aa0c8ad41b3d003d7da24594f40.png";
+            var keylolPoint = await _dbContext.Points.SingleAsync(p => p.IdCode == "KYLOL");
+            keylolPoint.AvatarImage = "keylol://56535eac2fcbe5d19fb758d2390c8f45.png";
+            keylolPoint.HeaderImage = "keylol://85acaa056bf5db1cadc0bcc0a3204b93.png";
             _dbContext.Points.AddRange(pointsToCreate);
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
 
         /// <summary>
-        /// 旧据点资料填充，每次调用填充 200 个据点
+        /// 垃圾据点关系清理
         /// </summary>
         [Route("migrate-4")]
         [HttpPost]
         public async Task<IHttpActionResult> Migrate4()
+        {
+            var tagBlacklist = PointController.TagBlacklist;
+            var relationships = await (from relationship in _dbContext.PointRelationships
+                where relationship.Relationship == PointRelationshipType.Tag &&
+                      tagBlacklist.Contains(relationship.TargetPoint.EnglishName)
+                select relationship).ToListAsync();
+            _dbContext.PointRelationships.RemoveRange(relationships);
+            await _dbContext.SaveChangesAsync();
+            return Ok("成功");
+        }
+
+        /// <summary>
+        /// 旧文章评论富文本化，回复关系关联，UnstyledContent 填充
+        /// </summary>
+        [Route("migrate-5")]
+        [HttpPost]
+        public async Task<IHttpActionResult> Migrate5()
+        {
+            var comments =
+                await _dbContext.ArticleComments.Where(c => c.UnstyledContent == string.Empty).ToListAsync();
+            foreach (var comment in comments)
+            {
+                var matches = Regex.Matches(comment.Content, "^(?:#(\\d+)[ \\t]*)+(?:$|[ \\t]+)", RegexOptions.Multiline);
+                if (matches.Count > 0)
+                {
+                    var sidForArticle =
+                        (from Match match in matches
+                            from Capture capture in match.Groups[1].Captures
+                            select int.Parse(capture.Value)).First();
+                    var replyToCommentId = await _dbContext.ArticleComments.Where(
+                        c => c.ArticleId == comment.ArticleId && c.SidForArticle == sidForArticle)
+                        .Select(c => c.Id)
+                        .FirstOrDefaultAsync();
+                    if (replyToCommentId != null)
+                        comment.ReplyToCommentId = replyToCommentId;
+                }
+                comment.Content = $"<p>{Regex.Replace(comment.Content, @"\r\n?|\n", "<br>")}</p>";
+                comment.UnstyledContent = PlainTextFormatter.FlattenHtml(comment.Content, false);
+            }
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        /// <summary>
+        /// 所有文章重新推送
+        /// </summary>
+        [Route("migrate-6")]
+        [HttpPost]
+        public async Task<IHttpActionResult> Migrate6()
+        {
+            var articleIds = await _dbContext.Articles.OrderBy(a => a.Sid).Select(a => a.Id).ToListAsync();
+            foreach (var articleId in articleIds)
+            {
+                _mqChannel.SendMessage(string.Empty, MqClientProvider.PushHubRequestQueue, new PushHubRequestDto
+                {
+                    Type = ContentPushType.Article,
+                    ContentId = articleId
+                });
+            }
+            return Ok("成功");
+        }
+
+        /// <summary>
+        /// 旧据点资料填充，每次调用填充 200 个据点
+        /// </summary>
+        [Route("migrate-7")]
+        [HttpPost]
+        public async Task<IHttpActionResult> Migrate7()
         {
             var points = await _dbContext.Points
                 .Where(p => p.Type == PointType.Game && p.SteamAppId != null && p.MediaHeaderImage == string.Empty)
@@ -432,28 +577,11 @@ namespace Keylol.Controllers.DatabaseMigration
         }
 
         /// <summary>
-        /// 垃圾据点关系清理
-        /// </summary>
-        [Route("migrate-5")]
-        [HttpPost]
-        public async Task<IHttpActionResult> Migrate5()
-        {
-            var tagBlacklist = PointController.TagBlacklist;
-            var relationships = await (from relationship in _dbContext.PointRelationships
-                where relationship.Relationship == PointRelationshipType.Tag &&
-                      tagBlacklist.Contains(relationship.TargetPoint.EnglishName)
-                select relationship).ToListAsync();
-            _dbContext.PointRelationships.RemoveRange(relationships);
-            await _dbContext.SaveChangesAsync();
-            return Ok("成功");
-        }
-
-        /// <summary>
         /// 文章封面图填充，内容图片重缩放，每次调用填充 200 篇文章
         /// </summary>
-        [Route("migrate-6")]
+        [Route("migrate-8")]
         [HttpPost]
-        public async Task<IHttpActionResult> Migrate6()
+        public async Task<IHttpActionResult> Migrate8()
         {
             var articles = await _dbContext.Articles.Include(a => a.TargetPoint)
                 .Where(a => a.CoverImage == string.Empty).Take(200).ToListAsync();
@@ -502,57 +630,6 @@ namespace Keylol.Controllers.DatabaseMigration
                 article.Content = dom.Render();
             }
             await _dbContext.SaveChangesAsync();
-            return Ok("成功");
-        }
-
-        /// <summary>
-        /// 旧文章评论富文本化，回复关系关联，UnstyledContent 填充
-        /// </summary>
-        [Route("migrate-7")]
-        [HttpPost]
-        public async Task<IHttpActionResult> Migrate7()
-        {
-            var comments =
-                await _dbContext.ArticleComments.Where(c => c.UnstyledContent == string.Empty).ToListAsync();
-            foreach (var comment in comments)
-            {
-                var matches = Regex.Matches(comment.Content, "^(?:#(\\d+)[ \\t]*)+(?:$|[ \\t]+)", RegexOptions.Multiline);
-                if (matches.Count > 0)
-                {
-                    var sidForArticle =
-                        (from Match match in matches
-                            from Capture capture in match.Groups[1].Captures
-                            select int.Parse(capture.Value)).First();
-                    var replyToCommentId = await _dbContext.ArticleComments.Where(
-                        c => c.ArticleId == comment.ArticleId && c.SidForArticle == sidForArticle)
-                        .Select(c => c.Id)
-                        .FirstOrDefaultAsync();
-                    if (replyToCommentId != null)
-                        comment.ReplyToCommentId = replyToCommentId;
-                }
-                comment.Content = $"<p>{Regex.Replace(comment.Content, @"\r\n?|\n", "<br>")}</p>";
-                comment.UnstyledContent = PlainTextFormatter.FlattenHtml(comment.Content, false);
-            }
-            await _dbContext.SaveChangesAsync();
-            return Ok();
-        }
-
-        /// <summary>
-        /// 所有文章重新推送
-        /// </summary>
-        [Route("migrate-8")]
-        [HttpPost]
-        public async Task<IHttpActionResult> Migrate8()
-        {
-            var articleIds = await _dbContext.Articles.OrderBy(a => a.Sid).Select(a => a.Id).ToListAsync();
-            foreach (var articleId in articleIds)
-            {
-                _mqChannel.SendMessage(string.Empty, MqClientProvider.PushHubRequestQueue, new PushHubRequestDto
-                {
-                    Type = ContentPushType.Article,
-                    ContentId = articleId
-                });
-            }
             return Ok("成功");
         }
     }
