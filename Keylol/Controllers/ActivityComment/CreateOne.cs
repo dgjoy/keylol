@@ -99,7 +99,7 @@ namespace Keylol.Controllers.ActivityComment
                 {
                     steamNotifiedArticleAuthor = replyToUser.Id == activity.AuthorId;
                     await _userManager.SendSteamChatMessageAsync(replyToUser,
-                        $"@{comment.Commentator.UserName} 回复了你在 《{activityContent}》 下的评论：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
+                        $"@{comment.Commentator.UserName} 回复了你在「{activityContent}」下的评论：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
                 }
             }
 
@@ -119,7 +119,7 @@ namespace Keylol.Controllers.ActivityComment
                 if (!steamNotifiedArticleAuthor && activity.Author.SteamNotifyOnActivityReplied)
                 {
                     await _userManager.SendSteamChatMessageAsync(activity.Author,
-                        $"@{comment.Commentator.UserName} 评论了你的动态 《{activityContent}》：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
+                        $"@{comment.Commentator.UserName} 评论了你的动态「{activityContent}」：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
                 }
             }
             await _dbContext.SaveChangesAsync();

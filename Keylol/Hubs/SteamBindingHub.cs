@@ -26,22 +26,7 @@ namespace Keylol.Hubs
         {
             using (var dbContext = new KeylolDbContext())
             {
-                var sessions = SteamBotCoordinator.Sessions.Keys;
-                var bots = await dbContext.SteamBots.Where(b =>
-                    b.Online && sessions.Contains(b.SessionId)
-                    && b.SteamId != null && b.FriendCount < b.FriendUpperLimit && b.Enabled)
-                    .OrderBy(b => b.Sid)
-                    .ToListAsync();
-
-                SteamBot bot = null;
-                if (bots.Count != 0)
-                {
-                    if (_nextBot >= bots.Count)
-                        _nextBot = 0;
-                    bot = bots[_nextBot];
-                    _nextBot++;
-                }
-
+                var bot = await GetNextBotAsync(dbContext);
                 var random = new Random();
                 string code;
                 do
@@ -66,6 +51,26 @@ namespace Keylol.Hubs
 
                 Clients.Caller.OnCode(token.Id, code, bot?.SteamId, $"其乐机器人 #{bot?.Sid}");
             }
+        }
+
+        /// <summary>
+        /// 获取下一个可用的机器人
+        /// </summary>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <returns><see cref="SteamBot"/></returns>
+        public static async Task<SteamBot> GetNextBotAsync(KeylolDbContext dbContext)
+        {
+            var sessions = SteamBotCoordinator.Sessions.Keys;
+            var bots = await dbContext.SteamBots.Where(b =>
+                b.Online && sessions.Contains(b.SessionId)
+                && b.SteamId != null && b.FriendCount < b.FriendUpperLimit && b.Enabled)
+                .OrderBy(b => b.Sid)
+                .ToListAsync();
+
+            if (bots.Count == 0) return null;
+            if (_nextBot >= bots.Count)
+                _nextBot = 0;
+            return bots[_nextBot++];
         }
 
         /// <summary>

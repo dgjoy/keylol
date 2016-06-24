@@ -87,7 +87,7 @@ namespace Keylol.States.Aggregation.User
 
                 case EntrancePage.Edit:
                     if (await StateTreeHelper.CanAccessAsync<UserLevel>(nameof(Edit)))
-                        result.Edit = await EditPage.CreateAsync(user, currentUserId, userManager);
+                        result.Edit = await EditPage.CreateAsync(user, currentUserId, dbContext, userManager);
                     break;
 
                 default:

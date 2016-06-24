@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
@@ -24,7 +25,7 @@ namespace Keylol.States.Aggregation.User
             var user = await userManager.FindByIdCodeAsync(userIdCode);
             if (user == null)
                 return new EditPage();
-            return await CreateAsync(user, StateTreeHelper.GetCurrentUserId(), userManager);
+            return await CreateAsync(user, StateTreeHelper.GetCurrentUserId(), dbContext, userManager);
         }
 
         /// <summary>
@@ -32,19 +33,18 @@ namespace Keylol.States.Aggregation.User
         /// </summary>
         /// <param name="user">用户对象</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="EditPage"/></returns>
-        public static async Task<EditPage> CreateAsync(KeylolUser user, string currentUserId,
+        public static async Task<EditPage> CreateAsync(KeylolUser user, string currentUserId, KeylolDbContext dbContext,
             KeylolUserManager userManager)
         {
             if (currentUserId != user.Id && !await userManager.IsInRoleAsync(currentUserId, KeylolRoles.Operator))
                 return new EditPage();
 
-            return new EditPage
+            var editPage = new EditPage
             {
                 Email = user.Email,
-                SteamBotName = $"其乐机器人 Keylol.com #{user.SteamBot.Sid}",
-                SteamBotSteamId = user.SteamBot.SteamId,
                 LockoutEnabled = user.LockoutEnabled,
                 OpenInNewWindow = user.OpenInNewWindow,
                 UseEnglishPointName = user.PreferredPointName == PreferredPointName.English,
@@ -65,6 +65,17 @@ namespace Keylol.States.Aggregation.User
                 SteamNotifyOnSpotlighted = user.SteamNotifyOnSpotlighted,
                 SteamNotifyOnMissive = user.SteamNotifyOnMissive
             };
+            if (user.SteamBotId == null)
+            {
+                editPage.SteamBotLost = true;
+                editPage.SteamBotSteamId = (await SteamBindingHub.GetNextBotAsync(dbContext)).SteamId;
+            }
+            else
+            {
+                editPage.SteamBotName = $"其乐机器人 Keylol.com #{user.SteamBot.Sid}";
+                editPage.SteamBotSteamId = user.SteamBot.SteamId;
+            }
+            return editPage;
         }
 
         /// <summary>
@@ -81,6 +92,11 @@ namespace Keylol.States.Aggregation.User
         /// Steam 机器人 Steam ID 3
         /// </summary>
         public string SteamBotSteamId { get; set; }
+
+        /// <summary>
+        /// 是否与机器人失联
+        /// </summary>
+        public bool? SteamBotLost { get; set; }
 
         /// <summary>
         /// 登录保护

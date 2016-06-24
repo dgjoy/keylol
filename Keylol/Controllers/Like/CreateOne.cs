@@ -64,7 +64,7 @@ namespace Keylol.Controllers.Like
                         notify = targetUser.NotifyOnArticleLiked;
                         steamNotify = targetUser.SteamNotifyOnArticleLiked;
                         steamNotifyText =
-                            $"{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{targetUser.IdCode}/{article.SidForAuthor}";
+                            $"{@operator.UserName} 认可了你的文章《{article.Title}》：\nhttps://www.keylol.com/article/{targetUser.IdCode}/{article.SidForAuthor}";
                         couponDescriptionForTargetUser = new
                         {
                             ArticleId = article.Id,
@@ -89,7 +89,7 @@ namespace Keylol.Controllers.Like
                         notify = targetUser.NotifyOnCommentLiked;
                         steamNotify = targetUser.SteamNotifyOnCommentLiked;
                         steamNotifyText =
-                            $"{@operator.UserName} 认可了你在 《{articleComment.ArticleTitle}》 下的评论：\nhttps://www.keylol.com/article/{articleComment.ArticleAuthorIdCode}/{articleComment.ArticleSidForAuthor}#{articleComment.SidForArticle}";
+                            $"{@operator.UserName} 认可了你在《{articleComment.ArticleTitle}》下的评论：\nhttps://www.keylol.com/article/{articleComment.ArticleAuthorIdCode}/{articleComment.ArticleSidForAuthor}#{articleComment.SidForArticle}";
                         couponDescriptionForTargetUser = new
                         {
                             ArticleCommentId = articleComment.Id,
@@ -106,7 +106,7 @@ namespace Keylol.Controllers.Like
                         notify = targetUser.NotifyOnActivityLiked;
                         steamNotify = targetUser.SteamNotifyOnActivityLiked;
                         steamNotifyText =
-                            $"{@operator.UserName} 认可了你的动态 《{PostOfficeMessageList.CollapseActivityContent(activity)}》：\nhttps://www.keylol.com/activity/{targetUser.IdCode}/{activity.SidForAuthor}";
+                            $"{@operator.UserName} 认可了你的动态「{PostOfficeMessageList.CollapseActivityContent(activity)}」：\nhttps://www.keylol.com/activity/{targetUser.IdCode}/{activity.SidForAuthor}";
                         couponDescriptionForTargetUser = new
                         {
                             ActivityId = activity.Id,
@@ -130,7 +130,7 @@ namespace Keylol.Controllers.Like
                         notify = targetUser.NotifyOnCommentLiked;
                         steamNotify = targetUser.SteamNotifyOnCommentLiked;
                         steamNotifyText =
-                            $"{@operator.UserName} 认可了你在 《{PostOfficeMessageList.CollapseActivityContent(activityComment.Activity)}》 下的评论：\nhttps://www.keylol.com/activity/{activityComment.ActivityAuthorIdCode}/{activityComment.Activity.SidForAuthor}#{activityComment.SidForActivity}";
+                            $"{@operator.UserName} 认可了你在「{PostOfficeMessageList.CollapseActivityContent(activityComment.Activity)}」下的评论：\nhttps://www.keylol.com/activity/{activityComment.ActivityAuthorIdCode}/{activityComment.Activity.SidForAuthor}#{activityComment.SidForActivity}";
                         couponDescriptionForTargetUser = new
                         {
                             ActivityCommentId = activityComment.Id,
