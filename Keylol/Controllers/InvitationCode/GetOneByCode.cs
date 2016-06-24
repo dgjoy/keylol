@@ -15,7 +15,7 @@ namespace Keylol.Controllers.InvitationCode
         [AllowAnonymous]
         [Route("{code}")]
         [HttpGet]
-        [ResponseType(typeof (InvitationCodeDto))]
+        [ResponseType(typeof(InvitationCodeDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "邀请码无效")]
         public IHttpActionResult GetOneByCode(string code)
         {

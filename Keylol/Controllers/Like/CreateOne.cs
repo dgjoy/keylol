@@ -1,16 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
-using Keylol.Models.DAL;
-using Keylol.Services;
-using Keylol.Services.Contracts;
-using Keylol.Utilities;
+using Keylol.Models.DTO;
+using Keylol.ServiceBase;
+using Keylol.States.PostOffice;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -21,189 +18,180 @@ namespace Keylol.Controllers.Like
         /// <summary>
         ///     创建一个认可
         /// </summary>
-        /// <param name="createOneDto">认可相关属性</param>
+        /// <param name="targetId">目标 ID</param>
+        /// <param name="targetType">目标类型</param>
         [Route]
         [HttpPost]
-        [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (int))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "当前登录用户无权创建认可（文章或评论被封存，或者用户文券不足）")]
-        public async Task<IHttpActionResult> CreateOne(LikeCreateOneDto createOneDto)
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "用户文券不足")]
+        [SwaggerResponse(HttpStatusCode.OK, "如果这个认可是免费发出的，则返回字符串“Free”")]
+        public async Task<IHttpActionResult> CreateOne(string targetId, LikeTargetType targetType)
         {
-            if (createOneDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var operatorId = User.Identity.GetUserId();
-            var @operator = await DbContext.Users.SingleAsync(u => u.Id == operatorId);
-            if (@operator.FreeLike <= 0 && !_coupon.CanTriggerEvent(operatorId, CouponEvent.发出认可))
+            var @operator = await _userManager.FindByIdAsync(operatorId);
+            if (@operator.FreeLike <= 0 && !await _coupon.CanTriggerEventAsync(operatorId, CouponEvent.发出认可))
                 return Unauthorized();
 
-            Models.Like like;
-            var free = false;
-            switch (createOneDto.Type)
+            var likeId = await _cachedData.Likes.AddAsync(operatorId, targetId, targetType);
+
+            var free = string.Empty;
+            if (likeId != null)
             {
-                case LikeType.ArticleLike:
-                {
-                    var existLike = await DbContext.ArticleLikes.FirstOrDefaultAsync(
-                        l => l.ArticleId == createOneDto.TargetId && l.OperatorId == operatorId);
-                    if (existLike != null)
+                if (targetType == LikeTargetType.Article || targetType == LikeTargetType.Activity)
+                    _mqChannel.SendMessage(string.Empty, MqClientProvider.PushHubRequestQueue, new PushHubRequestDto
                     {
-                        ModelState.AddModelError("vm.TargetId", "不能对同一篇文章重复认可。");
-                        return BadRequest(ModelState);
-                    }
-                    var article = await DbContext.Articles.FindAsync(createOneDto.TargetId);
-                    if (article == null)
-                    {
-                        ModelState.AddModelError("vm.TargetId", "指定文章不存在。");
-                        return BadRequest(ModelState);
-                    }
-                    if (article.PrincipalId == operatorId)
-                    {
-                        ModelState.AddModelError("vm.TargetId", "不能认可自己发布的文章。");
-                        return BadRequest(ModelState);
-                    }
-                    if (article.Archived != ArchivedState.None)
-                        return Unauthorized();
-                    var articleLike = DbContext.ArticleLikes.Create();
-                    articleLike.ArticleId = createOneDto.TargetId;
-                    like = articleLike;
-                    if (!article.IgnoreNewLikes)
-                    {
-                        var articleAuthor = await DbContext.Users.Include(u => u.SteamBot)
-                            .SingleAsync(u => u.Id == article.PrincipalId);
-
-                        // 邮政中心
-                        var message = DbContext.Messages.Create();
-                        message.Type = MessageType.ArticleLike;
-                        message.OperatorId = operatorId;
-                        message.ReceiverId = articleAuthor.Id;
-                        message.ArticleId = article.Id;
-                        DbContext.Messages.Add(message);
-
-                        // Steam 通知
-                        if (articleAuthor.SteamNotifyOnArticleLiked && articleAuthor.SteamBot.IsOnline())
-                        {
-                            var botCoordinator = SteamBotCoordinator.Sessions[articleAuthor.SteamBot.SessionId];
-                            await botCoordinator.Client.SendChatMessage(articleAuthor.SteamBotId, articleAuthor.SteamId,
-                                $"@{@operator.UserName} 认可了你的文章 《{article.Title}》：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{article.SequenceNumberForAuthor}");
-                        }
-                    }
-                    await _statistics.IncreaseUserLikeCount(article.PrincipalId);
-                    await _coupon.Update(article.PrincipalId, CouponEvent.获得认可, new
-                    {
-                        ArticleId = article.Id,
-                        OperatorId = operatorId
+                        Type = ContentPushType.Like,
+                        ContentId = likeId
                     });
-                    if (@operator.FreeLike > 0)
-                    {
-                        @operator.FreeLike--;
-                        free = true;
-                    }
-                    else
-                    {
-                        await _coupon.Update(operatorId, CouponEvent.发出认可, new {ArticleId = article.Id});
-                    }
-                    break;
-                }
 
-                case LikeType.CommentLike:
+                KeylolUser targetUser;
+                bool notify, steamNotify;
+                MessageType messageType;
+                string steamNotifyText;
+                object couponDescriptionForTargetUser, couponDescriptionForOperator;
+                switch (targetType)
                 {
-                    var existLike = await DbContext.CommentLikes.FirstOrDefaultAsync(
-                        l => l.CommentId == createOneDto.TargetId && l.OperatorId == operatorId);
-                    if (existLike != null)
-                    {
-                        ModelState.AddModelError("vm.TargetId", "不能对同一篇评论重复认可。");
-                        return BadRequest(ModelState);
-                    }
-                    var comment =
-                        await
-                            DbContext.Comments.Include(c => c.Article)
-                                .SingleOrDefaultAsync(c => c.Id == createOneDto.TargetId);
-                    if (comment == null)
-                    {
-                        ModelState.AddModelError("vm.TargetId", "指定评论不存在。");
-                        return BadRequest(ModelState);
-                    }
-                    if (comment.CommentatorId == operatorId)
-                    {
-                        ModelState.AddModelError("vm.TargetId", "不能认可自己发布的评论。");
-                        return BadRequest(ModelState);
-                    }
-                    if (comment.Archived != ArchivedState.None || comment.Article.Archived != ArchivedState.None)
-                        return Unauthorized();
-                    var commentLike = DbContext.CommentLikes.Create();
-                    commentLike.CommentId = createOneDto.TargetId;
-                    like = commentLike;
-                    if (!comment.IgnoreNewLikes)
-                    {
-                        var commentAuthor = await DbContext.Users.Include(u => u.SteamBot)
-                            .SingleAsync(u => u.Id == comment.CommentatorId);
-                        var articleAuthor = await DbContext.Users.SingleAsync(u => u.Id == comment.Article.PrincipalId);
-
-                        // 邮政中心
-                        var message = DbContext.Messages.Create();
-                        message.Type = MessageType.CommentLike;
-                        message.OperatorId = operatorId;
-                        message.ReceiverId = commentAuthor.Id;
-                        message.CommentId = comment.Id;
-                        DbContext.Messages.Add(message);
-
-                        // Steam 通知
-                        if (commentAuthor.SteamNotifyOnCommentLiked && commentAuthor.SteamBot.IsOnline())
+                    case LikeTargetType.Article:
+                        messageType = MessageType.ArticleLike;
+                        var article = await _dbContext.Articles.Where(a => a.Id == targetId)
+                            .Select(a => new
+                            {
+                                a.Id,
+                                a.Title,
+                                a.Author,
+                                a.SidForAuthor
+                            }).SingleAsync();
+                        targetUser = article.Author;
+                        notify = targetUser.NotifyOnArticleLiked;
+                        steamNotify = targetUser.SteamNotifyOnArticleLiked;
+                        steamNotifyText =
+                            $"{@operator.UserName} 认可了你的文章《{article.Title}》：\nhttps://www.keylol.com/article/{targetUser.IdCode}/{article.SidForAuthor}";
+                        couponDescriptionForTargetUser = new
                         {
-                            var botCoordinator = SteamBotCoordinator.Sessions[commentAuthor.SteamBot.SessionId];
-                            await botCoordinator.Client.SendChatMessage(commentAuthor.SteamBotId, commentAuthor.SteamId,
-                                $"@{@operator.UserName} 认可了你在 《{comment.Article.Title}》 下的评论：\nhttps://www.keylol.com/article/{articleAuthor.IdCode}/{comment.Article.SequenceNumberForAuthor}#{comment.SequenceNumberForArticle}");
-                        }
-                    }
-                    await _statistics.IncreaseUserLikeCount(comment.CommentatorId);
-                    await _coupon.Update(comment.CommentatorId, CouponEvent.获得认可, new
-                    {
-                        CommentId = comment.Id,
-                        OperatorId = operatorId
-                    });
-                    if (@operator.FreeLike > 0)
-                    {
-                        @operator.FreeLike--;
-                        free = true;
-                    }
-                    else
-                    {
-                        await _coupon.Update(operatorId, CouponEvent.发出认可, new {CommentId = comment.Id});
-                    }
-                    break;
-                }
+                            ArticleId = article.Id,
+                            OperatorId = operatorId
+                        };
+                        couponDescriptionForOperator = new {ArticleId = article.Id};
+                        break;
 
-                default:
-                    throw new ArgumentOutOfRangeException();
+                    case LikeTargetType.ArticleComment:
+                        messageType = MessageType.ArticleCommentLike;
+                        var articleComment = await _dbContext.ArticleComments.Where(c => c.Id == targetId)
+                            .Select(c => new
+                            {
+                                c.Id,
+                                c.Commentator,
+                                c.SidForArticle,
+                                ArticleTitle = c.Article.Title,
+                                ArticleSidForAuthor = c.Article.SidForAuthor,
+                                ArticleAuthorIdCode = c.Article.Author.IdCode
+                            }).SingleAsync();
+                        targetUser = articleComment.Commentator;
+                        notify = targetUser.NotifyOnCommentLiked;
+                        steamNotify = targetUser.SteamNotifyOnCommentLiked;
+                        steamNotifyText =
+                            $"{@operator.UserName} 认可了你在《{articleComment.ArticleTitle}》下的评论：\nhttps://www.keylol.com/article/{articleComment.ArticleAuthorIdCode}/{articleComment.ArticleSidForAuthor}#{articleComment.SidForArticle}";
+                        couponDescriptionForTargetUser = new
+                        {
+                            ArticleCommentId = articleComment.Id,
+                            OperatorId = operatorId
+                        };
+                        couponDescriptionForOperator = new {ArticleCommentId = articleComment.Id};
+                        break;
+
+                    case LikeTargetType.Activity:
+                        messageType = MessageType.ActivityLike;
+                        var activity = await _dbContext.Activities.Include(a => a.Author)
+                            .Where(a => a.Id == targetId).SingleAsync();
+                        targetUser = activity.Author;
+                        notify = targetUser.NotifyOnActivityLiked;
+                        steamNotify = targetUser.SteamNotifyOnActivityLiked;
+                        steamNotifyText =
+                            $"{@operator.UserName} 认可了你的动态「{PostOfficeMessageList.CollapseActivityContent(activity)}」：\nhttps://www.keylol.com/activity/{targetUser.IdCode}/{activity.SidForAuthor}";
+                        couponDescriptionForTargetUser = new
+                        {
+                            ActivityId = activity.Id,
+                            OperatorId = operatorId
+                        };
+                        couponDescriptionForOperator = new {ActivityId = activity.Id};
+                        break;
+
+                    case LikeTargetType.ActivityComment:
+                        messageType = MessageType.ActivityCommentLike;
+                        var activityComment = await _dbContext.ActivityComments.Where(c => c.Id == targetId)
+                            .Select(c => new
+                            {
+                                c.Id,
+                                c.Commentator,
+                                c.SidForActivity,
+                                c.Activity,
+                                ActivityAuthorIdCode = c.Activity.Author.IdCode
+                            }).SingleAsync();
+                        targetUser = activityComment.Commentator;
+                        notify = targetUser.NotifyOnCommentLiked;
+                        steamNotify = targetUser.SteamNotifyOnCommentLiked;
+                        steamNotifyText =
+                            $"{@operator.UserName} 认可了你在「{PostOfficeMessageList.CollapseActivityContent(activityComment.Activity)}」下的评论：\nhttps://www.keylol.com/activity/{activityComment.ActivityAuthorIdCode}/{activityComment.Activity.SidForAuthor}#{activityComment.SidForActivity}";
+                        couponDescriptionForTargetUser = new
+                        {
+                            ActivityCommentId = activityComment.Id,
+                            OperatorId = operatorId
+                        };
+                        couponDescriptionForOperator = new {ActivityCommentId = activityComment.Id};
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null);
+                }
+                if (@operator.FreeLike > 0)
+                {
+                    @operator.FreeLike--;
+                    free = "Free";
+                }
+                else
+                {
+                    await _coupon.UpdateAsync(@operator, CouponEvent.发出认可, couponDescriptionForOperator);
+                }
+                await _coupon.UpdateAsync(targetUser, CouponEvent.获得认可, couponDescriptionForTargetUser);
+                if (notify)
+                {
+                    var message = new Message
+                    {
+                        Type = messageType,
+                        OperatorId = operatorId,
+                        ReceiverId = targetUser.Id,
+                        Count = await _cachedData.Likes.GetUserLikeCountAsync(targetUser.Id),
+                        SecondCount = await _cachedData.Likes.GetTargetLikeCountAsync(targetId, targetType)
+                    };
+                    switch (targetType)
+                    {
+                        case LikeTargetType.Article:
+                            message.ArticleId = targetId;
+                            break;
+
+                        case LikeTargetType.ArticleComment:
+                            message.ArticleCommentId = targetId;
+                            break;
+
+                        case LikeTargetType.Activity:
+                            message.ActivityId = targetId;
+                            break;
+
+                        case LikeTargetType.ActivityComment:
+                            message.ActivityCommentId = targetId;
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null);
+                    }
+                    _dbContext.Messages.Add(message);
+                    await _dbContext.SaveChangesAsync();
+                }
+                if (steamNotify)
+                {
+                    await _userManager.SendSteamChatMessageAsync(targetUser, steamNotifyText);
+                }
             }
-            like.OperatorId = operatorId;
-            DbContext.Likes.Add(like);
-            await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
-            return Created($"like/{like.Id}", free ? "Free" : string.Empty);
-        }
-
-        /// <summary>
-        ///     请求 DTO
-        /// </summary>
-        public class LikeCreateOneDto
-        {
-            /// <summary>
-            ///     认可目标 Id
-            /// </summary>
-            [Required]
-            public string TargetId { get; set; }
-
-            /// <summary>
-            ///     认可目标类型
-            /// </summary>
-            public LikeType Type { get; set; }
+            return Ok(free);
         }
     }
 }

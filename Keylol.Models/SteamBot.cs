@@ -11,7 +11,7 @@ namespace Keylol.Models
 
         [Index(IsUnique = true, IsClustered = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int SequenceNumber { get; set; }
+        public int Sid { get; set; }
 
         [Required]
         [MaxLength(64)]
@@ -40,9 +40,5 @@ namespace Keylol.Models
 
         [Index]
         public bool Enabled { get; set; } = true;
-
-        public virtual ICollection<SteamBindingToken> BindingTokens { get; set; }
-
-        public virtual ICollection<KeylolUser> Users { get; set; }
     }
 }

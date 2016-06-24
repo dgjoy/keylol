@@ -1,25 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Keylol.Models.DAL;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Keylol.Models
 {
-    public enum LanguageConversionMode
-    {
-        ForceSimplifiedChinese,
-        ForceTraditionalChinese,
-        SimplifiedChineseWithContentUnmodified,
-        TraditionalChineseWithContentUnmodified
-    }
-
     public class KeylolUser : IdentityUser
     {
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public int Sid { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         [Required]
         [Index(IsUnique = true)]
         [StringLength(5, MinimumLength = 5)]
@@ -37,14 +31,20 @@ namespace Keylol.Models
         public string GamerTag { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
-        [MaxLength(64)]
+        [MaxLength(256)]
         public string AvatarImage { get; set; } = string.Empty;
 
-        public override bool LockoutEnabled { get; set; } = true;
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(256)]
+        public string HeaderImage { get; set; } = string.Empty;
 
-        [Index]
-        [MaxLength(64)]
-        public string SteamId { get; set; }
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(7)]
+        public string ThemeColor { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
+        [MaxLength(7)]
+        public string LightThemeColor { get; set; } = string.Empty;
 
         [Required(AllowEmptyStrings = true)]
         [MaxLength(64)]
@@ -52,84 +52,68 @@ namespace Keylol.Models
 
         public DateTime SteamBindingTime { get; set; }
 
-        public DateTime LastGameUpdateTime { get; set; } = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        public bool OpenInNewWindow { get; set; } = false;
 
-        public bool LastGameUpdateSucceed { get; set; } = false;
-
-        public bool AutoSubscribeEnabled { get; set; } = true;
-
-        public int AutoSubscribeDaySpan { get; set; } = 7;
+        public PreferredPointName PreferredPointName { get; set; } = PreferredPointName.Chinese;
 
         [Index]
         public int Coupon { get; set; } = 0;
-
-        public virtual ProfilePoint ProfilePoint { get; set; }
-
-        public string ProfilePointId => Id;
-
-        public virtual ICollection<Point> SubscribedPoints { get; set; }
-
-        public virtual ICollection<NormalPoint> ManagedPoints { get; set; }
-
-        public virtual ICollection<Comment> Comments { get; set; }
-
-        public virtual ICollection<Like> Likes { get; set; }
-
-        public virtual ICollection<LoginLog> LoginLogs { get; set; }
-
-        public virtual ICollection<EditLog> EditLogs { get; set; }
-
+        
         public string SteamBotId { get; set; }
 
         public virtual SteamBot SteamBot { get; set; }
 
-        public virtual InvitationCode InvitationCode { get; set; }
-
-        public virtual ICollection<Favorite> Favorites { get; set; }
-
         public string InviterId { get; set; }
         public virtual KeylolUser Inviter { get; set; }
-
-        public virtual ICollection<KeylolUser> InvitedUsers { get; set; }
 
         public DateTime LastDailyRewardTime { get; set; } = DateTime.Now;
 
         public int FreeLike { get; set; } = 5;
 
-        [Index(IsUnique = true, IsClustered = true)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int SequenceNumber { get; set; }
+        #region 邮政中心通知
 
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public bool NotifyOnArticleReplied { get; set; } = true;
 
-        //        public LanguageConversionMode PreferedLanguageConversionMode { get; set; } =
-        //            LanguageConversionMode.SimplifiedChineseWithContentUnmodified;
+        public bool NotifyOnCommentReplied { get; set; } = true;
 
-        // Accessibility demand
-        //        public bool ColorVisionDeficiency { get; set; } = false;
-        //        public bool VisionImpairment { get; set; } = false;
-        //        public bool HearingImpairment { get; set; } = false;
-        //        public bool PhotosensitiveEpilepsy { get; set; } = false;
+        public bool NotifyOnActivityReplied { get; set; } = true;
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<KeylolUser> manager)
-        {
-            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
-            // Add custom user claims here
-            return userIdentity;
-        }
+        public bool NotifyOnArticleLiked { get; set; } = true;
 
-        #region Steam bot notification options
+        public bool NotifyOnCommentLiked    { get; set; } = true;
+
+        public bool NotifyOnActivityLiked { get; set; } = true;
+
+        public bool NotifyOnSubscribed { get; set; } = true;
+
+        #endregion
+
+        #region Steam 机器人通知
 
         public bool SteamNotifyOnArticleReplied { get; set; } = true;
 
         public bool SteamNotifyOnCommentReplied { get; set; } = true;
 
+        public bool SteamNotifyOnActivityReplied { get; set; } = true;
+
         public bool SteamNotifyOnArticleLiked { get; set; } = true;
 
         public bool SteamNotifyOnCommentLiked { get; set; } = true;
 
+        public bool SteamNotifyOnActivityLiked { get; set; } = true;
+
+        public bool SteamNotifyOnSubscribed { get; set; } = true;
+
+        public bool SteamNotifyOnSpotlighted { get; set; } = true;
+
+        public bool SteamNotifyOnMissive { get; set; } = true;
+
         #endregion
+    }
+
+    public enum PreferredPointName
+    {
+        Chinese,
+        English
     }
 }

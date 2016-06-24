@@ -15,6 +15,9 @@ namespace Keylol.SteamBot.ServiceReference {
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.ISteamBotCoordinator", CallbackContract=typeof(Keylol.SteamBot.ServiceReference.ISteamBotCoordinatorCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface ISteamBotCoordinator {
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/Ping", ReplyAction="http://tempuri.org/ISteamBotCoordinator/PingResponse")]
+        void Ping();
+        
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/RequestBots")]
         void RequestBots();
         
@@ -38,9 +41,6 @@ namespace Keylol.SteamBot.ServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/OnBotNewChatMessage")]
         void OnBotNewChatMessage(string senderSteamId, string botId, string message);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/Ping", ReplyAction="http://tempuri.org/ISteamBotCoordinator/PingResponse")]
-        void Ping();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -50,7 +50,7 @@ namespace Keylol.SteamBot.ServiceReference {
         string[] GetAllocatedBots();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/RequestReallocateBotsResponse")]
-        void RequestReallocateBots(int count);
+        string[] RequestReallocateBots(int count);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/StopBot")]
         void StopBot(string botId);
@@ -111,6 +111,10 @@ namespace Keylol.SteamBot.ServiceReference {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
+        public void Ping() {
+            base.Channel.Ping();
+        }
+        
         public void RequestBots() {
             base.Channel.RequestBots();
         }
@@ -141,10 +145,6 @@ namespace Keylol.SteamBot.ServiceReference {
         
         public void OnBotNewChatMessage(string senderSteamId, string botId, string message) {
             base.Channel.OnBotNewChatMessage(senderSteamId, botId, message);
-        }
-        
-        public void Ping() {
-            base.Channel.Ping();
         }
     }
 }

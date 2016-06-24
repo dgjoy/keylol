@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Keylol.Models;
+using Keylol.Models.DTO;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.NormalPoint
@@ -20,12 +21,13 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}/related")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointGetListOfRelatedResponseDto>))]
+        [ResponseType(typeof(List<NormalPointGetListOfRelatedResponseDto>))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在或者不是游戏据点")]
-        public async Task<IHttpActionResult> GetListOfRelated(string id, IdType idType = IdType.Id)
+        public async Task<IHttpActionResult> GetListOfRelated(string id,
+            NormalPointIdentityType idType = NormalPointIdentityType.Id)
         {
-            var point = await DbContext.NormalPoints
-                .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
+            var point = await _dbContext.NormalPoints
+                .SingleOrDefaultAsync(p => idType == NormalPointIdentityType.IdCode ? p.IdCode == id : p.Id == id);
             if (point == null || (point.Type != NormalPointType.Game && point.Type != NormalPointType.Hardware))
                 return NotFound();
 

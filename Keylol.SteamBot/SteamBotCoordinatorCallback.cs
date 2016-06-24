@@ -30,10 +30,11 @@ namespace Keylol.SteamBot
             return SteamBot.BotInstances?.Select(b => b.Id).ToArray();
         }
 
-        public void RequestReallocateBots(int count)
+        public string[] RequestReallocateBots(int count)
         {
             _logger.Info($"Received new allocation target: {count} bot(s).");
             if (SteamBot.BotInstances == null) SteamBot.BotInstances = new List<BotInstance>(count);
+
             if (SteamBot.BotInstances.Count < count)
             {
                 var botInfos = SteamBot.Coordinator.Operations.AllocateBots(count - SteamBot.BotInstances.Count);
@@ -52,8 +53,10 @@ namespace Keylol.SteamBot
                 {
                     botInstance.Start();
                 }
+                return null;
             }
-            else if (SteamBot.BotInstances.Count > count)
+
+            if (SteamBot.BotInstances.Count > count)
             {
                 var deallocCount = SteamBot.BotInstances.Count - count;
                 var botToDealloc = SteamBot.BotInstances.Take(deallocCount).ToList();
@@ -62,7 +65,10 @@ namespace Keylol.SteamBot
                 {
                     botInstance.Dispose();
                 }
+                return botToDealloc.Select(b => b.Id).ToArray();
             }
+
+            return null;
         }
 
         public void StopBot(string botId)
@@ -96,7 +102,7 @@ namespace Keylol.SteamBot
         public void SendChatMessage(string botId, string steamId, string message, bool logMessage)
         {
             var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
-            if (botInstance == null || string.IsNullOrEmpty(message))
+            if (botInstance == null || string.IsNullOrWhiteSpace(message))
                 return;
             var id = new SteamID();
             id.SetFromSteam3String(steamId);
@@ -110,7 +116,7 @@ namespace Keylol.SteamBot
 
         public void BroadcastMessage(string message)
         {
-            if (SteamBot.BotInstances == null || string.IsNullOrEmpty(message))
+            if (SteamBot.BotInstances == null || string.IsNullOrWhiteSpace(message))
                 return;
             _logger.Info($"Broadcasting chat message: {message}");
             foreach (var botInstance in SteamBot.BotInstances)
@@ -132,8 +138,7 @@ namespace Keylol.SteamBot
             var id = new SteamID();
             id.SetFromSteam3String(steamId);
             return BitConverter.ToString(botInstance.SteamFriends.GetFriendAvatar(id))
-                .Replace("-", string.Empty)
-                .ToLower();
+                .Replace("-", string.Empty).ToLower();
         }
 
         public string GetUserProfileName(string botId, string steamId)

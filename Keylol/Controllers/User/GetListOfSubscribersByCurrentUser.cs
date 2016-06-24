@@ -18,18 +18,18 @@ namespace Keylol.Controllers.User
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("my")]
         [HttpGet]
-        [ResponseType(typeof (List<UserDto>))]
+        [ResponseType(typeof(List<UserDto>))]
         public async Task<IHttpActionResult> GetListOfSubscribersByCurrentUser(int skip = 0, int take = 30)
         {
             if (take > 50) take = 50;
             var userId = User.Identity.GetUserId();
-            return Ok((await DbContext.Users.AsNoTracking().Where(u => u.Id == userId)
+            return Ok((await _dbContext.Users.AsNoTracking().Where(u => u.Id == userId)
                 .SelectMany(u => u.ProfilePoint.Subscribers)
                 .Select(u => new
                 {
                     user = u,
                     profilePoint = u.ProfilePoint,
-                    articleCount = u.ProfilePoint.Articles.Count(),
+                    articleCount = u.ProfilePoint.Articles.Count,
                     subscriberCount = u.ProfilePoint.Subscribers.Count
                 })
                 .OrderBy(e => e.user.RegisterTime)

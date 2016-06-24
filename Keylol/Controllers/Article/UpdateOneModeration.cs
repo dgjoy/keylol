@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
-using Keylol.Services;
-using Keylol.Services.Contracts;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -23,58 +25,39 @@ namespace Keylol.Controllers.Article
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户无权编辑这篇文章")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> UpdoteOneModeration(string id,
-            ArticleUpdateOneModerationRequestDto requestDto)
+            [NotNull] ArticleUpdateOneModerationRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("requestDto", "Invalid request DTO.");
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var article = await DbContext.Articles.FindAsync(id);
+            var article = await _dbContext.Articles.Include(a => a.Author).Where(a => a.Id == id).SingleOrDefaultAsync();
             if (article == null)
                 return NotFound();
 
             var operatorId = User.Identity.GetUserId();
-            var operatorStaffClaim = await UserManager.GetStaffClaimAsync(operatorId);
+            var isKeylolOperator = User.IsInRole(KeylolRoles.Operator);
 
-            if (operatorStaffClaim != StaffClaim.Operator)
+            if (!isKeylolOperator)
             {
                 switch (requestDto.Property)
                 {
                     case ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived:
-                        if (article.PrincipalId != operatorId)
+                        if (article.AuthorId != operatorId)
                             return Unauthorized();
                         break;
-                    case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
-                        if (article.PrincipalId != operatorId || requestDto.Value)
-                            return Unauthorized();
-                        break;
-
-                    case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
-                    case ArticleUpdateOneModerationRequestDto.ArticleProperty.Warned:
-                        break;
+                        
                     default:
                         return Unauthorized();
                 }
             }
 
-            if (!Enum.IsDefined(typeof (ArticleUpdateOneModerationRequestDto.ArticleProperty), requestDto.Property))
+            if (!Enum.IsDefined(typeof(ArticleUpdateOneModerationRequestDto.ArticleProperty), requestDto.Property))
                 throw new ArgumentOutOfRangeException(nameof(requestDto.Property));
-            var propertyInfo = typeof (Models.Article).GetProperty(requestDto.Property.ToString());
+            var propertyInfo = typeof(Models.Article).GetProperty(requestDto.Property.ToString());
             if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived)
             {
                 if (article.Archived != ArchivedState.None == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
-                if (operatorStaffClaim == StaffClaim.Operator)
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
+
+                if (isKeylolOperator)
                 {
                     article.Archived = requestDto.Value ? ArchivedState.Operator : ArchivedState.None;
                 }
@@ -85,33 +68,21 @@ namespace Keylol.Controllers.Article
                     article.Archived = requestDto.Value ? ArchivedState.User : ArchivedState.None;
                 }
             }
-            else if (requestDto.Property == ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight)
-            {
-                if (article.SpotlightTime != null == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
-                if (requestDto.Value)
-                    article.SpotlightTime = DateTime.Now;
-                else
-                    article.SpotlightTime = null;
-            }
             else
             {
                 if ((bool) propertyInfo.GetValue(article) == requestDto.Value)
-                {
-                    ModelState.AddModelError("requestDto.Value", "文章已经处于目标状态");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.Value), Errors.Duplicate);
+
                 propertyInfo.SetValue(article, requestDto.Value);
             }
-            if (operatorStaffClaim == StaffClaim.Operator && (requestDto.NotifyAuthor ?? false))
+            if (isKeylolOperator && (requestDto.NotifyAuthor ?? false))
             {
-                var missive = DbContext.Messages.Create();
-                missive.OperatorId = operatorId;
-                missive.Receiver = article.Principal.User;
-                missive.ArticleId = article.Id;
+                var missive = new Message
+                {
+                    OperatorId = operatorId,
+                    ReceiverId = article.AuthorId,
+                    ArticleId = article.Id
+                };
                 string steamNotityText = null;
                 if (requestDto.Value)
                 {
@@ -121,20 +92,20 @@ namespace Keylol.Controllers.Article
                             missive.Type = MessageType.ArticleArchive;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            steamNotityText = $"文章《{article.Title}》已被封存，封存后该文章的内容和所有评论会被隐藏，同时这篇文章不会再显示于任何信息轨道上。";
+                            steamNotityText = $"文章《{article.Title}》已被封存，封存后该文章的内容和所有评论会被隐藏，同时这篇文章不会再显示于任何轨道上。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
-                            missive.Type = MessageType.Rejection;
+                            missive.Type = MessageType.ArticleRejection;
                             if (requestDto.Reasons != null)
                                 missive.Reasons = string.Join(",", requestDto.Reasons);
-                            steamNotityText = $"文章《{article.Title}》已被退稿，不会再出现于其他用户或据点的讯息轨道上，这篇文章后续的投稿也将被自动回绝。";
+                            steamNotityText = $"文章《{article.Title}》已被退稿，不会再出现于其他用户或据点的轨道上，这篇文章后续的投稿也将被自动回绝。";
                             break;
 
-                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
+                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlighted:
                             missive.Type = MessageType.Spotlight;
                             steamNotityText =
-                                $"感谢你对其乐社区质量的认可与贡献！你的文章《{article.Title}》已被推荐为萃选文章，此文章将会从此刻开始展示在全站的「萃选文章」栏目中 14 天。";
+                                $"感谢你对其乐社区质量的认可与贡献！你的文章《{article.Title}》已被推荐为萃选文章。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Warned:
@@ -151,15 +122,15 @@ namespace Keylol.Controllers.Article
                     {
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Archived:
                             missive.Type = MessageType.ArticleArchiveCancel;
-                            steamNotityText = $"文章《{article.Title}》的封存已被撤销，该文章的内容和所有评论已重新公开，讯息轨道将不再隐藏这篇文章。";
+                            steamNotityText = $"文章《{article.Title}》的封存已被撤销，该文章的内容和所有评论已重新公开，轨道将不再隐藏这篇文章。";
                             break;
 
                         case ArticleUpdateOneModerationRequestDto.ArticleProperty.Rejected:
-                            missive.Type = MessageType.RejectionCancel;
-                            steamNotityText = $"文章《{article.Title}》的退稿限制已被撤销，其他用户首页的讯息轨道将不再隐藏这篇文章，后续的投稿也不再会被其他据点回绝。";
+                            missive.Type = MessageType.ArticleRejectionCancel;
+                            steamNotityText = $"文章《{article.Title}》的退稿限制已被撤销，其他用户首页的轨道将不再隐藏这篇文章，后续的投稿也不再会被其他据点回绝。";
                             break;
 
-                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
+                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlighted:
                             missive.Type = MessageType.SpotlightCancel;
                             break;
 
@@ -169,17 +140,14 @@ namespace Keylol.Controllers.Article
                             break;
                     }
                 }
-                DbContext.Messages.Add(missive);
+                _dbContext.Messages.Add(missive);
 
                 // Steam 通知
-                if (!string.IsNullOrEmpty(steamNotityText) && missive.Receiver.SteamBot.IsOnline())
-                {
-                    var botCoordinator = SteamBotCoordinator.Sessions[missive.Receiver.SteamBot.SessionId];
-                    await botCoordinator.Client.SendChatMessage(missive.Receiver.SteamBotId, missive.Receiver.SteamId,
-                        steamNotityText);
-                }
+
+                if (!string.IsNullOrWhiteSpace(steamNotityText))
+                    await _userManager.SendSteamChatMessageAsync(article.Author, steamNotityText);
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }
@@ -207,7 +175,7 @@ namespace Keylol.Controllers.Article
             /// <summary>
             ///     萃选状态
             /// </summary>
-            Spotlight,
+            Spotlighted,
 
             /// <summary>
             ///     警告状态

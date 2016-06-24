@@ -22,12 +22,12 @@ namespace Keylol.Controllers.Article
         [Route("latest")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListOfLatest(bool titleOnly = true, string articleTypeFilter = null,
             int beforeSn = int.MaxValue, int take = 30)
         {
             if (take > 50) take = 50;
-            var articleQuery = DbContext.Articles.AsNoTracking()
+            var articleQuery = _dbContext.Articles.AsNoTracking()
                 .Where(a => a.Archived == ArchivedState.None && a.Rejected == false && a.SequenceNumber < beforeSn);
             if (articleTypeFilter != null)
             {
@@ -74,7 +74,7 @@ namespace Keylol.Controllers.Article
                         Author = new UserDto(entry.author),
                         VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                     };
-                    if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                    if (string.IsNullOrWhiteSpace(entry.article.ThumbnailImage))
                     {
                         articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                     }

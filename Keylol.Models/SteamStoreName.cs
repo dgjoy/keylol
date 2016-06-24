@@ -9,11 +9,15 @@ namespace Keylol.Models
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public long Sid { get; set; }
+
         [Required]
         [MaxLength(256)]
         [Index(IsUnique = true)]
         public string Name { get; set; }
 
-        public virtual ICollection<NormalPoint> NormalPoints { get; set; }
+        public virtual ICollection<Point> Points { get; set; }
     }
 }

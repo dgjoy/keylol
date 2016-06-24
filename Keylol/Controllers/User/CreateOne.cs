@@ -1,15 +1,18 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
-using Keylol.Models.DTO;
+using Keylol.Models.DAL;
+using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 using Keylol.Utilities;
-using Swashbuckle.Swagger.Annotations;
+using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
+using Constants = Keylol.Utilities.Constants;
 
 namespace Keylol.Controllers.User
 {
@@ -22,151 +25,161 @@ namespace Keylol.Controllers.User
         [AllowAnonymous]
         [Route]
         [HttpPost]
-        [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (LoginLogDto))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
-        public async Task<IHttpActionResult> CreateOne(UserCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOne([NotNull] UserCreateOneRequestDto requestDto)
         {
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
+            var steamBindingToken = await _dbContext.SteamBindingTokens.FindAsync(requestDto.SteamBindingTokenId);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var geetest = new Geetest();
-            if (
-                !await
-                    geetest.ValidateAsync(requestDto.GeetestChallenge, requestDto.GeetestSeccode,
-                        requestDto.GeetestValidate))
-            {
-                ModelState.AddModelError("authCode", "true");
-                return BadRequest(ModelState);
-            }
-            var steamBindingToken = await DbContext.SteamBindingTokens.FindAsync(requestDto.SteamBindingTokenId);
             if (steamBindingToken == null)
-            {
-                ModelState.AddModelError("vm.SteamBindingTokenId", "Invalid steam binding token.");
-                return BadRequest(ModelState);
-            }
-            if (await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == steamBindingToken.SteamId) != null)
-            {
-                ModelState.AddModelError("vm.SteamBindingTokenId",
-                    "Steam account has been binded to another Keylol account.");
-                return BadRequest(ModelState);
-            }
-            if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
-            {
-                ModelState.AddModelError("vm.IdCode", "Only 5 uppercase letters and digits are allowed in IdCode.");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId), Errors.Invalid);
 
-            if (await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == requestDto.IdCode) != null ||
-                !IsIdCodeLegit(requestDto.IdCode))
-            {
-                ModelState.AddModelError("vm.IdCode", "IdCode is already used by others.");
-                return BadRequest(ModelState);
-            }
-            if (await UserManager.FindByNameAsync(requestDto.UserName) != null)
-            {
-                ModelState.AddModelError("vm.UserName", "UserName is already used by others.");
-                return BadRequest(ModelState);
-            }
-            if (!requestDto.AvatarImage.IsTrustedUrl())
-            {
-                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
+            if (await _userManager.FindBySteamIdAsync(steamBindingToken.SteamId) != null)
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId), Errors.Duplicate);
+
             var user = new KeylolUser
             {
                 IdCode = requestDto.IdCode,
                 UserName = requestDto.UserName,
-                RegisterIp = OwinContext.Request.RemoteIpAddress,
-                AvatarImage = requestDto.AvatarImage,
+                RegisterIp = _owinContext.Request.RemoteIpAddress,
                 SteamBindingTime = DateTime.Now,
-                SteamId = steamBindingToken.SteamId,
-                SteamProfileName = requestDto.SteamProfileName,
                 SteamBotId = steamBindingToken.BotId
             };
 
-            var result = await UserManager.CreateAsync(user, requestDto.Password);
+            if (requestDto.AvatarImage != null)
+                user.AvatarImage = requestDto.AvatarImage;
+
+            if (requestDto.SteamProfileName != null)
+                user.SteamProfileName = requestDto.SteamProfileName;
+
+            var result = await _userManager.CreateAsync(user, requestDto.Password);
             if (!result.Succeeded)
             {
-                foreach (var error in result.Errors)
+                var error = result.Errors.First();
+                string propertyName;
+                switch (error)
                 {
-                    if (error.Contains("UserName"))
-                        ModelState.AddModelError("vm.UserName", error);
-                    else if (error.Contains("Password"))
-                        ModelState.AddModelError("vm.Password", error);
+                    case Errors.InvalidIdCode:
+                    case Errors.IdCodeReserved:
+                    case Errors.IdCodeUsed:
+                        propertyName = nameof(requestDto.IdCode);
+                        break;
+
+                    case Errors.UserNameInvalidCharacter:
+                    case Errors.UserNameInvalidLength:
+                    case Errors.UserNameUsed:
+                        propertyName = nameof(requestDto.UserName);
+                        break;
+
+                    case Errors.AvatarImageUntrusted:
+                        propertyName = nameof(requestDto.AvatarImage);
+                        break;
+
+                    case Errors.PasswordAllWhitespace:
+                    case Errors.PasswordTooShort:
+                        propertyName = nameof(requestDto.Password);
+                        break;
+
+                    default:
+                        return this.BadRequest(nameof(requestDto), error);
                 }
-                return BadRequest(ModelState);
+                return this.BadRequest(nameof(requestDto), propertyName, error);
             }
 
-            DbContext.SteamBindingTokens.Remove(steamBindingToken);
-            await DbContext.SaveChangesAsync();
+            await _userManager.AddLoginAsync(user.Id,
+                new UserLoginInfo(KeylolLoginProviders.Steam, steamBindingToken.SteamId));
+            _dbContext.SteamBindingTokens.Remove(steamBindingToken);
+            await _dbContext.SaveChangesAsync();
 
-            await _coupon.Update(user.Id, CouponEvent.新注册);
+            await _coupon.UpdateAsync(user, CouponEvent.新注册);
 
-            // 邀请人
-            if (requestDto.Inviter != null)
+            if (requestDto.InviterIdCode != null)
             {
-                var inviterIdCode = requestDto.Inviter;
-                var inviter = await DbContext.Users.Where(u => u.IdCode == inviterIdCode).SingleOrDefaultAsync();
+                var inviter = await _userManager.FindByIdCodeAsync(requestDto.InviterIdCode);
                 if (inviter != null)
                 {
-                    await DbContext.Entry(user).ReloadAsync();
                     user.InviterId = inviter.Id;
-                    await DbContext.SaveChangesAsync();
-                    await _coupon.Update(inviter.Id, CouponEvent.邀请注册, new {UserId = user.Id});
-                    await _coupon.Update(user.Id, CouponEvent.应邀注册, new {InviterId = user.Id});
+                    await _dbContext.SaveChangesAsync();
+                    await _coupon.UpdateAsync(inviter, CouponEvent.邀请注册, new {UserId = user.Id});
+                    await _coupon.UpdateAsync(user, CouponEvent.应邀注册, new {InviterId = user.Id});
                 }
             }
 
-            // Auto login
-            await SignInManager.SignInAsync(user, true, true);
-            var loginLog = new LoginLog
-            {
-                Ip = OwinContext.Request.RemoteIpAddress,
-                UserId = user.Id
-            };
-            DbContext.LoginLogs.Add(loginLog);
-            await DbContext.SaveChangesAsync();
+            AutoSubscribe(user.Id);
 
-            return Created($"user/{user.Id}", new LoginLogDto(loginLog));
+            return Ok(await _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1), OneTimeTokenPurpose.UserLogin));
         }
 
-        private static bool IsIdCodeLegit(string idCode)
+        private static void AutoSubscribe(string userId)
         {
-            if (new[]
+            Task.Run(async () =>
             {
-                @"^([A-Z0-9])\1{4}$",
-                @"^0000\d$",
-                @"^\d0000$",
-                @"^TEST.$",
-                @"^.TEST$"
-            }.Any(pattern => Regex.IsMatch(idCode, pattern)))
-                return false;
+                using (var dbContext = new KeylolDbContext())
+                using (var userManager = new KeylolUserManager(dbContext))
+                {
+                    var redis = Global.Container.GetInstance<RedisProvider>();
+                    var cachedData = new CachedDataProvider(dbContext, redis);
+                    if (await SteamCrawlerProvider.UpdateUserSteamGameRecordsAsync(userId, dbContext, userManager,
+                        redis, cachedData))
+                    {
+                        var games = await (from record in dbContext.UserSteamGameRecords
+                            where record.UserId == userId
+                            join point in dbContext.Points on record.SteamAppId equals point.SteamAppId
+                            orderby record.TotalPlayedTime
+                            select new
+                            {
+                                PointId = point.Id,
+                                record.LastPlayTime
+                            }).ToListAsync();
 
-            if (new[]
-            {
-                "12345",
-                "54321",
-                "ADMIN",
-                "STAFF",
-                "KEYLO",
-                "KYLOL",
-                "KEYLL",
-                "VALVE",
-                "STEAM",
-                "CHINA",
-                "JAPAN"
-            }.Contains(idCode))
-                return false;
+                        var gamePointIds = games.Select(g => g.PointId).ToList();
+                        var mostPlayedPointIds = gamePointIds.Take(3).ToList();
+                        var recentPlayedPointIds = games.Where(g => !mostPlayedPointIds.Contains(g.PointId))
+                            .OrderByDescending(g => g.LastPlayTime)
+                            .Select(g => g.PointId).Take(3).ToList();
+                        var categoryPointIds = await (from relationship in dbContext.PointRelationships
+                            where gamePointIds.Contains(relationship.SourcePointId) &&
+                                  (relationship.Relationship == PointRelationshipType.Tag ||
+                                   relationship.Relationship == PointRelationshipType.Series)
+                            group 1 by relationship.TargetPointId
+                            into g
+                            orderby g.Count() descending
+                            select g.Key).Take(3).ToListAsync();
 
-            return true;
+                        var pointIds = mostPlayedPointIds.Concat(recentPlayedPointIds).Concat(categoryPointIds).ToList();
+                        foreach (var pointId in pointIds)
+                        {
+                            await cachedData.Subscriptions.AddAsync(userId, pointId, SubscriptionTargetType.Point);
+                        }
+
+                        var pointFeedStreams = pointIds.Select(PointStream.Name).ToList();
+                        var feeds = await (from feed in dbContext.Feeds
+                            where pointFeedStreams.Contains(feed.StreamName)
+                            orderby feed.Id descending
+                            group new {feed.Id, feed.StreamName} by new {feed.Entry, feed.EntryType}
+                            into g
+                            orderby g.Max(f => f.Id)
+                            select g).Take(120).ToListAsync();
+                        var subscriptionStream = SubscriptionStream.Name(userId);
+                        foreach (var feed in feeds)
+                        {
+                            var properties = new SubscriptionStream.FeedProperties
+                            {
+                                Reasons = feed.Select(f => f.StreamName.Split(':')[1]).Distinct()
+                                    .Select(id => $"point:{id}").ToList()
+                            };
+                            dbContext.Feeds.Add(new Models.Feed
+                            {
+                                StreamName = subscriptionStream,
+                                Entry = feed.Key.Entry,
+                                EntryType = feed.Key.EntryType,
+                                Properties = JsonConvert.SerializeObject(properties)
+                            });
+                        }
+                        await dbContext.SaveChangesAsync();
+                    }
+                }
+            });
         }
+
 
         /// <summary>
         ///     请求 DTO
@@ -180,13 +193,13 @@ namespace Keylol.Controllers.User
             public string IdCode { get; set; }
 
             /// <summary>
-            ///     用户名
+            ///     昵称（用户名）
             /// </summary>
             [Required]
             public string UserName { get; set; }
 
             /// <summary>
-            ///     密码
+            ///     口令
             /// </summary>
             [Required]
             public string Password { get; set; }
@@ -194,7 +207,6 @@ namespace Keylol.Controllers.User
             /// <summary>
             ///     头像
             /// </summary>
-            [Required(AllowEmptyStrings = true)]
             public string AvatarImage { get; set; }
 
             /// <summary>
@@ -206,31 +218,12 @@ namespace Keylol.Controllers.User
             /// <summary>
             ///     Steam 玩家昵称
             /// </summary>
-            [Required(AllowEmptyStrings = true)]
             public string SteamProfileName { get; set; }
-
-            /// <summary>
-            ///     极验 Chanllenge
-            /// </summary>
-            [Required]
-            public string GeetestChallenge { get; set; }
-
-            /// <summary>
-            ///     极验 Seccode
-            /// </summary>
-            [Required]
-            public string GeetestSeccode { get; set; }
-
-            /// <summary>
-            ///     极验 Validate
-            /// </summary>
-            [Required]
-            public string GeetestValidate { get; set; }
 
             /// <summary>
             ///     邀请人识别码
             /// </summary>
-            public string Inviter { get; set; }
+            public string InviterIdCode { get; set; }
         }
     }
 }

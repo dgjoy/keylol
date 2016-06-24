@@ -4,9 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keylol.Models
 {
-    public abstract class Like
+    public class Like
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [Index(IsUnique = true, IsClustered = true)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public long Sid { get; set; }
 
         [Index]
         public DateTime Time { get; set; } = DateTime.Now;
@@ -15,21 +19,21 @@ namespace Keylol.Models
         public string OperatorId { get; set; }
 
         public virtual KeylolUser Operator { get; set; }
+
+        public LikeTargetType TargetType { get; set; }
+
+        [Index]
+        [Required]
+        [MaxLength(128)]
+        public string TargetId { get; set; }
     }
 
-    public class ArticleLike : Like
+    public enum LikeTargetType
     {
-        [Required]
-        public string ArticleId { get; set; }
-
-        public virtual Article Article { get; set; }
-    }
-
-    public class CommentLike : Like
-    {
-        [Required]
-        public string CommentId { get; set; }
-
-        public virtual Comment Comment { get; set; }
+        Article,
+        ArticleComment,
+        Activity,
+        ActivityComment,
+        ConferenceEntry
     }
 }

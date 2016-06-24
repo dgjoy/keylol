@@ -15,17 +15,17 @@ using SimpleInjector;
 namespace Keylol.ServiceBase
 {
     /// <summary>
-    /// 所有微服务都要继承于这个类
+    ///     所有微服务都要继承于这个类
     /// </summary>
     public class KeylolService : System.ServiceProcess.ServiceBase
     {
         /// <summary>
-        /// 服务中止事件
+        ///     服务中止事件
         /// </summary>
         public event EventHandler Stopped;
 
         /// <summary>
-        /// 为容器注册公用依赖（log4net 和 RabbitMQ Iconnection），然后启动新服务
+        ///     为容器注册公用依赖（log4net 和 RabbitMQ Iconnection），然后启动新服务
         /// </summary>
         /// <param name="args">服务启动参数</param>
         /// <param name="container">IoC 容器</param>
@@ -35,8 +35,8 @@ namespace Keylol.ServiceBase
             // 公用服务注册点
 
             // log4net
-            container.RegisterConditional(typeof (ILogProvider),
-                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (KeylolService)),
+            container.RegisterConditional(typeof(ILogProvider),
+                c => typeof(LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof(KeylolService)),
                 Lifestyle.Singleton,
                 c => true);
 
@@ -70,7 +70,7 @@ namespace Keylol.ServiceBase
             if (Environment.UserInteractive) // 作为控制台应用启动
             {
                 Console.Title =
-                    $"Service Console: {(string.IsNullOrEmpty(service.ServiceName) ? "(unnamed)" : service.ServiceName)}";
+                    $"Service Console: {(string.IsNullOrWhiteSpace(service.ServiceName) ? "(unnamed)" : service.ServiceName)}";
                 Console.WriteLine("Running in console mode. Press Ctrl-Q to stop.");
                 service.OnStart(args);
                 while (true)
@@ -107,36 +107,33 @@ namespace Keylol.ServiceBase
 
             if (Environment.UserInteractive)
             {
-                var ansiColorTerminalAppender = new AnsiColorTerminalAppender
+                var coloredConsoleAppender = new ColoredConsoleAppender
                 {
                     Layout = patternLayout
                 };
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Debug,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.Green,
-                    Attributes = AnsiColorTerminalAppender.AnsiAttributes.Bright
+                    ForeColor = ColoredConsoleAppender.Colors.Green
                 });
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Info,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.White
+                    ForeColor = ColoredConsoleAppender.Colors.White
                 });
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Warn,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.Yellow,
-                    Attributes = AnsiColorTerminalAppender.AnsiAttributes.Bright
+                    ForeColor = ColoredConsoleAppender.Colors.Yellow
                 });
-                ansiColorTerminalAppender.AddMapping(new AnsiColorTerminalAppender.LevelColors
+                coloredConsoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
                 {
                     Level = Level.Error,
-                    ForeColor = AnsiColorTerminalAppender.AnsiColor.White,
-                    BackColor = AnsiColorTerminalAppender.AnsiColor.Red,
-                    Attributes = AnsiColorTerminalAppender.AnsiAttributes.Bright
+                    ForeColor = ColoredConsoleAppender.Colors.White,
+                    BackColor = ColoredConsoleAppender.Colors.Red
                 });
-                ansiColorTerminalAppender.ActivateOptions();
-                hierarchy.Root.AddAppender(ansiColorTerminalAppender);
+                coloredConsoleAppender.ActivateOptions();
+                hierarchy.Root.AddAppender(coloredConsoleAppender);
             }
             else
             {

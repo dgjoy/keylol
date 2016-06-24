@@ -39,6 +39,7 @@
             // 
             // serviceInstaller
             // 
+            this.serviceInstaller.DelayedAutoStart = true;
             this.serviceInstaller.Description = "Provides Steam bot support for Keylol.com.";
             this.serviceInstaller.DisplayName = "Keylol Steam Bot";
             this.serviceInstaller.ServiceName = "Keylol.SteamBot";

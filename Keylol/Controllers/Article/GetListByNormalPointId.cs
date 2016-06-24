@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Controllers.NormalPoint;
 using Keylol.Models;
 using Keylol.Models.DTO;
 using Keylol.Utilities;
@@ -25,22 +24,22 @@ namespace Keylol.Controllers.Article
         [Route("point/{normalPointId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetListByNormalPointId(string normalPointId,
-            NormalPointController.IdType idType, string articleTypeFilter = null, int beforeSn = int.MaxValue,
+            NormalPointIdentityType idType, string articleTypeFilter = null, int beforeSn = int.MaxValue,
             int take = 30)
         {
             if (take > 50) take = 50;
-            var articleQuery = DbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSn &&
-                                                                            a.Archived == ArchivedState.None &&
-                                                                            a.Rejected == false);
+            var articleQuery = _dbContext.Articles.AsNoTracking().Where(a => a.SequenceNumber < beforeSn &&
+                                                                             a.Archived == ArchivedState.None &&
+                                                                             a.Rejected == false);
             switch (idType)
             {
-                case NormalPointController.IdType.Id:
+                case NormalPointIdentityType.Id:
                     articleQuery = articleQuery.Where(a => a.AttachedPoints.Select(p => p.Id).Contains(normalPointId));
                     break;
 
-                case NormalPointController.IdType.IdCode:
+                case NormalPointIdentityType.IdCode:
                     articleQuery =
                         articleQuery.Where(a => a.AttachedPoints.Select(p => p.IdCode).Contains(normalPointId));
                     break;
@@ -74,7 +73,7 @@ namespace Keylol.Controllers.Article
                     Author = new UserDto(entry.author),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
-                if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                if (string.IsNullOrWhiteSpace(entry.article.ThumbnailImage))
                 {
                     articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }

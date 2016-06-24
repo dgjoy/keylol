@@ -4,7 +4,10 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Identity;
 using Keylol.Models;
+using Keylol.Models.DAL;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.NormalPoint
@@ -14,22 +17,22 @@ namespace Keylol.Controllers.NormalPoint
     /// </summary>
     [Authorize]
     [RoutePrefix("normal-point")]
-    public partial class NormalPointController : KeylolApiController
+    public partial class NormalPointController : ApiController
     {
-        /// <summary>
-        ///     Id 类型
-        /// </summary>
-        public enum IdType
-        {
-            /// <summary>
-            ///     Id
-            /// </summary>
-            Id,
+        private readonly KeylolDbContext _dbContext;
 
-            /// <summary>
-            ///     识别码
-            /// </summary>
-            IdCode
+        /// <summary>
+        ///     创建 <see cref="NormalPointController" />
+        /// </summary>
+        /// <param name="dbContext">
+        ///     <see cref="KeylolDbContext" />
+        /// </param>
+        /// <param name="userManager">
+        ///     <see cref="KeylolUserManager" />
+        /// </param>
+        public NormalPointController(KeylolDbContext dbContext, KeylolUserManager userManager)
+        {
+            _dbContext = dbContext;
         }
 
         private static string GetPreferredName(Models.NormalPoint point)
@@ -48,7 +51,7 @@ namespace Keylol.Controllers.NormalPoint
         }
 
         private async Task<bool> PopulateGamePointAttributes(Models.NormalPoint normalPoint,
-            NormalPointCreateOrUpdateOneRequestDto requestDto, string editorStaffClaim, bool keepSteamAppId = false)
+            NormalPointCreateOrUpdateOneRequestDto requestDto, bool isKeylolOperator, bool keepSteamAppId = false)
         {
             if (requestDto.DisplayAliases == null)
             {
@@ -60,7 +63,7 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.CoverImage", "游戏据点必须填写封面图片");
                 return false;
             }
-            if (!requestDto.CoverImage.IsTrustedUrl())
+            if (!Helpers.IsTrustedUrl(requestDto.CoverImage))
             {
                 ModelState.AddModelError("vm.CoverImage", "不允许使用可不信图片来源");
                 return false;
@@ -100,7 +103,7 @@ namespace Keylol.Controllers.NormalPoint
                 ModelState.AddModelError("vm.SeriesPointsId", "游戏据点必须填写系列据点");
                 return false;
             }
-            if (editorStaffClaim == StaffClaim.Operator)
+            if (isKeylolOperator)
             {
                 if (!keepSteamAppId)
                 {
@@ -121,37 +124,37 @@ namespace Keylol.Controllers.NormalPoint
             normalPoint.DisplayAliases = requestDto.DisplayAliases;
             normalPoint.CoverImage = requestDto.CoverImage;
 
-            normalPoint.DeveloperPoints = await DbContext.NormalPoints
+            normalPoint.DeveloperPoints = await _dbContext.NormalPoints
                 .Where(
                     p =>
                         p.Type == NormalPointType.Manufacturer &&
                         requestDto.DeveloperPointsId.Contains(p.Id))
                 .ToListAsync();
-            normalPoint.PublisherPoints = await DbContext.NormalPoints
+            normalPoint.PublisherPoints = await _dbContext.NormalPoints
                 .Where(
                     p =>
                         p.Type == NormalPointType.Manufacturer &&
                         requestDto.PublisherPointsId.Contains(p.Id))
                 .ToListAsync();
-            normalPoint.GenrePoints = await DbContext.NormalPoints
+            normalPoint.GenrePoints = await _dbContext.NormalPoints
                 .Where(p => p.Type == NormalPointType.Genre && requestDto.GenrePointsId.Contains(p.Id))
                 .ToListAsync();
-            normalPoint.TagPoints = await DbContext.NormalPoints
+            normalPoint.TagPoints = await _dbContext.NormalPoints
                 .Where(p => p.Type == NormalPointType.Genre && requestDto.TagPointsId.Contains(p.Id))
                 .ToListAsync();
-            normalPoint.MajorPlatformPoints = await DbContext.NormalPoints
+            normalPoint.MajorPlatformPoints = await _dbContext.NormalPoints
                 .Where(
                     p =>
                         p.Type == NormalPointType.Platform &&
                         requestDto.MajorPlatformPointsId.Contains(p.Id))
                 .ToListAsync();
-            normalPoint.MinorPlatformForPoints = await DbContext.NormalPoints
+            normalPoint.MinorPlatformForPoints = await _dbContext.NormalPoints
                 .Where(
                     p =>
                         p.Type == NormalPointType.Platform &&
                         requestDto.MinorPlatformPointsId.Contains(p.Id))
                 .ToListAsync();
-            normalPoint.SeriesPoints = await DbContext.NormalPoints
+            normalPoint.SeriesPoints = await _dbContext.NormalPoints
                 .Where(p => p.Type == NormalPointType.Genre && requestDto.SeriesPointsId.Contains(p.Id))
                 .ToListAsync();
 
@@ -178,8 +181,8 @@ namespace Keylol.Controllers.NormalPoint
             }
             foreach (var idCode in possiblities)
             {
-                if (DbContext.NormalPoints.Local.All(p => p.IdCode != idCode) &&
-                    await DbContext.NormalPoints.AllAsync(p => p.IdCode != idCode))
+                if (_dbContext.NormalPoints.Local.All(p => p.IdCode != idCode) &&
+                    await _dbContext.NormalPoints.AllAsync(p => p.IdCode != idCode))
                     return idCode;
             }
             throw new Exception("无法找到可用的 IdCode");

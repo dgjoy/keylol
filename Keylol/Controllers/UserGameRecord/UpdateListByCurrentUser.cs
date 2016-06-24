@@ -10,13 +10,13 @@ using System.Web.Http;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
+using Keylol.ServiceBase;
 using Keylol.Services;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
 using SteamKit2;
 using Swashbuckle.Swagger.Annotations;
-using Extensions = Keylol.Utilities.Extensions;
 
 namespace Keylol.Controllers.UserGameRecord
 {
@@ -33,7 +33,7 @@ namespace Keylol.Controllers.UserGameRecord
         public async Task<IHttpActionResult> UpdateListByCurrentUser(bool manual = false)
         {
             var userId = User.Identity.GetUserId();
-            var user = await DbContext.Users.Where(u => u.Id == userId).SingleAsync();
+            var user = await _userManager.FindByIdAsync(userId);
             if (manual)
             {
                 if (user.LastGameUpdateSucceed && DateTime.Now - user.LastGameUpdateTime < TimeSpan.FromMinutes(1))
@@ -49,13 +49,13 @@ namespace Keylol.Controllers.UserGameRecord
 
             user.LastGameUpdateTime = DateTime.Now;
             user.LastGameUpdateSucceed = true;
-            await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+            await _dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
             try
             {
                 var steamId = new SteamID();
-                steamId.SetFromSteam3String(user.SteamId);
+                steamId.SetFromSteam3String(await _userManager.GetSteamIdAsync(user.Id));
                 string allGamesHtml;
-                if (user.SteamBot.IsOnline())
+                if (user.SteamBotId != null && user.SteamBot.IsOnline())
                 {
                     var botCoordinator = SteamBotCoordinator.Sessions[user.SteamBot.SessionId];
                     allGamesHtml = await botCoordinator.Client.Curl(user.SteamBotId,
@@ -67,7 +67,7 @@ namespace Keylol.Controllers.UserGameRecord
                     allGamesHtml = await httpClient.GetStringAsync(
                         $"http://steamcommunity.com/profiles/{steamId.ConvertToUInt64()}/games/?tab=all&l=english");
                 }
-                if (!string.IsNullOrEmpty(allGamesHtml))
+                if (!string.IsNullOrWhiteSpace(allGamesHtml))
                 {
                     var match = Regex.Match(allGamesHtml, @"<script language=""javascript"">\s*var rgGames = (.*)");
                     if (match.Success)
@@ -76,6 +76,7 @@ namespace Keylol.Controllers.UserGameRecord
                         var games = JArray.Parse(trimed.Substring(0, trimed.Length - 1));
                         foreach (var game in games)
                         {
+                            // game["hours"] 两周游戏时间
                             var appId = (int) game["appid"];
 
                             double totalPlayedTime = 0;
@@ -84,31 +85,31 @@ namespace Keylol.Controllers.UserGameRecord
                             if (Math.Abs(totalPlayedTime) <= 0.5)
                                 continue;
 
-                            var record = await DbContext.UserGameRecords
+                            var record = await _dbContext.UserGameRecords
                                 .Where(r => r.UserId == userId && r.SteamAppId == appId)
                                 .SingleOrDefaultAsync();
                             if (record == null)
                             {
-                                record = DbContext.UserGameRecords.Create();
+                                record = _dbContext.UserGameRecords.Create();
                                 record.UserId = userId;
                                 record.SteamAppId = appId;
-                                DbContext.UserGameRecords.Add(record);
+                                _dbContext.UserGameRecords.Add(record);
                             }
                             record.TotalPlayedTime = totalPlayedTime;
 
                             if (game["last_played"] != null)
                                 record.LastPlayTime =
-                                    Extensions.DateTimeFromUnixTimeStamp((int) game["last_played"]);
+                                    Helpers.DateTimeFromTimeStamp((int) game["last_played"]);
                         }
-                        await DbContext.SaveChangesAsync();
-                        var gameEntries = await DbContext.UserGameRecords
+                        await _dbContext.SaveChangesAsync();
+                        var gameEntries = await _dbContext.UserGameRecords
                             .Where(r => r.UserId == userId)
                             .OrderByDescending(r => r.TotalPlayedTime)
                             .Select(r =>
                                 new
                                 {
                                     record = r,
-                                    point = DbContext.NormalPoints.FirstOrDefault(
+                                    point = _dbContext.NormalPoints.FirstOrDefault(
                                         p => p.Type == NormalPointType.Game && p.SteamAppId == r.SteamAppId)
                                 })
                             .Where(e => e.point != null)
@@ -149,17 +150,17 @@ namespace Keylol.Controllers.UserGameRecord
                             .Select(pair => pair.Key).Take(3).ToList();
                         var manufactures = manufacturerStats.OrderByDescending(pair => pair.Value)
                             .Select(pair => pair.Key).Take(3).ToList();
-                        DbContext.AutoSubscriptions.RemoveRange(
-                            await DbContext.AutoSubscriptions.Where(s => s.UserId == userId).ToListAsync());
+                        _dbContext.AutoSubscriptions.RemoveRange(
+                            await _dbContext.AutoSubscriptions.Where(s => s.UserId == userId).ToListAsync());
                         var i = 0;
-                        DbContext.AutoSubscriptions.AddRange(
+                        _dbContext.AutoSubscriptions.AddRange(
                             mostPlayed.Select(p => new {p, t = AutoSubscriptionType.MostPlayed})
                                 .Concat(recentPlayed.Select(p => new {p, t = AutoSubscriptionType.RecentPlayed}))
                                 .Concat(genres.Select(p => new {p, t = AutoSubscriptionType.Genre}))
                                 .Concat(manufactures.Select(p => new {p, t = AutoSubscriptionType.Manufacture}))
                                 .Select(e =>
                                 {
-                                    var subscription = DbContext.AutoSubscriptions.Create();
+                                    var subscription = _dbContext.AutoSubscriptions.Create();
                                     subscription.UserId = userId;
                                     subscription.NormalPointId = e.p.Id;
                                     subscription.Type = e.t;
@@ -167,7 +168,7 @@ namespace Keylol.Controllers.UserGameRecord
                                     i++;
                                     return subscription;
                                 }));
-                        await DbContext.SaveChangesAsync();
+                        await _dbContext.SaveChangesAsync();
                         return Ok(new
                         {
                             MostPlayed = mostPlayed.Select(p => new NormalPointDto(p)),
@@ -184,7 +185,7 @@ namespace Keylol.Controllers.UserGameRecord
             catch (Exception)
             {
                 user.LastGameUpdateSucceed = false;
-                await DbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+                await _dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
             }
             return NotFound();
         }

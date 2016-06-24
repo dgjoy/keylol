@@ -45,8 +45,6 @@
       <xsd:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd0" namespace="http://tempuri.org/" />
       <xsd:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" />
-      <xsd:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Keylol.Models" />
-      <xsd:import schemaLocation="https://localhost:44300/Services/ImageGarageCoordinator.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IImageGarageCoordinator_Ping_InputMessage">
@@ -67,6 +65,18 @@
   <wsdl:message name="IImageGarageCoordinator_UpdateArticle_OutputMessage">
     <wsdl:part name="parameters" element="tns:UpdateArticleResponse" />
   </wsdl:message>
+  <wsdl:message name="IImageGarageCoordinator_FindArticleComment_InputMessage">
+    <wsdl:part name="parameters" element="tns:FindArticleComment" />
+  </wsdl:message>
+  <wsdl:message name="IImageGarageCoordinator_FindArticleComment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FindArticleCommentResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageGarageCoordinator_UpdateArticleComment_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateArticleComment" />
+  </wsdl:message>
+  <wsdl:message name="IImageGarageCoordinator_UpdateArticleComment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateArticleCommentResponse" />
+  </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="IImageGarageCoordinator">
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Ping">
       <wsdl:input wsaw:Action="http://tempuri.org/IImageGarageCoordinator/Ping" message="tns:IImageGarageCoordinator_Ping_InputMessage" />
@@ -79,6 +89,14 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateArticle">
       <wsdl:input wsaw:Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticle" message="tns:IImageGarageCoordinator_UpdateArticle_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticleResponse" message="tns:IImageGarageCoordinator_UpdateArticle_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="FindArticleComment">
+      <wsdl:input wsaw:Action="http://tempuri.org/IImageGarageCoordinator/FindArticleComment" message="tns:IImageGarageCoordinator_FindArticleComment_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IImageGarageCoordinator/FindArticleCommentResponse" message="tns:IImageGarageCoordinator_FindArticleComment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="UpdateArticleComment">
+      <wsdl:input wsaw:Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticleComment" message="tns:IImageGarageCoordinator_UpdateArticleComment_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IImageGarageCoordinator/UpdateArticleCommentResponse" message="tns:IImageGarageCoordinator_UpdateArticleComment_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetHttpBinding_IImageGarageCoordinator" type="tns:IImageGarageCoordinator">
@@ -104,6 +122,24 @@
     </wsdl:operation>
     <wsdl:operation name="UpdateArticle">
       <soap12:operation soapAction="http://tempuri.org/IImageGarageCoordinator/UpdateArticle" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FindArticleComment">
+      <soap12:operation soapAction="http://tempuri.org/IImageGarageCoordinator/FindArticleComment" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateArticleComment">
+      <soap12:operation soapAction="http://tempuri.org/IImageGarageCoordinator/UpdateArticleComment" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

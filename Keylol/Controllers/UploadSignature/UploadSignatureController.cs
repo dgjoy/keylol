@@ -7,8 +7,7 @@ namespace Keylol.Controllers.UploadSignature
     /// </summary>
     [Authorize]
     [RoutePrefix("upload-signature")]
-    public partial class UploadSignatureController : KeylolApiController
+    public partial class UploadSignatureController : ApiController
     {
-        private const string FormKey = "LaetquRR2LDCO0SezzqNNeTxjnQ=";
     }
 }

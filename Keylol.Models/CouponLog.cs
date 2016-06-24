@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keylol.Models
 {
@@ -14,7 +10,7 @@ namespace Keylol.Models
 
         [Index(IsUnique = true, IsClustered = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public int SequenceNumber { get; set; }
+        public long Sid { get; set; }
 
         [Required]
         public string UserId { get; set; }
@@ -31,7 +27,7 @@ namespace Keylol.Models
         public DateTime CreateTime { get; set; } = DateTime.Now;
 
         /// <summary>
-        /// 变动描述，使用 JSON 格式
+        ///     变动描述，使用 JSON 格式
         /// </summary>
         [Required]
         public string Description { get; set; }
@@ -42,7 +38,7 @@ namespace Keylol.Models
         新注册,
         应邀注册,
         发布文章,
-        发布简评,
+        [Obsolete] 发布简评,
         发出认可,
         获得认可,
         每日访问,

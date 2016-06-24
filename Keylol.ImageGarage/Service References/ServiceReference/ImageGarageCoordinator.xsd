@@ -30,12 +30,40 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="content" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="thumbnailImage" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="coverImage" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="rowVersion" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="UpdateArticleResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FindArticleComment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FindArticleCommentResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Keylol.Models.DTO" minOccurs="0" name="FindArticleCommentResult" nillable="true" type="q2:ArticleCommentDto" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateArticleComment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="content" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="rowVersion" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateArticleCommentResponse">
     <xs:complexType>
       <xs:sequence />
     </xs:complexType>

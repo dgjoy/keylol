@@ -25,8 +25,8 @@ namespace Keylol.Controllers.NormalPoint
         [Route("keyword/{keyword}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDto>))]
-        public async Task<HttpResponseMessage> GetListByKeyword(string keyword, bool full = false,
+        [ResponseType(typeof(List<NormalPointDto>))]
+        public async Task<IHttpActionResult> GetListByKeyword(string keyword, bool full = false,
             string typeFilter = null, int skip = 0, int take = 5)
         {
             if (take > 50) take = 50;
@@ -40,7 +40,7 @@ namespace Keylol.Controllers.NormalPoint
 
             if (!full)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, (await DbContext.NormalPoints.SqlQuery(
+                return Ok((await _dbContext.NormalPoints.SqlQuery(
                     @"SELECT * FROM [dbo].[NormalPoints] AS [t1] INNER JOIN (
                         SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
 		                    SELECT * FROM CONTAINSTABLE([dbo].[NormalPoints], ([EnglishName], [EnglishAliases]), {0})
@@ -54,7 +54,7 @@ namespace Keylol.Controllers.NormalPoint
                         point => new NormalPointDto(point)));
             }
 
-            var points = await DbContext.Database.SqlQuery<NormalPointDto>(@"SELECT
+            var points = await _dbContext.Database.SqlQuery<NormalPointDto>(@"SELECT
                 [t4].[Count],
                 [t4].[Id],
                 [t4].[PreferredName],
@@ -92,7 +92,7 @@ namespace Keylol.Controllers.NormalPoint
 
             var response = Request.CreateResponse(HttpStatusCode.OK, points);
             response.Headers.Add("X-Total-Record-Count", points.Count > 0 ? points[0].Count.ToString() : "0");
-            return response;
+            return ResponseMessage(response);
         }
     }
 }

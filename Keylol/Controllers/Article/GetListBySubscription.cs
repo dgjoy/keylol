@@ -22,14 +22,14 @@ namespace Keylol.Controllers.Article
         /// <param name="take">获取数量，最大 50，默认 30</param>
         [Route("subscription")]
         [HttpGet]
-        [ResponseType(typeof (List<ArticleDto>))]
+        [ResponseType(typeof(List<ArticleDto>))]
         public async Task<IHttpActionResult> GetBySubscription(string articleTypeFilter = null,
             int shortReviewFilter = 1, int beforeSn = int.MaxValue, int take = 30)
         {
             var userId = User.Identity.GetUserId();
 
             if (take > 50) take = 50;
-            var userQuery = DbContext.Users.AsNoTracking().Where(u => u.Id == userId);
+            var userQuery = _dbContext.Users.AsNoTracking().Where(u => u.Id == userId);
             var profilePointsQuery = userQuery.SelectMany(u => u.SubscribedPoints.OfType<ProfilePoint>());
 
             var shortReviewFilter1 = (shortReviewFilter & 1) != 0;
@@ -71,7 +71,7 @@ namespace Keylol.Controllers.Article
                             reason = ArticleDto.TimelineReasonType.Like,
                             likedByUser = l.Operator
                         }))
-                    .Concat(DbContext.AutoSubscriptions.Where(s => s.UserId == userId)
+                    .Concat(_dbContext.AutoSubscriptions.Where(s => s.UserId == userId)
                         .SelectMany(
                             s => s.NormalPoint.Articles.Select(a => new {article = a, fromPoint = s.NormalPoint}))
                         .Where(e =>
@@ -136,7 +136,7 @@ namespace Keylol.Controllers.Article
                     Author = new UserDto(entry.author),
                     VoteForPoint = entry.voteForPoint == null ? null : new NormalPointDto(entry.voteForPoint, true)
                 };
-                if (string.IsNullOrEmpty(entry.article.ThumbnailImage))
+                if (string.IsNullOrWhiteSpace(entry.article.ThumbnailImage))
                 {
                     articleDto.ThumbnailImage = entry.voteForPoint?.BackgroundImage;
                 }

@@ -11,16 +11,16 @@ namespace Keylol.Controllers.CouponLog
     public partial class CouponLogController
     {
         /// <summary>
-        /// 获取当前用户未读的文券变动记录
+        ///     获取当前用户未读的文券变动记录
         /// </summary>
         [Route("unread")]
         [HttpGet]
-        [ResponseType(typeof (List<CouponLogDto>))]
+        [ResponseType(typeof(List<CouponLogDto>))]
         public async Task<IHttpActionResult> GetListOfUnreadByCurrentUser()
         {
             var userId = User.Identity.GetUserId();
             var logs =
-                (await _coupon.PopUnreadCouponLogs(userId)).Select((dto, i) => new {Order = i, Log = dto}).ToList();
+                (await _coupon.GetUnreadCouponLogs(userId)).Select((dto, i) => new {Order = i, Log = dto}).ToList();
             var result = new List<CouponLogDto>();
             var first = logs.FirstOrDefault();
             var balance = first?.Log.Balance - first?.Log.Change ?? 0;

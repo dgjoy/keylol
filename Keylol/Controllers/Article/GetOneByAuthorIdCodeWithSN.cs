@@ -4,9 +4,9 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DTO;
-using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -22,7 +22,7 @@ namespace Keylol.Controllers.Article
         [Route("{authorIdCode}/{sequenceNumberForAuthor}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (ArticleDto))]
+        [ResponseType(typeof(ArticleDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文章不存在")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "文章被封存，当前登录用户无权查看")]
         public async Task<IHttpActionResult> GetOneByAuthorIdCodeWithSn(string authorIdCode, int sequenceNumberForAuthor)
@@ -30,13 +30,13 @@ namespace Keylol.Controllers.Article
             var userId = User.Identity.GetUserId();
             var articleEntry =
                 await
-                    DbContext.Articles.Where(a =>
+                    _dbContext.Articles.Where(a =>
                         a.Principal.User.IdCode == authorIdCode &&
                         a.SequenceNumberForAuthor == sequenceNumberForAuthor)
                         .Select(a => new
                         {
                             article = a,
-                            likeCount = a.Likes.Count(),
+                            likeCount = a.Likes.Count,
                             liked = a.Likes.Any(l => l.OperatorId == userId),
                             type = a.Type,
                             attachedPoints = a.AttachedPoints,
@@ -46,9 +46,8 @@ namespace Keylol.Controllers.Article
             if (articleEntry == null)
                 return NotFound();
 
-            var staffClaim = string.IsNullOrEmpty(userId) ? null : await UserManager.GetStaffClaimAsync(userId);
             if (articleEntry.article.Archived != ArchivedState.None &&
-                userId != articleEntry.article.PrincipalId && staffClaim != StaffClaim.Operator)
+                userId != articleEntry.article.PrincipalId && !User.IsInRole(KeylolRoles.Operator))
                 return Unauthorized();
 
             var articleDto = new ArticleDto(articleEntry.article, true, includeProsCons: true, includeSummary: true)

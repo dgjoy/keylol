@@ -18,7 +18,7 @@ namespace Keylol.Controllers.RedisCache
             foreach (var server in _redis.Connection.GetEndPoints()
                 .Select(endPoint => _redis.Connection.GetServer(endPoint)))
             {
-                if (string.IsNullOrEmpty(pattern))
+                if (string.IsNullOrWhiteSpace(pattern))
                     await server.FlushAllDatabasesAsync();
                 else
                     await redisDb.KeyDeleteAsync(server.Keys(pattern: pattern).ToArray());

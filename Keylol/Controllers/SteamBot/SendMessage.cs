@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Web.Http;
-using Keylol.Controllers.User;
 using Keylol.Models;
+using Keylol.Models.DTO;
 using Keylol.Services;
-using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.SteamBot
@@ -16,7 +13,7 @@ namespace Keylol.Controllers.SteamBot
     public partial class SteamBotController
     {
         /// <summary>
-        /// 命令机器人给指定用户发送聊天消息
+        ///     命令机器人给指定用户发送聊天消息
         /// </summary>
         /// <param name="userId">用户 ID，"*" 表示所有机器人给所有好友发送消息</param>
         /// <param name="message">消息内容</param>
@@ -26,7 +23,7 @@ namespace Keylol.Controllers.SteamBot
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户不存在")]
         public async Task<IHttpActionResult> SendMessage(string userId, string message, bool tempSilence = false,
-            UserController.IdType idType = UserController.IdType.IdCode)
+            UserIdentityType idType = UserIdentityType.IdCode)
         {
             if (userId == "*")
             {
@@ -40,20 +37,20 @@ namespace Keylol.Controllers.SteamBot
                 KeylolUser user;
                 switch (idType)
                 {
-                    case UserController.IdType.UserName:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.UserName == userId);
+                    case UserIdentityType.UserName:
+                        user = await _userManager.FindByNameAsync(userId);
                         break;
 
-                    case UserController.IdType.IdCode:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.IdCode == userId);
+                    case UserIdentityType.IdCode:
+                        user = await _userManager.FindByIdCodeAsync(userId);
                         break;
 
-                    case UserController.IdType.Id:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+                    case UserIdentityType.Id:
+                        user = await _userManager.FindByIdAsync(userId);
                         break;
 
-                    case UserController.IdType.SteamId:
-                        user = await DbContext.Users.SingleOrDefaultAsync(u => u.SteamId == userId);
+                    case UserIdentityType.SteamId:
+                        user = await _userManager.FindBySteamIdAsync(userId);
                         break;
 
                     default:
@@ -63,39 +60,7 @@ namespace Keylol.Controllers.SteamBot
                 if (user == null)
                     return NotFound();
 
-                if (user.SteamBot.IsOnline())
-                {
-                    if (tempSilence)
-                    {
-                        if (SteamBotCoordinator.AutoChatDisabledBots.ContainsKey(user.SteamBotId))
-                        {
-                            var timer = SteamBotCoordinator.AutoChatDisabledBots[user.SteamBotId];
-                            timer.Stop();
-                            timer.Start();
-                        }
-                        else
-                        {
-                            var timer = new Timer(120000) {AutoReset = false};
-                            timer.Elapsed +=
-                                (sender, args) =>
-                                {
-                                    SteamBotCoordinator.AutoChatDisabledBots.TryRemove(user.SteamBotId, out timer);
-                                };
-                            timer.Start();
-                            SteamBotCoordinator.AutoChatDisabledBots[user.SteamBotId] = timer;
-                        }
-                    }
-                    else if (SteamBotCoordinator.AutoChatDisabledBots.ContainsKey(user.SteamBotId))
-                    {
-                        Timer timer;
-                        if (SteamBotCoordinator.AutoChatDisabledBots.TryRemove(user.SteamBotId, out timer))
-                        {
-                            timer.Stop();
-                        }
-                    }
-                    await SteamBotCoordinator.Sessions[user.SteamBot.SessionId]
-                        .Client.SendChatMessage(user.SteamBotId, user.SteamId, message, true);
-                }
+                await _userManager.SendSteamChatMessageAsync(user, message, tempSilence);
             }
             return Ok();
         }

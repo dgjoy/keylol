@@ -6,8 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Keylol.Identity;
 using Keylol.Models.DTO;
-using Keylol.Utilities;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -18,15 +18,15 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="skip">起始位置，默认 0</param>
         /// <param name="take">获取数量，最大 50，默认 20</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route("list")]
         [HttpGet]
-        [ResponseType(typeof (List<NormalPointDto>))]
-        public async Task<HttpResponseMessage> GetListOfAll(int skip = 0, int take = 20)
+        [ResponseType(typeof(List<NormalPointDto>))]
+        public async Task<IHttpActionResult> GetListOfAll(int skip = 0, int take = 20)
         {
             if (take > 50) take = 50;
             var response = Request.CreateResponse(HttpStatusCode.OK,
-                (await DbContext.NormalPoints.OrderBy(p => p.CreateTime)
+                (await _dbContext.NormalPoints.OrderBy(p => p.CreateTime)
                     .Skip(() => skip).Take(() => take)
                     .Select(p => new
                     {
@@ -38,8 +38,8 @@ namespace Keylol.Controllers.NormalPoint
                         ArticleCount = entry.articleCount,
                         SubscriberCount = entry.subscriberCount
                     }));
-            response.Headers.Add("X-Total-Record-Count", (await DbContext.NormalPoints.CountAsync()).ToString());
-            return response;
+            response.Headers.Add("X-Total-Record-Count", (await _dbContext.NormalPoints.CountAsync()).ToString());
+            return ResponseMessage(response);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Keylol.Utilities;
+using Keylol.Identity;
 
 namespace Keylol.Controllers.NormalPoint
 {
@@ -22,16 +22,16 @@ namespace Keylol.Controllers.NormalPoint
         /// </summary>
         /// <param name="sourceIdCode">原据点识别码，在据点合并之后将被删除</param>
         /// <param name="targetIdCode">合并到的目标据点识别码</param>
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route("{sourceIdCode}/merge/{targetIdCode}")]
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteOneMerge(string sourceIdCode, string targetIdCode)
         {
-            var sourcePoint = await DbContext.NormalPoints.Where(p => p.IdCode == sourceIdCode).SingleOrDefaultAsync();
+            var sourcePoint = await _dbContext.NormalPoints.Where(p => p.IdCode == sourceIdCode).SingleOrDefaultAsync();
             if (sourcePoint == null)
                 return NotFound();
 
-            var targetPoint = await DbContext.NormalPoints.Where(p => p.IdCode == targetIdCode).SingleOrDefaultAsync();
+            var targetPoint = await _dbContext.NormalPoints.Where(p => p.IdCode == targetIdCode).SingleOrDefaultAsync();
             if (targetPoint == null)
                 return NotFound();
 
@@ -51,7 +51,7 @@ namespace Keylol.Controllers.NormalPoint
             MergeCollection(targetPoint.Articles, sourcePoint.Articles);
 
             // 文章评价对象
-            var articles = await DbContext.Articles.Where(a => a.VoteForPointId == sourcePoint.Id).ToListAsync();
+            var articles = await _dbContext.Articles.Where(a => a.VoteForPointId == sourcePoint.Id).ToListAsync();
             foreach (var article in articles)
             {
                 article.VoteForPointId = targetPoint.Id;
@@ -62,18 +62,18 @@ namespace Keylol.Controllers.NormalPoint
 
             // 自动订阅关系
             var sourceAutoSubscriptions =
-                await DbContext.AutoSubscriptions.Where(s => s.NormalPointId == sourcePoint.Id).ToListAsync();
+                await _dbContext.AutoSubscriptions.Where(s => s.NormalPointId == sourcePoint.Id).ToListAsync();
             var targetAutoSubscriptions =
-                await DbContext.AutoSubscriptions.Where(s => s.NormalPointId == targetPoint.Id).ToListAsync();
+                await _dbContext.AutoSubscriptions.Where(s => s.NormalPointId == targetPoint.Id).ToListAsync();
             foreach (var sourceAutoSubscription in sourceAutoSubscriptions.Where(ss =>
                 targetAutoSubscriptions.All(ts => ss.UserId != ts.UserId)))
             {
-                var newSubscription = DbContext.AutoSubscriptions.Create();
+                var newSubscription = _dbContext.AutoSubscriptions.Create();
                 newSubscription.UserId = sourceAutoSubscription.UserId;
                 newSubscription.NormalPointId = targetPoint.Id;
                 newSubscription.Type = sourceAutoSubscription.Type;
                 newSubscription.DisplayOrder = sourceAutoSubscription.DisplayOrder;
-                DbContext.AutoSubscriptions.Add(newSubscription);
+                _dbContext.AutoSubscriptions.Add(newSubscription);
             }
 
             sourcePoint.SteamStoreNames.Clear();
@@ -97,10 +97,10 @@ namespace Keylol.Controllers.NormalPoint
             sourcePoint.Articles.Clear();
 
             sourcePoint.Subscribers.Clear();
-            DbContext.AutoSubscriptions.RemoveRange(sourceAutoSubscriptions);
+            _dbContext.AutoSubscriptions.RemoveRange(sourceAutoSubscriptions);
 
-            DbContext.NormalPoints.Remove(sourcePoint);
-            await DbContext.SaveChangesAsync();
+            _dbContext.NormalPoints.Remove(sourcePoint);
+            await _dbContext.SaveChangesAsync();
 
             return Ok();
         }

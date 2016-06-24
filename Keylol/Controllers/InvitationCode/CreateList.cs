@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Identity;
 using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
@@ -33,20 +34,18 @@ namespace Keylol.Controllers.InvitationCode
         /// </summary>
         /// <param name="prefix">邀请码前缀</param>
         /// <param name="number">生成数量，最大 20000，默认 1</param>
-        [ClaimsAuthorize(StaffClaim.ClaimType, StaffClaim.Operator)]
+        [Authorize(Roles = KeylolRoles.Operator)]
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (string))]
+        [SwaggerResponse(HttpStatusCode.Created, Type = typeof(string))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
         public async Task<IHttpActionResult> CreateList(string prefix, int number = 1)
         {
             if (number > 20000) number = 20000;
             if (!_sourceLookup.ContainsKey(prefix))
-            {
-                ModelState.AddModelError("sourceCode", "邀请码前缀无效");
-                return BadRequest(ModelState);
-            }
+                return this.BadRequest(nameof(prefix), Errors.Invalid);
+
             var source = _sourceLookup[prefix];
 
             var random = new Random();
@@ -59,8 +58,8 @@ namespace Keylol.Controllers.InvitationCode
                     Source = source
                 });
             }
-            DbContext.InvitationCodes.AddRange(codes);
-            await DbContext.SaveChangesAsync();
+            _dbContext.InvitationCodes.AddRange(codes);
+            await _dbContext.SaveChangesAsync();
             return Created("invitation-code", $"{source}\n{string.Join("\n", codes.Select(c => c.Id))}");
         }
     }

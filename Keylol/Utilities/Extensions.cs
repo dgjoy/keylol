@@ -1,76 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using System.Text;
+using System.Web.Http;
+using System.Web.Http.Results;
+using Keylol.Models;
 using Keylol.Services;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.Utilities
 {
     /// <summary>
-    /// 一些常用扩展方法
+    ///     一些常用对象扩展
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        /// 从 Unix 时间戳创建 DateTime 对象
-        /// </summary>
-        /// <param name="unixTimeStamp">Unix 时间戳</param>
-        /// <returns>创建的 DateTime 对象</returns>
-        public static DateTime DateTimeFromUnixTimeStamp(double unixTimeStamp)
-        {
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
-        /// <summary>
-        /// 转换为 Unix 时间戳形式
+        ///     转换为 Unix 时间戳（秒）形式
         /// </summary>
         /// <param name="dateTime">要转换的 DateTime 对象</param>
-        /// <returns>Unix 时间戳</returns>
-        public static long UnixTimestamp(this DateTime dateTime)
+        /// <returns>Unix 时间戳（秒）</returns>
+        public static long ToTimestamp(this DateTime dateTime)
         {
             return (dateTime.ToUniversalTime().Ticks - 621355968000000000)/10000000;
         }
 
         /// <summary>
-        /// 计算一个字符串的“Unicode 码点字节长度”（码点 0 - 0xff 认为是一个字节，0x100 - 0xffff 认为是两个字节，大于 0xffff 认为是三个字节）
-        /// </summary>
-        /// <param name="str">要计算的字符串</param>
-        /// <returns>Unicode Code Point 字节长度</returns>
-        public static int ByteLength(this string str)
-        {
-            var s = 0;
-            for (var i = str.Length - 1; i >= 0; i--)
-            {
-                var code = (int) str[i];
-                if (code <= 0xff) s++;
-                else if (code > 0xff && code <= 0xffff) s += 2;
-                if (code >= 0xDC00 && code <= 0xDFFF)
-                {
-                    i--;
-                    s++;
-                }
-            }
-            return s;
-        }
-
-        /// <summary>
-        /// 检测 URL 是否是可信来源（以 keylol:// 为前缀）
-        /// </summary>
-        /// <param name="url">要检测的 URL</param>
-        /// <param name="allowNullOrEmpty">是否允许 URL 为空</param>
-        /// <returns>可信（allowNullOrEmpty 时 URL 为空也认为可信）返回 true，不可信返回 false</returns>
-        public static bool IsTrustedUrl(this string url, bool allowNullOrEmpty = true)
-        {
-            return (allowNullOrEmpty && string.IsNullOrEmpty(url)) || url.StartsWith("keylol://");
-        }
-
-        /// <summary>
-        /// 从一个集合中取出指定数量元素的所以组合情况
+        ///     从一个集合中取出指定数量元素的所以组合情况
         /// </summary>
         /// <param name="items">集合</param>
         /// <param name="count">取出元素数量</param>
@@ -89,8 +45,7 @@ namespace Keylol.Utilities
                     foreach (var result in list.Skip(i + 1).AllCombinations(count - 1))
                         yield return new[] {item}.Concat(result);
                 }
-
-                ++i;
+                i++;
             }
         }
 
@@ -103,102 +58,216 @@ namespace Keylol.Utilities
         public static TEnum ToEnum<TEnum>(this string text) where TEnum : struct
         {
             TEnum result;
-            if (Enum.TryParse(text, out result) && Enum.IsDefined(typeof (TEnum), result))
+            if (Enum.TryParse(text, out result) && Enum.IsDefined(typeof(TEnum), result))
                 return result;
             return default(TEnum);
         }
 
         /// <summary>
-        /// 设置 X-Total-Record-Count Header
-        /// </summary>
-        /// <param name="headers">HttpResponseHeaders 对象</param>
-        /// <param name="totalCount">要设置的数值</param>
-        public static void SetTotalCount(this HttpResponseHeaders headers, int totalCount)
-        {
-            if (headers.Contains("X-Total-Record-Count"))
-                headers.Remove("X-Total-Record-Count");
-            headers.Add("X-Total-Record-Count", totalCount.ToString());
-        }
-
-        /// <summary>
-        /// 判断 Steam 机器人是否属于“在线”状态
+        ///     判断 Steam 机器人是否属于“在线”状态
         /// </summary>
         /// <param name="bot">Steam 机器人实体</param>
         /// <returns>是否在线</returns>
-        public static bool IsOnline(this Models.SteamBot bot)
+        public static bool IsOnline(this SteamBot bot)
         {
             return bot.Online && bot.SessionId != null &&
                    SteamBotCoordinator.Sessions.ContainsKey(bot.SessionId);
         }
+
+        /// <summary>
+        ///     为 ModelState 增加指定错误并返回 BadRequest
+        /// </summary>
+        /// <param name="controller"><see cref="ApiController" /> 对象</param>
+        /// <param name="modelError">错误描述，最后一个出现的字符串将作为 errorMessage，其他字符串用 "." 拼接后作为 key</param>
+        /// <returns><see cref="IHttpActionResult" /> 对象</returns>
+        public static IHttpActionResult BadRequest(this ApiController controller, params string[] modelError)
+        {
+            controller.ModelState.AddModelError(string.Join(".", modelError.Take(modelError.Length - 1)),
+                modelError.Last());
+            return new InvalidModelStateResult(controller.ModelState, controller);
+        }
+
+        /// <summary>
+        /// 转换命名风格
+        /// </summary>
+        /// <param name="text">要转换的文本</param>
+        /// <param name="sourceCase">原始格式</param>
+        /// <param name="targetCase">目标格式</param>
+        /// <returns></returns>
+        public static string ToCase(this string text, NameConventionCase sourceCase, NameConventionCase targetCase)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+            var breakpoints = new List<int> {0};
+            for (var i = 1; i < text.Length; i++)
+            {
+                if (char.IsSurrogate(text[i]))
+                    continue;
+                switch (sourceCase)
+                {
+                    case NameConventionCase.PascalCase:
+                    case NameConventionCase.CamelCase:
+                        if (char.IsUpper(text[i]) && (char.IsLower(text[i - 1]) ||
+                                                      (i != text.Length - 1 && char.IsLower(text[i + 1]))))
+                            breakpoints.Add(i);
+                        break;
+
+                    case NameConventionCase.DashedCase:
+                        if (text[i - 1] == '-')
+                            breakpoints.Add(i);
+                        break;
+
+                    case NameConventionCase.SnakeCase:
+                        if (text[i - 1] == '_')
+                            breakpoints.Add(i);
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(sourceCase), sourceCase, null);
+                }
+            }
+            breakpoints.Add(text.Length);
+
+            var finalBreakpoints = new List<int>(breakpoints.Count) {0};
+            int minGap;
+            string replaceChar = null;
+            switch (sourceCase)
+            {
+                case NameConventionCase.PascalCase:
+                    minGap = 1;
+                    break;
+
+                case NameConventionCase.CamelCase:
+                    minGap = 1;
+                    break;
+
+                case NameConventionCase.DashedCase:
+                    minGap = 2;
+                    replaceChar = "-";
+                    break;
+
+                case NameConventionCase.SnakeCase:
+                    minGap = 2;
+                    replaceChar = "_";
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(targetCase), targetCase, null);
+            }
+            for (var i = 1; i < breakpoints.Count - 1; i++)
+            {
+                if (breakpoints[i] - breakpoints[i - 1] <= minGap && (breakpoints[i + 1] - breakpoints[i] <= minGap))
+                    continue;
+                finalBreakpoints.Add(breakpoints[i]);
+            }
+            finalBreakpoints.Add(text.Length);
+
+            var resultBuilder = new StringBuilder(text.Length);
+            for (var i = 0; i < finalBreakpoints.Count - 1; i++)
+            {
+                var word = text.Substring(finalBreakpoints[i], finalBreakpoints[i + 1] - finalBreakpoints[i]);
+                word = replaceChar == null ? word : word.Replace(replaceChar, string.Empty);
+                if (string.IsNullOrEmpty(word))
+                    continue;
+                switch (targetCase)
+                {
+                    case NameConventionCase.PascalCase:
+                        resultBuilder.Append(char.ToUpper(word[0]));
+                        resultBuilder.Append(word.Substring(1).ToLower());
+                        break;
+
+                    case NameConventionCase.CamelCase:
+                        if (i == 0)
+                        {
+                            resultBuilder.Append(word.ToLower());
+                        }
+                        else
+                        {
+                            resultBuilder.Append(char.ToUpper(word[0]));
+                            resultBuilder.Append(word.Substring(1).ToLower());
+                        }
+                        break;
+
+                    case NameConventionCase.DashedCase:
+                        resultBuilder.Append(word.ToLower());
+                        if (i < finalBreakpoints.Count - 2)
+                            resultBuilder.Append('-');
+                        break;
+
+                    case NameConventionCase.SnakeCase:
+                        resultBuilder.Append(word.ToLower());
+                        if (i < finalBreakpoints.Count - 2)
+                            resultBuilder.Append('_');
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(targetCase), targetCase, null);
+                }
+            }
+            return resultBuilder.ToString();
+        }
+
+        /// <summary>
+        /// 获取指定分页的记录
+        /// </summary>
+        /// <param name="source">查询源</param>
+        /// <param name="page">分页页码</param>
+        /// <param name="recordsPerPage">每页记录数</param>
+        /// <typeparam name="TSource">记录类型</typeparam>
+        public static IQueryable<TSource> TakePage<TSource>(this IQueryable<TSource> source, int page,
+            int recordsPerPage)
+        {
+            if (page <= 0)
+                throw new ArgumentException("Page must be greater than zero.", nameof(page));
+            if (recordsPerPage <= 0)
+                throw new ArgumentException("Records per page must be greater than zero.", nameof(page));
+
+            var skip = recordsPerPage*(page - 1);
+            return source.Skip(() => skip).Take(() => recordsPerPage);
+        }
+
+        /// <summary>
+        /// Distinct using the specified key selector.
+        /// </summary>
+        /// <param name="source">Source collection</param>
+        /// <param name="keySelector">Key selector</param>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector)
+        {
+            var seenKeys = new HashSet<TKey>();
+            foreach (var element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
     }
 
-    public static class StatusClaim
+    /// <summary>
+    /// 常见命名约定格式
+    /// </summary>
+    public enum NameConventionCase
     {
-        public const string ClaimType = "status";
-        public const string Probationer = "probationer";
-        public const string Normal = null;
+        /// <summary>
+        /// PascalCase
+        /// </summary>
+        PascalCase,
 
-        /// null represents "normal"
-        public static async Task<string> GetStatusClaimAsync(this KeylolUserManager manager, string userId)
-        {
-            return (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType)?.Value;
-        }
+        /// <summary>
+        /// camelCase
+        /// </summary>
+        CamelCase,
 
-        public static async Task<IdentityResult> RemoveStatusClaimAsync(this KeylolUserManager manager, string userId)
-        {
-            var claim = (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType);
-            if (claim != null)
-            {
-                return await manager.RemoveClaimAsync(userId, claim);
-            }
-            return new IdentityResult("User doesn't have any status claims.");
-        }
+        /// <summary>
+        /// dashed-case
+        /// </summary>
+        DashedCase,
 
-        public static async Task<IdentityResult> SetStatusClaimAsync(this KeylolUserManager manager, string userId,
-            string status)
-        {
-            var claim = (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType);
-            if (claim != null)
-            {
-                await manager.RemoveClaimAsync(userId, claim);
-            }
-            return await manager.AddClaimAsync(userId, new Claim(ClaimType, status));
-        }
-    }
-
-    public static class StaffClaim
-    {
-        public const string ClaimType = "staff";
-        public const string Manager = "manager";
-        public const string Moderator = "moderator";
-        public const string Operator = "operator";
-        public const string User = null;
-
-        /// null represents "user"
-        public static async Task<string> GetStaffClaimAsync(this KeylolUserManager manager, string userId)
-        {
-            return (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType)?.Value;
-        }
-
-        public static async Task<IdentityResult> RemoveStaffClaimAsync(this KeylolUserManager manager, string userId)
-        {
-            var claim = (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType);
-            if (claim != null)
-            {
-                return await manager.RemoveClaimAsync(userId, claim);
-            }
-            return new IdentityResult("User doesn't have any staff claims.");
-        }
-
-        public static async Task<IdentityResult> SetStaffClaimAsync(this KeylolUserManager manager, string userId,
-            string staff)
-        {
-            var claim = (await manager.GetClaimsAsync(userId)).SingleOrDefault(c => c.Type == ClaimType);
-            if (claim != null)
-            {
-                await manager.RemoveClaimAsync(userId, claim);
-            }
-            return await manager.AddClaimAsync(userId, new Claim(ClaimType, staff));
-        }
+        /// <summary>
+        /// snake_case
+        /// </summary>
+        SnakeCase
     }
 }

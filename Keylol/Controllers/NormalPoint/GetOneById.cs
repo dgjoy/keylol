@@ -28,14 +28,14 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (NormalPointDto))]
+        [ResponseType(typeof(NormalPointDto))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
         public async Task<IHttpActionResult> GetOneById(string id, bool stats = false, bool votes = false,
             bool subscribed = false, bool related = false, bool coverDescription = false,
-            bool more = false, IdType idType = IdType.Id)
+            bool more = false, NormalPointIdentityType idType = NormalPointIdentityType.Id)
         {
-            var point = await DbContext.NormalPoints
-                .SingleOrDefaultAsync(p => idType == IdType.IdCode ? p.IdCode == id : p.Id == id);
+            var point = await _dbContext.NormalPoints
+                .SingleOrDefaultAsync(p => idType == NormalPointIdentityType.IdCode ? p.IdCode == id : p.Id == id);
 
             if (point == null)
                 return NotFound();
@@ -44,7 +44,7 @@ namespace Keylol.Controllers.NormalPoint
 
             if (stats)
             {
-                var statsResult = await DbContext.NormalPoints
+                var statsResult = await _dbContext.NormalPoints
                     .Where(p => p.Id == point.Id)
                     .Select(p => new {articleCount = p.Articles.Count, subscriberCount = p.Subscribers.Count})
                     .SingleAsync();
@@ -55,7 +55,7 @@ namespace Keylol.Controllers.NormalPoint
             if (subscribed)
             {
                 var userId = User.Identity.GetUserId();
-                pointDto.Subscribed = await DbContext.Users.Where(u => u.Id == userId)
+                pointDto.Subscribed = await _dbContext.Users.Where(u => u.Id == userId)
                     .SelectMany(u => u.SubscribedPoints)
                     .Select(p => p.Id)
                     .ContainsAsync(point.Id);
@@ -63,7 +63,7 @@ namespace Keylol.Controllers.NormalPoint
 
             if (votes)
             {
-                var votesResult = await DbContext.NormalPoints
+                var votesResult = await _dbContext.NormalPoints
                     .Where(p => p.Id == point.Id)
                     .Select(
                         p => new

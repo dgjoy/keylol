@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Keylol.Identity;
 using Keylol.Models;
-using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
@@ -21,14 +21,14 @@ namespace Keylol.Controllers.Message
         public async Task<IHttpActionResult> DeleteOneById(string id)
         {
             var userId = User.Identity.GetUserId();
-            var staffClaim = await UserManager.GetStaffClaimAsync(userId);
-            var message = await DbContext.Messages.FindAsync(id);
+            var message = await _dbContext.Messages.FindAsync(id);
             if (message == null)
                 return NotFound();
-            if (staffClaim != StaffClaim.Operator && (message.Type.IsMissiveMessage() || message.ReceiverId != userId))
+            if (!User.IsInRole(KeylolRoles.Operator) &&
+                (message.Type.IsMissiveMessage() || message.ReceiverId != userId))
                 return Unauthorized();
-            DbContext.Messages.Remove(message);
-            await DbContext.SaveChangesAsync();
+            _dbContext.Messages.Remove(message);
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

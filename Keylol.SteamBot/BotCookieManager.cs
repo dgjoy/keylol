@@ -13,22 +13,11 @@ namespace Keylol.SteamBot
 {
     public class BotCookieManager : IDisposable
     {
-        private readonly RetryPolicy _retryPolicy;
-        private readonly ILog _logger;
-        private readonly CookieContainer _cookieContainer = new CookieContainer();
         private readonly Timer _checkTimer = new Timer(600000); // 10min
+        private readonly CookieContainer _cookieContainer = new CookieContainer();
+        private readonly ILog _logger;
+        private readonly RetryPolicy _retryPolicy;
         private bool _disposed;
-
-        public int BotSequenceNumber { get; set; }
-        public EUniverse ConnectedUniverse { get; set; }
-        public SteamID SteamId { get; set; }
-        public ulong LoginKeyUniqueId { get; set; }
-        public string WebApiUserNonce { get; set; }
-
-        /// <summary>
-        /// 检测到 Cookie 失效时触发
-        /// </summary>
-        public event EventHandler CookiesExpired;
 
         public BotCookieManager(RetryPolicy retryPolicy, ILogProvider logProvider)
         {
@@ -37,6 +26,23 @@ namespace Keylol.SteamBot
 
             _checkTimer.Elapsed += CheckTimerOnElapsed;
         }
+
+        public int BotSequenceNumber { get; set; }
+        public EUniverse ConnectedUniverse { get; set; }
+        public SteamID SteamId { get; set; }
+        public ulong LoginKeyUniqueId { get; set; }
+        public string WebApiUserNonce { get; set; }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     检测到 Cookie 失效时触发
+        /// </summary>
+        public event EventHandler CookiesExpired;
 
         private async void CheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
@@ -65,7 +71,7 @@ namespace Keylol.SteamBot
         }
 
         /// <summary>
-        /// 重新获取新 Cookies，如果是第一次调用本方法，会同时启用定时检测计时器
+        ///     重新获取新 Cookies，如果是第一次调用本方法，会同时启用定时检测计时器
         /// </summary>
         public async Task Refresh()
         {
@@ -75,7 +81,7 @@ namespace Keylol.SteamBot
                 _checkTimer.Start();
             }
 
-            if (string.IsNullOrEmpty(WebApiUserNonce))
+            if (string.IsNullOrWhiteSpace(WebApiUserNonce))
                 return;
 
             // generate an AES session key
@@ -136,10 +142,10 @@ namespace Keylol.SteamBot
         }
 
         /// <summary>
-        /// 使用当前 Cookies 创建一个 <see cref="HttpWebRequest"/>，并伪装浏览器的 User Agent
+        ///     使用当前 Cookies 创建一个 <see cref="HttpWebRequest" />，并伪装浏览器的 User Agent
         /// </summary>
         /// <param name="url">请求 URL</param>
-        /// <returns><see cref="HttpWebRequest"/> 对象</returns>
+        /// <returns><see cref="HttpWebRequest" /> 对象</returns>
         public HttpWebRequest CreateWebRequest(string url)
         {
             var request = WebRequest.CreateHttp(url);
@@ -153,12 +159,6 @@ namespace Keylol.SteamBot
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             request.CookieContainer = _cookieContainer;
             return request;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)

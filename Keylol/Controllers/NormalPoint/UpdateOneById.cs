@@ -5,9 +5,11 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JetBrains.Annotations;
+using Keylol.Identity;
 using Keylol.Models;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.NormalPoint
@@ -22,9 +24,10 @@ namespace Keylol.Controllers.NormalPoint
         [Route("{id}")]
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定据点不存在")]
-        public async Task<IHttpActionResult> UpdateOneById(string id, NormalPointCreateOrUpdateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> UpdateOneById(string id,
+            [NotNull] NormalPointCreateOrUpdateOneRequestDto requestDto)
         {
-            var normalPoint = await DbContext.NormalPoints
+            var normalPoint = await _dbContext.NormalPoints
                 .Include(p => p.DeveloperPoints)
                 .Include(p => p.PublisherPoints)
                 .Include(p => p.SeriesPoints)
@@ -37,76 +40,49 @@ namespace Keylol.Controllers.NormalPoint
             if (normalPoint == null)
                 return NotFound();
 
-            if (requestDto == null)
-            {
-                ModelState.AddModelError("vm", "Invalid view model.");
-                return BadRequest(ModelState);
-            }
+            if (!Helpers.IsTrustedUrl(requestDto.BackgroundImage))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.BackgroundImage), Errors.Invalid);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!Helpers.IsTrustedUrl(requestDto.AvatarImage))
+                return this.BadRequest(nameof(requestDto), nameof(requestDto.AvatarImage), Errors.Invalid);
 
-            if (!requestDto.BackgroundImage.IsTrustedUrl())
+            var isKeylolOperator = User.IsInRole(KeylolRoles.Operator);
+            if (isKeylolOperator)
             {
-                ModelState.AddModelError("vm.BackgroundImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
+                if (string.IsNullOrWhiteSpace(requestDto.EnglishName))
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.EnglishName), Errors.Required);
 
-            if (!requestDto.AvatarImage.IsTrustedUrl())
-            {
-                ModelState.AddModelError("vm.AvatarImage", "不允许使用可不信图片来源");
-                return BadRequest(ModelState);
-            }
-
-            var editorStaffClaim = await UserManager.GetStaffClaimAsync(User.Identity.GetUserId());
-            if (editorStaffClaim == StaffClaim.Operator)
-            {
-                if (string.IsNullOrEmpty(requestDto.EnglishName))
-                {
-                    ModelState.AddModelError("vm.EnglishName", "据点英文名称必填");
-                    return BadRequest(ModelState);
-                }
                 if (requestDto.PreferredName == null)
-                {
-                    ModelState.AddModelError("vm.PreferredName", "名称语言偏好必填");
-                    return BadRequest(ModelState);
-                }
-                if (string.IsNullOrEmpty(requestDto.IdCode))
-                {
-                    ModelState.AddModelError("vm.IdCode", "据点识别码必填");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.PreferredName), Errors.Required);
+
+                if (string.IsNullOrWhiteSpace(requestDto.IdCode))
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Required);
+
                 if (!Regex.IsMatch(requestDto.IdCode, @"^[A-Z0-9]{5}$"))
-                {
-                    ModelState.AddModelError("vm.IdCode", "识别码只允许使用 5 位数字或大写字母");
-                    return BadRequest(ModelState);
-                }
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Invalid);
+
                 if (requestDto.IdCode != normalPoint.IdCode &&
-                    await DbContext.NormalPoints.AnyAsync(u => u.IdCode == requestDto.IdCode))
-                {
-                    ModelState.AddModelError("vm.IdCode", "识别码已经被其他据点使用");
-                    return BadRequest(ModelState);
-                }
+                    await _dbContext.NormalPoints.AnyAsync(u => u.IdCode == requestDto.IdCode))
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.IdCode), Errors.Duplicate);
+
                 normalPoint.EnglishName = requestDto.EnglishName;
                 normalPoint.IdCode = requestDto.IdCode;
                 normalPoint.PreferredName = requestDto.PreferredName.Value;
                 if (normalPoint.Type == NormalPointType.Genre || normalPoint.Type == NormalPointType.Manufacturer)
                 {
                     if (requestDto.NameInSteamStore == null)
-                    {
-                        ModelState.AddModelError("vm.NameInSteamStore", "商店匹配名必填");
-                        return BadRequest(ModelState);
-                    }
+                        return this.BadRequest(nameof(requestDto), nameof(requestDto.NameInSteamStore), Errors.Required);
+
                     var nameStrings =
                         requestDto.NameInSteamStore.Split(';')
                             .Select(n => n.Trim())
-                            .Where(n => !string.IsNullOrEmpty(n));
+                            .Where(n => !string.IsNullOrWhiteSpace(n));
                     var names = new List<SteamStoreName>();
                     foreach (var nameString in nameStrings)
                     {
                         var name =
-                            await DbContext.SteamStoreNames.Where(n => n.Name == nameString).SingleOrDefaultAsync() ??
-                            DbContext.SteamStoreNames.Create();
+                            await _dbContext.SteamStoreNames.Where(n => n.Name == nameString).SingleOrDefaultAsync() ??
+                            _dbContext.SteamStoreNames.Create();
                         name.Name = nameString;
                         names.Add(name);
                     }
@@ -124,11 +100,11 @@ namespace Keylol.Controllers.NormalPoint
                 : requestDto.Description;
 
             if ((normalPoint.Type == NormalPointType.Game || normalPoint.Type == NormalPointType.Hardware) &&
-                !await PopulateGamePointAttributes(normalPoint, requestDto, editorStaffClaim, true))
+                !await PopulateGamePointAttributes(normalPoint, requestDto, isKeylolOperator, true))
             {
                 return BadRequest(ModelState);
             }
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

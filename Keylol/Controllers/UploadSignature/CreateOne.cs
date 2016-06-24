@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http;
+using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
@@ -18,8 +18,6 @@ namespace Keylol.Controllers.UploadSignature
         /// <param name="policy">请求 Policy</param>
         [Route]
         [HttpPost]
-        [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created, Type = typeof (string))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "请求 Policy 无效")]
         public IHttpActionResult CreateOne(string policy)
         {
@@ -28,19 +26,13 @@ namespace Keylol.Controllers.UploadSignature
             if ((string) options["save-key"] != "{filemd5}{.suffix}")
                 return BadRequest();
 
-            if ((int) options["expiration"] > DateTime.Now.UnixTimestamp() + 330)
+            if ((int) options["expiration"] > DateTime.Now.ToTimestamp() + 360)
                 return BadRequest();
 
             var range = ((string) options["content-length-range"]).Split(',').Select(int.Parse).ToList();
-            if (range[1] > 5*1024*1024) // 5 MB
+            if (range[1] > UpyunProvider.MaxImageSize)
                 return BadRequest();
-
-            byte[] hash;
-            using (var md5 = MD5.Create())
-            {
-                hash = md5.ComputeHash(Encoding.UTF8.GetBytes($"{policy}&{FormKey}"));
-            }
-            return Created("upload-signature", BitConverter.ToString(hash).Replace("-", string.Empty).ToLower());
+            return Ok(Helpers.Md5($"{policy}&{UpyunProvider.FormKey}"));
         }
     }
 }

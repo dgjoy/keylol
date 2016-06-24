@@ -16,11 +16,11 @@ namespace Keylol.Controllers.Favorite
         /// </summary>
         [Route]
         [HttpGet]
-        [ResponseType(typeof (List<FavoriteDto>))]
+        [ResponseType(typeof(List<FavoriteDto>))]
         public async Task<IHttpActionResult> GetListByCurrentUser()
         {
             var userId = User.Identity.GetUserId();
-            return Ok((await DbContext.Favorites.Where(f => f.UserId == userId)
+            return Ok((await _dbContext.Favorites.Where(f => f.UserId == userId)
                 .OrderBy(f => f.AddTime)
                 .Take(() => FavoriteSize)
                 .ToListAsync()).Select(f => new FavoriteDto(f)).ToList());

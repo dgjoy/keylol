@@ -2,32 +2,29 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Cors;
 using System.Web.Http;
-using Keylol;
-using Keylol.Hubs;
-using Keylol.Models;
-using Keylol.Models.DAL;
-using Keylol.Provider;
-using Keylol.ServiceBase;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
+using Keylol.Filters;
+using Keylol.Identity;
+using Keylol.StateTreeManager;
+using Keylol.Utilities;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
-using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Diagnostics;
+using Microsoft.Owin.Extensions;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Owin;
-using SimpleInjector;
-using SimpleInjector.Extensions.ExecutionContextScoping;
-using SimpleInjector.Integration.WebApi;
+using SimpleInjector.Integration.Owin;
 using Swashbuckle.Application;
 using WebApiThrottle;
-
-[assembly: OwinStartup(typeof (Startup))]
 
 namespace Keylol
 {
@@ -37,20 +34,10 @@ namespace Keylol
     public class Startup
     {
         /// <summary>
-        /// 全局 IoC 容器
-        /// </summary>
-        public static Container Container { get; set; } = new Container();
-
-        /// <summary>
         ///     OWIN 启动配置
         /// </summary>
         public void Configuration(IAppBuilder app)
         {
-            // 注册常用服务
-            RegisterServices();
-
-            // 启用 OWIN 中间件
-
             // 请求计时
             app.Use(async (context, next) =>
             {
@@ -58,20 +45,23 @@ namespace Keylol
                 context.Response.OnSendingHeaders(o =>
                 {
                     stopwatch.Stop();
-                    context.Response.Headers.Set("X-Process-Time", stopwatch.ElapsedMilliseconds.ToString());
+                    try
+                    {
+                        context.Response.Headers.Set("X-Process-Time", stopwatch.ElapsedMilliseconds.ToString());
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }, null);
                 await next.Invoke();
             });
 
-            // 为后续 OWIN 中间件建立 IoC 容器 Scope
-            app.Use(async (context, next) =>
-            {
-                using (Container.BeginExecutionContextScope())
-                    await next.Invoke();
-            });
+            // 错误页面
+            app.UseErrorPage(ErrorPageOptions.ShowAll);
 
             // 访问频率限制
-            app.Use(typeof (ThrottlingMiddleware),
+            app.Use(typeof(ThrottlingMiddleware),
                 ThrottlePolicy.FromStore(new PolicyConfigurationProvider()),
                 new PolicyMemoryCacheRepository(),
                 new MemoryCacheRepository(),
@@ -80,66 +70,54 @@ namespace Keylol
             // CORS
             UseCors(app);
 
-            // 认证、授权相关中间件
-            UseAuth(app);
+            // Simple Injector OWIN Request Lifestyle
+            app.UseOwinRequestLifestyle();
+
+            // OAuth 认证服务器
+            app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
+            {
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(60),
+                AuthenticationMode = AuthenticationMode.Passive,
+                TokenEndpointPath = new PathString("/oauth/token"),
+                AuthorizeEndpointPath = new PathString("/oauth/authorization"),
+                Provider = new KeylolOAuthAuthorizationServerProvider()
+            });
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+            {
+                Provider = new KeylolOAuthBearerAuthenticationProvider()
+            });
+
+            app.UseStageMarker(PipelineStage.Authenticate);
+
+            // State Tree Manager
+            app.UseStateTreeManager();
 
             // SignalR
+            GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => new KeylolUserIdProvider());
             app.MapSignalR();
 
             // ASP.NET Web API
             UseWebApi(app);
-
-            Container.Verify();
         }
 
-        private void RegisterServices()
-        {
-            // 配置容器
-            Container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
 
-            // log4net
-            Container.RegisterConditional(typeof (ILogProvider),
-                c => typeof (LogProvider<>).MakeGenericType(c.Consumer?.ImplementationType ?? typeof (Startup)),
-                Lifestyle.Singleton,
-                c => true);
-
-            // RabbitMQ IConnection
-            Container.RegisterSingleton<MqClientProvider>();
-
-            // RabbitMQ IModel
-            Container.RegisterWebApiRequest(() => Container.GetInstance<MqClientProvider>().CreateModel());
-
-            // StackExchange.Redis
-            Container.RegisterSingleton<RedisProvider>();
-
-            // Keylol DbContext
-            Container.Register(() =>
-            {
-                var context = new KeylolDbContext();
-#if DEBUG
-                context.WriteLog +=
-                    (sender, s) => { GlobalHost.ConnectionManager.GetHubContext<DebugInfoHub>().Clients.All.Write(s); };
-#endif
-                return context;
-            }, Lifestyle.Scoped);
-
-            // Coupon
-            Container.RegisterWebApiRequest<CouponProvider>();
-
-            // Statistics
-            Container.RegisterWebApiRequest<StatisticsProvider>();
-        }
-
-        private void UseCors(IAppBuilder app)
+        private static void UseCors(IAppBuilder app)
         {
             app.Use(async (context, next) =>
             {
                 // 将所有 'X-' Headers 加入到 Access-Control-Expose-Headers 中
                 context.Response.OnSendingHeaders(o =>
                 {
-                    context.Response.Headers.Add("Access-Control-Expose-Headers",
-                        context.Response.Headers.Select(h => h.Key)
-                            .Where(k => k.StartsWith("X-", StringComparison.OrdinalIgnoreCase)).ToArray());
+                    try
+                    {
+                        context.Response.Headers.Add("Access-Control-Expose-Headers",
+                            context.Response.Headers.Select(h => h.Key)
+                                .Where(k => k.StartsWith("X-", StringComparison.OrdinalIgnoreCase)).ToArray());
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }, null);
                 await next.Invoke();
             });
@@ -165,65 +143,39 @@ namespace Keylol
             });
         }
 
-        private void UseWebApi(IAppBuilder app)
+        private static void UseWebApi(IAppBuilder app)
         {
-            var config = new HttpConfiguration();
-            var server = new HttpServer(config);
+            var config = Global.Container.GetInstance<HttpConfiguration>();
 
-            config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
+            var jsonSerializerSettings = config.Formatters.JsonFormatter.SerializerSettings;
+            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            jsonSerializerSettings.Converters.Add(new StringEnumConverter());
+            jsonSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
+            config.Filters.Add(new ValidateModelAttribute());
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
-            
+
             config.EnableSwagger("swagger-hRwp3Pnm/docs/{apiVersion}", c =>
             {
-                c.SingleApiVersion("v1", "Keylol REST API")
+                c.SingleApiVersion("v2", "Keylol API")
+                    .Description("The API specification for Keylol backend.")
                     .Contact(cc => cc.Name("Stackia")
-                        .Email("stackia@keylol.com"));
+                        .Email("stackia@keylol.com")
+                        .Url("http://t.cn/RqWeGJf"));
+
+                c.Schemes(new[] {"https"});
 
                 var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "bin", "Keylol.XML"));
-                c.DescribeAllEnumsAsStrings();
-            }).EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}");
+                var dtoXml = Path.Combine(baseDirectory, "bin", "Keylol.Models.DTO.XML");
+                if (File.Exists(dtoXml))
+                    c.IncludeXmlComments(dtoXml);
+            }).EnableSwaggerUi("swagger-hRwp3Pnm/{*assetPath}",
+                c => { c.InjectJavaScript(Assembly.GetExecutingAssembly(), "Keylol.Utilities.swagger-ui-extra.js"); });
 
             config.MapHttpAttributeRoutes();
 
-            Container.RegisterWebApiControllers(config);
-            config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(Container);
-
-            app.UseWebApi(server);
-        }
-
-        private void UseAuth(IAppBuilder app)
-        {
-            app.CreatePerOwinContext<KeylolDbContext>((o, c) => Container.GetInstance<KeylolDbContext>(),
-                (o, c) => { }); // 忽略 disposeCallback，交给 Container 自身处理
-            app.CreatePerOwinContext<KeylolUserManager>(KeylolUserManager.Create);
-            app.CreatePerOwinContext<KeylolSignInManager>(KeylolSignInManager.Create);
-
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = PathString.Empty,
-                CookieHttpOnly = true,
-                CookieName = ".Keylol.Cookies",
-                SlidingExpiration = true,
-                ExpireTimeSpan = TimeSpan.FromDays(15),
-                Provider = new CookieAuthenticationProvider
-                {
-                    OnValidateIdentity =
-                        SecurityStampValidator.OnValidateIdentity<KeylolUserManager, KeylolUser>(
-                            TimeSpan.FromMinutes(30), (manager, user) => user.GenerateUserIdentityAsync(manager))
-                }
-            });
-
-//            app.UseOAuthBearerTokens(new OAuthAuthorizationServerOptions()
-//            {
-//                AllowInsecureHttp = true,
-//                TokenEndpointPath = new PathString("/oauth/token"),
-//                AuthorizeEndpointPath = new PathString("/oauth/authorize"),
-//                Provider = new KeylolOAuthProvider()
-//            });
+            app.UseWebApi(new HttpServer(config));
         }
     }
 }

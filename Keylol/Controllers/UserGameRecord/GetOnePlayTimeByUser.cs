@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Keylol.Controllers.User;
+using Keylol.Models.DTO;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.UserGameRecord
@@ -21,29 +21,31 @@ namespace Keylol.Controllers.UserGameRecord
         [Route("{id}/{steamAppId}")]
         [AllowAnonymous]
         [HttpGet]
-        [ResponseType(typeof (double))]
+        [ResponseType(typeof(double))]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定用户没有该游戏的在档记录")]
         public async Task<IHttpActionResult> GetOnePlayTimeByUser(string id, int steamAppId,
-            UserController.IdType idType = UserController.IdType.Id)
+            UserIdentityType idType = UserIdentityType.Id)
         {
             string userId;
             switch (idType)
             {
-                case UserController.IdType.UserName:
+                case UserIdentityType.UserName:
                 {
-                    var user = await DbContext.Users.SingleAsync(u => u.UserName == id);
+                    var user = await _userManager.FindByNameAsync(id);
                     userId = user.Id;
                     break;
                 }
 
-                case UserController.IdType.IdCode:
+                case UserIdentityType.IdCode:
                 {
-                    var user = await DbContext.Users.SingleAsync(u => u.IdCode == id);
+                    var user = await _userManager.FindByIdCodeAsync(id);
+                    if (user == null)
+                        return NotFound();
                     userId = user.Id;
                     break;
                 }
 
-                case UserController.IdType.Id:
+                case UserIdentityType.Id:
                     userId = id;
                     break;
 
@@ -51,7 +53,7 @@ namespace Keylol.Controllers.UserGameRecord
                     throw new ArgumentOutOfRangeException(nameof(idType), idType, null);
             }
 
-            var gameRecord = await DbContext.UserGameRecords
+            var gameRecord = await _dbContext.UserGameRecords
                 .Where(r => r.UserId == userId && r.SteamAppId == steamAppId)
                 .SingleOrDefaultAsync();
             if (gameRecord == null)

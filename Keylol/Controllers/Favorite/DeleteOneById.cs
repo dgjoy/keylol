@@ -18,15 +18,15 @@ namespace Keylol.Controllers.Favorite
         [SwaggerResponse(HttpStatusCode.Unauthorized, "当前用户不是这个收藏的拥有者")]
         public async Task<IHttpActionResult> DeleteOneById(string id)
         {
-            var favorite = await DbContext.Favorites.FindAsync(id);
+            var favorite = await _dbContext.Favorites.FindAsync(id);
             if (favorite == null)
                 return NotFound();
 
             if (favorite.UserId != User.Identity.GetUserId())
                 return Unauthorized();
 
-            DbContext.Favorites.Remove(favorite);
-            await DbContext.SaveChangesAsync();
+            _dbContext.Favorites.Remove(favorite);
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

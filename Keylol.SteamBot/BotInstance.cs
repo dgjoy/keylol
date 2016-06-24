@@ -20,24 +20,17 @@ namespace Keylol.SteamBot
 {
     public class BotInstance : IDisposable
     {
+        private static readonly Semaphore LoginSemaphore = new Semaphore(5, 5); // 最多 5 个机器人同时登录
+        private readonly CallbackManager _callbackManager;
         private readonly IServiceConsumer<ISteamBotCoordinator> _coordinator;
         private readonly ILog _logger;
         private readonly MqClientProvider _mqClientProvider;
-        private readonly CallbackManager _callbackManager;
         private readonly SteamUser _steamUser;
+        private bool _callbackPumpStarted; // 回调泵是否已启用
 
         private bool _disposed;
         private bool _loginPending; // 是否处于登录过程中
-        private bool _callbackPumpStarted; // 回调泵是否已启用
         private IModel _mqChannel;
-        private static readonly Semaphore LoginSemaphore = new Semaphore(5, 5); // 最多 5 个机器人同时登录
-
-        public string Id { get; set; }
-        public int SequenceNumber { get; set; }
-        public SteamUser.LogOnDetails LogOnDetails { get; set; } = new SteamUser.LogOnDetails();
-        public SteamClient SteamClient { get; } = new SteamClient();
-        public SteamFriends SteamFriends { get; }
-        public BotCookieManager CookieManager { get; }
 
         public BotInstance(IServiceConsumer<ISteamBotCoordinator> coordinator, ILogProvider logProvider,
             BotCookieManager cookieManager, MqClientProvider mqClientProvider)
@@ -64,8 +57,24 @@ namespace Keylol.SteamBot
             SteamFriends = SteamClient.GetHandler<SteamFriends>();
         }
 
+        public string Id { get; set; }
+        public int SequenceNumber { get; set; }
+        public SteamUser.LogOnDetails LogOnDetails { get; set; } = new SteamUser.LogOnDetails();
+        public SteamClient SteamClient { get; } = new SteamClient();
+        public SteamFriends SteamFriends { get; }
+        public BotCookieManager CookieManager { get; }
+
         /// <summary>
-        /// 启动机器人实例
+        ///     停止机器人实例，并通知协调器撤销分配
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     启动机器人实例
         /// </summary>
         /// <param name="startWait">是否等待三秒后再启动，默认 <c>false</c></param>
         public void Start(bool startWait = false)
@@ -113,7 +122,7 @@ namespace Keylol.SteamBot
 
             _mqChannel = _mqClientProvider.CreateModel();
             _mqChannel.BasicQos(0, 5, false);
-            var queueName = $"{MqClientProvider.SteamBotDelayedActionQueue}.{Id}";
+            var queueName = MqClientProvider.SteamBotDelayedActionQueue(Id);
             _mqChannel.QueueDeclare(queueName, true, false, false, null);
             _mqChannel.QueueBind(queueName, MqClientProvider.DelayedMessageExchange, queueName);
             var consumer = new EventingBasicConsumer(_mqChannel);
@@ -122,7 +131,7 @@ namespace Keylol.SteamBot
         }
 
         /// <summary>
-        /// 重启机器人实例
+        ///     重启机器人实例
         /// </summary>
         public void Restart()
         {
@@ -131,7 +140,7 @@ namespace Keylol.SteamBot
         }
 
         /// <summary>
-        /// 停止机器人实例
+        ///     停止机器人实例
         /// </summary>
         public void Stop()
         {
@@ -223,6 +232,17 @@ namespace Keylol.SteamBot
                 _mqChannel.BasicNack(basicDeliverEventArgs.DeliveryTag, false, false);
                 _logger.Fatal($"#{SequenceNumber} Unhandled MQ consumer exception.", e);
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            if (disposing)
+            {
+                CookieManager.Dispose();
+                Stop();
+            }
+            _disposed = true;
         }
 
         #region SteamClient Callbacks
@@ -417,25 +437,5 @@ namespace Keylol.SteamBot
         }
 
         #endregion
-
-        /// <summary>
-        /// 停止机器人实例，并通知协调器撤销分配
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-            if (disposing)
-            {
-                CookieManager.Dispose();
-                Stop();
-            }
-            _disposed = true;
-        }
     }
 }
