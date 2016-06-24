@@ -83,7 +83,8 @@ namespace Keylol.States.Shared
                                     PointAvatarImage = article.TargetPoint.AvatarImage,
                                     PointType = article.TargetPoint.Type,
                                     PointChineseName = article.TargetPoint.ChineseName,
-                                    PointEnglishName = article.TargetPoint.EnglishName
+                                    PointEnglishName = article.TargetPoint.EnglishName,
+                                    PointSteamAppId = article.TargetPoint.SteamAppId
                                 }).SingleOrDefaultAsync();
                             if (a == null || a.Archived != ArchivedState.None || (!ignoreRejected && a.Rejected))
                                 continue;
@@ -116,7 +117,11 @@ namespace Keylol.States.Shared
                                 IdCode = a.PointIdCode,
                                 AvatarImage = a.PointAvatarImage,
                                 ChineseName = a.PointChineseName,
-                                EnglishName = a.PointEnglishName
+                                EnglishName = a.PointEnglishName,
+                                InLibrary = string.IsNullOrWhiteSpace(currentUserId) || a.PointSteamAppId == null
+                                    ? (bool?) null
+                                    : await
+                                        cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, a.PointSteamAppId.Value)
                             });
                             break;
                         }
@@ -144,7 +149,8 @@ namespace Keylol.States.Shared
                                     PointAvatarImage = activity.TargetPoint.AvatarImage,
                                     PointType = activity.TargetPoint.Type,
                                     PointChineseName = activity.TargetPoint.ChineseName,
-                                    PointEnglishName = activity.TargetPoint.EnglishName
+                                    PointEnglishName = activity.TargetPoint.EnglishName,
+                                    PointSteamAppId = activity.TargetPoint.SteamAppId
                                 }).SingleOrDefaultAsync();
                             if (a == null || a.Archived != ArchivedState.None || (!ignoreRejected && a.Rejected))
                                 continue;
@@ -179,7 +185,11 @@ namespace Keylol.States.Shared
                                 IdCode = a.PointIdCode,
                                 AvatarImage = a.PointAvatarImage,
                                 ChineseName = a.PointChineseName,
-                                EnglishName = a.PointEnglishName
+                                EnglishName = a.PointEnglishName,
+                                InLibrary = string.IsNullOrWhiteSpace(currentUserId) || a.PointSteamAppId == null
+                                    ? (bool?)null
+                                    : await
+                                        cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, a.PointSteamAppId.Value)
                             });
                             break;
                         }

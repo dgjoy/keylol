@@ -79,19 +79,27 @@ namespace Keylol.States.Entrance.Discovery
         public static async Task<SlideshowEntry> GetReference(string link, [Injected] KeylolDbContext dbContext)
         {
             var result = new SlideshowEntry();
-            var match = Regex.Match(link, @"^https?:\/\/.+\.keylol\.com\/article\/(.+)\/(\d+)$");
+            var match = Regex.Match(link, @"^https?:\/\/.+\.keylol\.com(?::\d+)?\/article\/(.+)\/(\d+)$");
             if (!match.Success)
                 return result;
             var idCode = match.Groups[1].Value;
             var sidForAuthor = int.Parse(match.Groups[2].Value);
-            var article = await dbContext.Articles.Include(a => a.Author)
+            var article = await dbContext.Articles
                 .Where(a => a.Author.IdCode == idCode && a.SidForAuthor == sidForAuthor)
+                .Select(a => new
+                {
+                    a.Title,
+                    a.Subtitle,
+                    AuthorUserName = a.Author.UserName,
+                    a.PublishTime,
+                    a.CoverImage
+                })
                 .SingleOrDefaultAsync();
             if (article == null)
                 return result;
             result.Title = article.Title;
             result.Subtitle = article.Subtitle;
-            result.Author = article.Author.UserName;
+            result.Author = article.AuthorUserName;
             result.Date = article.PublishTime.Date.ToString("M月d日");
             result.BackgroundImage = article.CoverImage;
             return result;

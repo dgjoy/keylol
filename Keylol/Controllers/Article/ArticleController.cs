@@ -53,7 +53,8 @@ namespace Keylol.Controllers.Article
         /// <returns>净化后的 HTML 代码</returns>
         public static string SanitizeRichText(string html)
         {
-            Config.HtmlEncoder = new HtmlEncoderMinimum();
+            Config.HtmlEncoder = new HtmlEncoderNone();
+            Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
             var sanitizer = new HtmlSanitizer(
                 new[]
                 {

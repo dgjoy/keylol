@@ -79,6 +79,7 @@ namespace Keylol.States.Aggregation.Point.Frontpage
             {
                 result.Add(new BriefReview
                 {
+                    Id = a.Id,
                     AuthorIdCode = a.AuthorIdCode,
                     AuthorAvatarImage = a.AuthorAvatarImage,
                     AuthorUserName = a.AuthorUserName,
@@ -108,6 +109,11 @@ namespace Keylol.States.Aggregation.Point.Frontpage
     /// </summary>
     public class BriefReview
     {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// 作者识别码
         /// </summary>

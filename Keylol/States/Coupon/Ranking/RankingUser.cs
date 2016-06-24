@@ -72,7 +72,10 @@ namespace Keylol.States.Coupon.Ranking
                         IdCode = g.User.IdCode,
                         AvatarImage = g.User.AvatarImage,
                         UserName = g.User.UserName,
-                        GamerTag = g.User.GamerTag
+                        GamerTag = g.User.GamerTag,
+                        IsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                            ? (bool?) null
+                            : await cachedData.Users.IsFriendAsync(currentUserId, g.User.Id)
                     },
                     Coupon = g.User.Coupon,
                     LikeCount = await cachedData.Likes.GetUserLikeCountAsync(g.User.Id)

@@ -72,7 +72,14 @@ namespace Keylol.States.Aggregation.User.People
                             GamerTag = u.GamerTag,
                             ArticleCount = u.ArticleCount,
                             ActivityCount = u.ActivityCount,
-                            LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id)
+                            LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id),
+                            Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                                ? (bool?) null
+                                : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, u.Id,
+                                    SubscriptionTargetType.User),
+                            IsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                                ? (bool?) null
+                                : await cachedData.Users.IsFriendAsync(currentUserId, u.Id)
                         });
                     }
                     return new Tuple<UserEntryList, int>(result,
@@ -109,7 +116,14 @@ namespace Keylol.States.Aggregation.User.People
                             GamerTag = u.GamerTag,
                             ArticleCount = u.ArticleCount,
                             ActivityCount = u.ActivityCount,
-                            LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id)
+                            LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id),
+                            Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                                ? (bool?) null
+                                : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, u.Id,
+                                    SubscriptionTargetType.User),
+                            IsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                                ? (bool?) null
+                                : await cachedData.Users.IsFriendAsync(currentUserId, u.Id)
                         });
                     }
                     var count = await cachedData.Subscriptions.GetSubscribedUserCountAsync(userId);
@@ -146,7 +160,14 @@ namespace Keylol.States.Aggregation.User.People
                             GamerTag = u.GamerTag,
                             ArticleCount = u.ArticleCount,
                             ActivityCount = u.ActivityCount,
-                            LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id)
+                            LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id),
+                            Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                                ? (bool?) null
+                                : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, u.Id,
+                                    SubscriptionTargetType.User),
+                            IsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                                ? (bool?) null
+                                : await cachedData.Users.IsFriendAsync(currentUserId, u.Id)
                         });
                     }
                     var count =

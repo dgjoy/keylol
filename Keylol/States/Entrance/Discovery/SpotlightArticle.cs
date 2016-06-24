@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.StateTreeManager;
 using Keylol.Utilities;
 using Newtonsoft.Json;
 
@@ -42,6 +45,7 @@ namespace Keylol.States.Entrance.Discovery
                 orderby feed.Id descending
                 select new
                 {
+                    article.Id,
                     FeedId = feed.Id,
                     FeedProperties = feed.Properties,
                     article.AuthorId,
@@ -68,6 +72,7 @@ namespace Keylol.States.Entrance.Discovery
                 var p = JsonConvert.DeserializeObject<SpotlightArticleStream.FeedProperties>(a.FeedProperties);
                 result.Add(new SpotlightArticle
                 {
+                    Id = a.Id,
                     FeedId = a.FeedId,
                     AuthorIdCode = a.AuthorIdCode,
                     AuthorAvatarImage = a.AuthorAvatarImage,
@@ -92,6 +97,47 @@ namespace Keylol.States.Entrance.Discovery
             }
             return result;
         }
+
+        /// <summary>
+        /// 获取推送参考
+        /// </summary>
+        /// <param name="link">文章链接</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <returns><see cref="SpotlightArticle"/></returns>
+        public static async Task<SpotlightArticle> GetReference(string link, [Injected] KeylolDbContext dbContext)
+        {
+            var result = new SpotlightArticle();
+            var match = Regex.Match(link, @"^https?:\/\/.+\.keylol\.com(?::\d+)?\/article\/(.+)\/(\d+)$");
+            if (!match.Success)
+                return result;
+            var idCode = match.Groups[1].Value;
+            var sidForAuthor = int.Parse(match.Groups[2].Value);
+            var article = await dbContext.Articles
+                .Where(a => a.Author.IdCode == idCode && a.SidForAuthor == sidForAuthor)
+                .Select(a => new
+                {
+                    a.Id,
+                    a.Title,
+                    a.Subtitle,
+                    AuthorIdCode = a.Author.IdCode,
+                    PointIdCode = a.TargetPoint.IdCode
+                })
+                .SingleOrDefaultAsync();
+            if (article == null)
+                return result;
+            result.Id = article.Id;
+            result.Title = article.Title;
+            result.Subtitle = article.Subtitle;
+            result.AuthorIdCode = article.AuthorIdCode;
+            result.PointIdCode = article.PointIdCode;
+            return result;
+        }
+
+        /// <summary>
+        /// 推送参考
+        /// </summary>
+        [Authorize(Roles = KeylolRoles.Operator)]
+        public SpotlightArticle Reference { get; set; }
     }
 
     /// <summary>
@@ -99,6 +145,11 @@ namespace Keylol.States.Entrance.Discovery
     /// </summary>
     public class SpotlightArticle
     {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// Feed ID
         /// </summary>
@@ -127,12 +178,12 @@ namespace Keylol.States.Entrance.Discovery
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime PublishTime { get; set; }
+        public DateTime? PublishTime { get; set; }
 
         /// <summary>
         /// 作者名下序号
         /// </summary>
-        public int SidForAuthor { get; set; }
+        public int? SidForAuthor { get; set; }
 
         /// <summary>
         /// 标题
@@ -162,7 +213,7 @@ namespace Keylol.States.Entrance.Discovery
         /// <summary>
         /// 收稿据点类型
         /// </summary>
-        public PointType PointType { get; set; }
+        public PointType? PointType { get; set; }
 
         /// <summary>
         /// 收稿据点中文名

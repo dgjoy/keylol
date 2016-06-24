@@ -174,6 +174,7 @@ namespace Keylol.Controllers.User
                                 Properties = JsonConvert.SerializeObject(properties)
                             });
                         }
+                        await dbContext.SaveChangesAsync();
                     }
                 }
             });

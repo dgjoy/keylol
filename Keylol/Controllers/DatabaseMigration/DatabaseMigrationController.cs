@@ -449,7 +449,7 @@ namespace Keylol.Controllers.DatabaseMigration
         }
 
         /// <summary>
-        /// 文章封面图填充，每次调用填充 200 篇文章
+        /// 文章封面图填充，内容图片重缩放，每次调用填充 200 篇文章
         /// </summary>
         [Route("migrate-6")]
         [HttpPost]
@@ -457,6 +457,7 @@ namespace Keylol.Controllers.DatabaseMigration
         {
             var articles = await _dbContext.Articles.Include(a => a.TargetPoint)
                 .Where(a => a.CoverImage == string.Empty).Take(200).ToListAsync();
+            Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
             foreach (var article in articles)
             {
                 article.CoverImage = article.TargetPoint.HeaderImage;
@@ -485,6 +486,20 @@ namespace Keylol.Controllers.DatabaseMigration
                             throw new ArgumentOutOfRangeException();
                     }
                 }
+                var dom = CQ.Create(article.Content);
+                foreach (var img in dom["img"])
+                {
+                    string oldWidthText;
+                    if (!img.TryGetAttribute("width", out oldWidthText)) continue;
+                    var oldWidth = int.Parse(oldWidthText);
+                    if (oldWidth <= 670) continue;
+                    img.SetAttribute("width", "670");
+                    string oldheightText;
+                    if (!img.TryGetAttribute("height", out oldheightText)) continue;
+                    var oldHeight = int.Parse(oldheightText);
+                    img.SetAttribute("height", ((int) ((double) oldHeight*670/oldWidth)).ToString());
+                }
+                article.Content = dom.Render();
             }
             await _dbContext.SaveChangesAsync();
             return Ok("成功");

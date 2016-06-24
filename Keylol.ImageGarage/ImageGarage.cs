@@ -36,7 +36,7 @@ namespace Keylol.ImageGarage
             _logger = logProvider.Logger;
             _mqChannel = mqClientProvider.CreateModel();
             _coordinator = coordinator;
-            Config.HtmlEncoder = new HtmlEncoderMinimum();
+            Config.HtmlEncoder = new HtmlEncoderNone();
 
             _heartbeatTimer.Elapsed += (sender, args) =>
             {
@@ -132,6 +132,7 @@ namespace Keylol.ImageGarage
                             if (!string.IsNullOrWhiteSpace(url))
                                 coverImage = url;
                         }
+                        content = dom.Render();
                         switch (requestDto.ContentType)
                         {
                             case ImageGarageRequestContentType.Article:

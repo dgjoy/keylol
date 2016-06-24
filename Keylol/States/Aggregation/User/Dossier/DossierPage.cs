@@ -42,7 +42,8 @@ namespace Keylol.States.Aggregation.User.Dossier
         public static async Task<DossierPage> CreateAsync(KeylolUser user, string currentUserId,
             KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
         {
-            var subscribedPoints = await SubscribedPointList.CreateAsync(user.Id, 1, 3, true, dbContext);
+            var subscribedPoints =
+                await SubscribedPointList.CreateAsync(currentUserId, user.Id, 1, 3, true, dbContext, cachedData);
             var selectedArticles =
                 await SelectedArticleList.CreateAsync(user.Id, 1, 8, true, currentUserId, dbContext, cachedData);
             var dossierPage = new DossierPage
