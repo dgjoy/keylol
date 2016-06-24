@@ -39,6 +39,7 @@ namespace Keylol.States.Entrance.Points
                     {
                         point.Id,
                         point.IdCode,
+                        point.HeaderImage,
                         point.ThumbnailImage,
                         point.ChineseName,
                         point.EnglishName,
@@ -55,6 +56,7 @@ namespace Keylol.States.Entrance.Points
                     {
                         point.Id,
                         point.IdCode,
+                        point.HeaderImage,
                         point.ThumbnailImage,
                         point.ChineseName,
                         point.EnglishName,
@@ -75,10 +77,10 @@ namespace Keylol.States.Entrance.Points
                     TwoWeekPlayedTime = p.TwoWeekPlayedTime
                 });
             }
-            var firstRecord = result.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.ThumbnailImage));
+            var firstRecord = queryResult.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.HeaderImage));
             return new Tuple<RecentPlayedPointList, string>(
                 result,
-                firstRecord?.ThumbnailImage);
+                firstRecord?.HeaderImage);
         }
     }
 

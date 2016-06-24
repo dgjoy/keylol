@@ -11,6 +11,7 @@ using Keylol.Models;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.Point
@@ -206,7 +207,8 @@ namespace Keylol.Controllers.Point
                         : !Helpers.IsTrustedUrl(m.Link, false)))
                         return this.BadRequest(nameof(requestDto), nameof(requestDto.Media), Errors.Invalid);
                     // 序列化成 JSON 存储数据库
-                    point.Media = JsonConvert.SerializeObject(media);
+                    point.Media = JsonConvert.SerializeObject(media,
+                        new JsonSerializerSettings {Converters = new List<JsonConverter> {new StringEnumConverter()}});
                 }
 
                 if (requestDto.TitleCoverImage != null && Helpers.IsTrustedUrl(requestDto.TitleCoverImage))

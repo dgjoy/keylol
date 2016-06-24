@@ -225,6 +225,24 @@ namespace Keylol.Utilities
             var skip = recordsPerPage*(page - 1);
             return source.Skip(() => skip).Take(() => recordsPerPage);
         }
+
+        /// <summary>
+        /// Distinct using the specified key selector.
+        /// </summary>
+        /// <param name="source">Source collection</param>
+        /// <param name="keySelector">Key selector</param>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector)
+        {
+            var seenKeys = new HashSet<TKey>();
+            foreach (var element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Models.DTO;
 
@@ -51,7 +52,8 @@ namespace Keylol.Provider.CachedDataProvider
             var ratings = new PointRatingsDto();
             var userRatings = new Dictionary<string, UserRating>();
             foreach (var ratingEntry in await _dbContext.Articles
-                .Where(a => a.TargetPointId == pointId && a.Rating != null)
+                .Where(a => a.TargetPointId == pointId && a.Rating != null &&
+                            a.Archived == ArchivedState.None && a.Rejected == false)
                 .Select(a => new {a.AuthorId, a.Rating})
                 .Union(_dbContext.Activities
                     .Where(a => a.TargetPointId == pointId && a.Rating != null)

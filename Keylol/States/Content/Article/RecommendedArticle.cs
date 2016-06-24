@@ -2,8 +2,10 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Utilities;
 
 namespace Keylol.States.Content.Article
 {
@@ -12,6 +14,10 @@ namespace Keylol.States.Content.Article
     /// </summary>
     public class RecommendedArticleList : List<RecommendedArticle>
     {
+        private RecommendedArticleList([NotNull] IEnumerable<RecommendedArticle> collection) : base(collection)
+        {
+        }
+
         private RecommendedArticleList(int capacity) : base(capacity)
         {
         }
@@ -101,6 +107,7 @@ namespace Keylol.States.Content.Article
                     Subtitle = a.Subtitle
                 });
 
+            result = new RecommendedArticleList(result.DistinctBy(aa => new {aa.AuthorIdCode, aa.SidForAuthor}));
             // 广场收稿箱中最近的文章
             if (result.Count < 3)
             {

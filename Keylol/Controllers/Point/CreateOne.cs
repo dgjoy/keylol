@@ -277,6 +277,10 @@ namespace Keylol.Controllers.Point
                                     Converters = new List<JsonConverter> {new StringEnumConverter()}
                                 });
 
+                            // 由于网络请求耗时较多，这里再次检测存在性
+                            if (await _dbContext.Points.AnyAsync(p => p.SteamAppId == requestDto.SteamAppId))
+                                return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamAppId),
+                                    Errors.Duplicate);
                             _dbContext.Points.Add(point);
                             await _dbContext.SaveChangesAsync();
                             pointId = point.Id;
