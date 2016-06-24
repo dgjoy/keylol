@@ -77,7 +77,6 @@ namespace Keylol.States.Content.Article
                     .GetSubscribedUserCountAsync(article.AuthorId),
                 SubscriberCount = await cachedData.Subscriptions
                     .GetSubscriberCountAsync(article.AuthorId, SubscriptionTargetType.User),
-                SteamProfileName = article.Author.SteamProfileName,
                 IsFriend = string.IsNullOrWhiteSpace(currentUserId)
                     ? (bool?) null
                     : await cachedData.Users.IsFriendAsync(currentUserId, article.AuthorId),

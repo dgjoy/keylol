@@ -68,7 +68,7 @@ namespace Keylol.States
             try
             {
                 var queryResult = await dbContext.Points.SqlQuery(
-                    @"SELECT TOP(4) * FROM [dbo].[Points] AS [t1] INNER JOIN (
+                    @"SELECT TOP(5) * FROM [dbo].[Points] AS [t1] INNER JOIN (
                         SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
 		                    SELECT * FROM CONTAINSTABLE([dbo].[Points], ([EnglishName], [EnglishAliases]), {0})
 		                    UNION ALL

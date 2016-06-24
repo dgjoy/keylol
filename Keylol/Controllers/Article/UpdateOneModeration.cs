@@ -43,12 +43,7 @@ namespace Keylol.Controllers.Article
                         if (article.AuthorId != operatorId)
                             return Unauthorized();
                         break;
-
-                    case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
-                        if (article.AuthorId != operatorId || requestDto.Value)
-                            return Unauthorized();
-                        break;
-
+                        
                     default:
                         return Unauthorized();
                 }
@@ -107,7 +102,7 @@ namespace Keylol.Controllers.Article
                             steamNotityText = $"文章《{article.Title}》已被退稿，不会再出现于其他用户或据点的轨道上，这篇文章后续的投稿也将被自动回绝。";
                             break;
 
-                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
+                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlighted:
                             missive.Type = MessageType.Spotlight;
                             steamNotityText =
                                 $"感谢你对其乐社区质量的认可与贡献！你的文章《{article.Title}》已被推荐为萃选文章。";
@@ -135,7 +130,7 @@ namespace Keylol.Controllers.Article
                             steamNotityText = $"文章《{article.Title}》的退稿限制已被撤销，其他用户首页的轨道将不再隐藏这篇文章，后续的投稿也不再会被其他据点回绝。";
                             break;
 
-                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlight:
+                        case ArticleUpdateOneModerationRequestDto.ArticleProperty.Spotlighted:
                             missive.Type = MessageType.SpotlightCancel;
                             break;
 
@@ -180,7 +175,7 @@ namespace Keylol.Controllers.Article
             /// <summary>
             ///     萃选状态
             /// </summary>
-            Spotlight,
+            Spotlighted,
 
             /// <summary>
             ///     警告状态

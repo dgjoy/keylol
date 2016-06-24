@@ -109,7 +109,6 @@ namespace Keylol.States.Shared
                             card.Liked = string.IsNullOrWhiteSpace(currentUserId)
                                 ? (bool?) null
                                 : await cachedData.Likes.IsLikedAsync(currentUserId, feed.Entry, LikeTargetType.Article);
-                            card.CommentCount = await cachedData.ArticleComments.GetArticleCommentCountAsync(feed.Entry);
                             targetPointId = a.PointId;
                             card.AttachedPoints.Add(new PointBasicInfo
                             {

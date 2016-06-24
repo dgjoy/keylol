@@ -237,6 +237,11 @@ namespace Keylol.States.Content.Activity
         public int SidForActivity { get; set; }
 
         /// <summary>
+        /// 被回复的评论
+        /// </summary>
+        public List<ActivityComment> ReplyToComments { get; set; }
+
+        /// <summary>
         /// 内容
         /// </summary>
         public string Content { get; set; }

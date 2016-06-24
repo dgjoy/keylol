@@ -223,7 +223,6 @@ namespace Keylol.Controllers.User
             /// <summary>
             ///     邀请人识别码
             /// </summary>
-            [RegularExpression(Constants.IdCodeConstraint)]
             public string InviterIdCode { get; set; }
         }
     }

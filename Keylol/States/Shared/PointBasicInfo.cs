@@ -100,24 +100,24 @@ namespace Keylol.States.Shared
                 basicInfo.SonkwoProductId = point.SonkwoProductId;
                 basicInfo.SonkwoPrice = point.SonkwoPrice;
                 basicInfo.SonkwoDiscountedPrice = point.SonkwoDiscountedPrice;
-                basicInfo.UplayLink = point.UplayLink;
-                basicInfo.UplayPrice = point.UplayPrice;
-                basicInfo.XboxLink = point.XboxLink;
-                basicInfo.XboxPrice = point.XboxPrice;
-                basicInfo.PlayStationLink = point.PlayStationLink;
-                basicInfo.PlayStationPrice = point.PlayStationPrice;
-                basicInfo.OriginLink = point.OriginLink;
-                basicInfo.OriginPrice = point.OriginPrice;
-                basicInfo.WindowsStoreLink = point.WindowsStoreLink;
-                basicInfo.WindowsStorePrice = point.WindowsStorePrice;
-                basicInfo.AppStoreLink = point.AppStoreLink;
-                basicInfo.AppStorePrice = point.AppStorePrice;
-                basicInfo.GooglePlayLink = point.GooglePlayLink;
-                basicInfo.GooglePlayPrice = point.GooglePlayPrice;
-                basicInfo.GogLink = point.GogLink;
-                basicInfo.GogPrice = point.GogPrice;
-                basicInfo.BattleNetLink = point.BattleNetLink;
-                basicInfo.BattleNetPrice = point.BattleNetPrice;
+                basicInfo.UplayLink = EmptyToNull(point.UplayLink);
+                basicInfo.UplayPrice = EmptyToNull(point.UplayPrice);
+                basicInfo.XboxLink = EmptyToNull(point.XboxLink);
+                basicInfo.XboxPrice = EmptyToNull(point.XboxPrice);
+                basicInfo.PlayStationLink = EmptyToNull(point.PlayStationLink);
+                basicInfo.PlayStationPrice = EmptyToNull(point.PlayStationPrice);
+                basicInfo.OriginLink = EmptyToNull(point.OriginLink);
+                basicInfo.OriginPrice = EmptyToNull(point.OriginPrice);
+                basicInfo.WindowsStoreLink = EmptyToNull(point.WindowsStoreLink);
+                basicInfo.WindowsStorePrice = EmptyToNull(point.WindowsStorePrice);
+                basicInfo.AppStoreLink = EmptyToNull(point.AppStoreLink);
+                basicInfo.AppStorePrice = EmptyToNull(point.AppStorePrice);
+                basicInfo.GooglePlayLink = EmptyToNull(point.GooglePlayLink);
+                basicInfo.GooglePlayPrice = EmptyToNull(point.GooglePlayPrice);
+                basicInfo.GogLink = EmptyToNull(point.GogLink);
+                basicInfo.GogPrice = EmptyToNull(point.GogPrice);
+                basicInfo.BattleNetLink = EmptyToNull(point.BattleNetLink);
+                basicInfo.BattleNetPrice = EmptyToNull(point.BattleNetPrice);
 
                 #endregion
             }
@@ -162,6 +162,11 @@ namespace Keylol.States.Shared
                     : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, point.SteamAppId.Value);
             }
             return basicInfo;
+        }
+
+        private static string EmptyToNull(string text)
+        {
+            return string.IsNullOrWhiteSpace(text) ? null : text;
         }
 
         /// <summary>

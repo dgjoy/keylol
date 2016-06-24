@@ -43,6 +43,8 @@ namespace Keylol.Controllers.Point
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.HeaderImage),
                     Errors.AvatarImageUntrusted);
 
+            string pointId;
+
             switch (requestDto.Type)
             {
                 case PointCreateOneRequestDto.CreateType.SteamGame:
@@ -277,6 +279,7 @@ namespace Keylol.Controllers.Point
 
                             _dbContext.Points.Add(point);
                             await _dbContext.SaveChangesAsync();
+                            pointId = point.Id;
 
                             var categoryPointsMap = new Dictionary<string, string>();
                             var vendorPointsMap = new Dictionary<string, string>();
@@ -422,6 +425,7 @@ namespace Keylol.Controllers.Point
                         return this.BadRequest(nameof(requestDto), nameof(requestDto.PlatformPoints), Errors.Required);
                     _dbContext.PointRelationships.AddRange(platforms);
                     await _dbContext.SaveChangesAsync();
+                    pointId = point.Id;
                     break;
                 }
 
@@ -443,6 +447,7 @@ namespace Keylol.Controllers.Point
 
                     _dbContext.Points.Add(point);
                     await _dbContext.SaveChangesAsync();
+                    pointId = point.Id;
                     break;
                 }
 
@@ -462,6 +467,7 @@ namespace Keylol.Controllers.Point
 
                     _dbContext.Points.Add(point);
                     await _dbContext.SaveChangesAsync();
+                    pointId = point.Id;
                     break;
                 }
 
@@ -481,13 +487,14 @@ namespace Keylol.Controllers.Point
 
                     _dbContext.Points.Add(point);
                     await _dbContext.SaveChangesAsync();
+                    pointId = point.Id;
                     break;
                 }
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return Ok();
+            return Ok(pointId);
         }
 
         /// <summary>

@@ -47,7 +47,17 @@ namespace Keylol.States.PostOffice
                 condition = m => m.ReceiverId == currentUserId && (int) m.Type >= 200 && (int) m.Type <= 299;
             else throw new ArgumentOutOfRangeException(nameof(pageType));
 
-            var messages = await dbContext.Messages.IncludeRelated()
+            var messages = await dbContext.Messages.Include(m => m.Article)
+                .Include(m => m.Article.Author)
+                .Include(m => m.Activity)
+                .Include(m => m.Activity.Author)
+                .Include(m => m.Operator)
+                .Include(m => m.ArticleComment)
+                .Include(m => m.ArticleComment.Article)
+                .Include(m => m.ArticleComment.Article.Author)
+                .Include(m => m.ActivityComment)
+                .Include(m => m.ActivityComment.Activity)
+                .Include(m => m.ActivityComment.Activity.Author)
                 .Where(condition)
                 .OrderByDescending(m => m.Unread)
                 .ThenByDescending(m => m.Sid)
@@ -86,6 +96,8 @@ namespace Keylol.States.PostOffice
                 }
                 else if (m.ActivityId != null)
                 {
+                    item.ActivityAuthorIdCode = m.Activity.Author.IdCode;
+                    item.ActivitySidForAuthor = m.Activity.SidForAuthor;
                     item.ActivityContent = CollapseActivityContent(m.Activity);
                 }
                 else if (m.ArticleCommentId != null)
@@ -100,8 +112,8 @@ namespace Keylol.States.PostOffice
                 {
                     item.CommentContent = CollapseCommentContent(m.ActivityComment.Content);
                     item.CommentSidForParent = m.ActivityComment.SidForActivity;
-                    item.ArticleAuthorIdCode = m.ActivityComment.Activity.Author.IdCode;
-                    item.ArticleSidForAuthor = m.ActivityComment.Activity.SidForAuthor;
+                    item.ActivityAuthorIdCode = m.ActivityComment.Activity.Author.IdCode;
+                    item.ActivitySidForAuthor = m.ActivityComment.Activity.SidForAuthor;
                     item.ActivityContent = CollapseActivityContent(m.ActivityComment.Activity);
                 }
 
@@ -198,6 +210,16 @@ namespace Keylol.States.PostOffice
         /// 相关文章标题
         /// </summary>
         public string ArticleTitle { get; set; }
+
+        /// <summary>
+        /// 相关动态作者识别码
+        /// </summary>
+        public string ActivityAuthorIdCode { get; set; }
+
+        /// <summary>
+        /// 相关动态在作者名下的序号
+        /// </summary>
+        public int? ActivitySidForAuthor { get; set; }
 
         /// <summary>
         /// 相关动态内容
