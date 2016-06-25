@@ -228,8 +228,9 @@ namespace Keylol.PushHub
                             var currentReason = properties.Reasons[i];
                             var parts = currentReason.Split(':');
                             if (parts.Length != 2 || parts[0] != "like") continue;
+                            var currentSubscriberId = parts[1];
                             var currentSubscriberCount = await dbContext.Subscriptions.LongCountAsync(
-                                s => s.TargetId == parts[1] && s.TargetType == SubscriptionTargetType.User);
+                                s => s.TargetId == currentSubscriberId && s.TargetType == SubscriptionTargetType.User);
                             var newSubscriberCount = await dbContext.Subscriptions.LongCountAsync(
                                 s => s.TargetId == likeOperatorId && s.TargetType == SubscriptionTargetType.User);
                             if (newSubscriberCount >= currentSubscriberCount)
