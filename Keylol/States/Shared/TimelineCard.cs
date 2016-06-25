@@ -186,7 +186,7 @@ namespace Keylol.States.Shared
                                 ChineseName = a.PointChineseName,
                                 EnglishName = a.PointEnglishName,
                                 InLibrary = string.IsNullOrWhiteSpace(currentUserId) || a.PointSteamAppId == null
-                                    ? (bool?)null
+                                    ? (bool?) null
                                     : await
                                         cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, a.PointSteamAppId.Value)
                             });
@@ -199,27 +199,38 @@ namespace Keylol.States.Shared
                     var properties = Helpers.SafeDeserialize<SubscriptionStream.FeedProperties>(feed.Properties);
                     if (properties?.Reasons != null)
                     {
-                        var splittedReasons = properties.Reasons.Select(r => r.Split(':')).ToList();
-                        var likedByUserId = splittedReasons.Where(p => p.Length == 2 && p[0] == "like")
-                            .Select(p => p[1]).FirstOrDefault();
-                        if (likedByUserId != null)
+                        var pointIds = new List<string>();
+                        foreach (var reason in properties.Reasons)
                         {
-                            var user = await dbContext.Users.Where(u => u.Id == likedByUserId).Select(u => new
+                            if (reason == "like")
                             {
-                                u.IdCode,
-                                u.AvatarImage,
-                                u.UserName
-                            }).SingleAsync();
-                            card.LikedByUser = new UserBasicInfo
+                                card.LikedByThisUser = true;
+                                continue;
+                            }
+                            var parts = reason.Split(':');
+                            if (parts.Length != 2) continue;
+                            if (parts[0] == "like")
                             {
-                                IdCode = user.IdCode,
-                                AvatarImage = user.AvatarImage,
-                                UserName = user.UserName
-                            };
+                                var likedByUserId = parts[1];
+                                if (likedByUserId == null) continue;
+                                var user = await dbContext.Users.Where(u => u.Id == likedByUserId).Select(u => new
+                                {
+                                    u.IdCode,
+                                    u.AvatarImage,
+                                    u.UserName
+                                }).SingleAsync();
+                                card.LikedByUser = new UserBasicInfo
+                                {
+                                    IdCode = user.IdCode,
+                                    AvatarImage = user.AvatarImage,
+                                    UserName = user.UserName
+                                };
+                            }
+                            else if (parts[0] == "point" && parts[1] != targetPointId)
+                            {
+                                pointIds.Add(parts[1]);
+                            }
                         }
-                        var pointIds = splittedReasons
-                            .Where(p => p.Length == 2 && p[0] == "point" && p[1] != targetPointId)
-                            .Select(p => p[1]).ToList();
                         if (pointIds.Count > 0)
                             card.AttachedPoints.AddRange((await (from point in dbContext.Points
                                 where pointIds.Contains(point.Id)
@@ -292,6 +303,11 @@ namespace Keylol.States.Shared
         /// 认可的用户基本信息
         /// </summary>
         public UserBasicInfo LikedByUser { get; set; }
+
+        /// <summary>
+        /// 是否被当前用户认可
+        /// </summary>
+        public bool? LikedByThisUser { get; set; }
 
         /// <summary>
         /// 内容类型
