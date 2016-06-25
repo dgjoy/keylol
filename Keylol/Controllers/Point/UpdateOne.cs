@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
@@ -111,55 +112,55 @@ namespace Keylol.Controllers.Point
                 }
 
                 if (requestDto.UplayLink != null)
-                    point.UplayLink = requestDto.UplayLink;
+                    point.UplayLink = PrependHttpIfNeeded(requestDto.UplayLink);
 
                 if (requestDto.UplayPrice != null)
                     point.UplayPrice = requestDto.UplayPrice;
 
                 if (requestDto.XboxLink != null)
-                    point.XboxLink = requestDto.XboxLink;
+                    point.XboxLink = PrependHttpIfNeeded(requestDto.XboxLink);
 
                 if (requestDto.XboxPrice != null)
                     point.XboxPrice = requestDto.XboxPrice;
 
                 if (requestDto.PlayStationLink != null)
-                    point.PlayStationLink = requestDto.PlayStationLink;
+                    point.PlayStationLink = PrependHttpIfNeeded(requestDto.PlayStationLink);
 
                 if (requestDto.PlayStationPrice != null)
                     point.PlayStationPrice = requestDto.PlayStationPrice;
 
                 if (requestDto.OriginLink != null)
-                    point.OriginLink = requestDto.OriginLink;
+                    point.OriginLink = PrependHttpIfNeeded(requestDto.OriginLink);
 
                 if (requestDto.OriginPrice != null)
                     point.OriginPrice = requestDto.OriginPrice;
 
                 if (requestDto.WindowsStoreLink != null)
-                    point.WindowsStoreLink = requestDto.WindowsStoreLink;
+                    point.WindowsStoreLink = PrependHttpIfNeeded(requestDto.WindowsStoreLink);
 
                 if (requestDto.WindowsStorePrice != null)
                     point.WindowsStorePrice = requestDto.WindowsStorePrice;
 
                 if (requestDto.AppStoreLink != null)
-                    point.AppStoreLink = requestDto.AppStoreLink;
+                    point.AppStoreLink = PrependHttpIfNeeded(requestDto.AppStoreLink);
 
                 if (requestDto.AppStorePrice != null)
                     point.AppStorePrice = requestDto.AppStorePrice;
 
                 if (requestDto.GooglePlayLink != null)
-                    point.GooglePlayLink = requestDto.GooglePlayLink;
+                    point.GooglePlayLink = PrependHttpIfNeeded(requestDto.GooglePlayLink);
 
                 if (requestDto.GooglePlayPrice != null)
                     point.GooglePlayPrice = requestDto.GooglePlayPrice;
 
                 if (requestDto.GogLink != null)
-                    point.GogLink = requestDto.GogLink;
+                    point.GogLink = PrependHttpIfNeeded(requestDto.GogLink);
 
                 if (requestDto.GogPrice != null)
                     point.GogPrice = requestDto.GogPrice;
 
                 if (requestDto.BattleNetLink != null)
-                    point.BattleNetLink = requestDto.BattleNetLink;
+                    point.BattleNetLink = PrependHttpIfNeeded(requestDto.BattleNetLink);
 
                 if (requestDto.BattleNetPrice != null)
                     point.BattleNetPrice = requestDto.BattleNetPrice;
@@ -403,6 +404,11 @@ namespace Keylol.Controllers.Point
 
             await _dbContext.SaveChangesAsync();
             return Ok();
+        }
+
+        private static string PrependHttpIfNeeded(string url)
+        {
+            return Regex.IsMatch(url, @"^(https?:)?\/\/") ? url : $"http://{url}";
         }
 
         /// <summary>

@@ -58,15 +58,20 @@ namespace Keylol.Identity
 
             // UserName
 
-            if (user.UserName.Length < 3 || user.UserName.Length > 16)
-                return IdentityResult.Failed(Errors.UserNameInvalidLength);
-
-            if (!Regex.IsMatch(user.UserName, Constants.UserNameConstraint))
-                return IdentityResult.Failed(Errors.UserNameInvalidCharacter);
 
             var userNameOwner = await _userManager.FindByNameAsync(user.UserName);
-            if (userNameOwner != null && userNameOwner.Id != user.Id)
+            if (userNameOwner == null)
+            {
+                if (user.UserName.Length < 3 || user.UserName.Length > 16)
+                    return IdentityResult.Failed(Errors.UserNameInvalidLength);
+
+                if (!Regex.IsMatch(user.UserName, Constants.UserNameConstraint))
+                    return IdentityResult.Failed(Errors.UserNameInvalidCharacter);
+            }
+            else if (userNameOwner.Id != user.Id)
+            {
                 return IdentityResult.Failed(Errors.UserNameUsed);
+            }
 
             // Email
 
