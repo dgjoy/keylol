@@ -42,18 +42,18 @@ namespace Keylol.States.Entrance
             switch (targetPage)
             {
                 case EntrancePage.Auto:
-//                    if (string.IsNullOrWhiteSpace(currentUserId))
-//                    {
-//                        result.Discovery = await DiscoveryPage.CreateAsync(currentUserId, dbContext, cachedData);
-//                        result.Current = EntrancePage.Discovery;
-//                    }
-//                    else
-//                    {
-//                        result.Timeline = await TimelinePage.CreateAsync(currentUserId, dbContext, cachedData);
-//                        result.Current = EntrancePage.Timeline;
-//                    }
-                    result.Discovery = await DiscoveryPage.CreateAsync(currentUserId, dbContext, cachedData);
-                    result.Current = EntrancePage.Discovery;
+                    if (string.IsNullOrWhiteSpace(currentUserId))
+                    {
+                        result.Discovery = await DiscoveryPage.CreateAsync(currentUserId, dbContext, cachedData);
+                        result.Current = EntrancePage.Discovery;
+                    }
+                    else
+                    {
+                        result.Timeline = await TimelinePage.CreateAsync(currentUserId, dbContext, cachedData);
+                        result.Current = EntrancePage.Timeline;
+                    }
+//                    result.Discovery = await DiscoveryPage.CreateAsync(currentUserId, dbContext, cachedData);
+//                    result.Current = EntrancePage.Discovery;
                     break;
 
                 case EntrancePage.Discovery:
