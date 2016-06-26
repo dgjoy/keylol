@@ -198,6 +198,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Net.Http">
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="WebApiThrottle, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WebApiThrottle.1.4.3\lib\net45\WebApiThrottle.dll</HintPath>
       <Private>True</Private>
@@ -272,6 +273,7 @@
     <Compile Include="Provider\RedisProvider.cs" />
     <Compile Include="Provider\CachedDataProvider\CachedDataProvider.cs" />
     <Compile Include="Provider\SteamCrawlerProvider.cs" />
+    <Compile Include="Provider\SteamCnProvider.cs" />
     <Compile Include="Services\Contracts\IImageGarageCoordinator.cs" />
     <Compile Include="Services\Contracts\ISteamBotCoordinator.cs" />
     <Compile Include="Services\ImageGarageCoordinator.svc.cs">

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Keylol.Models;
 using Keylol.Provider;
 using Keylol.Utilities;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Keylol.Identity
@@ -97,6 +98,49 @@ namespace Keylol.Identity
             context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
         }
 
+        private async Task GrantSteamCnPassword(OAuthGrantCustomExtensionContext context)
+        {
+            var userName = context.Parameters["user_name"];
+            var uid = context.Parameters["uid"];
+            var password = context.Parameters["password"];
+            bool isUid;
+            if (!string.IsNullOrWhiteSpace(userName))
+            {
+                // 用户名登录
+                isUid = false;
+            }
+            else if (!string.IsNullOrWhiteSpace(uid))
+            {
+                // UID 登录
+                userName = uid;
+                isUid = true;
+            }
+            else
+            {
+                context.SetError(Errors.InvalidIdField);
+                return;
+            }
+            var steamCnUser = await SteamCnProvider.UserLoginAsync(userName, password, isUid);
+            if (steamCnUser == null || steamCnUser.Uid < -1)
+            {
+                context.SetError(Errors.InvalidPassword);
+                return;
+            }
+            if (steamCnUser.Uid == -1)
+            {
+                context.SetError(Errors.UserNonExistent);
+                return;
+            }
+            var userManager = Global.Container.GetInstance<KeylolUserManager>();
+            var user =
+                await userManager.FindAsync(new UserLoginInfo(KeylolLoginProviders.SteamCn, steamCnUser.Uid.ToString()));
+            if (user == null)
+            {
+                return;
+            }
+            context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));
+        }
+
         /// <summary>
         ///     Called when a request to the Token endpoint arrives with a "grant_type" of any other value. If the application
         ///     supports custom grant types
@@ -120,6 +164,10 @@ namespace Keylol.Identity
             else if (context.GrantType.Equals("one_time_token", StringComparison.OrdinalIgnoreCase))
             {
                 await GrantOneTimeToken(context);
+            }
+            else if (context.GrantType.Equals("steamcn_password", StringComparison.OrdinalIgnoreCase))
+            {
+                await GrantSteamCnPassword(context);
             }
         }
 
