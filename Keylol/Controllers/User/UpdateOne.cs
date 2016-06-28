@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Keylol.Identity;
 using Keylol.Models;
+using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Swashbuckle.Swagger.Annotations;
@@ -75,6 +76,34 @@ namespace Keylol.Controllers.User
                     }
                     return this.BadRequest(nameof(requestDto), errorPropertyName, passwordError);
                 }
+            }
+
+            if (requestDto.SteamCnUserName != null || requestDto.SteamCnUid != null)
+            {
+                var isUid = requestDto.SteamCnUserName == null;
+                var steamCnUser = await SteamCnProvider.UserLoginAsync(isUid
+                    ? requestDto.SteamCnUserName
+                    : requestDto.SteamCnUid, requestDto.SteamCnPassword, isUid);
+                if (steamCnUser == null || steamCnUser.Uid < -1)
+                {
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamCnPassword), Errors.Invalid);
+                }
+                if (steamCnUser.Uid == -1)
+                {
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.UserName), Errors.NonExistent);
+                }
+                if (await _userManager.FindAsync(new UserLoginInfo(KeylolLoginProviders.SteamCn,
+                    steamCnUser.Uid.ToString())) != null)
+                {
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.UserName), Errors.Duplicate);
+                }
+                foreach (var loginInfo in (await _userManager.GetLoginsAsync(user.Id))
+                    .Where(l => l.LoginProvider == KeylolLoginProviders.SteamCn))
+                {
+                    await _userManager.RemoveLoginAsync(user.Id, loginInfo);
+                }
+                await _userManager.AddLoginAsync(user.Id, new UserLoginInfo(KeylolLoginProviders.SteamCn,
+                    steamCnUser.Uid.ToString()));
             }
 
             if (requestDto.LockoutEnabled != null)
@@ -230,6 +259,21 @@ namespace Keylol.Controllers.User
             /// 新口令
             /// </summary>
             public string NewPassword { get; set; }
+
+            /// <summary>
+            /// SteamCN 用户名
+            /// </summary>
+            public string SteamCnUserName { get; set; }
+
+            /// <summary>
+            /// SteamCN UID
+            /// </summary>
+            public string SteamCnUid { get; set; }
+
+            /// <summary>
+            /// SteamCN 密码
+            /// </summary>
+            public string SteamCnPassword { get; set; }
 
             /// <summary>
             /// 登录保护
