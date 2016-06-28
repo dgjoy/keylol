@@ -216,6 +216,7 @@
     <Compile Include="Controllers\ArticleComment\UpdateOneModeration.cs" />
     <Compile Include="Controllers\Article\ArticleController.cs" />
     <Compile Include="Controllers\Article\CreateOne.cs" />
+    <Compile Include="Controllers\Article\GetListForSteamCn.cs" />
     <Compile Include="Controllers\Article\UpdateOne.cs" />
     <Compile Include="Controllers\ArticleComment\ArticleCommentController.cs" />
     <Compile Include="Controllers\ArticleComment\CreateOne.cs" />

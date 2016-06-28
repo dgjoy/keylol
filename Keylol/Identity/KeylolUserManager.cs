@@ -91,6 +91,18 @@ namespace Keylol.Identity
         }
 
         /// <summary>
+        ///     获取指定用户的 SteamCN UID
+        /// </summary>
+        /// <param name="userId">用户 ID</param>
+        /// <returns>用户的 SteamCN UID</returns>
+        public async Task<string> GetSteamCnUidAsync(string userId)
+        {
+            return (await GetLoginsAsync(userId))
+                .FirstOrDefault(l => l.LoginProvider == KeylolLoginProviders.SteamCn)?
+                .ProviderKey;
+        }
+
+        /// <summary>
         ///     命令机器人向用户发送一条 Steam 聊天消息
         /// </summary>
         /// <param name="user"><see cref="KeylolUser" /> 用户对象</param>

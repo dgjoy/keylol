@@ -75,6 +75,12 @@ namespace Keylol.States.Aggregation.User
                 editPage.SteamBotName = $"其乐机器人 Keylol.com #{user.SteamBot.Sid}";
                 editPage.SteamBotSteamId = user.SteamBot.SteamId;
             }
+            int steamCnUid;
+            if (int.TryParse(await userManager.GetSteamCnUidAsync(user.Id), out steamCnUid))
+            {
+                editPage.SteamCnUid = steamCnUid;
+                editPage.SteamCnUserName = user.SteamCnUserName;
+            }
             return editPage;
         }
 
@@ -97,6 +103,16 @@ namespace Keylol.States.Aggregation.User
         /// 是否与机器人失联
         /// </summary>
         public bool? SteamBotLost { get; set; }
+
+        /// <summary>
+        /// SteamCN 用户名
+        /// </summary>
+        public string SteamCnUserName { get; set; }
+
+        /// <summary>
+        /// SteamCN UID
+        /// </summary>
+        public int? SteamCnUid { get; set; }
 
         /// <summary>
         /// 登录保护

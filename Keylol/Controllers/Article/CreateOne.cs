@@ -8,6 +8,7 @@ using System.Web.Http;
 using JetBrains.Annotations;
 using Keylol.Models;
 using Keylol.Models.DTO;
+using Keylol.Provider;
 using Keylol.ServiceBase;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
@@ -82,6 +83,7 @@ namespace Keylol.Controllers.Article
                 ContentType = ImageGarageRequestContentType.Article,
                 ContentId = article.Id
             });
+            SteamCnProvider.TriggerArticleUpdate();
             return Ok(article.SidForAuthor);
         }
 

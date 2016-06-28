@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Cache;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,11 @@ namespace Keylol.Provider
         private const string UserAgent =
             "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36";
 
+        private static readonly HttpRequestCachePolicy NoCachePolicy =
+            new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+
+        private const string Referer = "http://steamcn.com/";
+        private const int Timeout = 20000;
         private static readonly Encoding Charset = Encoding.GetEncoding("GBK");
         private const string UCenterEndpoint = "http://steamcn.com/uc_server/index.php";
         private const string UCenterKey = "OcB4u207q2dAF217j8x7u8SbB0u6T3zb52Xek6M7idR0Rf0782N7l3B757l8M4J2";
@@ -80,6 +86,31 @@ namespace Keylol.Provider
             };
         }
 
+        /// <summary>
+        /// 通知 SteamCN 触发最新文章更新操作
+        /// </summary>
+        /// <returns></returns>
+        public static void TriggerArticleUpdate()
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    var request = WebRequest.CreateHttp("http://steamcn.com/plugin.php?id=keylol:update");
+                    request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                    request.UserAgent = UserAgent;
+                    request.Referer = Referer;
+                    request.Timeout = Timeout;
+                    request.CachePolicy = NoCachePolicy;
+                    request.GetResponse().Close();
+                }
+                catch (Exception)
+                {
+                    // ignore
+                }
+            });
+        }
+
         private static async Task<XmlDocument> InvokeAsync(string model, string action,
             Dictionary<string, string> arguments)
         {
@@ -89,6 +120,9 @@ namespace Keylol.Provider
                 request.Method = WebRequestMethods.Http.Post;
                 request.ContentType = "application/x-www-form-urlencoded";
                 request.UserAgent = UserAgent;
+                request.Referer = Referer;
+                request.Timeout = Timeout;
+                request.CachePolicy = NoCachePolicy;
                 arguments["agent"] = Helpers.Md5(UserAgent, Charset);
                 arguments["time"] = DateTime.Now.ToTimestamp().ToString();
                 var postData = Charset.GetBytes(DictionaryToQueryString(new Dictionary<string, string>

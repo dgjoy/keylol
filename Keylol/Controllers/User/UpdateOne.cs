@@ -78,12 +78,10 @@ namespace Keylol.Controllers.User
                 }
             }
 
-            if (requestDto.SteamCnUserName != null || requestDto.SteamCnUid != null)
+            if (requestDto.SteamCnUserName != null)
             {
-                var isUid = requestDto.SteamCnUserName == null;
-                var steamCnUser = await SteamCnProvider.UserLoginAsync(isUid
-                    ? requestDto.SteamCnUserName
-                    : requestDto.SteamCnUid, requestDto.SteamCnPassword, isUid);
+                var steamCnUser =
+                    await SteamCnProvider.UserLoginAsync(requestDto.SteamCnUserName, requestDto.SteamCnPassword, false);
                 if (steamCnUser == null || steamCnUser.Uid < -1)
                 {
                     return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamCnPassword), Errors.Invalid);
@@ -264,11 +262,6 @@ namespace Keylol.Controllers.User
             /// SteamCN 用户名
             /// </summary>
             public string SteamCnUserName { get; set; }
-
-            /// <summary>
-            /// SteamCN UID
-            /// </summary>
-            public string SteamCnUid { get; set; }
 
             /// <summary>
             /// SteamCN 密码
