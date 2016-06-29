@@ -14,10 +14,11 @@ namespace Keylol.ServiceBase
         ///     计算一段字符串的 MD5 值，使用 UTF-8 编码
         /// </summary>
         /// <param name="text">要计算的字符串</param>
+        /// <param name="encoding">字符串的编码</param>
         /// <returns>字符串的 MD5，用小写字母表示</returns>
-        public static string Md5(string text)
+        public static string Md5(string text, Encoding encoding = null)
         {
-            return Md5(Encoding.UTF8.GetBytes(text));
+            return Md5((encoding ?? Encoding.UTF8).GetBytes(text));
         }
 
         /// <summary>

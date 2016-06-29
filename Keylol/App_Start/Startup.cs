@@ -151,6 +151,7 @@ namespace Keylol
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             jsonSerializerSettings.Converters.Add(new StringEnumConverter());
             jsonSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
 
             config.Filters.Add(new ValidateModelAttribute());
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;

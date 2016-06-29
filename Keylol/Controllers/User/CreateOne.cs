@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
-using Constants = Keylol.Utilities.Constants;
 
 namespace Keylol.Controllers.User
 {
@@ -35,10 +35,15 @@ namespace Keylol.Controllers.User
             if (await _userManager.FindBySteamIdAsync(steamBindingToken.SteamId) != null)
                 return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId), Errors.Duplicate);
 
+            if (requestDto.Email != null && (!new EmailAddressAttribute().IsValid(requestDto.Email) ||
+                                             await _userManager.FindByEmailAsync(requestDto.Email) != null))
+                requestDto.Email = null;
+
             var user = new KeylolUser
             {
                 IdCode = requestDto.IdCode,
                 UserName = requestDto.UserName,
+                Email = requestDto.Email,
                 RegisterIp = _owinContext.Request.RemoteIpAddress,
                 SteamBindingTime = DateTime.Now,
                 SteamBotId = steamBindingToken.BotId
@@ -69,6 +74,10 @@ namespace Keylol.Controllers.User
                         propertyName = nameof(requestDto.UserName);
                         break;
 
+                    case Errors.InvalidEmail:
+                        propertyName = nameof(requestDto.Email);
+                        break;
+
                     case Errors.AvatarImageUntrusted:
                         propertyName = nameof(requestDto.AvatarImage);
                         break;
@@ -88,6 +97,22 @@ namespace Keylol.Controllers.User
                 new UserLoginInfo(KeylolLoginProviders.Steam, steamBindingToken.SteamId));
             _dbContext.SteamBindingTokens.Remove(steamBindingToken);
             await _dbContext.SaveChangesAsync();
+
+            if (requestDto.SteamCnUserName != null)
+            {
+                var steamCnUser =
+                    await SteamCnProvider.UserLoginAsync(requestDto.SteamCnUserName, requestDto.SteamCnPassword, false);
+                if (steamCnUser != null && steamCnUser.Uid > 0 &&
+                    await _userManager.FindAsync(new UserLoginInfo(KeylolLoginProviders.SteamCn,
+                        steamCnUser.Uid.ToString())) == null)
+                {
+                    await _userManager.AddLoginAsync(user.Id, new UserLoginInfo(KeylolLoginProviders.SteamCn,
+                        steamCnUser.Uid.ToString()));
+                    user.SteamCnUserName = steamCnUser.UserName;
+                    user.SteamCnBindingTime = DateTime.Now;
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
 
             await _coupon.UpdateAsync(user, CouponEvent.新注册);
 
@@ -189,19 +214,19 @@ namespace Keylol.Controllers.User
             /// <summary>
             ///     识别码
             /// </summary>
-            [Required]
+            [Utilities.Required]
             public string IdCode { get; set; }
 
             /// <summary>
             ///     昵称（用户名）
             /// </summary>
-            [Required]
+            [Utilities.Required]
             public string UserName { get; set; }
 
             /// <summary>
             ///     口令
             /// </summary>
-            [Required]
+            [Utilities.Required]
             public string Password { get; set; }
 
             /// <summary>
@@ -210,9 +235,24 @@ namespace Keylol.Controllers.User
             public string AvatarImage { get; set; }
 
             /// <summary>
+            /// 邮箱
+            /// </summary>
+            public string Email { get; set; }
+
+            /// <summary>
+            /// SteamCN 用户名
+            /// </summary>
+            public string SteamCnUserName { get; set; }
+
+            /// <summary>
+            /// SteamCN 密码
+            /// </summary>
+            public string SteamCnPassword { get; set; }
+
+            /// <summary>
             ///     SteamBindingToken Id
             /// </summary>
-            [Required]
+            [Utilities.Required]
             public string SteamBindingTokenId { get; set; }
 
             /// <summary>

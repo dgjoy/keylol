@@ -5,6 +5,7 @@ using Ganss.XSS;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 using Keylol.ServiceBase;
 using RabbitMQ.Client;
 
@@ -21,6 +22,7 @@ namespace Keylol.Controllers.Article
         private readonly KeylolDbContext _dbContext;
         private readonly IModel _mqChannel;
         private readonly KeylolUserManager _userManager;
+        private readonly CachedDataProvider _cachedData;
 
         /// <summary>
         ///     创建 <see cref="ArticleController" />
@@ -37,13 +39,15 @@ namespace Keylol.Controllers.Article
         /// <param name="userManager">
         ///     <see cref="KeylolUserManager" />
         /// </param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         public ArticleController(IModel mqChannel, CouponProvider coupon, KeylolDbContext dbContext,
-            KeylolUserManager userManager)
+            KeylolUserManager userManager, CachedDataProvider cachedData)
         {
             _mqChannel = mqChannel;
             _coupon = coupon;
             _dbContext = dbContext;
             _userManager = userManager;
+            _cachedData = cachedData;
         }
 
         /// <summary>

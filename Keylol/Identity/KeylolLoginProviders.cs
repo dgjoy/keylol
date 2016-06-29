@@ -9,5 +9,10 @@
         ///     Steam 平台
         /// </summary>
         public const string Steam = "Steam";
+
+        /// <summary>
+        /// SteamCN
+        /// </summary>
+        public const string SteamCn = "SteamCN";
     }
 }

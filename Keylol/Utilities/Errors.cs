@@ -138,6 +138,11 @@
         public const string InvalidToken = "invalid_token";
 
         /// <summary>
+        /// 没有对应的用户
+        /// </summary>
+        public const string NoCorrespondingUser = "no_corresponding_user";
+
+        /// <summary>
         ///     礼品已下架
         /// </summary>
         public const string GiftOffTheMarket = "gift_off_the_market";
