@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Threading.Tasks;
@@ -80,6 +81,9 @@ namespace Keylol.Controllers.User
 
             if (requestDto.SteamCnUserName != null)
             {
+                var currentSteamCnUid = await _userManager.GetSteamCnUidAsync(user.Id);
+                if (currentSteamCnUid != null)
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamCnUserName), Errors.TooMany);
                 var steamCnUser =
                     await SteamCnProvider.UserLoginAsync(requestDto.SteamCnUserName, requestDto.SteamCnPassword, false);
                 if (steamCnUser == null || steamCnUser.Uid < -1)
@@ -88,12 +92,12 @@ namespace Keylol.Controllers.User
                 }
                 if (steamCnUser.Uid == -1)
                 {
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.UserName), Errors.NonExistent);
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamCnUserName), Errors.NonExistent);
                 }
                 if (await _userManager.FindAsync(new UserLoginInfo(KeylolLoginProviders.SteamCn,
                     steamCnUser.Uid.ToString())) != null)
                 {
-                    return this.BadRequest(nameof(requestDto), nameof(requestDto.UserName), Errors.Duplicate);
+                    return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamCnUserName), Errors.Duplicate);
                 }
                 foreach (var loginInfo in (await _userManager.GetLoginsAsync(user.Id))
                     .Where(l => l.LoginProvider == KeylolLoginProviders.SteamCn))
@@ -102,6 +106,8 @@ namespace Keylol.Controllers.User
                 }
                 await _userManager.AddLoginAsync(user.Id, new UserLoginInfo(KeylolLoginProviders.SteamCn,
                     steamCnUser.Uid.ToString()));
+                user.SteamCnUserName = steamCnUser.UserName;
+                user.SteamCnBindingTime = DateTime.Now;
             }
 
             if (requestDto.LockoutEnabled != null)

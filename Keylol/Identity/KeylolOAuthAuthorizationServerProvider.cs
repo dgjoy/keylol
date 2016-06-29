@@ -136,7 +136,7 @@ namespace Keylol.Identity
                 await userManager.FindAsync(new UserLoginInfo(KeylolLoginProviders.SteamCn, steamCnUser.Uid.ToString()));
             if (user == null)
             {
-                context.SetError(Errors.NoCorrespondingUser, steamCnUser.Email);
+                context.SetError(Errors.NoCorrespondingUser, $"{steamCnUser.Email}:{steamCnUser.UserName}");
                 return;
             }
             context.Validated(await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType));

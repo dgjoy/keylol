@@ -307,6 +307,10 @@
     <Compile Include="States\PostOffice\SocialActivity\SocialActivityLevel.cs" />
     <Compile Include="States\PostOffice\SocialActivity\SubscriberPage.cs" />
     <Compile Include="States\PostOffice\UnreadPage.cs" />
+    <Compile Include="States\Search\ArticleSearch.cs" />
+    <Compile Include="States\Search\PointSearch.cs" />
+    <Compile Include="States\Search\SearchLevel.cs" />
+    <Compile Include="States\Search\UserSearch.cs" />
     <Compile Include="States\Shared\PointBasicInfo.cs" />
     <Compile Include="States\Aggregation\Point\Edit\EditLevel.cs" />
     <Compile Include="States\Aggregation\Point\Edit\InfoPage.cs" />

@@ -50,6 +50,12 @@ namespace Keylol.States.Shared
             };
             if (!string.IsNullOrWhiteSpace(basicInfo.SteamId))
                 basicInfo.SteamProfileName = user.SteamProfileName;
+            int steamCnUid;
+            if (int.TryParse(await userManager.GetSteamCnUidAsync(user.Id), out steamCnUid))
+            {
+                basicInfo.SteamCnUid = steamCnUid;
+                basicInfo.SteamCnUserName = user.SteamCnUserName;
+            }
             return basicInfo;
         }
 
@@ -122,6 +128,16 @@ namespace Keylol.States.Shared
         /// Steam 昵称
         /// </summary>
         public string SteamProfileName { get; set; }
+
+        /// <summary>
+        /// SteamCN 用户名
+        /// </summary>
+        public string SteamCnUserName { get; set; }
+
+        /// <summary>
+        /// SteamCN UID
+        /// </summary>
+        public int? SteamCnUid { get; set; }
 
         /// <summary>
         /// 主题色

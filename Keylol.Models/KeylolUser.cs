@@ -56,7 +56,7 @@ namespace Keylol.Models
         [MaxLength(64)]
         public string SteamCnUserName { get; set; } = string.Empty;
 
-        public DateTime SteamCnBindingTime { get; set; }
+        public DateTime SteamCnBindingTime { get; set; } = new DateTime(1970, 1, 1, 0, 0, 0);
 
         public bool OpenInNewWindow { get; set; } = false;
 

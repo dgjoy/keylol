@@ -98,12 +98,10 @@ namespace Keylol.Controllers.User
             _dbContext.SteamBindingTokens.Remove(steamBindingToken);
             await _dbContext.SaveChangesAsync();
 
-            if (requestDto.SteamCnUserName != null || requestDto.SteamCnUid != null)
+            if (requestDto.SteamCnUserName != null)
             {
-                var isUid = requestDto.SteamCnUserName == null;
-                var steamCnUser = await SteamCnProvider.UserLoginAsync(isUid
-                    ? requestDto.SteamCnUid
-                    : requestDto.SteamCnUserName, requestDto.SteamCnPassword, isUid);
+                var steamCnUser =
+                    await SteamCnProvider.UserLoginAsync(requestDto.SteamCnUserName, requestDto.SteamCnPassword, false);
                 if (steamCnUser != null && steamCnUser.Uid > 0 &&
                     await _userManager.FindAsync(new UserLoginInfo(KeylolLoginProviders.SteamCn,
                         steamCnUser.Uid.ToString())) == null)
@@ -245,11 +243,6 @@ namespace Keylol.Controllers.User
             /// SteamCN 用户名
             /// </summary>
             public string SteamCnUserName { get; set; }
-
-            /// <summary>
-            /// SteamCN UID
-            /// </summary>
-            public string SteamCnUid { get; set; }
 
             /// <summary>
             /// SteamCN 密码
