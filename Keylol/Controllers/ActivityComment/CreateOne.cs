@@ -50,62 +50,63 @@ namespace Keylol.Controllers.ActivityComment
             _dbContext.ActivityComments.Add(comment);
             await _dbContext.SaveChangesAsync();
             await _cachedData.ActivityComments.IncreaseActivityCommentCountAsync(activity.Id, 1);
-            
-            var matches = Regex.Matches(comment.Content, "^(?:#(\\d+)[ \\t]*)+(?:$|[ \\t]+)", RegexOptions.Multiline);
-            if (matches.Count <= 0) return Ok(comment.SidForActivity);
 
-            var sidForActivities = (from Match match in matches
-                from Capture capture in match.Groups[1].Captures
-                select int.Parse(capture.Value)).ToList();
-
-            var messageNotifiedArticleAuthor = false;
-            var steamNotifiedArticleAuthor = false;
+            var messageNotifiedActivityAuthor = false;
+            var steamNotifiedActivityAuthor = false;
             var truncatedContent = comment.Content.Length > 512
                 ? $"{comment.Content.Substring(0, 512)} …"
                 : comment.Content;
             var activityContent = PostOfficeMessageList.CollapseActivityContent(activity);
 
-            var replyToComments = await _dbContext.ActivityComments
-                .Include(c => c.Commentator)
-                .Where(c => c.ActivityId == activity.Id && sidForActivities.Contains(c.SidForActivity))
-                .ToListAsync();
-            foreach (var replyToComment in replyToComments)
+            var matches = Regex.Matches(comment.Content, "^(?:#(\\d+)[ \\t]*)+(?:$|[ \\t]+)", RegexOptions.Multiline);
+            if (matches.Count > 0)
             {
-                _dbContext.Replies.Add(new Reply
-                {
-                    EntryType = ReplyEntryType.ActivityComment,
-                    EntryId = replyToComment.Id,
-                    ReplyId = comment.Id
-                });
-            }
+                var sidForActivities = (from Match match in matches
+                    from Capture capture in match.Groups[1].Captures
+                    select int.Parse(capture.Value)).ToList();
 
-            foreach (var replyToUser in replyToComments
-                .Where(c => c.CommentatorId != comment.CommentatorId && !c.DismissReplyMessage)
-                .Select(c => c.Commentator).Distinct())
-            {
-                if (replyToUser.NotifyOnCommentReplied)
+                var replyToComments = await _dbContext.ActivityComments
+                    .Include(c => c.Commentator)
+                    .Where(c => c.ActivityId == activity.Id && sidForActivities.Contains(c.SidForActivity))
+                    .ToListAsync();
+                foreach (var replyToComment in replyToComments)
                 {
-                    messageNotifiedArticleAuthor = replyToUser.Id == activity.AuthorId;
-                    _dbContext.Messages.Add(new Message
+                    _dbContext.Replies.Add(new Reply
                     {
-                        Type = MessageType.ActivityCommentReply,
-                        OperatorId = comment.CommentatorId,
-                        ReceiverId = replyToUser.Id,
-                        ActivityCommentId = comment.Id
+                        EntryType = ReplyEntryType.ActivityComment,
+                        EntryId = replyToComment.Id,
+                        ReplyId = comment.Id
                     });
                 }
 
-                if (replyToUser.SteamNotifyOnCommentReplied)
+                foreach (var replyToUser in replyToComments
+                    .Where(c => c.CommentatorId != comment.CommentatorId && !c.DismissReplyMessage)
+                    .Select(c => c.Commentator).Distinct())
                 {
-                    steamNotifiedArticleAuthor = replyToUser.Id == activity.AuthorId;
-                    await _userManager.SendSteamChatMessageAsync(replyToUser,
-                        $"{comment.Commentator.UserName} 回复了你在「{activityContent}」下的评论：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
+                    if (replyToUser.NotifyOnCommentReplied)
+                    {
+                        messageNotifiedActivityAuthor = replyToUser.Id == activity.AuthorId;
+                        _dbContext.Messages.Add(new Message
+                        {
+                            Type = MessageType.ActivityCommentReply,
+                            OperatorId = comment.CommentatorId,
+                            ReceiverId = replyToUser.Id,
+                            ActivityCommentId = comment.Id
+                        });
+                    }
+
+                    if (replyToUser.SteamNotifyOnCommentReplied)
+                    {
+                        steamNotifiedActivityAuthor = replyToUser.Id == activity.AuthorId;
+                        await _userManager.SendSteamChatMessageAsync(replyToUser,
+                            $"{comment.Commentator.UserName} 回复了你在「{activityContent}」下的评论：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
+                    }
                 }
             }
 
             if (comment.CommentatorId != activity.AuthorId && !activity.DismissCommentMessage)
             {
-                if (!messageNotifiedArticleAuthor && activity.Author.NotifyOnActivityReplied)
+                if (!messageNotifiedActivityAuthor && activity.Author.NotifyOnActivityReplied)
                 {
                     _dbContext.Messages.Add(new Message
                     {
@@ -116,7 +117,7 @@ namespace Keylol.Controllers.ActivityComment
                     });
                 }
 
-                if (!steamNotifiedArticleAuthor && activity.Author.SteamNotifyOnActivityReplied)
+                if (!steamNotifiedActivityAuthor && activity.Author.SteamNotifyOnActivityReplied)
                 {
                     await _userManager.SendSteamChatMessageAsync(activity.Author,
                         $"{comment.Commentator.UserName} 评论了你的动态「{activityContent}」：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
