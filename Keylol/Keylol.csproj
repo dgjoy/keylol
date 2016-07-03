@@ -234,6 +234,8 @@
     <Compile Include="Controllers\Like\CreateOne.cs" />
     <Compile Include="Controllers\Like\LikeController.cs" />
     <Compile Include="Controllers\Point\CreateOne.cs" />
+    <Compile Include="Controllers\Point\GetOneForEnhancedSteam.cs" />
+    <Compile Include="Controllers\Point\GetOneForYxdzqb.cs" />
     <Compile Include="Controllers\Point\PointController.cs" />
     <Compile Include="Controllers\Point\UpdateOne.cs" />
     <Compile Include="Controllers\RedisCache\DeleteListByKeyPattern.cs" />
@@ -245,6 +247,7 @@
     <Compile Include="Controllers\UploadSignature\CreateOne.cs" />
     <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
     <Compile Include="Controllers\User\CreateOne.cs" />
+    <Compile Include="Controllers\User\GetOneForEnhancedSteam.cs" />
     <Compile Include="Controllers\User\UpdateOne.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />

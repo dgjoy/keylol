@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models.DAL;
+using Keylol.Provider.CachedDataProvider;
 using Keylol.Utilities;
 
 namespace Keylol.Controllers.Point
@@ -17,14 +18,17 @@ namespace Keylol.Controllers.Point
     public partial class PointController : ApiController
     {
         private readonly KeylolDbContext _dbContext;
+        private readonly CachedDataProvider _cachedData;
 
         /// <summary>
         /// 创建 <see cref="PointController"/>
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        public PointController(KeylolDbContext dbContext)
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        public PointController(KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             _dbContext = dbContext;
+            _cachedData = cachedData;
         }
 
         private async Task<string> GenerateIdCode(string name)
