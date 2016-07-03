@@ -2,9 +2,9 @@
 namespace Keylol.States.Search
 {
     /// <summary>
-    /// 用户搜索
+    /// 文章搜索
     /// </summary>
-    public class UserSearch
+    public class ArticlePage
     {
     }
 }

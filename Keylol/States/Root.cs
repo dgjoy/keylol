@@ -16,6 +16,7 @@ using Keylol.States.Coupon.Ranking;
 using Keylol.States.Entrance;
 using Keylol.States.PostOffice;
 using Keylol.States.PostOffice.SocialActivity;
+using Keylol.States.Search;
 using Keylol.StateTreeManager;
 using EntrancePage = Keylol.States.Aggregation.User.EntrancePage;
 
@@ -179,7 +180,7 @@ namespace Keylol.States
                 case "content.article":
                     root.Content = new ContentLevel
                     {
-                        Article = await ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
+                        Article = await States.Content.Article.ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
                             isOperator, dbContext, cachedData, userManager)
                     };
                     break;
@@ -313,5 +314,10 @@ namespace Keylol.States
         /// </summary>
         [Authorize]
         public RelatedPointList RelatedPoints { get; set; }
+
+        /// <summary>
+        /// 搜索层级
+        /// </summary>
+        public SearchLevel Search { get; set; }
     }
 }

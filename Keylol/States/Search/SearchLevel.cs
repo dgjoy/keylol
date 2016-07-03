@@ -9,17 +9,17 @@ namespace Keylol.States.Search
         /// <summary>
         /// 据点查询结果
         /// </summary>
-        public PointSearch Point { get; set; }
+        public PointPage Point { get; set; }
         
         /// <summary>
         /// 文章查询结果
         /// </summary>
-        public ArticleSearch Article { get; set; }
+        public ArticlePage Article { get; set; }
         
         /// <summary>
         /// 用户查询结果
         /// </summary>
-        public UserSearch User { get; set; }
+        public UserPage User { get; set; }
 
 
     }
