@@ -51,13 +51,14 @@ namespace Keylol.Controllers.Point
             var articleSummary = article == null ? null : PlainTextFormatter.FlattenHtml(article.Content, true);
             if (articleSummary != null && articleSummary.Length > 200)
                 articleSummary = articleSummary.Substring(0, 200);
+            var thirdPartyLinks =
+                Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability)?.ThirdPartyLinks;
             return Ok(new
             {
                 Link = $"https://www.keylol.com/point/{point.IdCode}",
-                point.ChineseName,
+                ChineseName = string.IsNullOrWhiteSpace(point.ChineseName) ? null : point.ChineseName,
                 (await _cachedData.Points.GetRatingsAsync(point.Id)).AverageRating,
-                ChineseLocalizations =
-                    Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability)?.ThirdPartyLinks,
+                ChineseLocalizations = thirdPartyLinks?.Count > 0 ? thirdPartyLinks : null,
                 Article = article == null
                     ? null
                     : new
