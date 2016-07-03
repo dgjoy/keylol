@@ -66,7 +66,6 @@ namespace Keylol.States.Search
         /// <summary>
         /// 通过关键字搜索据点列表
         /// </summary>
-        /// <param name="userId">当前用户Id</param>
         /// <param name="keyword">关键字</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData">缓存数据</param>

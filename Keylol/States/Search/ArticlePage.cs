@@ -1,4 +1,10 @@
 ﻿
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Keylol.Models.DAL;
+using Keylol.Provider.CachedDataProvider;
+using Keylol.StateTreeManager;
+
 namespace Keylol.States.Search
 {
     /// <summary>
@@ -7,6 +13,30 @@ namespace Keylol.States.Search
     public class ArticlePage
     {
     }
+
+    //public class ArticleResultList : List<ArticleResult>
+    //{
+    //    private ArticleResultList()
+    //    {
+    //    }
+
+    //    private ArticleResultList(int capacity) : base(capacity)
+    //    {
+    //    }
+
+    //    public static async Task<ArticleResultList> Get(string keyword, [Injected] KeylolDbContext dbContext,
+    //        [Injected] CachedDataProvider cachedData, int page, bool searchAll = true)
+    //    {
+    //        var 
+    //    }
+
+    //    public static async Task<ArticleResultList> CreateAsync(string userId, string keyword,
+    //        [Injected] KeylolDbContext dbContext,[Injected] CachedDataProvider cachedData, int page, bool searchAll = true)
+    //    {
+    //        var searchResult = await dbContext.Database.SqlQuery<ArticleResult>(
+    //            @"").ToListAsync();
+    //    }
+    //}
 
     /// <summary>
     /// 文章搜索结果
@@ -22,6 +52,16 @@ namespace Keylol.States.Search
         /// 副标题
         /// </summary>
         public string SubTitle { get; set; }
+
+        /// <summary>
+        /// 作者用户识别码
+        /// </summary>
+        public string AutherrUserIdCode { get; set; }
+
+        /// <summary>
+        /// 作者的文章定位
+        /// </summary>
+        public int SidForAuther { get; set; }
 
         /// <summary>
         /// 投稿据点ID
