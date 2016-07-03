@@ -73,10 +73,11 @@ namespace Keylol.States.Search
         /// <param name="page">页码</param>
         /// <param name="searchAll">是否全部查询</param>
         /// <returns><see cref="PointResultList"/></returns>
-        public static async Task<PointResultList> Get(string userId,string keyword,[Injected] KeylolDbContext dbContext,
+        public static async Task<PointResultList> Get(string keyword,[Injected] KeylolDbContext dbContext,
             [Injected]CachedDataProvider cachedData,int page, bool searchAll = true)
         {
-            return await CreateAsync(userId,keyword, dbContext, cachedData, page, searchAll);
+            var currentUserId = StateTreeHelper.GetCurrentUserId();
+            return await CreateAsync(currentUserId, keyword, dbContext, cachedData, page, searchAll);
         }
 
         /// <summary>
@@ -92,12 +93,13 @@ namespace Keylol.States.Search
         public static async Task<PointResultList> CreateAsync(string userId,string keyword, [Injected] KeylolDbContext dbContext,
             [Injected]CachedDataProvider cachedData,int page,bool searchAll = true)
         {
+            var offSet = (page - 1)*10;
             var searchResult = await dbContext.Database.SqlQuery<PointResult>(
-                @"SELECT TOP(10) * ,
-                                 Id AS PointId, 
-                                 (SELECT COUNT(1) FROM Articles WHERE TargetPointId = t4.Id) AS ArticleCount,
-                                 (SELECT COUNT(1) FROM Activities WHERE TargetPointId=t4.Id) AS ActivityCount,
-                                 AvatarImage 
+                @"SELECT  *,
+                          Id AS PointId, 
+                          (SELECT COUNT(1) FROM Articles WHERE TargetPointId = t4.Id) AS ArticleCount,
+                          (SELECT COUNT(1) FROM Activities WHERE TargetPointId=t4.Id) AS ActivityCount,
+                          AvatarImage 
                         FROM (SELECT * FROM [dbo].[Points] AS [t1] INNER JOIN (
                         SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
 						SELECT * FROM CONTAINSTABLE([dbo].[Points], ([EnglishName], [EnglishAliases]), {0})
@@ -105,8 +107,8 @@ namespace Keylol.States.Search
 		                    SELECT * FROM CONTAINSTABLE([dbo].[Points], ([ChineseName], [ChineseAliases]), {0})
 	                    ) AS [t2] GROUP BY [t2].[KEY]
                     ) AS [t3] ON [t1].[Id] = [t3].[KEY])AS [t4]
-                    ORDER BY [t4].[RANK] DESC",
-                $"\"{keyword}\" OR \"{keyword}*\"").ToListAsync();
+                    ORDER BY [t4].[RANK] DESC OFFSET {1} ROWS FETCH NEXT 10 ROWS ONLY",
+                $"\"{keyword}\" OR \"{keyword}*\"", offSet).ToListAsync();
             var result = new PointResultList(searchResult.Count);
             if (searchAll)
             {
