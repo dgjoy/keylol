@@ -90,7 +90,8 @@ namespace Keylol.States.Search
         /// <param name="searchAll"></param>
         /// <returns></returns>
         public static async Task<ArticleResultList> CreateAsync(string keyword,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, int page,
+            [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData, int page,
             bool searchAll = true)
         {
             var onePageCount = searchAll ? 10 : 5;

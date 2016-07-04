@@ -19,7 +19,6 @@ namespace Keylol.States.Search
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="searchAll">是否全部查询</param>
-        /// <returns></returns>
         public static async Task<PointPage> Get(string keyword, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData, bool searchAll = true)
         {
@@ -35,7 +34,6 @@ namespace Keylol.States.Search
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="searchAll">是否全部查询</param>
-        /// <returns></returns>
         public static async Task<PointPage> CreateAsync(string currentUserId, string keyword,
             [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData, bool searchAll = true)
@@ -129,7 +127,7 @@ namespace Keylol.States.Search
                                 cachedData.Subscriptions.GetSubscriberCountAsync(p.Id, SubscriptionTargetType.User),
                         ArticleCount = p.ArticleCount,
                         ActivityCount = p.ActivityCount,
-                        IsSubscribed =
+                        Subscribed =
                             await
                                 cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
                                     SubscriptionTargetType.User)
@@ -201,6 +199,6 @@ namespace Keylol.States.Search
         /// <summary>
         /// 是否被订阅
         /// </summary>
-        public bool? IsSubscribed { get; set; }
+        public bool? Subscribed { get; set; }
     }
 }
