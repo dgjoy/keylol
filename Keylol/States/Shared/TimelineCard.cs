@@ -33,13 +33,13 @@ namespace Keylol.States.Shared
         /// <param name="streamName">Feed 流名称</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="take">获取数量</param>
-        /// <param name="ignoreRejected">忽略退稿状态</param>
+        /// <param name="keepRejected">是否保留被退稿的内容</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="before">起始位置</param>
         /// <returns><see cref="TimelineCardList"/></returns>
         public static async Task<TimelineCardList> CreateAsync(string streamName, string currentUserId, int take,
-            bool ignoreRejected, KeylolDbContext dbContext, CachedDataProvider cachedData, long before = long.MaxValue)
+            bool keepRejected, KeylolDbContext dbContext, CachedDataProvider cachedData, long before = long.MaxValue)
         {
             if (take > 50) take = 50;
             var result = new TimelineCardList(20);
@@ -86,7 +86,7 @@ namespace Keylol.States.Shared
                                     PointEnglishName = article.TargetPoint.EnglishName,
                                     PointSteamAppId = article.TargetPoint.SteamAppId
                                 }).SingleOrDefaultAsync();
-                            if (a == null || a.Archived != ArchivedState.None || (!ignoreRejected && a.Rejected))
+                            if (a == null || a.Archived != ArchivedState.None || (!keepRejected && a.Rejected))
                                 continue;
                             card.Author = new UserBasicInfo
                             {
@@ -151,7 +151,7 @@ namespace Keylol.States.Shared
                                     PointEnglishName = activity.TargetPoint.EnglishName,
                                     PointSteamAppId = activity.TargetPoint.SteamAppId
                                 }).SingleOrDefaultAsync();
-                            if (a == null || a.Archived != ArchivedState.None || (!ignoreRejected && a.Rejected))
+                            if (a == null || a.Archived != ArchivedState.None || (!keepRejected && a.Rejected))
                                 continue;
                             card.Author = new UserBasicInfo
                             {

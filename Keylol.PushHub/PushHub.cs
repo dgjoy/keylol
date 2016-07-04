@@ -47,6 +47,7 @@ namespace Keylol.PushHub
                         FeedEntryType entryType;
                         List<string> pointsToPush;
                         List<UserToPush> usersToPush = new List<UserToPush>();
+                        var count = 0;
                         switch (requestDto.Type)
                         {
                             case ContentPushType.Article:
@@ -92,6 +93,9 @@ namespace Keylol.PushHub
                                 pointsToPush = Helpers.SafeDeserialize<List<string>>(activity.AttachedPoints) ??
                                                new List<string>();
                                 pointsToPush.Add(activity.TargetPointId);
+                                if (await AddOrUpdateFeedAsync(LatestActivityStream.Name, entryId, entryType, null,
+                                    dbContext))
+                                    count++;
                                 break;
                             }
 
@@ -125,7 +129,6 @@ namespace Keylol.PushHub
                                 throw new ArgumentOutOfRangeException();
                         }
 
-                        var count = 0;
                         foreach (var user in usersToPush)
                         {
                             if (await AddOrUpdateFeedAsync(UserStream.Name(user.UserId),
