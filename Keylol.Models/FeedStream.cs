@@ -102,4 +102,9 @@ namespace Keylol.Models
             public List<string> Reasons { get; set; }
         }
     }
+
+    public static class LatestActivityStream
+    {
+        public static string Name => "latest-activities";
+    }
 }

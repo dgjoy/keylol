@@ -2,6 +2,7 @@
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Entrance.Discovery
@@ -92,8 +93,26 @@ namespace Keylol.States.Entrance.Discovery
                     SpotlightArticleStream.ArticleCategory.Story, dbContext, cachedData),
                 LatestArticleHeaderImage = latestArticles.Item3,
                 LatestArticlePageCount = latestArticles.Item2,
-                LatestArticles = latestArticles.Item1
+                LatestArticles = latestArticles.Item1,
+                LatestActivities = await TimelineCardList.CreateAsync(LatestActivityStream.Name, currentUserId,
+                    12, false, dbContext, cachedData)
             };
+        }
+
+        /// <summary>
+        /// 获取时间轴卡片列表
+        /// </summary>
+        /// <param name="before">起始位置</param>
+        /// <param name="take">获取数量</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="TimelineCardList"/></returns>
+        public static async Task<TimelineCardList> GetLatestActivities(int before, int take,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
+        {
+            var currentUserId = StateTreeHelper.GetCurrentUserId();
+            return await TimelineCardList.CreateAsync(LatestActivityStream.Name, currentUserId,
+                take, false, dbContext, cachedData, before);
         }
 
         /// <summary>
@@ -150,5 +169,10 @@ namespace Keylol.States.Entrance.Discovery
         /// 最新文章
         /// </summary>
         public LatestArticleList LatestArticles { get; set; }
+
+        /// <summary>
+        /// 最新动态
+        /// </summary>
+        public TimelineCardList LatestActivities { get; set; }
     }
 }
