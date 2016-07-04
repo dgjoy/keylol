@@ -24,24 +24,26 @@ namespace Keylol.States.Search
             [Injected] CachedDataProvider cachedData, bool searchAll = true)
         {
             var currentUserId = StateTreeHelper.GetCurrentUserId();
-            return await CreateAsync(currentUserId,keyword, dbContext, cachedData, searchAll);
+            return await CreateAsync(currentUserId, keyword, dbContext, cachedData, searchAll);
         }
 
         /// <summary>
         /// 创建 <see cref="PointResultList"/>
         /// </summary>
-        /// <param name="userId">当前用户Id</param>
+        /// <param name="currentUserId">当前用户Id</param>
         /// <param name="keyword">搜索关键字</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="searchAll">是否全部查询</param>
         /// <returns></returns>
-        public static async Task<PointPage> CreateAsync(string userId,string keyword, [Injected] KeylolDbContext dbContext,
+        public static async Task<PointPage> CreateAsync(string currentUserId, string keyword,
+            [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData, bool searchAll = true)
         {
-            return new PointPage { 
-                Results = await PointResultList.CreateAsync(userId,keyword, dbContext,cachedData,1,searchAll)
-                };
+            return new PointPage
+            {
+                Results = await PointResultList.CreateAsync(currentUserId, keyword, dbContext, cachedData, 1, searchAll)
+            };
         }
 
         /// <summary>
@@ -66,14 +68,14 @@ namespace Keylol.States.Search
         /// <summary>
         /// 通过关键字搜索据点列表
         /// </summary>
-        /// <param name="keyword">关键字</param>
+        /// <param name="keyword">搜索关键字</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="cachedData">缓存数据</param>
-        /// <param name="page">页码</param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="page">分页页码</param>
         /// <param name="searchAll">是否全部查询</param>
         /// <returns><see cref="PointResultList"/></returns>
-        public static async Task<PointResultList> Get(string keyword,[Injected] KeylolDbContext dbContext,
-            [Injected]CachedDataProvider cachedData,int page, bool searchAll = true)
+        public static async Task<PointResultList> Get(string keyword, [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData, int page, bool searchAll = true)
         {
             var currentUserId = StateTreeHelper.GetCurrentUserId();
             return await CreateAsync(currentUserId, keyword, dbContext, cachedData, page, searchAll);
@@ -82,20 +84,31 @@ namespace Keylol.States.Search
         /// <summary>
         /// 创建 <see cref="PointResultList"/>
         /// </summary>
-        /// <param name="userId">当前用户Id</param>
+        /// <param name="currentUserId">当前用户 ID</param>
         /// <param name="keyword">搜索关键字</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <param name="page">页码</param>
+        /// <param name="page">分页页码</param>
         /// <param name="searchAll">是否全部查询</param>
-        /// <returns></returns>
-        public static async Task<PointResultList> CreateAsync(string userId,string keyword, [Injected] KeylolDbContext dbContext,
-            [Injected]CachedDataProvider cachedData,int page,bool searchAll = true)
+        public static async Task<PointResultList> CreateAsync(string currentUserId, string keyword,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, int page,
+            bool searchAll = true)
         {
+            int onePageCount;
+            if (searchAll)
+            {
+                onePageCount = 10;
+            }
+            else
+            {
+                onePageCount = 5;
+            }
+
             var offSet = (page - 1)*10;
             var searchResult = await dbContext.Database.SqlQuery<PointResult>(
                 @"SELECT  *,
-                          Id AS PointId, 
+                          Id, 
+                          IdCode,
                           (SELECT COUNT(1) FROM Articles WHERE TargetPointId = t4.Id) AS ArticleCount,
                           (SELECT COUNT(1) FROM Activities WHERE TargetPointId=t4.Id) AS ActivityCount,
                           AvatarImage 
@@ -106,8 +119,8 @@ namespace Keylol.States.Search
 		                    SELECT * FROM CONTAINSTABLE([dbo].[Points], ([ChineseName], [ChineseAliases]), {0})
 	                    ) AS [t2] GROUP BY [t2].[KEY]
                     ) AS [t3] ON [t1].[Id] = [t3].[KEY])AS [t4]
-                    ORDER BY [t4].[RANK] DESC OFFSET {1} ROWS FETCH NEXT 10 ROWS ONLY",
-                $"\"{keyword}\" OR \"{keyword}*\"", offSet).ToListAsync();
+                    ORDER BY [t4].[RANK] DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY",
+                $"\"{keyword}\" OR \"{keyword}*\"", offSet,onePageCount).ToListAsync();
             var result = new PointResultList(searchResult.Count);
             if (searchAll)
             {
@@ -115,14 +128,20 @@ namespace Keylol.States.Search
                 {
                     result.Add(new PointResult
                     {
-                        PointId = p.PointId,
+                        Id = p.Id,
+                        IdCode = p.IdCode,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName,
                         AvatarImage = p.AvatarImage,
-                        ReaderCount = await cachedData.Subscriptions.GetSubscriberCountAsync(p.PointId, SubscriptionTargetType.User),
+                        ReaderCount =
+                            await
+                                cachedData.Subscriptions.GetSubscriberCountAsync(p.Id, SubscriptionTargetType.User),
                         ArticleCount = p.ArticleCount,
                         ActivityCount = p.ActivityCount,
-                        IsSubscribed = await cachedData.Subscriptions.IsSubscribedAsync(userId,p.PointId, SubscriptionTargetType.User)
+                        IsSubscribed =
+                            await
+                                cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
+                                    SubscriptionTargetType.User)
                     });
                 }
             }
@@ -132,6 +151,7 @@ namespace Keylol.States.Search
                 {
                     result.Add(new PointResult
                     {
+                        IdCode = p.IdCode,
                         ChineseName = p.ChineseName,
                         EnglishName = p.EnglishName,
                         AvatarImage = p.AvatarImage
@@ -148,43 +168,48 @@ namespace Keylol.States.Search
     public class PointResult
     {
         /// <summary>
-        /// 据点ID
+        /// ID
         /// </summary>
-        public string PointId { get; set; }
+        public string Id { get; set; }
+
         /// <summary>
-        /// 据点中文名称
+        /// 识别码
+        /// </summary>
+        public string IdCode { get; set; }
+
+        /// <summary>
+        /// 中文名
         /// </summary>
         public string ChineseName { get; set; }
 
         /// <summary>
-        /// 据点英文名称
+        /// 英文名
         /// </summary>
         public string EnglishName { get; set; }
 
         /// <summary>
-        /// 据点头像
+        /// 头像
         /// </summary>
         public string AvatarImage { get; set; }
 
         /// <summary>
-        /// 读者数量
+        /// 读者数
         /// </summary>
         public long? ReaderCount { get; set; }
 
         /// <summary>
-        /// 来稿文章数量
+        /// 来稿文章数
         /// </summary>
         public int? ArticleCount { get; set; }
 
         /// <summary>
-        /// 动态数量
+        /// 动态数
         /// </summary>
         public int? ActivityCount { get; set; }
 
         /// <summary>
         /// 是否被订阅
         /// </summary>
-        public bool IsSubscribed { get; set; }
-
+        public bool? IsSubscribed { get; set; }
     }
 }

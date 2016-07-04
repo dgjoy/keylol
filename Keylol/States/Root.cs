@@ -48,7 +48,7 @@ namespace Keylol.States
         public static async Task<Root> Locate(string state, [Injected] KeylolUserManager userManager,
             [Injected] KeylolDbContext dbContext, [Injected] CouponProvider coupon,
             [Injected] CachedDataProvider cachedData, string pointIdCode = null, string authorIdCode = null,
-            string userIdCode = null, int sidForAuthor = 0)
+            string userIdCode = null, int sidForAuthor = 0, string keyword = null)
         {
             var root = new Root();
             var currentUserId = StateTreeHelper.GetCurrentUserId();
@@ -180,8 +180,10 @@ namespace Keylol.States
                 case "content.article":
                     root.Content = new ContentLevel
                     {
-                        Article = await States.Content.Article.ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
-                            isOperator, dbContext, cachedData, userManager)
+                        Article =
+                            await
+                                States.Content.Article.ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
+                                    isOperator, dbContext, cachedData, userManager)
                     };
                     break;
 
@@ -256,6 +258,13 @@ namespace Keylol.States
                         {
                             Ranking = await RankingPage.CreateAsync(currentUserId, dbContext, cachedData)
                         };
+                    break;
+
+                case "search.point":
+                    root.Search = new SearchLevel
+                    {
+                        Point = await PointPage.CreateAsync(currentUserId, keyword, dbContext, cachedData)
+                    };
                     break;
 
                 default:
