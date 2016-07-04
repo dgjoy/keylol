@@ -94,16 +94,7 @@ namespace Keylol.States.Search
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, int page,
             bool searchAll = true)
         {
-            int onePageCount;
-            if (searchAll)
-            {
-                onePageCount = 10;
-            }
-            else
-            {
-                onePageCount = 5;
-            }
-
+            var onePageCount = searchAll ? 10 : 5;
             var offSet = (page - 1)*10;
             var searchResult = await dbContext.Database.SqlQuery<PointResult>(
                 @"SELECT  *,

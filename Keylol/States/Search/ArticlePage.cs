@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
@@ -38,7 +37,7 @@ namespace Keylol.States.Search
         /// <param name="searchAll"></param>
         /// <returns></returns>
         public static async Task<ArticlePage> CreateAsync(string keyword,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData,bool searchAll = true)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, bool searchAll = true)
         {
             return new ArticlePage
             {
@@ -74,8 +73,9 @@ namespace Keylol.States.Search
         /// <param name="page"></param>
         /// <param name="searchAll"></param>
         /// <returns></returns>
-        public static async Task<ArticleResultList> Get(string keyword, [Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData, int page, bool searchAll = true)
+        public static async Task<ArticleResultList> Get(string keyword,
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, int page,
+            bool searchAll = true)
         {
             return await CreateAsync(keyword, dbContext, cachedData, page, searchAll);
         }
@@ -90,31 +90,24 @@ namespace Keylol.States.Search
         /// <param name="searchAll"></param>
         /// <returns></returns>
         public static async Task<ArticleResultList> CreateAsync(string keyword,
-            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, int page, bool searchAll = true)
+            [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData, int page,
+            bool searchAll = true)
         {
-            int onePageCount;
-            if (searchAll)
-            {
-                onePageCount = 10;
-            }
-            else
-            {
-                onePageCount = 5;
-            }
+            var onePageCount = searchAll ? 10 : 5;
             var offSet = (page - 1)*10;
             var searchResult = await dbContext.Database.SqlQuery<ArticleResult>(
                 @"SELECT *,
                          (SELECT AvatarImage FROM Points WHERE t4.TargetPointId= Id)AS AvatarImage,
                          (SELECT IdCode FROM KeylolUsers WHERE t4.AuthorId = Id)AS AuthorIdCode,
-                         (SELECT ChineseName FROM Points WHERE t4.TargetPointId = Id)AS TargetPointChineseName,
-					     (SELECT EnglishName FROM Points WHERE t4.TargetPointId = Id)AS TargetPointEnglishName
+                         (SELECT ChineseName FROM Points WHERE t4.TargetPointId = Id)AS PointChineseName,
+					     (SELECT EnglishName FROM Points WHERE t4.TargetPointId = Id)AS PointEnglishName
                     FROM(
 					    SELECT * FROM [dbo].[Articles] AS [t1] INNER JOIN
 					        (SELECT [t2].[KEY],SUM([t2].[RANK]) AS RANK FROM (
 					            SELECT * FROM CONTAINSTABLE([dbo].[Articles],([Title],[Subtitle],[Content]),{0})
                             ) AS[t2] GROUP BY[t2].[KEY]) AS[t3] ON[t1].[Id] = [t3].[KEY]) AS[t4]
-                    ORDER BY[t4].RANK DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", 
-                $"\"{keyword}\" OR \"{keyword}*\"", offSet,onePageCount).ToListAsync();
+                    ORDER BY[t4].RANK DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY",
+                $"\"{keyword}\" OR \"{keyword}*\"", offSet, onePageCount).ToListAsync();
             var result = new ArticleResultList(searchResult.Count);
             if (searchAll)
             {
@@ -122,13 +115,13 @@ namespace Keylol.States.Search
                 {
                     result.Add(new ArticleResult
                     {
-                        Titile = p.Titile,
+                        Title = p.Title,
                         SubTitle = p.SubTitle,
-                        AutherUserIdCode = p.AutherUserIdCode,
-                        SidForAuther = p.SidForAuther,
-                        TargetPointChineseName = p.TargetPointChineseName,
-                        TargetPointEnglishName = p.TargetPointEnglishName,
-                        TargetPointAvater = p.TargetPointAvater,
+                        AuthorIdCode = p.AuthorIdCode,
+                        SidForAuthor = p.SidForAuthor,
+                        PointChineseName = p.PointChineseName,
+                        PointEnglishName = p.PointEnglishName,
+                        PointAvater = p.PointAvater,
                         LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(p.Id, LikeTargetType.Article),
                         CommentCount = await cachedData.ArticleComments.GetArticleCommentCountAsync(p.Id),
                         PublishTime = p.PublishTime
@@ -141,13 +134,13 @@ namespace Keylol.States.Search
                 {
                     result.Add(new ArticleResult
                     {
-                        Titile = p.Titile,
+                        Title = p.Title,
                         SubTitle = p.SubTitle,
-                        AutherUserIdCode = p.AutherUserIdCode,
-                        SidForAuther = p.SidForAuther,
-                        TargetPointChineseName = p.TargetPointChineseName,
-                        TargetPointEnglishName = p.TargetPointEnglishName,
-                        TargetPointAvater = p.TargetPointAvater,
+                        AuthorIdCode = p.AuthorIdCode,
+                        SidForAuthor = p.SidForAuthor,
+                        PointChineseName = p.PointChineseName,
+                        PointEnglishName = p.PointEnglishName,
+                        PointAvater = p.PointAvater,
                         LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(p.Id, LikeTargetType.Article)
                     });
                 }
@@ -169,7 +162,7 @@ namespace Keylol.States.Search
         /// <summary>
         /// 标题
         /// </summary>
-        public string Titile { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// 副标题
@@ -179,12 +172,12 @@ namespace Keylol.States.Search
         /// <summary>
         /// 作者用户识别码
         /// </summary>
-        public string AutherUserIdCode { get; set; }
+        public string AuthorIdCode { get; set; }
 
         /// <summary>
         /// 作者的文章定位
         /// </summary>
-        public int SidForAuther { get; set; }
+        public int? SidForAuthor { get; set; }
 
         /// <summary>
         /// 投稿据点ID
@@ -194,31 +187,31 @@ namespace Keylol.States.Search
         /// <summary>
         /// 投稿据点中文
         /// </summary>
-        public string TargetPointChineseName { get; set; }
+        public string PointChineseName { get; set; }
 
         /// <summary>
         /// 投稿据点英文
         /// </summary>
-        public string TargetPointEnglishName { get; set; }
+        public string PointEnglishName { get; set; }
 
         /// <summary>
         /// 据点头像
         /// </summary>
-        public string TargetPointAvater { get; set; }
+        public string PointAvater { get; set; }
 
         /// <summary>
         /// 获赞数
         /// </summary>
-        public long LikeCount { get; set; }
+        public long? LikeCount { get; set; }
 
         /// <summary>
         /// 评论数
         /// </summary>
-        public long CommentCount { get; set; }
+        public long? CommentCount { get; set; }
 
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime PublishTime { get; set; }
+        public DateTime? PublishTime { get; set; }
     }
 }
