@@ -39,6 +39,10 @@ namespace Keylol.Models
         public string Content { get; set; }
 
         [Required(AllowEmptyStrings = true)]
+        [MaxLength(300000)]
+        public string UnstyledContent { get; set; } = string.Empty;
+
+        [Required(AllowEmptyStrings = true)]
         [MaxLength(256)]
         public string CoverImage { get; set; } = string.Empty;
 

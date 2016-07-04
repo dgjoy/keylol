@@ -314,10 +314,13 @@
     <Compile Include="States\PostOffice\SocialActivity\SocialActivityLevel.cs" />
     <Compile Include="States\PostOffice\SocialActivity\SubscriberPage.cs" />
     <Compile Include="States\PostOffice\UnreadPage.cs" />
-    <Compile Include="States\Search\ArticlePage.cs" />
-    <Compile Include="States\Search\PointPage.cs" />
+    <Compile Include="States\Search\Article\ArticlePage.cs" />
+    <Compile Include="States\Search\Article\ArticleResult.cs" />
+    <Compile Include="States\Search\Point\PointPage.cs" />
+    <Compile Include="States\Search\Point\PointResult.cs" />
     <Compile Include="States\Search\SearchLevel.cs" />
-    <Compile Include="States\Search\UserPage.cs" />
+    <Compile Include="States\Search\User\UserPage.cs" />
+    <Compile Include="States\Search\User\UserResult.cs" />
     <Compile Include="States\Shared\PointBasicInfo.cs" />
     <Compile Include="States\Aggregation\Point\Edit\EditLevel.cs" />
     <Compile Include="States\Aggregation\Point\Edit\InfoPage.cs" />

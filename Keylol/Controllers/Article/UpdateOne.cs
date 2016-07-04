@@ -41,6 +41,7 @@ namespace Keylol.Controllers.Article
             article.Title = requestDto.Title;
             article.Subtitle = string.IsNullOrWhiteSpace(requestDto.Subtitle) ? string.Empty : requestDto.Subtitle;
             article.Content = SanitizeRichText(requestDto.Content);
+            article.UnstyledContent = PlainTextFormatter.FlattenHtml(article.Content, true);
             article.CoverImage = SanitizeCoverImage(requestDto.CoverImage);
 
             var targetPoint = await _dbContext.Points.Where(p => p.Id == requestDto.TargetPointId)

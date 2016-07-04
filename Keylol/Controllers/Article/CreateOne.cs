@@ -40,6 +40,7 @@ namespace Keylol.Controllers.Article
                 Content = SanitizeRichText(requestDto.Content),
                 CoverImage = SanitizeCoverImage(requestDto.CoverImage)
             };
+            article.UnstyledContent = PlainTextFormatter.FlattenHtml(article.Content, true);
 
             if (!string.IsNullOrWhiteSpace(requestDto.Subtitle))
                 article.Subtitle = requestDto.Subtitle;

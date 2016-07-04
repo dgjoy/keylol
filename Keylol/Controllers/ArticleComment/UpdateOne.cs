@@ -36,7 +36,7 @@ namespace Keylol.Controllers.ArticleComment
                 return Unauthorized();
 
             comment.Content = ArticleController.SanitizeRichText(requestDto.Content);
-            comment.UnstyledContent = PlainTextFormatter.FlattenHtml(requestDto.Content, false);
+            comment.UnstyledContent = PlainTextFormatter.FlattenHtml(comment.Content, false);
             if (requestDto.ReplyToComment != null)
             {
                 var replyToComment = await _dbContext.ArticleComments

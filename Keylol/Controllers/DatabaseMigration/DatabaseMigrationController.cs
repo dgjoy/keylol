@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using CsQuery;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Utilities;
 
 namespace Keylol.Controllers.DatabaseMigration
 {
@@ -41,6 +43,41 @@ namespace Keylol.Controllers.DatabaseMigration
             });
             await _dbContext.SaveChangesAsync();
             return Ok();
+        }
+
+        /// <summary>
+        /// 重新提取所有文章的 UnstyledContent
+        /// </summary>
+        [Route("article-unstyled-content")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ArticleUnstyledContent()
+        {
+            var articles = await _dbContext.Articles.ToListAsync();
+            Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
+            foreach (var article in articles)
+            {
+                article.Content = CQ.Create(article.Content).Render();
+                article.UnstyledContent = PlainTextFormatter.FlattenHtml(article.Content, true);
+                await _dbContext.SaveChangesAsync();
+            }
+            return Ok("迁移成功");
+        }
+
+        /// <summary>
+        /// 重新提取所有文章评论的 UnstyledContent
+        /// </summary>
+        [Route("article-comment-unstyled-content")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ArticleCommentUnstyledContent()
+        {
+            var comments = await _dbContext.ArticleComments.ToListAsync();
+            Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
+            foreach (var comment in comments)
+            {
+                comment.UnstyledContent = PlainTextFormatter.FlattenHtml(comment.Content, false);
+                await _dbContext.SaveChangesAsync();
+            }
+            return Ok("迁移成功");
         }
     }
 }

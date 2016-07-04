@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
 using Keylol.ServiceBase;
-using Keylol.Utilities;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Keylol.Controllers.Point
@@ -41,16 +40,13 @@ namespace Keylol.Controllers.Point
                 {
                     a.Title,
                     a.Subtitle,
-                    a.Content,
+                    a.UnstyledContent,
                     a.PublishTime,
                     a.SidForAuthor,
                     a.AuthorId,
                     AuthorIdCode = a.Author.IdCode,
                     AuthorUserName = a.Author.UserName
                 }).FirstOrDefaultAsync();
-            var articleSummary = article == null ? null : PlainTextFormatter.FlattenHtml(article.Content, true);
-            if (articleSummary != null && articleSummary.Length > 200)
-                articleSummary = articleSummary.Substring(0, 200);
             var thirdPartyLinks =
                 Helpers.SafeDeserialize<ChineseAvailability>(point.ChineseAvailability)?.ThirdPartyLinks;
             return Ok(new
@@ -66,7 +62,9 @@ namespace Keylol.Controllers.Point
                         Link = $"https://www.keylol.com/article/{article.AuthorIdCode}/{article.SidForAuthor}",
                         article.Title,
                         article.Subtitle,
-                        Summary = articleSummary,
+                        Summary = article.UnstyledContent.Length > 200
+                            ? article.UnstyledContent.Substring(0, 200)
+                            : article.UnstyledContent,
                         PublishDate = article.PublishTime.ToString("yyyy-MM-dd"),
                         Author = new
                         {
