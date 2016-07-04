@@ -9,7 +9,6 @@ namespace Keylol.Models.Migrations
         {
             Sql(@"ALTER FULLTEXT INDEX ON [dbo].[Articles] ADD ([Subtitle] LANGUAGE 2052)",true);
             Sql(@"CREATE FULLTEXT INDEX ON [dbo].[KeylolUsers] ([UserName] LANGUAGE 2052) KEY INDEX [IX_Sid]", true);
-            //Sql(@"ALTER FULLTEXT INDEX ON [dbo].[KeylolUsers] ENABLE");
         }
         
         public override void Down()
