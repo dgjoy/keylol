@@ -95,7 +95,7 @@ namespace Keylol.States.Search.Point
                     ActivityCount = searchAll ? p.ActivityCount : null,
                     Subscribed = searchAll && !string.IsNullOrWhiteSpace(currentUserId)
                         ? await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
-                            SubscriptionTargetType.User)
+                            SubscriptionTargetType.Point)
                         : (bool?) null,
                     InLibrary = p.SteamAppId == null || string.IsNullOrWhiteSpace(currentUserId)
                         ? (bool?) null

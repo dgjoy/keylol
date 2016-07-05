@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
@@ -69,19 +70,25 @@ namespace Keylol.States.Search.User
                 $"\"{keyword}\" OR \"{keyword}*\"", skip, take).ToListAsync();
 
             var result = new UserResultList(queryResult.Count);
-            foreach (var p in queryResult)
+            foreach (var u in queryResult)
             {
                 result.Add(new UserResult
                 {
-                    Id = searchAll ? p.Id : null,
-                    UserName = p.UserName,
-                    GamerTag = p.GamerTag,
-                    IdCode = p.IdCode,
-                    AvatarImage = p.AvatarImage,
-                    ArticleCount = p.ArticleCount,
-                    ActivityCount = p.ActivityCount,
-                    LikeCount = await cachedData.Likes.GetUserLikeCountAsync(p.Id),
-                    IsFriend = await cachedData.Users.IsFriendAsync(currentUserId, p.Id)
+                    Id = searchAll ? u.Id : null,
+                    UserName = u.UserName,
+                    GamerTag = u.GamerTag,
+                    IdCode = u.IdCode,
+                    AvatarImage = u.AvatarImage,
+                    ArticleCount = u.ArticleCount,
+                    ActivityCount = u.ActivityCount,
+                    LikeCount = await cachedData.Likes.GetUserLikeCountAsync(u.Id),
+                    Subscribed = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, u.Id,
+                            SubscriptionTargetType.User),
+                    IsFriend = string.IsNullOrWhiteSpace(currentUserId)
+                        ? (bool?) null
+                        : await cachedData.Users.IsFriendAsync(currentUserId, u.Id)
                 });
             }
             return result;
@@ -132,6 +139,11 @@ namespace Keylol.States.Search.User
         /// 获得认可数
         /// </summary>
         public int? LikeCount { get; set; }
+
+        /// <summary>
+        /// 是否已订阅
+        /// </summary>
+        public bool? Subscribed { get; set; }
 
         /// <summary>
         /// 是否是好友

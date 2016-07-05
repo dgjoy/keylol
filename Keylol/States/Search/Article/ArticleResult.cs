@@ -45,18 +45,17 @@ namespace Keylol.States.Search.Article
             var take = searchAll ? 10 : 5;
             var skip = (page - 1)*take;
             var searchResult = await dbContext.Database.SqlQuery<ArticleResult>(@"SELECT
-                        *,
-                        (SELECT
-                            IdCode
-                        FROM KeylolUsers
-                        WHERE t3.AuthorId = Id)
-                        AS AuthorIdCode
+                        *
                     FROM (SELECT
                         [t1].*,
                         [t2].*,
+                        [t5].[IdCode] AS PointIdCode,
                         [t5].[AvatarImage] AS PointAvatarImage,
                         [t5].[ChineseName] AS PointChineseName,
-                        [t5].[EnglishName] AS PointEnglishName
+                        [t5].[EnglishName] AS PointEnglishName,
+                        [t6].[UserName] AS AuthorUserName,
+                        [t6].[IdCode] AS AuthorIdCode,
+                        [t6].[AvatarImage] AS AuthorAvatarImage
                     FROM [dbo].[Articles] AS [t1]
                     INNER JOIN (SELECT
                         *
@@ -64,27 +63,31 @@ namespace Keylol.States.Search.Article
                         ON [t1].[Sid] = [t2].[KEY]
                     INNER JOIN [dbo].[Points] AS [t5]
                         ON [t1].[TargetPointId] = [t5].[Id]
+                    INNER JOIN [dbo].[KeylolUsers] AS [t6]
+                        ON [t1].[AuthorId] = [t6].[Id]
                     WHERE [t1].[Archived] = 0 AND [t1].[Rejected] = 0) AS [t3]
                     ORDER BY [t3].[RANK] DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY",
                 keyword, skip, take).ToListAsync();
 
             var result = new ArticleResultList(searchResult.Count);
-            foreach (var p in searchResult)
+            foreach (var a in searchResult)
             {
                 result.Add(new ArticleResult
                 {
-                    Title = p.Title,
-                    SubTitle = p.SubTitle,
-                    AuthorIdCode = p.AuthorIdCode,
-                    SidForAuthor = p.SidForAuthor,
-                    PointChineseName = p.PointChineseName,
-                    PointEnglishName = p.PointEnglishName,
-                    PointAvaterImage = p.PointAvaterImage,
-                    PointIdCode = p.PointIdCode,
-                    LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(p.Id, LikeTargetType.Article),
+                    Title = a.Title,
+                    SubTitle = a.SubTitle,
+                    AuthorIdCode = a.AuthorIdCode,
+                    AuthorUserName = searchAll ? a.AuthorUserName : null,
+                    AuthorAvatarImage = searchAll ? a.AuthorAvatarImage : null,
+                    SidForAuthor = a.SidForAuthor,
+                    PointChineseName = searchAll ? a.PointChineseName : null,
+                    PointEnglishName = searchAll ? a.PointEnglishName : null,
+                    PointAvatarImage = searchAll ? a.PointAvatarImage : null,
+                    PointIdCode = searchAll ? a.PointIdCode : null,
+                    LikeCount = await cachedData.Likes.GetTargetLikeCountAsync(a.Id, LikeTargetType.Article),
                     CommentCount =
-                        searchAll ? await cachedData.ArticleComments.GetArticleCommentCountAsync(p.Id) : (long?)null,
-                    PublishTime = searchAll ? p.PublishTime : null
+                        searchAll ? await cachedData.ArticleComments.GetArticleCommentCountAsync(a.Id) : (long?)null,
+                    PublishTime = searchAll ? a.PublishTime : null
                 });
             }
             return result;
@@ -117,6 +120,16 @@ namespace Keylol.States.Search.Article
         public string AuthorIdCode { get; set; }
 
         /// <summary>
+        /// 作者用户名
+        /// </summary>
+        public string AuthorUserName { get; set; }
+
+        /// <summary>
+        /// 作者头像
+        /// </summary>
+        public string AuthorAvatarImage { get; set; }
+
+        /// <summary>
         /// 文章在作者名下序号
         /// </summary>
         public int? SidForAuthor { get; set; }
@@ -134,7 +147,7 @@ namespace Keylol.States.Search.Article
         /// <summary>
         /// 据点头像
         /// </summary>
-        public string PointAvaterImage { get; set; }
+        public string PointAvatarImage { get; set; }
 
         /// <summary>
         /// 据点识别码
