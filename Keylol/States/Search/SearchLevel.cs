@@ -1,4 +1,7 @@
-﻿
+﻿using Keylol.States.Search.Article;
+using Keylol.States.Search.Point;
+using Keylol.States.Search.User;
+
 namespace Keylol.States.Search
 {
     /// <summary>
@@ -7,20 +10,18 @@ namespace Keylol.States.Search
     public class SearchLevel
     {
         /// <summary>
-        /// 据点查询结果
+        /// 据点
         /// </summary>
-        public PointSearch Point { get; set; }
+        public PointPage Point { get; set; }
         
         /// <summary>
-        /// 文章查询结果
+        /// 文章
         /// </summary>
-        public ArticleSearch Article { get; set; }
+        public ArticlePage Article { get; set; }
         
         /// <summary>
-        /// 用户查询结果
+        /// 用户
         /// </summary>
-        public UserSearch User { get; set; }
-
-
+        public UserPage User { get; set; }
     }
 }

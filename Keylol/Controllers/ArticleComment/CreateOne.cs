@@ -42,12 +42,12 @@ namespace Keylol.Controllers.ArticleComment
                 ArticleId = article.Id,
                 CommentatorId = userId,
                 Content = ArticleController.SanitizeRichText(requestDto.Content),
-                UnstyledContent = PlainTextFormatter.FlattenHtml(requestDto.Content, false),
                 SidForArticle = await _dbContext.ArticleComments.Where(c => c.ArticleId == article.Id)
                     .Select(c => c.SidForArticle)
                     .DefaultIfEmpty(0)
                     .MaxAsync() + 1
             };
+            comment.UnstyledContent = PlainTextFormatter.FlattenHtml(comment.Content, false);
 
             if (requestDto.ReplyToComment != null)
             {

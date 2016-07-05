@@ -9,13 +9,16 @@ using Keylol.States.Aggregation.Point;
 using Keylol.States.Aggregation.User;
 using Keylol.States.Content;
 using Keylol.States.Content.Activity;
-using Keylol.States.Content.Article;
 using Keylol.States.Coupon;
 using Keylol.States.Coupon.Detail;
 using Keylol.States.Coupon.Ranking;
 using Keylol.States.Entrance;
 using Keylol.States.PostOffice;
 using Keylol.States.PostOffice.SocialActivity;
+using Keylol.States.Search;
+using Keylol.States.Search.Article;
+using Keylol.States.Search.Point;
+using Keylol.States.Search.User;
 using Keylol.StateTreeManager;
 using EntrancePage = Keylol.States.Aggregation.User.EntrancePage;
 
@@ -43,11 +46,12 @@ namespace Keylol.States
         /// <param name="authorIdCode">作者识别码</param>
         /// <param name="userIdCode">用户识别码</param>
         /// <param name="sidForAuthor">文章在作者名下的序号</param>
+        /// <param name="keyword">搜索关键字</param>
         /// <returns>完整状态树</returns>
         public static async Task<Root> Locate(string state, [Injected] KeylolUserManager userManager,
             [Injected] KeylolDbContext dbContext, [Injected] CouponProvider coupon,
             [Injected] CachedDataProvider cachedData, string pointIdCode = null, string authorIdCode = null,
-            string userIdCode = null, int sidForAuthor = 0)
+            string userIdCode = null, int sidForAuthor = 0, string keyword = null)
         {
             var root = new Root();
             var currentUserId = StateTreeHelper.GetCurrentUserId();
@@ -179,8 +183,10 @@ namespace Keylol.States
                 case "content.article":
                     root.Content = new ContentLevel
                     {
-                        Article = await ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
-                            isOperator, dbContext, cachedData, userManager)
+                        Article =
+                            await
+                                States.Content.Article.ArticlePage.CreateAsync(authorIdCode, sidForAuthor, currentUserId,
+                                    isOperator, dbContext, cachedData, userManager)
                     };
                     break;
 
@@ -257,6 +263,27 @@ namespace Keylol.States
                         };
                     break;
 
+                case "search.point":
+                    root.Search = new SearchLevel
+                    {
+                        Point = await PointPage.CreateAsync(currentUserId, keyword, dbContext, cachedData)
+                    };
+                    break;
+
+                case "search.article":
+                    root.Search = new SearchLevel
+                    {
+                        Article = await ArticlePage.CreateAsync(keyword, dbContext, cachedData)
+                    };
+                    break;
+
+                case "search.user":
+                    root.Search = new SearchLevel
+                    {
+                        User = await UserPage.CreateAsync(currentUserId, keyword, dbContext, cachedData)
+                    };
+                    break;
+
                 default:
                     throw new NotSupportedException("Not supported state.");
             }
@@ -313,5 +340,10 @@ namespace Keylol.States
         /// </summary>
         [Authorize]
         public RelatedPointList RelatedPoints { get; set; }
+
+        /// <summary>
+        /// 搜索层级
+        /// </summary>
+        public SearchLevel Search { get; set; }
     }
 }

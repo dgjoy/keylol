@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Keylol.Models;
@@ -15,10 +14,6 @@ namespace Keylol.States
     /// </summary>
     public class PointQueryResultList : List<PointQueryResult>
     {
-        private PointQueryResultList()
-        {
-        }
-
         private PointQueryResultList(int capacity) : base(capacity)
         {
         }
@@ -65,44 +60,39 @@ namespace Keylol.States
                 var inTypes = string.Join(", ", typeWhitelist.Select(t => (int) t));
                 typeFilterSql = $"WHERE [t1].[Type] IN ({inTypes})";
             }
-            try
-            {
-                var queryResult = await dbContext.Points.SqlQuery(
-                    @"SELECT TOP(5) * FROM [dbo].[Points] AS [t1] INNER JOIN (
-                        SELECT [t2].[KEY], SUM([t2].[RANK]) as RANK FROM (
+            keyword = keyword.Replace('"', ' ').Replace('*', ' ').Replace('\'', ' ');
+            var queryResult = await dbContext.Points.SqlQuery(
+                @"SELECT TOP(5) *, (SELECT COUNT(1) FROM Articles WHERE TargetPointId = t1.Id) AS ArticleCount
+                      FROM [dbo].[Points] AS [t1] INNER JOIN (
+                        SELECT [t2].[KEY], MAX([t2].[RANK]) as RANK FROM (
 		                    SELECT * FROM CONTAINSTABLE([dbo].[Points], ([EnglishName], [EnglishAliases]), {0})
 		                    UNION ALL
 		                    SELECT * FROM CONTAINSTABLE([dbo].[Points], ([ChineseName], [ChineseAliases]), {0})
 	                    ) AS [t2] GROUP BY [t2].[KEY]
-                    ) AS [t3] ON [t1].[Id] = [t3].[KEY] " + typeFilterSql + @"
-                    ORDER BY [t3].[RANK] DESC",
-                    $"\"{keyword}\" OR \"{keyword}*\"")
-                    .ToListAsync();
+                    ) AS [t3] ON [t1].[Sid] = [t3].[KEY] " + typeFilterSql + @"
+                    ORDER BY [t3].[RANK] DESC, [ArticleCount] DESC",
+                $"\"{keyword}\" OR \"{keyword}*\"")
+                .ToListAsync();
 
-                var result = new PointQueryResultList(queryResult.Count);
-                foreach (var p in queryResult)
-                {
-                    result.Add(new PointQueryResult
-                    {
-                        Id = p.Id,
-                        Type = p.Type,
-                        AvatarImage = p.AvatarImage,
-                        ChineseName = p.ChineseName,
-                        EnglishName = p.EnglishName,
-                        HeaderImage = headerImage ? p.HeaderImage : null,
-                        TotalPlayedTime = playedTime && p.SteamAppId.HasValue
-                            ? (await dbContext.UserSteamGameRecords
-                                .Where(r => r.UserId == currentUserId && r.SteamAppId == p.SteamAppId.Value)
-                                .SingleOrDefaultAsync())?.TotalPlayedTime
-                            : null
-                    });
-                }
-                return result;
-            }
-            catch (SqlException)
+            var result = new PointQueryResultList(queryResult.Count);
+            foreach (var p in queryResult)
             {
-                return new PointQueryResultList();
+                result.Add(new PointQueryResult
+                {
+                    Id = p.Id,
+                    Type = p.Type,
+                    AvatarImage = p.AvatarImage,
+                    ChineseName = p.ChineseName,
+                    EnglishName = p.EnglishName,
+                    HeaderImage = headerImage ? p.HeaderImage : null,
+                    TotalPlayedTime = playedTime && p.SteamAppId.HasValue
+                        ? (await dbContext.UserSteamGameRecords
+                            .Where(r => r.UserId == currentUserId && r.SteamAppId == p.SteamAppId.Value)
+                            .SingleOrDefaultAsync())?.TotalPlayedTime
+                        : null
+                });
             }
+            return result;
         }
     }
 

@@ -161,6 +161,14 @@
     <Compile Include="Migrations\201606281044461_SteamCnUserNameBindingTime.Designer.cs">
       <DependentUpon>201606281044461_SteamCnUserNameBindingTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607031356503_MoreFullText.cs" />
+    <Compile Include="Migrations\201607031356503_MoreFullText.Designer.cs">
+      <DependentUpon>201607031356503_MoreFullText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607042035187_FullIndexRecreate.cs" />
+    <Compile Include="Migrations\201607042035187_FullIndexRecreate.Designer.cs">
+      <DependentUpon>201607042035187_FullIndexRecreate.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -895,6 +903,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606281044461_SteamCnUserNameBindingTime.resx">
       <DependentUpon>201606281044461_SteamCnUserNameBindingTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607031356503_MoreFullText.resx">
+      <DependentUpon>201607031356503_MoreFullText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607042035187_FullIndexRecreate.resx">
+      <DependentUpon>201607042035187_FullIndexRecreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Keylol.Models;
-using Keylol.Models.DTO;
 using Keylol.Services;
 using Swashbuckle.Swagger.Annotations;
 
@@ -63,6 +62,32 @@ namespace Keylol.Controllers.SteamBot
                 await _userManager.SendSteamChatMessageAsync(user, message, tempSilence);
             }
             return Ok();
+        }
+
+        /// <summary>
+        /// 用户 ID 类型
+        /// </summary>
+        public enum UserIdentityType
+        {
+            /// <summary>
+            /// 用户名
+            /// </summary>
+            UserName,
+
+            /// <summary>
+            /// 识别码
+            /// </summary>
+            IdCode,
+
+            /// <summary>
+            /// ID
+            /// </summary>
+            Id,
+
+            /// <summary>
+            /// Steam ID
+            /// </summary>
+            SteamId
         }
     }
 }
