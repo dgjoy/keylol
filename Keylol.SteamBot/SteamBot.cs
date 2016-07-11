@@ -6,8 +6,8 @@ using ChannelAdam.ServiceModel;
 using Keylol.ServiceBase;
 using Keylol.SteamBot.ServiceReference;
 using log4net;
-using Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling;
-using SteamKit2;
+using SteamKit2.Discovery;
+using SteamKit2.Internal;
 
 namespace Keylol.SteamBot
 {
@@ -15,16 +15,14 @@ namespace Keylol.SteamBot
     {
         private readonly Timer _heartbeatTimer = new Timer(10000) {AutoReset = false}; // 10s
         private readonly ILog _logger;
-        private readonly RetryPolicy _retryPolicy;
 
         public SteamBot(ILogProvider logProvider, IServiceConsumer<ISteamBotCoordinator> coordinator,
-            SteamBotCoordinatorCallback callback, RetryPolicy retryPolicy)
+            SteamBotCoordinatorCallback callback)
         {
             ServiceName = "Keylol.SteamBot";
 
             _logger = logProvider.Logger;
             Coordinator = coordinator;
-            _retryPolicy = retryPolicy;
             callback.SteamBot = this;
 
             _heartbeatTimer.Elapsed += (sender, args) =>
@@ -46,7 +44,7 @@ namespace Keylol.SteamBot
 
         public List<BotInstance> BotInstances { get; set; }
 
-        protected override async void OnStart(string[] args)
+        protected override void OnStart(string[] args)
         {
             var dataFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
             Directory.CreateDirectory(dataFolder);
@@ -54,9 +52,8 @@ namespace Keylol.SteamBot
 
             uint cellId = 0; // 基于地理位置
             if (args != null && args.Length > 1) uint.TryParse(args[0], out cellId);
-            _logger.Info("Loading CM server list...");
-            await _retryPolicy.ExecuteAsync(async () => await SteamDirectory.Initialize(cellId));
-            _logger.Info("CM server list loaded.");
+            CMClient.Servers.CellID = cellId;
+            CMClient.Servers.ServerListProvider = new FileStorageServerListProvider(Path.Combine(dataFolder, "server-list.bin"));
 
             try
             {

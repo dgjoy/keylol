@@ -93,7 +93,7 @@ namespace Keylol.SteamBot
                     _logger.Info($"#{SequenceNumber} Listening callbacks...");
                     while (!_disposed)
                     {
-                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(10));
+                        _callbackManager.RunWaitAllCallbacks(TimeSpan.FromMilliseconds(10));
                     }
                     _logger.Info($"#{SequenceNumber} Stopped listening callbacks.");
                 });
