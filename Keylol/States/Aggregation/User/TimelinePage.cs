@@ -60,7 +60,7 @@ namespace Keylol.States.Aggregation.User
             return new TimelinePage
             {
                 Cards = await TimelineCardList.CreateAsync(UserStream.Name(userId), currentUserId,
-                    12, true, dbContext, cachedData)
+                    18, true, dbContext, cachedData)
             };
         }
 

@@ -61,7 +61,7 @@ namespace Keylol.States.Aggregation.Point
             return new TimelinePage
             {
                 Cards = await TimelineCardList.CreateAsync(PointStream.Name(pointId), currentUserId,
-                    12, false, dbContext, cachedData)
+                    18, false, dbContext, cachedData)
             };
         }
 

@@ -53,7 +53,7 @@ namespace Keylol.States.Entrance
             return new TimelinePage
             {
                 Cards = await TimelineCardList.CreateAsync(SubscriptionStream.Name(currentUserId), currentUserId,
-                    12, false, dbContext, cachedData)
+                    18, false, dbContext, cachedData)
             };
         }
 
