@@ -47,11 +47,9 @@ namespace Keylol.States.Entrance.Discovery
         /// <param name="returnFirstHeaderImage">是否返回第一个据点头部图</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns>Item1 表示 <see cref="OnSalePointList"/>，Item2 表示总页数，Item3 表示第一个据点头部图</returns>
-        public static async Task<Tuple<OnSalePointList, int, string>> CreateAsync(string currentUserId, int page,
-            bool returnPageCount,
-            bool returnFirstHeaderImage, KeylolDbContext dbContext,
-            CachedDataProvider cachedData)
+        /// <returns>Item1 表示 <see cref="OnSalePointList"/>，Item2 表示总页数，Item3 表示第一个据点头部图，Item4 表示第二个据点头部图</returns>
+        public static async Task<Tuple<OnSalePointList, int, string, string>> CreateAsync(string currentUserId, int page,
+            bool returnPageCount, bool returnFirstHeaderImage, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             SteamCrawlerProvider.UpdateOnSalePoints();
             var conditionQuery = from feed in dbContext.Feeds
@@ -90,11 +88,14 @@ namespace Keylol.States.Entrance.Discovery
                         : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, p.SteamAppId.Value)
                 });
             }
-            var firstRecord = queryResult.FirstOrDefault(r => !string.IsNullOrWhiteSpace(r.HeaderImage));
-            return new Tuple<OnSalePointList, int, string>(
+            var pointWithHeaders = queryResult.Where(r => !string.IsNullOrWhiteSpace(r.HeaderImage)).ToList();
+            var firstRecord = pointWithHeaders.FirstOrDefault();
+            var secondRecord = pointWithHeaders.Skip(1).FirstOrDefault();
+            return new Tuple<OnSalePointList, int, string, string>(
                 result,
                 (int) Math.Ceiling(firstRecord?.Count/(double) RecordsPerPage ?? 1),
-                firstRecord?.HeaderImage);
+                firstRecord?.HeaderImage,
+                secondRecord?.HeaderImage);
         }
     }
 }

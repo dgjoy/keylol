@@ -94,6 +94,7 @@ namespace Keylol.States.Entrance.Discovery
                 LatestArticleHeaderImage = latestArticles.Item3,
                 LatestArticlePageCount = latestArticles.Item2,
                 LatestArticles = latestArticles.Item1,
+                LatestActivityHeaderImage = onSalePoints.Item4,
                 LatestActivities = await TimelineCardList.CreateAsync(LatestActivityStream.Name, currentUserId,
                     12, false, dbContext, cachedData)
             };
@@ -169,6 +170,11 @@ namespace Keylol.States.Entrance.Discovery
         /// 最新文章
         /// </summary>
         public LatestArticleList LatestArticles { get; set; }
+
+        /// <summary>
+        /// 最新动态头部图
+        /// </summary>
+        public string LatestActivityHeaderImage { get; set; }
 
         /// <summary>
         /// 最新动态
