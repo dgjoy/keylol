@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Threading.Tasks;
 using Keylol.Identity;
 using Keylol.Models.DAL;
@@ -340,6 +341,23 @@ namespace Keylol.States
         /// </summary>
         [Authorize]
         public RelatedPointList RelatedPoints { get; set; }
+
+        /// <summary>
+        /// 邀请注册的用户数
+        /// </summary>
+        [Authorize]
+        public int? InviteCount { get; set; }
+
+        /// <summary>
+        /// 获取当前用户邀请注册数
+        /// </summary>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <returns>邀请注册数</returns>
+        public static async Task<int> GetInviteCount([Injected] KeylolDbContext dbContext)
+        {
+            var currentUserId = StateTreeHelper.GetCurrentUserId();
+            return await dbContext.Users.CountAsync(u => u.InviterId == currentUserId);
+        }
 
         /// <summary>
         /// 搜索层级
