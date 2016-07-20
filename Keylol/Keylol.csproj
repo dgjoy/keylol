@@ -258,6 +258,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\CouponHub.cs" />
+    <Compile Include="Hubs\MessageHub.cs" />
     <Compile Include="Hubs\ReliableHub.cs" />
     <Compile Include="Identity\KeylolClaimTypes.cs" />
     <Compile Include="Identity\KeylolLoginProviders.cs" />
@@ -272,6 +274,7 @@
     <Compile Include="Provider\CachedDataProvider\ActivityCommentOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\ArticleCommentOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\LikeOperations.cs" />
+    <Compile Include="Provider\CachedDataProvider\MessageOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\PointOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\SubscriptionOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\UserOperations.cs" />

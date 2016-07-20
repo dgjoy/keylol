@@ -76,6 +76,7 @@ namespace Keylol.Controllers.ArticleComment
 
                 propertyInfo.SetValue(comment, requestDto.Value);
             }
+            await _dbContext.SaveChangesAsync();
             if (isKeylolOperator && (requestDto.NotifyAuthor ?? false))
             {
                 var missive = new Message
@@ -126,14 +127,13 @@ namespace Keylol.Controllers.ArticleComment
                             break;
                     }
                 }
-                _dbContext.Messages.Add(missive);
+                await _cachedData.Messages.AddAsync(missive);
 
                 // Steam 通知
 
                 if (!string.IsNullOrWhiteSpace(steamNotityText))
                     await _userManager.SendSteamChatMessageAsync(comment.Commentator, steamNotityText);
             }
-            await _dbContext.SaveChangesAsync();
             return Ok();
         }
     }

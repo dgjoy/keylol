@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.States
 {
@@ -21,11 +21,12 @@ namespace Keylol.States
         /// </summary>
         /// <param name="user">用户对象</param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <param name="dbContext"></param>
-        /// <param name="coupon"></param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="coupon"><see cref="CouponProvider"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="CurrentUser"/></returns>
         public static async Task<CurrentUser> CreateAsync(KeylolUser user, KeylolUserManager userManager,
-            KeylolDbContext dbContext, CouponProvider coupon)
+            KeylolDbContext dbContext, CouponProvider coupon, CachedDataProvider cachedData)
         {
             // 每日访问奖励
             if (DateTime.Now.Date > user.LastDailyRewardTime.Date)
@@ -55,7 +56,7 @@ namespace Keylol.States
                 IdCode = user.IdCode,
                 Roles = (await userManager.GetRolesAsync(user.Id)).ToList(),
                 AvatarImage = user.AvatarImage,
-                MessageCount = await dbContext.Messages.CountAsync(m => m.ReceiverId == user.Id && m.Unread),
+                MessageCount = await cachedData.Messages.GetUserUnreadMessageCountAsync(user.Id),
                 Coupon = user.Coupon,
                 PreferredPointName = user.PreferredPointName,
                 OpenInNewWindow = user.OpenInNewWindow

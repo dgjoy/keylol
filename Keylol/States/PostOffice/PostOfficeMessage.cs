@@ -4,8 +4,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Keylol.Hubs;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Provider;
+using Keylol.Provider.CachedDataProvider;
 using Keylol.States.PostOffice.SocialActivity;
 using Keylol.Utilities;
 
@@ -30,9 +33,10 @@ namespace Keylol.States.PostOffice
         /// <param name="page">分页页码</param>
         /// <param name="returnPageCount">是否返回总页数</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns>Item1 表示 <see cref="PostOfficeMessageList"/>，Item2 表示总页数</returns>
         public static async Task<Tuple<PostOfficeMessageList, int>> CreateAsync(Type pageType, string currentUserId,
-            int page, bool returnPageCount, KeylolDbContext dbContext)
+            int page, bool returnPageCount, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             Expression<Func<Message, bool>> condition;
             if (pageType == typeof(UnreadPage))
@@ -64,6 +68,7 @@ namespace Keylol.States.PostOffice
                 .TakePage(page, RecordsPerPage)
                 .ToListAsync();
             var result = new PostOfficeMessageList(messages.Count);
+            var markReadCount = 0;
             foreach (var m in messages)
             {
                 var item = new PostOfficeMessage
@@ -121,9 +126,16 @@ namespace Keylol.States.PostOffice
                 if (m.SecondCount > 0) item.SecondCount = m.SecondCount;
 
                 result.Add(item);
-                m.Unread = false;
+                if (m.Unread)
+                {
+                    m.Unread = false;
+                    markReadCount++;
+                }
             }
             await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
+            await cachedData.Messages.IncreaseUserUnreadMessageCountAsync(currentUserId, -markReadCount);
+            NotificationProvider.Hub<MessageHub, IMessageHubClient>().User(currentUserId)?
+                .OnUnreadCountChanged(await cachedData.Messages.GetUserUnreadMessageCountAsync(currentUserId));
             var pageCount = 1;
             if (returnPageCount)
             {

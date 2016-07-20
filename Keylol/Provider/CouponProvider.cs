@@ -2,6 +2,7 @@
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Hubs;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
@@ -79,6 +80,8 @@ namespace Keylol.Provider
                     log.Balance = user.Coupon;
                     log.CreateTime = logTime ?? DateTime.Now;
                     await _dbContext.SaveChangesAsync();
+                    NotificationProvider.Hub<CouponHub, ICouponHubClient>().User(user.Id)?
+                        .OnCouponChanged(log.Event, log.Change, log.Balance);
                 }
                 catch (DbUpdateConcurrencyException e)
                 {

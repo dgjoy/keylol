@@ -183,8 +183,7 @@ namespace Keylol.Controllers.Like
                         default:
                             throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null);
                     }
-                    _dbContext.Messages.Add(message);
-                    await _dbContext.SaveChangesAsync();
+                    await _cachedData.Messages.AddAsync(message);
                 }
                 if (steamNotify)
                 {

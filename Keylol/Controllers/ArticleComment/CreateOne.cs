@@ -75,7 +75,7 @@ namespace Keylol.Controllers.ArticleComment
                 if (comment.ReplyToComment.Commentator.NotifyOnCommentReplied)
                 {
                     messageNotifiedArticleAuthor = comment.ReplyToComment.CommentatorId == article.AuthorId;
-                    _dbContext.Messages.Add(new Message
+                    await _cachedData.Messages.AddAsync(new Message
                     {
                         Type = MessageType.ArticleCommentReply,
                         OperatorId = comment.CommentatorId,
@@ -96,7 +96,7 @@ namespace Keylol.Controllers.ArticleComment
             {
                 if (!messageNotifiedArticleAuthor && article.Author.NotifyOnArticleReplied)
                 {
-                    _dbContext.Messages.Add(new Message
+                    await _cachedData.Messages.AddAsync(new Message
                     {
                         Type = MessageType.ArticleComment,
                         OperatorId = comment.CommentatorId,
@@ -111,7 +111,6 @@ namespace Keylol.Controllers.ArticleComment
                         $"{comment.Commentator.UserName} 评论了你的文章《{article.Title}》：\n\n{unstyledContentWithNewLine}\n\nhttps://www.keylol.com/article/{article.Author.IdCode}/{article.SidForAuthor}#{comment.SidForArticle}");
                 }
             }
-            await _dbContext.SaveChangesAsync();
             _mqChannel.SendMessage(string.Empty, MqClientProvider.ImageGarageRequestQueue, new ImageGarageRequestDto
             {
                 ContentType = ImageGarageRequestContentType.ArticleComment,

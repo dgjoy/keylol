@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Keylol.Models.DAL;
+using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.PostOffice.SocialActivity
@@ -13,22 +14,26 @@ namespace Keylol.States.PostOffice.SocialActivity
         /// 获取听众消息页
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="SubscriberPage"/></returns>
-        public static async Task<SubscriberPage> Get([Injected] KeylolDbContext dbContext)
+        public static async Task<SubscriberPage> Get([Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
         }
 
         /// <summary>
-        /// 获取消息列表
+        /// 获取听众消息列表
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="dbContext"></param>
-        /// <returns></returns>
-        public static async Task<PostOfficeMessageList> GetMessages(int page, [Injected] KeylolDbContext dbContext)
+        /// <param name="page">分页页码</param>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="PostOfficeMessageList"/></returns>
+        public static async Task<PostOfficeMessageList> GetMessages(int page, [Injected] KeylolDbContext dbContext,
+            [Injected] CachedDataProvider cachedData)
         {
             return (await PostOfficeMessageList.CreateAsync(typeof(SubscriberPage), StateTreeHelper.GetCurrentUserId(),
-                page, false, dbContext)).Item1;
+                page, false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
@@ -36,11 +41,13 @@ namespace Keylol.States.PostOffice.SocialActivity
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="SubscriberPage"/></returns>
-        public static async Task<SubscriberPage> CreateAsync(string currentUserId, KeylolDbContext dbContext)
+        public static async Task<SubscriberPage> CreateAsync(string currentUserId, KeylolDbContext dbContext,
+            CachedDataProvider cachedData)
         {
             var messages = await PostOfficeMessageList.CreateAsync(typeof(SubscriberPage), currentUserId, 1, true,
-                dbContext);
+                dbContext, cachedData);
             return new SubscriberPage
             {
                 MessagePageCount = messages.Item2,
