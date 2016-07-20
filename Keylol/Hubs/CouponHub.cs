@@ -20,6 +20,6 @@ namespace Keylol.Hubs
         /// <param name="event">事件</param>
         /// <param name="change">变化量</param>
         /// <param name="balance">余额</param>
-        void OnCouponChanged(CouponEvent @event, int change, int balance);
+        void OnCouponChanged(string @event, int change, int balance);
     }
 }

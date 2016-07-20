@@ -81,7 +81,7 @@ namespace Keylol.Provider
                     log.CreateTime = logTime ?? DateTime.Now;
                     await _dbContext.SaveChangesAsync();
                     NotificationProvider.Hub<CouponHub, ICouponHubClient>().User(user.Id)?
-                        .OnCouponChanged(log.Event, log.Change, log.Balance);
+                        .OnCouponChanged(log.Event.ToString(), log.Change, log.Balance);
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
