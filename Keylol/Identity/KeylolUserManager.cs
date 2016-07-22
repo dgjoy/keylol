@@ -39,9 +39,9 @@ namespace Keylol.Identity
             DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(30);
             MaxFailedAccessAttemptsBeforeLockout = 10;
 
-            SteamChatMessageService = new KeylolSteamChatMessageService();
-            EmailService = new KeylolEmailService();
-            SmsService = new KeylolSmsService();
+            SteamChatMessageService = KeylolSteamChatMessageService.Default;
+            EmailService = KeylolEmailService.Default;
+            SmsService = KeylolSmsService.Default;
         }
 
         /// <summary>

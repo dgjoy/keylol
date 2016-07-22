@@ -13,6 +13,15 @@ namespace Keylol.Identity.MessageServices
     public class KeylolSteamChatMessageService : IIdentityMessageService
     {
         /// <summary>
+        /// 全局默认实例
+        /// </summary>
+        public static KeylolSteamChatMessageService Default = new KeylolSteamChatMessageService();
+
+        private KeylolSteamChatMessageService()
+        {
+        }
+
+        /// <summary>
         ///     This method should send the message
         /// </summary>
         /// <param name="message" />
