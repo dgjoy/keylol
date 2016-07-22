@@ -7,12 +7,12 @@ namespace Keylol.Models.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.CouponGifts", "GiftType", c => c.Int(nullable: false));
+            AddColumn("dbo.CouponGifts", "Type", c => c.Int(nullable: false));
         }
         
         public override void Down()
         {
-            DropColumn("dbo.CouponGifts", "GiftType");
+            DropColumn("dbo.CouponGifts", "Type");
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
@@ -26,6 +24,7 @@ namespace Keylol.States.Coupon.Store
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <returns><see cref="CouponGiftList"/></returns>
         public static async Task<CouponGiftList> Get([Injected] KeylolDbContext dbContext,CachedDataProvider cachedData)
         {
             return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
@@ -40,20 +39,17 @@ namespace Keylol.States.Coupon.Store
         public static async Task<CouponGiftList> CreateAsync(string currentUserId, [Injected] KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            var queryResult =
-                await
-                    dbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)
-                        .OrderByDescending(g => g.CreateTime)
-                        .Select(u => new
-                        {
-                            u.Id,
-                            u.Name,
-                            u.Descriptions,
-                            u.PreviewImage,
-                            u.Price,
-                            u.ThumbnailImage,
-                            u.GiftType
-                        }).ToListAsync();
+            var queryResult = await dbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)
+                .OrderByDescending(g => g.CreateTime)
+                .Select(g => new
+                {
+                    g.Id,
+                    g.Name,
+                    g.Descriptions,
+                    g.Price,
+                    g.ThumbnailImage,
+                    g.Type
+                }).ToListAsync();
 
             var result = new CouponGiftList(queryResult.Count);
             foreach (var g in queryResult)
@@ -63,10 +59,9 @@ namespace Keylol.States.Coupon.Store
                     Id = g.Id,
                     Name = g.Name,
                     Description = g.Descriptions,
-                    ThumbnailImage = g.ThumbnailImage,
                     Price = g.Price,
-                    UserSeasonLiked = 9,
-                    GiftType = g.GiftType
+                    ThumbnailImage = g.ThumbnailImage,
+                    Type = g.Type
                 });
             }
             return result;
@@ -75,24 +70,24 @@ namespace Keylol.States.Coupon.Store
     }
 
     /// <summary>
-    /// 商店上架商品
+    /// 文券商店商品
     /// </summary>
     public class CouponGift
     {
         /// <summary>
-        /// 商品Id
+        /// ID
         /// </summary>
         public string Id { get; set; }
         
         /// <summary>
         /// 商品名
         /// </summary>
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// 商品描述
+        /// 描述
         /// </summary>
-        public String Description { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// 缩略图
@@ -100,24 +95,13 @@ namespace Keylol.States.Coupon.Store
         public string ThumbnailImage { get; set; }
 
         /// <summary>
-        /// 预览图
+        /// 价格
         /// </summary>
-        [Obsolete]
-        public string PreviewImage { get; set; }
+        public int? Price { get; set; }
 
         /// <summary>
-        /// 文券价格
+        /// 类型
         /// </summary>
-        public int Price { get; set; }
-
-        /// <summary>
-        /// 用户当季获得认可数
-        /// </summary>
-        public int UserSeasonLiked { get; set; }
-
-        /// <summary>
-        /// 商品类型，0 为未定义商品
-        /// </summary>
-        public CouponGiftType GiftType { get; set; }
+        public CouponGiftType? Type { get; set; }
     }
 }
