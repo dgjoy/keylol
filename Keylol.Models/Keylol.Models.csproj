@@ -169,6 +169,14 @@
     <Compile Include="Migrations\201607042035187_FullIndexRecreate.Designer.cs">
       <DependentUpon>201607042035187_FullIndexRecreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607220354056_AddCouponGiftType.cs" />
+    <Compile Include="Migrations\201607220354056_AddCouponGiftType.Designer.cs">
+      <DependentUpon>201607220354056_AddCouponGiftType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607220357566_ModifyCouponGiftType_With_Unspecified.cs" />
+    <Compile Include="Migrations\201607220357566_ModifyCouponGiftType_With_Unspecified.Designer.cs">
+      <DependentUpon>201607220357566_ModifyCouponGiftType_With_Unspecified.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -909,6 +917,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607042035187_FullIndexRecreate.resx">
       <DependentUpon>201607042035187_FullIndexRecreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607220354056_AddCouponGiftType.resx">
+      <DependentUpon>201607220354056_AddCouponGiftType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607220357566_ModifyCouponGiftType_With_Unspecified.resx">
+      <DependentUpon>201607220357566_ModifyCouponGiftType_With_Unspecified.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
