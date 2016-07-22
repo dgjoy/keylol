@@ -40,5 +40,15 @@ namespace Keylol.Models
         public DateTime CreateTime { get; set; } = DateTime.Now;
 
         public DateTime EndTime { get; set; }
+
+        [Required]
+        public CouponGiftType GiftType { get; set; }
+    }
+
+    public enum CouponGiftType
+    {
+        Unspecified = 0,
+        SteamCnCredit,
+        SteamGiftCard
     }
 }

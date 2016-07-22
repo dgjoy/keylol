@@ -255,6 +255,8 @@
     <Compile Include="Controllers\ArticleComment\ArticleCommentController.cs" />
     <Compile Include="Controllers\ArticleComment\CreateOne.cs" />
     <Compile Include="Controllers\Article\UpdateOneModeration.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CouponGiftOrderController.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CreateOne.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Feed\CreateOneOutpostPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightPoint.cs" />
@@ -342,6 +344,8 @@
     <Compile Include="States\Coupon\Detail\DetailPage.cs" />
     <Compile Include="States\Coupon\Ranking\RankingPage.cs" />
     <Compile Include="States\Coupon\Ranking\RankingUser.cs" />
+    <Compile Include="States\Coupon\Store\CouponGift.cs" />
+    <Compile Include="States\Coupon\Store\StorePage.cs" />
     <Compile Include="States\PostOffice\MissivePage.cs" />
     <Compile Include="States\PostOffice\PostOfficeLevel.cs" />
     <Compile Include="States\PostOffice\PostOfficeMessage.cs" />
@@ -438,6 +442,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\CouponGiftOrder\CouponGift\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
