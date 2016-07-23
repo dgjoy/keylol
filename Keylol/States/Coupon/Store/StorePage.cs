@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
@@ -19,11 +20,12 @@ namespace Keylol.States.Coupon.Store
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"></param>
         /// <returns><see cref="StorePage"/></returns>
         public static async Task<StorePage> Get([Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
         {
-            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager);
         }
 
         /// <summary>
@@ -32,13 +34,14 @@ namespace Keylol.States.Coupon.Store
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
+        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <returns><see cref="StorePage"/></returns>
         public static async Task<StorePage> CreateAsync(string currentUserId, [Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
         {
             return new StorePage
             {
-                Gifts = await CouponGiftList.CreateAsync(currentUserId, dbContext, cachedData)
+                Gifts = await CouponGiftList.CreateAsync(currentUserId, dbContext, cachedData, userManager)
             };
         }
 
