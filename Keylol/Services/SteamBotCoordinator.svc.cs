@@ -331,7 +331,7 @@ namespace Keylol.Services
                     {
                         if (!AutoChatDisabledBots.ContainsKey(botId))
                         {
-                            await Client.SendChatMessage(botId, senderSteamId, await AskTulingBot(message, user.Id),
+                            await Client.SendChatMessage(botId, senderSteamId, await AskTulingBotAsync(message, user.Id),
                                 true);
                         }
                     }
@@ -428,7 +428,7 @@ namespace Keylol.Services
         /// <param name="question">问题内容</param>
         /// <param name="userId">上下文关联用户 ID</param>
         /// <returns>图灵机器人的回答，null 表示询问失败</returns>
-        private async Task<string> AskTulingBot(string question, string userId)
+        private async Task<string> AskTulingBotAsync(string question, string userId)
         {
             const string apiKey = "51c3bd1bb6a9d092f8b63aca01262edf";
             userId = Helpers.Md5(userId);

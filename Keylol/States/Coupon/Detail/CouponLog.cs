@@ -86,7 +86,7 @@ namespace Keylol.States.Coupon.Detail
             KeylolUserManager userManager)
         {
             var description = Helpers.SafeDeserialize<JObject>(descriptionText);
-            if (description == null) return null;
+            if (description == null) return Helpers.SafeDeserialize<string>(descriptionText);
             Func<object, JObject> jObject =
                 o => JObject.FromObject(o, new JsonSerializer {NullValueHandling = NullValueHandling.Ignore});
             Func<string, string, Task> fillUser = async (field, newField) =>
@@ -131,7 +131,7 @@ namespace Keylol.States.Coupon.Detail
                     description.Remove("CommentId");
                     description["ArticleComment"] = jObject(new
                     {
-                        Content = truncateContent(comment.Content),
+                        Content = truncateContent(comment.UnstyledContent),
                         ArticleAuthorIdCode = comment.Article.Author.IdCode,
                         comment.Article.SidForAuthor,
                         comment.SidForArticle
@@ -146,7 +146,7 @@ namespace Keylol.States.Coupon.Detail
                     description.Remove("ActivityId");
                     description["Activity"] = jObject(new
                     {
-                        Content = truncateContent(activity.Content),
+                        Content = PostOffice.PostOfficeMessageList.CollapseActivityContent(activity, 15),
                         activity.SidForAuthor,
                         activity.Author.IdCode
                     });

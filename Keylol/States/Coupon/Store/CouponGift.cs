@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Keylol.Controllers.CouponGiftOrder.Processors;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
@@ -42,44 +43,52 @@ namespace Keylol.States.Coupon.Store
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         public static async Task<CouponGiftList> CreateAsync(string currentUserId, [Injected] KeylolDbContext dbContext,
-            [Injected]CachedDataProvider cachedData, [Injected]KeylolUserManager userManager)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
         {
             var queryResult = await dbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)
                 .OrderByDescending(g => g.CreateTime)
-                .Select(g => new
-                {
-                    g.Id,
-                    g.Name,
-                    g.Descriptions,
-                    g.Price,
-                    g.ThumbnailImage,
-                    g.Type
-                }).ToListAsync();
+                .ToListAsync();
 
-            var steamCnUId = await userManager.GetSteamCnUidAsync(currentUserId);
-            var steamCnUserName =
-                dbContext.Users.Where(u => u.Id == currentUserId).Select(u => u.SteamCnUserName).First();
+            var steamCnUid = await userManager.GetSteamCnUidAsync(currentUserId);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
             var email = dbContext.Users.Where(u => u.Id == currentUserId).Select(u => u.Email).First();
 
             var result = new CouponGiftList(queryResult.Count);
             foreach (var g in queryResult)
             {
-                result.Add(new CouponGift
+                GiftProcessor processor;
+                switch (g.Type)
+                {
+                    case CouponGiftType.Custom:
+                        processor = new CustomProcessor();
+                        break;
+
+                    case CouponGiftType.SteamCnCredit:
+                        processor = new SteamCnCreditProcessor(dbContext, userManager);
+                        break;
+
+                    case CouponGiftType.SteamGiftCard:
+                        processor = new SteamGiftCardProcessor(dbContext, userManager);
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                var stateTreeGift = new CouponGift
                 {
                     Id = g.Id,
                     Name = g.Name,
-                    Description = g.Descriptions,
+                    Descriptions = g.Descriptions,
                     Price = g.Price,
                     ThumbnailImage = g.ThumbnailImage,
-                    Type = g.Type,
-                    SteamCnUId = steamCnUId,
-                    SteamCnUserName = steamCnUserName,
-                    Email = email
-                });
+                    Type = g.Type
+                };
+                processor.Initialize(currentUserId, g);
+                await processor.FillPropertiesAsync(stateTreeGift);
+                result.Add(stateTreeGift);
             }
             return result;
         }
-
     }
 
     /// <summary>
@@ -91,7 +100,7 @@ namespace Keylol.States.Coupon.Store
         /// ID
         /// </summary>
         public string Id { get; set; }
-        
+
         /// <summary>
         /// 商品名
         /// </summary>
@@ -100,7 +109,7 @@ namespace Keylol.States.Coupon.Store
         /// <summary>
         /// 描述
         /// </summary>
-        public string Description { get; set; }
+        public string Descriptions { get; set; }
 
         /// <summary>
         /// 缩略图
@@ -120,7 +129,7 @@ namespace Keylol.States.Coupon.Store
         /// <summary>
         /// 蒸汽动力账号
         /// </summary>
-        public string SteamCnUId { get; set; }
+        public string SteamCnUid { get; set; }
 
         /// <summary>
         /// SteamCN 用户名

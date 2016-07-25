@@ -1,10 +1,10 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using CsQuery;
 using Keylol.Models;
 using Keylol.Models.DAL;
-using Keylol.Utilities;
 
 namespace Keylol.Controllers.DatabaseMigration
 {
@@ -45,38 +45,26 @@ namespace Keylol.Controllers.DatabaseMigration
         }
 
         /// <summary>
-        /// 重新提取所有文章的 UnstyledContent
+        /// 重新计算所有用户的当季文章认可数 （2016年，6月1日 - 8月31日）
         /// </summary>
-        [Route("article-unstyled-content")]
+        [Route("recalculate-season-article-like")]
         [HttpPost]
-        public async Task<IHttpActionResult> ArticleUnstyledContent()
+        public async Task<IHttpActionResult> RecalculateSeasonArticleLike()
         {
-            var articles = await _dbContext.Articles.ToListAsync();
-            Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
-            foreach (var article in articles)
+            var users = await _dbContext.Users.ToListAsync();
+            var startTime = new DateTime(2016, 6, 1, 0, 0, 0);
+            var endTime = new DateTime(2016, 9, 1, 0, 0, 0);
+            foreach (var user in users)
             {
-                article.Content = CQ.Create(article.Content).Render();
-                article.UnstyledContent = PlainTextFormatter.FlattenHtml(article.Content, true);
+                user.SeasonLikeCount = await (from article in _dbContext.Articles
+                    join like in _dbContext.Likes on article.Id equals like.TargetId
+                    where like.TargetType == LikeTargetType.Article && article.AuthorId == user.Id &&
+                          like.Time >= startTime && like.Time < endTime
+                    select article
+                    ).CountAsync();
                 await _dbContext.SaveChangesAsync();
             }
-            return Ok("迁移成功");
-        }
-
-        /// <summary>
-        /// 重新提取所有文章评论的 UnstyledContent
-        /// </summary>
-        [Route("article-comment-unstyled-content")]
-        [HttpPost]
-        public async Task<IHttpActionResult> ArticleCommentUnstyledContent()
-        {
-            var comments = await _dbContext.ArticleComments.ToListAsync();
-            Config.OutputFormatter = OutputFormatters.HtmlEncodingNone;
-            foreach (var comment in comments)
-            {
-                comment.UnstyledContent = PlainTextFormatter.FlattenHtml(comment.Content, false);
-                await _dbContext.SaveChangesAsync();
-            }
-            return Ok("迁移成功");
+            return Ok();
         }
     }
 }

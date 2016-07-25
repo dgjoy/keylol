@@ -110,7 +110,6 @@ namespace Keylol.Controllers.Article
             ///     内容
             /// </summary>
             [Required]
-            [MaxLength(100000)]
             public string Content { get; set; }
 
             /// <summary>

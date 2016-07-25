@@ -64,7 +64,10 @@ namespace Keylol.Models
 
         [Index]
         public int Coupon { get; set; } = 0;
-        
+
+        [Index]
+        public int SeasonLikeCount { get; set; } = 0;
+
         public string SteamBotId { get; set; }
 
         public virtual SteamBot SteamBot { get; set; }

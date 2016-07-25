@@ -164,14 +164,29 @@ namespace Keylol.SteamBot
             }
             return result.ToArray();
         }
-
-        public void SetPlayingGame(string botId, int appId)
+        
+        public void SetPlayingGame(string botId, uint[] appIds, string gameName)
         {
             var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-            playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+            if (!string.IsNullOrWhiteSpace(gameName))
             {
-                game_id = new GameID(appId)
-            });
+                playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                {
+                    game_extra_info = gameName,
+                    game_id = new GameID
+                    {
+                        AppType = GameID.GameType.Shortcut,
+                        ModID = uint.MaxValue
+                    }
+                });
+            }
+            foreach (var appId in appIds)
+            {
+                playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                {
+                    game_id = new GameID(appId)
+                });
+            }
             if (botId == null)
             {
                 if (SteamBot.BotInstances == null)

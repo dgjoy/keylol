@@ -174,9 +174,10 @@ namespace Keylol.Services.Contracts
         ///     设置机器人正在玩的游戏
         /// </summary>
         /// <param name="botId">机器人 ID，<c>null</c> 表示所有机器人</param>
-        /// <param name="appId">App ID，0 表示停止游戏</param>
+        /// <param name="appIds">App ID 列表</param>
+        /// <param name="gameName">游戏名称</param>
         [OperationContract(IsOneWay = true)]
-        Task SetPlayingGame(string botId, int appId);
+        Task SetPlayingGame(string botId, List<uint> appIds, string gameName = null);
 
         /// <summary>
         ///     要求机器人使用自己的 Cookies 抓取指定网页（使用 HTTP GET 方法）

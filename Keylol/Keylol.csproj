@@ -256,10 +256,13 @@
     <Compile Include="Controllers\ArticleComment\CreateOne.cs" />
     <Compile Include="Controllers\Article\UpdateOneModeration.cs" />
     <Compile Include="Controllers\CouponGiftOrder\CouponGiftOrderController.cs" />
-    <Compile Include="Controllers\CouponGiftOrder\CouponGift\Custom.cs" />
-    <Compile Include="Controllers\CouponGiftOrder\CouponGift\SteamCnCredit.cs" />
-    <Compile Include="Controllers\CouponGiftOrder\CouponGift\SteamGiftCard.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\CustomProcessor.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\GiftProcessor.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\SteamCnCreditProcessor.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\SteamGiftCardProcessor.cs" />
     <Compile Include="Controllers\CouponGiftOrder\CreateOne.cs" />
+    <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
+    <Compile Include="Controllers\CouponLog\CreateOne.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Feed\CreateOneOutpostPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightPoint.cs" />

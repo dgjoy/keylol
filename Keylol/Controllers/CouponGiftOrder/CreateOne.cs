@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using Keylol.Controllers.CouponGiftOrder.CouponGift;
+using Keylol.Controllers.CouponGiftOrder.Processors;
 using Keylol.Models;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
@@ -16,6 +12,10 @@ namespace Keylol.Controllers.CouponGiftOrder
 {
     public partial class CouponGiftOrderController
     {
+        /// <summary>
+        /// 创建一个文券商品订单
+        /// </summary>
+        /// <param name="giftId">文券商品 ID</param>
         [Route]
         [HttpPost]
         [SwaggerResponseRemoveDefaults]
@@ -35,40 +35,36 @@ namespace Keylol.Controllers.CouponGiftOrder
             var user = await _userManager.FindByIdAsync(userId);
             if (user.Coupon < gift.Price)
                 return this.BadRequest(nameof(giftId), Errors.NotEnoughCoupon);
-
-            // add gift order into database
-            var type = gift.Type;
+            
             try
             {
-                IGiftProcessor giftProcessor;
-                switch (type)
+                GiftProcessor processor;
+                switch (gift.Type)
                 {
                     case CouponGiftType.Custom:
-                        giftProcessor = new Custom();
-                        giftProcessor.GiftExchange(userId,_dbContext);
+                        processor = new CustomProcessor();
                         break;
 
                     case CouponGiftType.SteamCnCredit:
-                        giftProcessor = new SteamCnCredit();
-                        giftProcessor.GiftExchange(userId, _dbContext);
+                        processor = new SteamCnCreditProcessor(_dbContext, _userManager);
                         break;
 
                     case CouponGiftType.SteamGiftCard:
-                        giftProcessor = new SteamGiftCard();
-                        giftProcessor.GiftExchange(userId, _dbContext);
+                        processor = new SteamGiftCardProcessor(_dbContext, _userManager);
                         break;
 
                     default:
-                        throw new BadRequestException("错误的 gift 类型");
+                        throw new ArgumentOutOfRangeException();
                 }
+                processor.Initialize(User.Identity.GetUserId(), gift);
+                await processor.RedeemAsync();
+                return Ok();
             }
             catch (Exception e)
             {
-                return this.BadRequest(e.Message, Errors.Invalid);
+                return this.BadRequest(giftId, e.Message);
             }
-            return Ok();
         }
-
     }
 
 }

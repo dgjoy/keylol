@@ -35,18 +35,4 @@ namespace Keylol.Controllers.CouponGiftOrder
             _cachedData = cachedData;
         }
     }
-
-    /// <summary>
-    /// 文券商品处理接口
-    /// </summary>
-    public interface IGiftProcessor
-    {
-        /// <summary>
-        /// 商品兑换
-        /// </summary>
-        /// <param name="userId">用户 Id</param>
-        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        void GiftExchange(string userId, KeylolDbContext dbContext);
-        
-    }
 }

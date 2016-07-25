@@ -1,5 +1,6 @@
 using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -237,6 +238,27 @@ namespace Keylol.Provider.CachedDataProvider
                 UserLikedTargetCacheValue(targetId, targetType));
             await IncreaseUserLikeCountAsync(likeReceiverId, 1);
             await IncreaseTargetLikeCountAsync(targetId, targetType, 1);
+
+            if (targetType == LikeTargetType.Article)
+            {
+                var receiver = await _dbContext.Users.Where(u => u.Id == likeReceiverId).SingleAsync();
+                bool saveFailed;
+                do
+                {
+                    try
+                    {
+                        saveFailed = false;
+                        receiver.SeasonLikeCount++;
+                        await _dbContext.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException e)
+                    {
+                        saveFailed = true;
+                        await e.Entries.Single().ReloadAsync();
+                    }
+                } while (saveFailed);
+            }
+
             return like.Id;
         }
 
@@ -290,8 +312,8 @@ namespace Keylol.Provider.CachedDataProvider
                     throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null);
             }
 
-            var likes = await _dbContext.Likes.Where(l => l.OperatorId == operatorId &&
-                                                          l.TargetId == targetId && l.TargetType == targetType)
+            var likes = await _dbContext.Likes
+                .Where(l => l.OperatorId == operatorId && l.TargetId == targetId && l.TargetType == targetType)
                 .ToListAsync();
             _dbContext.Likes.RemoveRange(likes);
             await _dbContext.SaveChangesAsync();
@@ -304,6 +326,26 @@ namespace Keylol.Provider.CachedDataProvider
             }
             await IncreaseUserLikeCountAsync(likeReceiverId, -likes.Count);
             await IncreaseTargetLikeCountAsync(targetId, targetType, -likes.Count);
+
+            if (targetType == LikeTargetType.Article)
+            {
+                var receiver = await _dbContext.Users.Where(u => u.Id == likeReceiverId).SingleAsync();
+                bool saveFailed;
+                do
+                {
+                    try
+                    {
+                        saveFailed = false;
+                        receiver.SeasonLikeCount--;
+                        await _dbContext.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException e)
+                    {
+                        saveFailed = true;
+                        await e.Entries.Single().ReloadAsync();
+                    }
+                } while (saveFailed);
+            }
         }
     }
 }

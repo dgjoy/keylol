@@ -77,7 +77,7 @@ namespace Keylol.SteamBot.ServiceReference {
         string[] GetFriendList(string botId);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetPlayingGame")]
-        void SetPlayingGame(string botId, int appId);
+        void SetPlayingGame(string botId, uint[] appIds, string gameName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/Curl", ReplyAction="http://tempuri.org/ISteamBotCoordinator/CurlResponse")]
         string Curl(string botId, string url);

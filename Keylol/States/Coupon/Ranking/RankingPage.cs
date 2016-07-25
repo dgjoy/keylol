@@ -32,18 +32,11 @@ namespace Keylol.States.Coupon.Ranking
         public static async Task<RankingPage> CreateAsync(string currentUserId, KeylolDbContext dbContext,
             CachedDataProvider cachedData)
         {
-            var rankingUsers = await RankingUserList.CreateAsync(currentUserId, 1, true, dbContext, cachedData);
             return new RankingPage
             {
-                MyRanking = rankingUsers.Item2,
-                RankingUsers = rankingUsers.Item1
+                RankingUsers = await RankingUserList.CreateAsync(currentUserId, 1, dbContext, cachedData)
             };
         }
-
-        /// <summary>
-        /// 我的排名
-        /// </summary>
-        public int? MyRanking { get; set; }
 
         /// <summary>
         /// 上榜用户列表
