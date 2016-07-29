@@ -70,6 +70,7 @@ namespace Keylol.Provider
                 Description = JsonConvert.SerializeObject(description)
             };
             _dbContext.CouponLogs.Add(log);
+
             bool saveFailed;
             do
             {

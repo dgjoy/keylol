@@ -12,6 +12,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
     {
         private readonly KeylolDbContext _dbContext;
         private readonly KeylolUserManager _userManager;
+        private readonly int _creditBase;
         
         /// <summary>
         /// 创建 <see cref="SteamCnCreditProcessor"/>
@@ -22,6 +23,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _creditBase = 120;
         }
 
         /// <summary>
@@ -44,6 +46,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
             stateTreeGift.SteamCnUid = await _userManager.GetSteamCnUidAsync(UserId);
             var user = await _userManager.FindByIdAsync(UserId);
             stateTreeGift.SteamCnUserName = user.SteamCnUserName;
+            stateTreeGift.Credit = _creditBase;
         }
     }
 }

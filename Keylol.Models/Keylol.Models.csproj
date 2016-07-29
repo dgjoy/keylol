@@ -177,6 +177,10 @@
     <Compile Include="Migrations\201607251024336_UserSeasonLikeCount.Designer.cs">
       <DependentUpon>201607251024336_UserSeasonLikeCount.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607291912465_AddAttributionInCouponGift.cs" />
+    <Compile Include="Migrations\201607291912465_AddAttributionInCouponGift.Designer.cs">
+      <DependentUpon>201607291912465_AddAttributionInCouponGift.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -923,6 +927,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607251024336_UserSeasonLikeCount.resx">
       <DependentUpon>201607251024336_UserSeasonLikeCount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607291912465_AddAttributionInCouponGift.resx">
+      <DependentUpon>201607291912465_AddAttributionInCouponGift.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

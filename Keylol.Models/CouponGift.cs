@@ -39,6 +39,8 @@ namespace Keylol.Models
 
         public int Price { get; set; } = 10;
 
+        public int Value { get; set; } = 100;
+
         [Index]
         public DateTime CreateTime { get; set; } = DateTime.Now;
 

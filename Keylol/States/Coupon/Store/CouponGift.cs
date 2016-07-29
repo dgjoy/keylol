@@ -122,6 +122,11 @@ namespace Keylol.States.Coupon.Store
         public int? Price { get; set; }
 
         /// <summary>
+        /// 消费额度
+        /// </summary>
+        public int? Credit { get; set; }
+
+        /// <summary>
         /// 类型
         /// </summary>
         public CouponGiftType? Type { get; set; }
