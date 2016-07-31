@@ -79,6 +79,12 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/SetPlayingGame")]
         void SetPlayingGame(string botId, uint[] appIds, string gameName);
         
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/AddLicense")]
+        void AddLicense(string botId, uint[] appIds);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/RedeemKey")]
+        void RedeemKey(string botId, string cdKey);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/Curl", ReplyAction="http://tempuri.org/ISteamBotCoordinator/CurlResponse")]
         string Curl(string botId, string url);
     }

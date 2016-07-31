@@ -180,6 +180,22 @@ namespace Keylol.Services.Contracts
         Task SetPlayingGame(string botId, List<uint> appIds, string gameName = null);
 
         /// <summary>
+        ///     为机器人添加免费 License
+        /// </summary>
+        /// <param name="botId">机器人 ID，<c>null</c> 表示所有机器人</param>
+        /// <param name="appIds">App ID 列表</param>
+        [OperationContract(IsOneWay = true)]
+        Task AddLicense(string botId, List<uint> appIds);
+
+        /// <summary>
+        ///     为指定机器人兑换 CD Key
+        /// </summary>
+        /// <param name="botId">机器人 ID</param>
+        /// <param name="cdKey">CD Key</param>
+        [OperationContract(IsOneWay = true)]
+        Task RedeemKey(string botId, string cdKey);
+
+        /// <summary>
         ///     要求机器人使用自己的 Cookies 抓取指定网页（使用 HTTP GET 方法）
         /// </summary>
         /// <param name="botId">机器人 ID</param>

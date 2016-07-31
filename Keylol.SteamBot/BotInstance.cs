@@ -55,6 +55,7 @@ namespace Keylol.SteamBot
 
             _steamUser = SteamClient.GetHandler<SteamUser>();
             SteamFriends = SteamClient.GetHandler<SteamFriends>();
+            SteamApps = SteamClient.GetHandler<SteamApps>();
         }
 
         public string Id { get; set; }
@@ -62,6 +63,7 @@ namespace Keylol.SteamBot
         public SteamUser.LogOnDetails LogOnDetails { get; set; } = new SteamUser.LogOnDetails();
         public SteamClient SteamClient { get; } = new SteamClient();
         public SteamFriends SteamFriends { get; }
+        public SteamApps SteamApps { get; }
         public BotCookieManager CookieManager { get; }
 
         /// <summary>

@@ -164,7 +164,7 @@ namespace Keylol.SteamBot
             }
             return result.ToArray();
         }
-        
+
         public void SetPlayingGame(string botId, uint[] appIds, string gameName)
         {
             var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
@@ -199,6 +199,39 @@ namespace Keylol.SteamBot
             }
             var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
             botInstance?.SteamClient.Send(playGameMessage);
+        }
+
+        public void AddLicense(string botId, uint[] appIds)
+        {
+            if (botId == null)
+            {
+                if (SteamBot.BotInstances == null)
+                    return;
+                foreach (var bot in SteamBot.BotInstances)
+                {
+                    foreach (var appId in appIds)
+                    {
+                        bot.SteamApps.RequestFreeLicense(appId);
+                    }
+                }
+                return;
+            }
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            if (botInstance == null)
+                return;
+            foreach (var appId in appIds)
+            {
+                botInstance.SteamApps.RequestFreeLicense(appId);
+            }
+        }
+
+        public void RedeemKey(string botId, string cdKey)
+        {
+            var botInstance = SteamBot.BotInstances?.SingleOrDefault(b => b.Id == botId);
+            botInstance?.SteamClient.Send(new ClientMsgProtobuf<CMsgClientRegisterKey>(EMsg.ClientRegisterKey)
+            {
+                Body = {key = cdKey}
+            });
         }
 
         public string Curl(string botId, string url)

@@ -283,6 +283,8 @@
     <Compile Include="Controllers\RedisCache\DeleteListByKeyPattern.cs" />
     <Compile Include="Controllers\RedisCache\GetOneByKey.cs" />
     <Compile Include="Controllers\RedisCache\RedisCacheController.cs" />
+    <Compile Include="Controllers\SteamBot\AddLicense.cs" />
+    <Compile Include="Controllers\SteamBot\RedeemKey.cs" />
     <Compile Include="Controllers\SteamBot\SendMessage.cs" />
     <Compile Include="Controllers\SteamBot\SteamBotController.cs" />
     <Compile Include="Controllers\SteamBot\UpdatePlayingGame.cs" />
