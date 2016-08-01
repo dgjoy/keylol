@@ -35,7 +35,7 @@ namespace Keylol.Controllers.CouponGiftOrder
             var user = await _userManager.FindByIdAsync(userId);
             if (user.Coupon < gift.Price)
                 return this.BadRequest(nameof(giftId), Errors.NotEnoughCoupon);
-            
+
             try
             {
                 GiftProcessor processor;
@@ -46,11 +46,11 @@ namespace Keylol.Controllers.CouponGiftOrder
                         break;
 
                     case CouponGiftType.SteamCnCredit:
-                        processor = new SteamCnCreditProcessor(_dbContext, _userManager);
+                        processor = new SteamCnCreditProcessor(_dbContext, _userManager, _coupon);
                         break;
 
                     case CouponGiftType.SteamGiftCard:
-                        processor = new SteamGiftCardProcessor(_dbContext, _userManager);
+                        processor = new SteamGiftCardProcessor(_dbContext, _userManager, _coupon);
                         break;
 
                     default:
@@ -66,5 +66,4 @@ namespace Keylol.Controllers.CouponGiftOrder
             }
         }
     }
-
 }

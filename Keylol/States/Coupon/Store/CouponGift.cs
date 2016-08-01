@@ -7,6 +7,7 @@ using Keylol.Controllers.CouponGiftOrder.Processors;
 using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
+using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Microsoft.AspNet.Identity;
@@ -28,11 +29,12 @@ namespace Keylol.States.Coupon.Store
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="coupon"></param>
         /// <returns><see cref="CouponGiftList"/></returns>
         public static async Task<CouponGiftList> Get([Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager,[Injected] CouponProvider coupon)
         {
-            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager, coupon);
         }
 
         /// <summary>
@@ -42,8 +44,9 @@ namespace Keylol.States.Coupon.Store
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="coupon"></param>
         public static async Task<CouponGiftList> CreateAsync(string currentUserId, [Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager, [Injected] CouponProvider coupon)
         {
             var queryResult = await dbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)
                 .OrderByDescending(g => g.CreateTime)
@@ -64,11 +67,11 @@ namespace Keylol.States.Coupon.Store
                         break;
 
                     case CouponGiftType.SteamCnCredit:
-                        processor = new SteamCnCreditProcessor(dbContext, userManager);
+                        processor = new SteamCnCreditProcessor(dbContext, userManager, coupon);
                         break;
 
                     case CouponGiftType.SteamGiftCard:
-                        processor = new SteamGiftCardProcessor(dbContext, userManager);
+                        processor = new SteamGiftCardProcessor(dbContext, userManager, coupon);
                         break;
 
                     default:

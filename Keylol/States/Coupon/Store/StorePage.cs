@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Keylol.Identity;
 using Keylol.Models.DAL;
+using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 
@@ -21,11 +22,12 @@ namespace Keylol.States.Coupon.Store
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"></param>
+        /// <param name="coupon"></param>
         /// <returns><see cref="StorePage"/></returns>
         public static async Task<StorePage> Get([Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager, [Injected]CouponProvider coupon)
         {
-            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager);
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager, coupon);
         }
 
         /// <summary>
@@ -35,13 +37,14 @@ namespace Keylol.States.Coupon.Store
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
+        /// <param name="coupon"></param>
         /// <returns><see cref="StorePage"/></returns>
         public static async Task<StorePage> CreateAsync(string currentUserId, [Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager, [Injected] CouponProvider coupon)
         {
             return new StorePage
             {
-                Gifts = await CouponGiftList.CreateAsync(currentUserId, dbContext, cachedData, userManager)
+                Gifts = await CouponGiftList.CreateAsync(currentUserId, dbContext, cachedData, userManager, coupon)
             };
         }
 

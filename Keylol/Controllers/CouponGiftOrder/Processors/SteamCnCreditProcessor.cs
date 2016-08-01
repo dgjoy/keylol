@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Keylol.Identity;
 using Keylol.Models.DAL;
+using Keylol.Provider;
 
 namespace Keylol.Controllers.CouponGiftOrder.Processors
 {
@@ -12,17 +13,20 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
     {
         private readonly KeylolDbContext _dbContext;
         private readonly KeylolUserManager _userManager;
+        private readonly CouponProvider _coupon;
         private readonly int _creditBase;
-        
+
         /// <summary>
         /// 创建 <see cref="SteamCnCreditProcessor"/>
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        public SteamCnCreditProcessor(KeylolDbContext dbContext, KeylolUserManager userManager)
+        /// <param name="coupon"></param>
+        public SteamCnCreditProcessor(KeylolDbContext dbContext, KeylolUserManager userManager, CouponProvider coupon)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _coupon = coupon;
             _creditBase = 120;
         }
 
