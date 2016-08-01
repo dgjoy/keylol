@@ -21,7 +21,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <param name="coupon"></param>
+        /// <param name="coupon"><see cref="CouponProvider"/></param>
         public SteamCnCreditProcessor(KeylolDbContext dbContext, KeylolUserManager userManager, CouponProvider coupon)
         {
             _dbContext = dbContext;

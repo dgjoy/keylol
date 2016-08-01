@@ -29,7 +29,7 @@ namespace Keylol.States.Coupon.Store
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <param name="coupon"></param>
+        /// <param name="coupon"><see cref="CouponProvider"/></param>
         /// <returns><see cref="CouponGiftList"/></returns>
         public static async Task<CouponGiftList> Get([Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager,[Injected] CouponProvider coupon)
@@ -44,7 +44,7 @@ namespace Keylol.States.Coupon.Store
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <param name="coupon"></param>
+        /// <param name="coupon"><see cref="CouponProvider"/></param>
         public static async Task<CouponGiftList> CreateAsync(string currentUserId, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager, [Injected] CouponProvider coupon)
         {

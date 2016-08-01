@@ -123,6 +123,11 @@
         public const string UserNonExistent = "user_non_existent";
 
         /// <summary>
+        ///     用户邮箱不存在
+        /// </summary>
+        public const string EmailNonExistent = "email_non_existent";
+
+        /// <summary>
         ///     帐号被暂时锁定
         /// </summary>
         public const string AccountLockedOut = "account_locked_out";
