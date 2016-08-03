@@ -23,7 +23,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         private readonly KeylolDbContext _dbContext;
         private readonly KeylolUserManager _userManager;
         private readonly CouponProvider _coupon;
-        private readonly int _creditBase;
+        private const int CreditBase = 0;
 
         /// <summary>
         /// 创建 <see cref="SteamGiftCardProcessor"/>
@@ -36,7 +36,6 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
             _dbContext = dbContext;
             _userManager = userManager;
             _coupon = coupon;
-            _creditBase = 0;
         }
 
         /// <summary>
@@ -44,43 +43,16 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// </summary>
         public override async Task RedeemAsync()
         {
-            // 额度检测
             var user = await _userManager.FindByIdAsync(UserId);
-            var seasonLikeCount = user.SeasonLikeCount;
-            var boughtCredits = await (from giftOrder in _dbContext.CouponGiftOrders
-                where giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == UserId
-                join gift in _dbContext.CouponGifts on giftOrder.GiftId equals gift.Id
-                where gift.Type == Gift.Type
-                select new
-                {
-                    RedeemPrice = giftOrder.RedeemPrice
-                }
-                ).SumAsync(b => b.RedeemPrice);
-            var credit = _creditBase + seasonLikeCount - boughtCredits;
-            if (credit < Gift.Price)
-            {
-                throw new Exception(Errors.NotEnoughCredit);
-            }
 
-            // 文券检测
-            if (user.Coupon < Gift.Price)
-                throw new Exception(Errors.NotEnoughCoupon);
-
-            // 电邮地址检测
-            var email = user.Email;
-            if (email == null)
-            {
-                throw new Exception(Errors.EmailNonExistent);
-            }
-
-            // 完成兑换
-            var order = new Models.CouponGiftOrder
+            if (await GetCreditAsync(user) < Gift.Price) throw new Exception(Errors.NotEnoughCredit);
+            if (user.Email == null) throw new Exception(Errors.EmailNonExistent);
+            _dbContext.CouponGiftOrders.Add(new Models.CouponGiftOrder
             {
                 UserId = UserId,
                 GiftId = Gift.Id,
                 RedeemPrice = Gift.Price
-            };
-            _dbContext.CouponGiftOrders.Add(order);
+            });
             await _dbContext.SaveChangesAsync();
             await _coupon.UpdateAsync(user, CouponEvent.兑换商品, -Gift.Price, new { CouponGiftId = Gift.Id });
         }
@@ -91,18 +63,19 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// <param name="stateTreeGift">状态树商品对象</param>
         public override async Task FillPropertiesAsync(States.Coupon.Store.CouponGift stateTreeGift)
         {
-            stateTreeGift.Email = await _userManager.GetEmailAsync(UserId);
-            var seasonLiked = await _dbContext.Users.Where(u => u.Id == UserId).Select(u=>u.SeasonLikeCount).ToListAsync();
-            var boughtCredits = await (from giftOrder in _dbContext.CouponGiftOrders
-                                       where giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == UserId
-                                       join gift in _dbContext.CouponGifts on giftOrder.GiftId equals gift.Id
-                                       where gift.Type == Gift.Type
-                                       select new
-                                       {
-                                           RedeemPrice = giftOrder.RedeemPrice
-                                       }
-                ).SumAsync(b => b.RedeemPrice);
-            stateTreeGift.Credit = _creditBase + seasonLiked.First() - boughtCredits;
+            var user = await _userManager.FindByIdAsync(UserId);
+            stateTreeGift.Email = user.Email;
+            stateTreeGift.Credit = await GetCreditAsync(user);
+            stateTreeGift.Coupon = user.Coupon;
+        }
+
+        private async Task<int> GetCreditAsync(KeylolUser user)
+        {
+            var boughtCredits = await _dbContext.CouponGiftOrders.Where(giftOrder =>
+                giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == UserId &&
+                giftOrder.Gift.Type == Gift.Type).Select(o=>o.RedeemPrice).DefaultIfEmpty(0).SumAsync();
+
+            return CreditBase + user.SeasonLikeCount - boughtCredits;
         }
     }
 }

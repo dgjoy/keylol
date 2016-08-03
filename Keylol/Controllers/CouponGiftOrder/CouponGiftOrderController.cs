@@ -7,7 +7,6 @@ using System.Web.Http;
 using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider;
-using Keylol.Provider.CachedDataProvider;
 
 namespace Keylol.Controllers.CouponGiftOrder
 {
@@ -20,7 +19,6 @@ namespace Keylol.Controllers.CouponGiftOrder
     {
         private readonly KeylolDbContext _dbContext;
         private readonly KeylolUserManager _userManager;
-        private readonly CachedDataProvider _cachedData;
         private readonly CouponProvider _coupon;
 
         /// <summary>
@@ -28,13 +26,11 @@ namespace Keylol.Controllers.CouponGiftOrder
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="coupon"><see cref="CouponProvider"/></param>
-        public CouponGiftOrderController(KeylolDbContext dbContext, KeylolUserManager userManager, CachedDataProvider cachedData, CouponProvider coupon)
+        public CouponGiftOrderController(KeylolDbContext dbContext, KeylolUserManager userManager, CouponProvider coupon)
         {
             _dbContext = dbContext;
             _userManager = userManager;
-            _cachedData = cachedData;
             _coupon = coupon;
         }
     }

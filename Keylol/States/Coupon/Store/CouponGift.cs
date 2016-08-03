@@ -148,5 +148,11 @@ namespace Keylol.States.Coupon.Store
         /// 电邮地址
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// 拥有文券数
+        /// </summary>
+        public int? Coupon { get; set; }
+
     }
 }

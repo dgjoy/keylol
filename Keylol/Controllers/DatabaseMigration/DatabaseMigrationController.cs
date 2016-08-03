@@ -66,5 +66,23 @@ namespace Keylol.Controllers.DatabaseMigration
             }
             return Ok();
         }
+
+        /// <summary>
+        /// 同步数据库原先所有文券商品交易时价格 (2016年8月4日前)
+        /// </summary>
+        [Route("sync-coupon-gift-order-redeem-price")]
+        [HttpPost]
+        public async Task<IHttpActionResult> SyncCouponGiftOrderRedeemPrice()
+        {
+            var couponGiftOrders = await _dbContext.CouponGiftOrders
+                .Include(o=>o.Gift)
+                .ToListAsync();
+            foreach (var couponGiftOrder in couponGiftOrders)
+            {
+                couponGiftOrder.RedeemPrice = couponGiftOrder.Gift.Price;
+                await _dbContext.SaveChangesAsync();
+            }
+            return Ok();
+        }
     }
 }

@@ -98,9 +98,14 @@
         public const string SteamAccountBound = "steam_account_bound";
 
         /// <summary>
-        ///     头像图片来源不可信
+        ///     SteanCN 账户未绑定
         /// </summary>
-        public const string AvatarImageUntrusted = "avatar_image_untrusted";
+        public const string SteamCnAccountNotBound = "steamcn_account_not_bound";
+
+    /// <summary>
+    ///     头像图片来源不可信
+    /// </summary>
+    public const string AvatarImageUntrusted = "avatar_image_untrusted";
 
         /// <summary>
         ///     页眉图片来源不可信

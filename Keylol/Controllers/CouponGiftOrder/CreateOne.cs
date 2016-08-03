@@ -56,7 +56,7 @@ namespace Keylol.Controllers.CouponGiftOrder
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                processor.Initialize(User.Identity.GetUserId(), gift);
+                processor.Initialize(userId, gift);
                 await processor.RedeemAsync();
                 return Ok();
             }
