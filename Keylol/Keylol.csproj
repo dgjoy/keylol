@@ -261,6 +261,8 @@
     <Compile Include="Controllers\CouponGiftOrder\Processors\SteamCnCreditProcessor.cs" />
     <Compile Include="Controllers\CouponGiftOrder\Processors\SteamGiftCardProcessor.cs" />
     <Compile Include="Controllers\CouponGiftOrder\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\CouponGiftController.cs" />
+    <Compile Include="Controllers\CouponGift\CreateOne.cs" />
     <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
     <Compile Include="Controllers\CouponLog\CreateOne.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />

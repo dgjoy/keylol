@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.IdentityModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Keylol.Identity;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Utilities;
-using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Keylol.Controllers.CouponGiftOrder.Processors
 {
@@ -21,7 +15,6 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
     public class SteamGiftCardProcessor : GiftProcessor
     {
         private readonly KeylolDbContext _dbContext;
-        private readonly KeylolUserManager _userManager;
         private readonly CouponProvider _coupon;
         private const int CreditBase = 0;
 
@@ -29,12 +22,10 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// 创建 <see cref="SteamGiftCardProcessor"/>
         /// </summary>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
-        /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <param name="coupon"><see cref="CouponProvider"/></param>
-        public SteamGiftCardProcessor(KeylolDbContext dbContext, KeylolUserManager userManager, CouponProvider coupon)
+        public SteamGiftCardProcessor(KeylolDbContext dbContext, CouponProvider coupon)
         {
             _dbContext = dbContext;
-            _userManager = userManager;
             _coupon = coupon;
         }
 
@@ -43,18 +34,20 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// </summary>
         public override async Task RedeemAsync()
         {
-            var user = await _userManager.FindByIdAsync(UserId);
+            if (await GetCreditAsync() < Gift.Price)
+                throw new Exception(Errors.NotEnoughCredit);
 
-            if (await GetCreditAsync(user) < Gift.Price) throw new Exception(Errors.NotEnoughCredit);
-            if (user.Email == null) throw new Exception(Errors.EmailNonExistent);
+            if (string.IsNullOrWhiteSpace(User.Email))
+                throw new Exception(Errors.EmailNonExistent);
+
             _dbContext.CouponGiftOrders.Add(new Models.CouponGiftOrder
             {
-                UserId = UserId,
+                UserId = User.Id,
                 GiftId = Gift.Id,
                 RedeemPrice = Gift.Price
             });
             await _dbContext.SaveChangesAsync();
-            await _coupon.UpdateAsync(user, CouponEvent.兑换商品, -Gift.Price, new { CouponGiftId = Gift.Id });
+            await _coupon.UpdateAsync(User, CouponEvent.兑换商品, -Gift.Price, new {CouponGiftId = Gift.Id});
         }
 
         /// <summary>
@@ -63,19 +56,17 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// <param name="stateTreeGift">状态树商品对象</param>
         public override async Task FillPropertiesAsync(States.Coupon.Store.CouponGift stateTreeGift)
         {
-            var user = await _userManager.FindByIdAsync(UserId);
-            stateTreeGift.Email = user.Email;
-            stateTreeGift.Credit = await GetCreditAsync(user);
-            stateTreeGift.Coupon = user.Coupon;
+            stateTreeGift.Email = User.Email;
+            stateTreeGift.Credit = await GetCreditAsync();
         }
 
-        private async Task<int> GetCreditAsync(KeylolUser user)
+        private async Task<int> GetCreditAsync()
         {
             var boughtCredits = await _dbContext.CouponGiftOrders.Where(giftOrder =>
-                giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == UserId &&
-                giftOrder.Gift.Type == Gift.Type).Select(o=>o.RedeemPrice).DefaultIfEmpty(0).SumAsync();
+                giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == User.Id &&
+                giftOrder.Gift.Type == Gift.Type).Select(o => o.Gift.Value).DefaultIfEmpty(0).SumAsync();
 
-            return CreditBase + user.SeasonLikeCount - boughtCredits;
+            return CreditBase + User.SeasonLikeCount - boughtCredits;
         }
     }
 }

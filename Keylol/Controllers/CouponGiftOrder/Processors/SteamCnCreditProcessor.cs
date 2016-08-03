@@ -38,14 +38,25 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// </summary>
         public override async Task RedeemAsync()
         {
-            var user = await _userManager.FindByIdAsync(UserId);
+            if (await GetCreditAsync() < Gift.Price)
+                throw new Exception(Errors.NotEnoughCredit);
 
-            if (await GetCreditAsync(user) < Gift.Price) throw new Exception(Errors.NotEnoughCredit);
+            if (await _userManager.GetSteamCnUidAsync(User.Id) == null)
+                throw new Exception(Errors.SteamCnAccountNotBound);
 
-            if (await _userManager.GetSteamCnUidAsync(UserId) == null) throw new Exception(Errors.SteamCnAccountNotBound);
+            throw new NotImplementedException();
 
-            // todo 即时充值
-                throw new NotImplementedException();
+/*
+            _dbContext.CouponGiftOrders.Add(new Models.CouponGiftOrder
+            {
+                UserId = User.Id,
+                GiftId = Gift.Id,
+                RedeemPrice = Gift.Price,
+                Finished = true
+            });
+            await _dbContext.SaveChangesAsync();
+            await _coupon.UpdateAsync(User, CouponEvent.兑换商品, -Gift.Price, new { CouponGiftId = Gift.Id });
+*/
         }
 
         /// <summary>
@@ -54,18 +65,16 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// <param name="stateTreeGift">状态树商品对象</param>
         public override async Task FillPropertiesAsync(States.Coupon.Store.CouponGift stateTreeGift)
         {
-            var user = await _userManager.FindByIdAsync(UserId);
-            stateTreeGift.SteamCnUserName = user.SteamCnUserName;
-            stateTreeGift.SteamCnUid = await _userManager.GetSteamCnUidAsync(UserId);
-            stateTreeGift.Credit = await GetCreditAsync(user);
-            stateTreeGift.Coupon = user.Coupon;
+            stateTreeGift.SteamCnUserName = User.SteamCnUserName;
+            stateTreeGift.SteamCnUid = await _userManager.GetSteamCnUidAsync(User.Id);
+            stateTreeGift.Credit = await GetCreditAsync();
         }
 
-        private async Task<int> GetCreditAsync(KeylolUser user)
+        private async Task<int> GetCreditAsync()
         {
             var boughtCredits = await _dbContext.CouponGiftOrders.Where(giftOrder =>
-                giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == UserId &&
-                giftOrder.Gift.Type == Gift.Type).Select(o => o.RedeemPrice).DefaultIfEmpty(0).SumAsync();
+                giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == User.Id &&
+                giftOrder.Gift.Type == Gift.Type).Select(o => o.Gift.Value).DefaultIfEmpty(0).SumAsync();
 
             return CreditBase - boughtCredits;
         }

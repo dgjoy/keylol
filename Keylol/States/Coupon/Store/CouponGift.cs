@@ -10,7 +10,6 @@ using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
-using Microsoft.AspNet.Identity;
 
 namespace Keylol.States.Coupon.Store
 {
@@ -45,16 +44,14 @@ namespace Keylol.States.Coupon.Store
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
         /// <param name="coupon"><see cref="CouponProvider"/></param>
-        public static async Task<CouponGiftList> CreateAsync(string currentUserId, [Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager, [Injected] CouponProvider coupon)
+        public static async Task<CouponGiftList> CreateAsync(string currentUserId, KeylolDbContext dbContext,
+            CachedDataProvider cachedData, KeylolUserManager userManager, CouponProvider coupon)
         {
             var queryResult = await dbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)
                 .OrderByDescending(g => g.CreateTime)
                 .ToListAsync();
-
-            var steamCnUid = await userManager.GetSteamCnUidAsync(currentUserId);
+            
             var currentUser = await userManager.FindByIdAsync(currentUserId);
-            var email = dbContext.Users.Where(u => u.Id == currentUserId).Select(u => u.Email).First();
 
             var result = new CouponGiftList(queryResult.Count);
             foreach (var g in queryResult)
@@ -71,7 +68,7 @@ namespace Keylol.States.Coupon.Store
                         break;
 
                     case CouponGiftType.SteamGiftCard:
-                        processor = new SteamGiftCardProcessor(dbContext, userManager, coupon);
+                        processor = new SteamGiftCardProcessor(dbContext, coupon);
                         break;
 
                     default:
@@ -86,7 +83,7 @@ namespace Keylol.States.Coupon.Store
                     ThumbnailImage = g.ThumbnailImage,
                     Type = g.Type
                 };
-                processor.Initialize(currentUserId, g);
+                processor.Initialize(currentUser, g);
                 await processor.FillPropertiesAsync(stateTreeGift);
                 result.Add(stateTreeGift);
             }
@@ -148,11 +145,5 @@ namespace Keylol.States.Coupon.Store
         /// 电邮地址
         /// </summary>
         public string Email { get; set; }
-
-        /// <summary>
-        /// 拥有文券数
-        /// </summary>
-        public int? Coupon { get; set; }
-
     }
 }

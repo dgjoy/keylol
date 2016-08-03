@@ -11,21 +11,21 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// <summary>
         /// 兑换用户的 ID
         /// </summary>
-        protected string UserId;
+        protected KeylolUser User;
 
         /// <summary>
         /// 文券商品
         /// </summary>
-        protected CouponGift Gift;
+        protected Models.CouponGift Gift;
 
         /// <summary>
         /// 初始化属性
         /// </summary>
-        /// <param name="userId">兑换用户的 ID</param>
+        /// <param name="user">要兑换的用户</param>
         /// <param name="gift">文券商品</param>
-        public virtual void Initialize(string userId, CouponGift gift)
+        public virtual void Initialize(KeylolUser user, Models.CouponGift gift)
         {
-            UserId = userId;
+            User = user;
             Gift = gift;
         }
 

@@ -32,8 +32,7 @@ namespace Keylol.Models
         public string Extra { get; set; } = "{}";
 
         public bool Finished { get; set; } = false;
-
-        [Required]
+        
         public int RedeemPrice { get; set; }
     }
 }

@@ -27,7 +27,6 @@ namespace Keylol.Models
         public string ThumbnailImage { get; set; }
 
         [Obsolete]
-        [Required]
         public string PreviewImage { get; set; }
 
         /// <summary>

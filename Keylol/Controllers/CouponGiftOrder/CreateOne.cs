@@ -18,9 +18,7 @@ namespace Keylol.Controllers.CouponGiftOrder
         /// <param name="giftId">文券商品 ID</param>
         [Route]
         [HttpPost]
-        [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(HttpStatusCode.Created)]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "存在无效的输入属性")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "发生错误")]
         [SwaggerResponse(HttpStatusCode.NotFound, "指定文券礼品不存在")]
         public async Task<IHttpActionResult> CreateOne(string giftId)
         {
@@ -50,19 +48,19 @@ namespace Keylol.Controllers.CouponGiftOrder
                         break;
 
                     case CouponGiftType.SteamGiftCard:
-                        processor = new SteamGiftCardProcessor(_dbContext, _userManager, _coupon);
+                        processor = new SteamGiftCardProcessor(_dbContext, _coupon);
                         break;
 
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                processor.Initialize(userId, gift);
+                processor.Initialize(user, gift);
                 await processor.RedeemAsync();
                 return Ok();
             }
             catch (Exception e)
             {
-                return this.BadRequest(giftId, e.Message);
+                return this.BadRequest(nameof(giftId), e.Message);
             }
         }
     }

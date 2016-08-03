@@ -189,6 +189,10 @@
     <Compile Include="Migrations\201608031431416_ModifyCouponGiftOrder.Designer.cs">
       <DependentUpon>201608031431416_ModifyCouponGiftOrder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.cs" />
+    <Compile Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.Designer.cs">
+      <DependentUpon>201608031758103_CouponGiftPreviewImageNotRequired.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -944,6 +948,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608031431416_ModifyCouponGiftOrder.resx">
       <DependentUpon>201608031431416_ModifyCouponGiftOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.resx">
+      <DependentUpon>201608031758103_CouponGiftPreviewImageNotRequired.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

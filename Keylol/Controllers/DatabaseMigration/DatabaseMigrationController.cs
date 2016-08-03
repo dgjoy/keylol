@@ -75,11 +75,11 @@ namespace Keylol.Controllers.DatabaseMigration
         public async Task<IHttpActionResult> SyncCouponGiftOrderRedeemPrice()
         {
             var couponGiftOrders = await _dbContext.CouponGiftOrders
-                .Include(o=>o.Gift)
+                .Include(o => o.Gift)
                 .ToListAsync();
-            foreach (var couponGiftOrder in couponGiftOrders)
+            foreach (var order in couponGiftOrders)
             {
-                couponGiftOrder.RedeemPrice = couponGiftOrder.Gift.Price;
+                order.RedeemPrice = order.Gift.Price;
                 await _dbContext.SaveChangesAsync();
             }
             return Ok();
