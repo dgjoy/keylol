@@ -13,6 +13,7 @@ using Keylol.States.Content.Activity;
 using Keylol.States.Coupon;
 using Keylol.States.Coupon.Detail;
 using Keylol.States.Coupon.Ranking;
+using Keylol.States.Coupon.Store;
 using Keylol.States.Entrance;
 using Keylol.States.PostOffice;
 using Keylol.States.PostOffice.SocialActivity;
@@ -253,6 +254,15 @@ namespace Keylol.States
                         root.Coupon = new CouponLevel
                         {
                             Detail = await DetailPage.CreateAsync(currentUserId, dbContext, userManager)
+                        };
+                    break;
+
+                case "coupon.store":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(Coupon)))
+                        root.Coupon = new CouponLevel
+                        {
+                            Store =
+                                await StorePage.CreateAsync(currentUserId, dbContext, cachedData, userManager, coupon)
                         };
                     break;
 
