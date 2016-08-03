@@ -34,6 +34,6 @@ namespace Keylol.Models
         public bool Finished { get; set; } = false;
 
         [Required]
-        public int CurrentPrice { get; set; }
+        public int RedeemPrice { get; set; }
     }
 }

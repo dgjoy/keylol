@@ -47,11 +47,16 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
             // 额度检测
             var user = await _userManager.FindByIdAsync(UserId);
             var seasonLikeCount = user.SeasonLikeCount;
-            var boughtTimes =
-                await _dbContext.CouponGiftOrders
-                    .CountAsync(
-                        u => u.RedeemTime.Month == DateTime.Now.Month && u.UserId == UserId && u.GiftId == Gift.Id);
-            var credit = _creditBase + seasonLikeCount - boughtTimes * Gift.Price;
+            var boughtCredits = await (from giftOrder in _dbContext.CouponGiftOrders
+                where giftOrder.RedeemTime.Month == DateTime.Now.Month
+                join gift in _dbContext.CouponGifts on giftOrder.GiftId equals gift.Id
+                where gift.Type == Gift.Type
+                select new
+                {
+                    RedeemPrice = giftOrder.RedeemPrice
+                }
+                ).SumAsync(b => b.RedeemPrice);
+            var credit = _creditBase + seasonLikeCount - boughtCredits;
             if (credit < Gift.Price)
             {
                 throw new Exception(Errors.NotEnoughCoupon);
