@@ -163,7 +163,12 @@
         public const string NotEnoughCoupon = "not_enough_coupon";
 
         /// <summary>
-        /// 网络错误
+        ///     用户额度不足
+        /// </summary>
+        public const string NotEnoughCredit = "not_enough_credit";
+
+        /// <summary>
+        ///     网络错误
         /// </summary>
         public const string NetworkError = "network_error";
 

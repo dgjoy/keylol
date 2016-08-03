@@ -48,7 +48,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
             var user = await _userManager.FindByIdAsync(UserId);
             var seasonLikeCount = user.SeasonLikeCount;
             var boughtCredits = await (from giftOrder in _dbContext.CouponGiftOrders
-                where giftOrder.RedeemTime.Month == DateTime.Now.Month
+                where giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == UserId
                 join gift in _dbContext.CouponGifts on giftOrder.GiftId equals gift.Id
                 where gift.Type == Gift.Type
                 select new
@@ -59,9 +59,13 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
             var credit = _creditBase + seasonLikeCount - boughtCredits;
             if (credit < Gift.Price)
             {
-                throw new Exception(Errors.NotEnoughCoupon);
+                throw new Exception(Errors.NotEnoughCredit);
             }
-            
+
+            // 文券检测
+            if (user.Coupon < Gift.Price)
+                throw new Exception(Errors.NotEnoughCoupon);
+
             // 电邮地址检测
             var email = user.Email;
             if (email == null)
@@ -73,7 +77,8 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
             var order = new Models.CouponGiftOrder
             {
                 UserId = UserId,
-                GiftId = Gift.Id
+                GiftId = Gift.Id,
+                RedeemPrice = Gift.Price
             };
             _dbContext.CouponGiftOrders.Add(order);
             await _dbContext.SaveChangesAsync();
@@ -88,10 +93,16 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         {
             stateTreeGift.Email = await _userManager.GetEmailAsync(UserId);
             var seasonLiked = await _dbContext.Users.Where(u => u.Id == UserId).Select(u=>u.SeasonLikeCount).ToListAsync();
-            var boughtTimes =
-                _dbContext.CouponGiftOrders
-                    .Count(u => u.RedeemTime.Month == DateTime.Now.Month && u.UserId == UserId && u.GiftId == Gift.Id);
-            stateTreeGift.Credit = _creditBase + seasonLiked.First() - boughtTimes * Gift.Price;
+            var boughtCredits = await (from giftOrder in _dbContext.CouponGiftOrders
+                                       where giftOrder.RedeemTime.Month == DateTime.Now.Month && giftOrder.UserId == UserId
+                                       join gift in _dbContext.CouponGifts on giftOrder.GiftId equals gift.Id
+                                       where gift.Type == Gift.Type
+                                       select new
+                                       {
+                                           RedeemPrice = giftOrder.RedeemPrice
+                                       }
+                ).SumAsync(b => b.RedeemPrice);
+            stateTreeGift.Credit = _creditBase + seasonLiked.First() - boughtCredits;
         }
     }
 }
