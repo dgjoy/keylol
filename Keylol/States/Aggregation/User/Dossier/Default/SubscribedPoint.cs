@@ -10,7 +10,7 @@ using Keylol.States.Shared;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
-namespace Keylol.States.Aggregation.User.Dossier
+namespace Keylol.States.Aggregation.User.Dossier.Default
 {
     /// <summary>
     /// 订阅的据点列表
