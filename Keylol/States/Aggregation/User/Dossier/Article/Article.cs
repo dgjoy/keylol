@@ -32,7 +32,7 @@ namespace Keylol.States.Aggregation.User.Dossier.Article
         public static async Task<ArticleList> Get(string userId, int page, int recordsPerPage,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return await CreateAsync(userId, page, recordsPerPage, dbContext, cachedData);
+            return (await CreateAsync(userId, page, recordsPerPage, false, dbContext, cachedData)).Item1;
         }
 
         /// <summary>
@@ -41,10 +41,12 @@ namespace Keylol.States.Aggregation.User.Dossier.Article
         /// <param name="userId">用户 ID</param>
         /// <param name="page">搜索页码</param>
         /// <param name="recordsPerPage">每页显示文章数量</param>
+        /// <param name="returnCount">是否返回总数</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        public static async Task<ArticleList> CreateAsync(string userId, int page, int recordsPerPage,
-            KeylolDbContext dbContext, CachedDataProvider cachedData)
+        /// <returns>Item1 表示 <see cref="ArticleList"/>，Item2 表示总数</returns>
+        public static async Task<Tuple<ArticleList, int>> CreateAsync(string userId, int page, int recordsPerPage,
+            bool returnCount, KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var queryResult = await (from article in dbContext.Articles
                 where article.AuthorId == userId
@@ -61,7 +63,8 @@ namespace Keylol.States.Aggregation.User.Dossier.Article
                     PointIdCode = article.TargetPoint.IdCode,
                     PointChineseName = article.TargetPoint.ChineseName,
                     PointEnglishName = article.TargetPoint.EnglishName,
-                    PointAvatarImage = article.TargetPoint.AvatarImage
+                    PointAvatarImage = article.TargetPoint.AvatarImage,
+                    Count = returnCount ? dbContext.Articles.Count(a => a.AuthorId == userId) : 1
                 }).TakePage(page, recordsPerPage).ToListAsync();
 
             var result = new ArticleList(queryResult.Count);
@@ -79,11 +82,12 @@ namespace Keylol.States.Aggregation.User.Dossier.Article
                     PointChineseName = a.PointChineseName,
                     PointEnglishName = a.PointEnglishName,
                     PointIdCode = a.PointIdCode,
-                    PointAvatarImage = a.PointAvatarImage
+                    PointAvatarImage = a.PointAvatarImage,
                 });
             }
 
-            return result;
+            var firstRecord = queryResult.FirstOrDefault();
+            return new Tuple<ArticleList, int>(result, firstRecord?.Count ?? 0);
         }
     }
 
