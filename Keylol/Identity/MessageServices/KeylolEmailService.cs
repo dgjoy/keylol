@@ -16,9 +16,11 @@ namespace Keylol.Identity.MessageServices
         /// </summary>
         public static KeylolEmailService Default = new KeylolEmailService();
 
-        private readonly RestClient _restClient = new RestClient("https://api.mailgun.net/v3")
+        private readonly RestClient _restClient = new RestClient("http://api.sendcloud.net/apiv2")
         {
-            Authenticator = new HttpBasicAuthenticator("api", ConfigurationManager.AppSettings["mailgunApiKey"] ?? string.Empty)
+            Authenticator =
+                new SimpleAuthenticator("apiUser", ConfigurationManager.AppSettings["sendCloudApiUser"], "apiKey",
+                    ConfigurationManager.AppSettings["sendCloudApiKey"])
         };
 
         private KeylolEmailService()
@@ -32,8 +34,7 @@ namespace Keylol.Identity.MessageServices
         /// <returns />
         public async Task SendAsync(IdentityMessage message)
         {
-            var request = new RestRequest {Resource = "{domain}/messages"};
-            request.AddParameter("domain", "noreply.keylol.com", ParameterType.UrlSegment);
+            var request = new RestRequest {Resource = "mail/send"};
             request.AddParameter("from", "Keylol Postman <postman@noreply.keylol.com>");
             request.AddParameter("to", message.Destination);
             request.AddParameter("subject", message.Subject);
