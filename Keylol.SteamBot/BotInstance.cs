@@ -256,22 +256,6 @@ namespace Keylol.SteamBot
             _disposed = true;
         }
 
-        public void UpdatePlayingGame()
-        {
-            var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-            playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
-            {
-                game_extra_info =
-                    $"中国 金{SteamBot.Medal.Gold} 银{SteamBot.Medal.Silver} 铜{SteamBot.Medal.Bronze} 排名{SteamBot.Medal.Rank}",
-                game_id = new GameID
-                {
-                    AppType = GameID.GameType.Shortcut,
-                    ModID = uint.MaxValue
-                }
-            });
-            SteamClient.Send(playGameMessage);
-        }
-
         #region SteamClient Callbacks
 
         private void OnConnected(SteamClient.ConnectedCallback connectedCallback)
@@ -323,13 +307,12 @@ namespace Keylol.SteamBot
                             _coordinator.Consume(
                                 coordinator => coordinator.UpdateBot(Id, null, true, _steamUser.SteamID.Render(true)));
                             _logger.Info($"#{SequenceNumber} is now online.");
-                            UpdatePlayingGame();
-//                            var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-//                            playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
-//                            {
-//                                game_id = new GameID(250820) // 默认玩 SteamVR
-//                            });
-//                            SteamClient.Send(playGameMessage);
+                            var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
+                            playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                            {
+                                game_id = new GameID(570) // 默认玩 Dota2
+                            });
+                            SteamClient.Send(playGameMessage);
                         }
                         catch (TaskCanceledException)
                         {
