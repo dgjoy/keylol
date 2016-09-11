@@ -22,9 +22,11 @@ namespace Keylol.Controllers.User
             var user = await _userManager.FindBySteamIdAsync(steamId.Render(true));
             if (user == null)
                 return NotFound();
+            var steamCnUid = await _userManager.GetSteamCnUidAsync(user.Id);
             return Ok(new
             {
-                Link = $"https://www.keylol.com/user/{user.IdCode}"
+                KeylolLink = $"https://www.keylol.com/user/{user.IdCode}",
+                SteamCnLink = steamCnUid == null ? null : $"http://steamcn.com/?{steamCnUid}"
             });
         }
     }

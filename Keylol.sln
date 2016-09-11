@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol", "Keylol\Keylol.csproj", "{567C5AF9-9C86-4C8C-9C33-DAB688A5AFEB}"
 EndProject
@@ -42,6 +42,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.Models.DTO", "Keylol.Models.DTO\Keylol.Models.DTO.csproj", "{CC333ECE-41AC-4799-921F-3E597EA7B4E9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.PushHub", "Keylol.PushHub\Keylol.PushHub.csproj", "{85E151F3-019A-4C40-8BEE-0223C6F46361}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keylol.CruatorSpammer", "Keylol.CruatorSpammer\Keylol.CruatorSpammer.csproj", "{4EECE051-7E5C-4406-B545-FCC4EB439FAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,12 +91,16 @@ Global
 		{85E151F3-019A-4C40-8BEE-0223C6F46361}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85E151F3-019A-4C40-8BEE-0223C6F46361}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85E151F3-019A-4C40-8BEE-0223C6F46361}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EECE051-7E5C-4406-B545-FCC4EB439FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EECE051-7E5C-4406-B545-FCC4EB439FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EECE051-7E5C-4406-B545-FCC4EB439FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EECE051-7E5C-4406-B545-FCC4EB439FAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 	EndGlobalSection
 EndGlobal

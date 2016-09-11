@@ -138,6 +138,12 @@
   <wsdl:message name="ISteamBotCoordinator_SetPlayingGame_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:SetPlayingGame" />
   </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_AddLicense_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:AddLicense" />
+  </wsdl:message>
+  <wsdl:message name="ISteamBotCoordinator_RedeemKey_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:RedeemKey" />
+  </wsdl:message>
   <wsdl:message name="ISteamBotCoordinator_Curl_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:Curl" />
   </wsdl:message>
@@ -214,6 +220,12 @@
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SetPlayingGame">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/SetPlayingGame" message="tns:ISteamBotCoordinator_SetPlayingGame_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="AddLicense">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/AddLicense" message="tns:ISteamBotCoordinator_AddLicense_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="RedeemKey">
+      <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/RedeemKey" message="tns:ISteamBotCoordinator_RedeemKey_OutputCallbackMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Curl">
       <wsdl:output wsaw:Action="http://tempuri.org/ISteamBotCoordinator/Curl" message="tns:ISteamBotCoordinator_Curl_OutputCallbackMessage" />
@@ -369,6 +381,18 @@
     </wsdl:operation>
     <wsdl:operation name="SetPlayingGame">
       <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/SetPlayingGame" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddLicense">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/AddLicense" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RedeemKey">
+      <soap12:operation soapAction="http://tempuri.org/ISteamBotCoordinator/RedeemKey" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

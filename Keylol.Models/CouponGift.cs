@@ -12,6 +12,8 @@ namespace Keylol.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Sid { get; set; }
 
+        public CouponGiftType Type { get; set; } = CouponGiftType.Custom;
+
         [Required]
         public string Name { get; set; }
 
@@ -24,7 +26,7 @@ namespace Keylol.Models
         [Required]
         public string ThumbnailImage { get; set; }
 
-        [Required]
+        [Obsolete]
         public string PreviewImage { get; set; }
 
         /// <summary>
@@ -36,9 +38,18 @@ namespace Keylol.Models
 
         public int Price { get; set; } = 10;
 
+        public int Value { get; set; } = 100;
+
         [Index]
         public DateTime CreateTime { get; set; } = DateTime.Now;
 
         public DateTime EndTime { get; set; }
+    }
+
+    public enum CouponGiftType
+    {
+        Custom,
+        SteamCnCredit,
+        SteamGiftCard
     }
 }

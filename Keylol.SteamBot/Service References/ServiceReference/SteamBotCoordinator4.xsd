@@ -213,7 +213,24 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="appId" type="xs:int" />
+        <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="appIds" nillable="true" type="q5:ArrayOfunsignedInt" />
+        <xs:element minOccurs="0" name="gameName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddLicense">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+        <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="appIds" nillable="true" type="q6:ArrayOfunsignedInt" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RedeemKey">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="botId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="cdKey" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

@@ -37,6 +37,7 @@ namespace Keylol.States
 
                     var cookieContainer = new CookieContainer();
                     cookieContainer.Add(new Uri("http://store.steampowered.com/"), new Cookie("birthtime", "-473410799"));
+                    cookieContainer.Add(new Uri("http://store.steampowered.com/"), new Cookie("mature_content", "1"));
                     var request =
                         WebRequest.CreateHttp($"http://store.steampowered.com/app/{steamAppId}/?l=english&cc=us");
                     var picsRequest =

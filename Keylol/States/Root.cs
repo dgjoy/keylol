@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Threading.Tasks;
 using Keylol.Identity;
 using Keylol.Models.DAL;
@@ -12,6 +13,7 @@ using Keylol.States.Content.Activity;
 using Keylol.States.Coupon;
 using Keylol.States.Coupon.Detail;
 using Keylol.States.Coupon.Ranking;
+using Keylol.States.Coupon.Store;
 using Keylol.States.Entrance;
 using Keylol.States.PostOffice;
 using Keylol.States.PostOffice.SocialActivity;
@@ -59,7 +61,7 @@ namespace Keylol.States
             if (await StateTreeHelper.CanAccessAsync<Root>(nameof(CurrentUser)))
             {
                 var user = await userManager.FindByIdAsync(currentUserId);
-                root.CurrentUser = await CurrentUser.CreateAsync(user, userManager, dbContext, coupon);
+                root.CurrentUser = await CurrentUser.CreateAsync(user, userManager, dbContext, coupon, cachedData);
             }
 
             switch (state)
@@ -202,7 +204,7 @@ namespace Keylol.States
                     if (await StateTreeHelper.CanAccessAsync<Root>(nameof(PostOffice)))
                         root.PostOffice = new PostOfficeLevel
                         {
-                            Unread = await UnreadPage.CreateAsync(currentUserId, dbContext)
+                            Unread = await UnreadPage.CreateAsync(currentUserId, dbContext, cachedData)
                         };
                     break;
 
@@ -212,7 +214,7 @@ namespace Keylol.States
                         {
                             SocialActivity = new SocialActivityLevel
                             {
-                                Comment = await CommentPage.CreateAsync(currentUserId, dbContext)
+                                Comment = await CommentPage.CreateAsync(currentUserId, dbContext, cachedData)
                             }
                         };
                     break;
@@ -223,7 +225,7 @@ namespace Keylol.States
                         {
                             SocialActivity = new SocialActivityLevel
                             {
-                                Like = await LikePage.CreateAsync(currentUserId, dbContext)
+                                Like = await LikePage.CreateAsync(currentUserId, dbContext, cachedData)
                             }
                         };
                     break;
@@ -234,7 +236,7 @@ namespace Keylol.States
                         {
                             SocialActivity = new SocialActivityLevel
                             {
-                                Subscriber = await SubscriberPage.CreateAsync(currentUserId, dbContext)
+                                Subscriber = await SubscriberPage.CreateAsync(currentUserId, dbContext, cachedData)
                             }
                         };
                     break;
@@ -243,7 +245,7 @@ namespace Keylol.States
                     if (await StateTreeHelper.CanAccessAsync<Root>(nameof(PostOffice)))
                         root.PostOffice = new PostOfficeLevel
                         {
-                            Missive = await MissivePage.CreateAsync(currentUserId, dbContext)
+                            Missive = await MissivePage.CreateAsync(currentUserId, dbContext, cachedData)
                         };
                     break;
 
@@ -252,6 +254,15 @@ namespace Keylol.States
                         root.Coupon = new CouponLevel
                         {
                             Detail = await DetailPage.CreateAsync(currentUserId, dbContext, userManager)
+                        };
+                    break;
+
+                case "coupon.store":
+                    if (await StateTreeHelper.CanAccessAsync<Root>(nameof(Coupon)))
+                        root.Coupon = new CouponLevel
+                        {
+                            Store =
+                                await StorePage.CreateAsync(currentUserId, dbContext, cachedData, userManager, coupon)
                         };
                     break;
 
@@ -340,6 +351,23 @@ namespace Keylol.States
         /// </summary>
         [Authorize]
         public RelatedPointList RelatedPoints { get; set; }
+
+        /// <summary>
+        /// 邀请注册的用户数
+        /// </summary>
+        [Authorize]
+        public int? InviteCount { get; set; }
+
+        /// <summary>
+        /// 获取当前用户邀请注册数
+        /// </summary>
+        /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
+        /// <returns>邀请注册数</returns>
+        public static async Task<int> GetInviteCount([Injected] KeylolDbContext dbContext)
+        {
+            var currentUserId = StateTreeHelper.GetCurrentUserId();
+            return await dbContext.Users.CountAsync(u => u.InviterId == currentUserId);
+        }
 
         /// <summary>
         /// 搜索层级

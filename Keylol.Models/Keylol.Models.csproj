@@ -169,6 +169,30 @@
     <Compile Include="Migrations\201607042035187_FullIndexRecreate.Designer.cs">
       <DependentUpon>201607042035187_FullIndexRecreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607220354056_AddCouponGiftType.cs" />
+    <Compile Include="Migrations\201607220354056_AddCouponGiftType.Designer.cs">
+      <DependentUpon>201607220354056_AddCouponGiftType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607251024336_UserSeasonLikeCount.cs" />
+    <Compile Include="Migrations\201607251024336_UserSeasonLikeCount.Designer.cs">
+      <DependentUpon>201607251024336_UserSeasonLikeCount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607291912465_AddAttributionInCouponGift.cs" />
+    <Compile Include="Migrations\201607291912465_AddAttributionInCouponGift.Designer.cs">
+      <DependentUpon>201607291912465_AddAttributionInCouponGift.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608011604157_AddCurrentPrice.cs" />
+    <Compile Include="Migrations\201608011604157_AddCurrentPrice.Designer.cs">
+      <DependentUpon>201608011604157_AddCurrentPrice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608031431416_ModifyCouponGiftOrder.cs" />
+    <Compile Include="Migrations\201608031431416_ModifyCouponGiftOrder.Designer.cs">
+      <DependentUpon>201608031431416_ModifyCouponGiftOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.cs" />
+    <Compile Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.Designer.cs">
+      <DependentUpon>201608031758103_CouponGiftPreviewImageNotRequired.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -909,6 +933,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607042035187_FullIndexRecreate.resx">
       <DependentUpon>201607042035187_FullIndexRecreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607220354056_AddCouponGiftType.resx">
+      <DependentUpon>201607220354056_AddCouponGiftType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607251024336_UserSeasonLikeCount.resx">
+      <DependentUpon>201607251024336_UserSeasonLikeCount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607291912465_AddAttributionInCouponGift.resx">
+      <DependentUpon>201607291912465_AddAttributionInCouponGift.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608011604157_AddCurrentPrice.resx">
+      <DependentUpon>201608011604157_AddCurrentPrice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608031431416_ModifyCouponGiftOrder.resx">
+      <DependentUpon>201608031431416_ModifyCouponGiftOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.resx">
+      <DependentUpon>201608031758103_CouponGiftPreviewImageNotRequired.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

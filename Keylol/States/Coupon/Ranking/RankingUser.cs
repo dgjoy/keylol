@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ namespace Keylol.States.Coupon.Ranking
         public static async Task<RankingUserList> Get(int page, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData)
         {
-            return (await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, false, dbContext, cachedData)).Item1;
+            return await CreateAsync(StateTreeHelper.GetCurrentUserId(), page, dbContext, cachedData);
         }
 
         /// <summary>
@@ -39,23 +38,25 @@ namespace Keylol.States.Coupon.Ranking
         /// </summary>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="page">分页页码</param>
-        /// <param name="returnMyRanking">是否返回我的排名</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <returns><see cref="RankingUserList"/></returns>
-        public static async Task<Tuple<RankingUserList, int>> CreateAsync(string currentUserId, int page,
-            bool returnMyRanking, KeylolDbContext dbContext, CachedDataProvider cachedData)
+        public static async Task<RankingUserList> CreateAsync(string currentUserId, int page,
+            KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             if (page > 7) page = 7;
-            var queryResult = await dbContext.Users.OrderByDescending(u => u.Coupon).Select(u => new
-            {
-                u.Id,
-                u.IdCode,
-                u.UserName,
-                u.AvatarImage,
-                u.GamerTag,
-                u.Coupon
-            }).Take(100).ToListAsync();
+            var queryResult = await dbContext.Users.OrderByDescending(u => u.SeasonLikeCount)
+                .ThenByDescending(u => u.Coupon)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.IdCode,
+                    u.UserName,
+                    u.AvatarImage,
+                    u.GamerTag,
+                    u.SeasonLikeCount,
+                    u.Coupon
+                }).Take(100).ToListAsync();
             var actualResult = queryResult.Select((u, i) => new
             {
                 Ranking = i,
@@ -78,11 +79,10 @@ namespace Keylol.States.Coupon.Ranking
                             : await cachedData.Users.IsFriendAsync(currentUserId, g.User.Id)
                     },
                     Coupon = g.User.Coupon,
-                    LikeCount = await cachedData.Likes.GetUserLikeCountAsync(g.User.Id)
+                    SeasonLikeCount = g.User.SeasonLikeCount
                 });
             }
-            return new Tuple<RankingUserList, int>(result,
-                returnMyRanking ? queryResult.Select(u => u.Id).ToList().IndexOf(currentUserId) + 1 : 0);
+            return result;
         }
     }
 
@@ -107,8 +107,8 @@ namespace Keylol.States.Coupon.Ranking
         public int? Coupon { get; set; }
 
         /// <summary>
-        /// 获得认可数
+        /// 当季文章认可数
         /// </summary>
-        public int? LikeCount { get; set; }
+        public int? SeasonLikeCount { get; set; }
     }
 }

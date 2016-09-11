@@ -25,11 +25,12 @@
     <IISExpressUseClassicPipelineMode />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <ApplicationInsightsResourceId>/subscriptions/94134ff1-0ee1-4929-b994-16b1070ed679/resourcegroups/keylol/providers/microsoft.insights/components/keylol</ApplicationInsightsResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -75,6 +76,34 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.1.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.1.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.1.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.1.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.1.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.1.0\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -83,8 +112,8 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -132,8 +161,12 @@
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RabbitMQ.Client, Version=3.6.2.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
-      <HintPath>..\packages\RabbitMQ.Client.3.6.2\lib\net45\RabbitMQ.Client.dll</HintPath>
+    <Reference Include="RabbitMQ.Client, Version=3.6.3.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.3.6.3\lib\net45\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SimpleInjector, Version=3.2.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
@@ -160,8 +193,8 @@
       <HintPath>..\packages\StackExchange.Redis.1.1.603\lib\net46\StackExchange.Redis.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SteamKit2, Version=1.7.0.33680, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SteamKit2.1.7.0\lib\net45\SteamKit2.dll</HintPath>
+    <Reference Include="SteamKit2, Version=1.8.0.26737, Culture=neutral, PublicKeyToken=ed3ce47ed5aad940, processorArchitecture=MSIL">
+      <HintPath>..\packages\SteamKit2.1.8.0\lib\net45\SteamKit2.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
@@ -222,6 +255,16 @@
     <Compile Include="Controllers\ArticleComment\ArticleCommentController.cs" />
     <Compile Include="Controllers\ArticleComment\CreateOne.cs" />
     <Compile Include="Controllers\Article\UpdateOneModeration.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CouponGiftOrderController.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\CustomProcessor.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\GiftProcessor.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\SteamCnCreditProcessor.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\Processors\SteamGiftCardProcessor.cs" />
+    <Compile Include="Controllers\CouponGiftOrder\CreateOne.cs" />
+    <Compile Include="Controllers\CouponGift\CouponGiftController.cs" />
+    <Compile Include="Controllers\CouponGift\CreateOne.cs" />
+    <Compile Include="Controllers\CouponLog\CouponLogController.cs" />
+    <Compile Include="Controllers\CouponLog\CreateOne.cs" />
     <Compile Include="Controllers\DatabaseMigration\DatabaseMigrationController.cs" />
     <Compile Include="Controllers\Feed\CreateOneOutpostPoint.cs" />
     <Compile Include="Controllers\Feed\CreateOneSpotlightPoint.cs" />
@@ -242,6 +285,8 @@
     <Compile Include="Controllers\RedisCache\DeleteListByKeyPattern.cs" />
     <Compile Include="Controllers\RedisCache\GetOneByKey.cs" />
     <Compile Include="Controllers\RedisCache\RedisCacheController.cs" />
+    <Compile Include="Controllers\SteamBot\AddLicense.cs" />
+    <Compile Include="Controllers\SteamBot\RedeemKey.cs" />
     <Compile Include="Controllers\SteamBot\SendMessage.cs" />
     <Compile Include="Controllers\SteamBot\SteamBotController.cs" />
     <Compile Include="Controllers\SteamBot\UpdatePlayingGame.cs" />
@@ -258,6 +303,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\CouponHub.cs" />
+    <Compile Include="Hubs\MessageHub.cs" />
     <Compile Include="Hubs\ReliableHub.cs" />
     <Compile Include="Identity\KeylolClaimTypes.cs" />
     <Compile Include="Identity\KeylolLoginProviders.cs" />
@@ -272,6 +319,7 @@
     <Compile Include="Provider\CachedDataProvider\ActivityCommentOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\ArticleCommentOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\LikeOperations.cs" />
+    <Compile Include="Provider\CachedDataProvider\MessageOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\PointOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\SubscriptionOperations.cs" />
     <Compile Include="Provider\CachedDataProvider\UserOperations.cs" />
@@ -306,6 +354,8 @@
     <Compile Include="States\Coupon\Detail\DetailPage.cs" />
     <Compile Include="States\Coupon\Ranking\RankingPage.cs" />
     <Compile Include="States\Coupon\Ranking\RankingUser.cs" />
+    <Compile Include="States\Coupon\Store\CouponGift.cs" />
+    <Compile Include="States\Coupon\Store\StorePage.cs" />
     <Compile Include="States\PostOffice\MissivePage.cs" />
     <Compile Include="States\PostOffice\PostOfficeLevel.cs" />
     <Compile Include="States\PostOffice\PostOfficeMessage.cs" />
@@ -387,7 +437,6 @@
     <Compile Include="Utilities\KeylolUserIdProvider.cs" />
     <Compile Include="Utilities\LogHubAppender.cs" />
     <Compile Include="Utilities\PlainTextFormatter.cs" />
-    <Compile Include="Utilities\PredicateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Utilities\swagger-ui-extra.js" />
@@ -406,10 +455,17 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\keylol CN.pubxml" />
     <None Include="Properties\PublishProfiles\keylol LGBT.pubxml" />
     <None Include="Properties\PublishProfiles\keylol-dev - Web Deploy.pubxml" />
+    <Content Include="Service References\Application Insights\ConnectedService.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Keylol.Models.DTO\Keylol.Models.DTO.csproj">

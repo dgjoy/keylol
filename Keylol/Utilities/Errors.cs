@@ -98,9 +98,14 @@
         public const string SteamAccountBound = "steam_account_bound";
 
         /// <summary>
-        ///     头像图片来源不可信
+        ///     SteanCN 账户未绑定
         /// </summary>
-        public const string AvatarImageUntrusted = "avatar_image_untrusted";
+        public const string SteamCnAccountNotBound = "steamcn_account_not_bound";
+
+    /// <summary>
+    ///     头像图片来源不可信
+    /// </summary>
+    public const string AvatarImageUntrusted = "avatar_image_untrusted";
 
         /// <summary>
         ///     页眉图片来源不可信
@@ -121,6 +126,11 @@
         ///     用户不存在
         /// </summary>
         public const string UserNonExistent = "user_non_existent";
+
+        /// <summary>
+        ///     用户邮箱不存在
+        /// </summary>
+        public const string EmailNonExistent = "email_non_existent";
 
         /// <summary>
         ///     帐号被暂时锁定
@@ -158,7 +168,12 @@
         public const string NotEnoughCoupon = "not_enough_coupon";
 
         /// <summary>
-        /// 网络错误
+        ///     用户额度不足
+        /// </summary>
+        public const string NotEnoughCredit = "not_enough_credit";
+
+        /// <summary>
+        ///     网络错误
         /// </summary>
         public const string NetworkError = "network_error";
 

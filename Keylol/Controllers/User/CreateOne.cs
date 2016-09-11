@@ -116,6 +116,7 @@ namespace Keylol.Controllers.User
 
             await _coupon.UpdateAsync(user, CouponEvent.新注册);
 
+            var inviterText = string.Empty;
             if (requestDto.InviterIdCode != null)
             {
                 var inviter = await _userManager.FindByIdCodeAsync(requestDto.InviterIdCode);
@@ -125,10 +126,19 @@ namespace Keylol.Controllers.User
                     await _dbContext.SaveChangesAsync();
                     await _coupon.UpdateAsync(inviter, CouponEvent.邀请注册, new {UserId = user.Id});
                     await _coupon.UpdateAsync(user, CouponEvent.应邀注册, new {InviterId = user.Id});
+                    inviterText = $"邀请人：{inviter.UserName} ({inviter.IdCode})\n";
                 }
             }
 
             AutoSubscribe(user.Id);
+
+            var operatorRoleId = (await _roleManager.FindByNameAsync(KeylolRoles.Operator)).Id;
+            foreach (var @operator in await _dbContext.Users
+                .Where(u => u.Roles.Any(r => r.RoleId == operatorRoleId)).ToListAsync())
+            {
+                await _userManager.SendSteamChatMessageAsync(@operator,
+                    $"[新用户注册 {user.RegisterTime}]\n#{user.Sid} {user.UserName}\nSteam 昵称：{user.SteamProfileName}\nIP：{user.RegisterIp}\n{inviterText}https://www.keylol.com/user/{user.IdCode}");
+            }
 
             return Ok(await _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1), OneTimeTokenPurpose.UserLogin));
         }

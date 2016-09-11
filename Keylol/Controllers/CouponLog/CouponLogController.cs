@@ -1,6 +1,5 @@
 ﻿using System.Web.Http;
 using Keylol.Identity;
-using Keylol.Models.DAL;
 using Keylol.Provider;
 
 namespace Keylol.Controllers.CouponLog
@@ -8,12 +7,11 @@ namespace Keylol.Controllers.CouponLog
     /// <summary>
     ///     文券日志 Controller
     /// </summary>
-    [Authorize]
+    [Authorize(Roles = KeylolRoles.Operator)]
     [RoutePrefix("coupon-log")]
     public partial class CouponLogController : ApiController
     {
         private readonly CouponProvider _coupon;
-        private readonly KeylolDbContext _dbContext;
         private readonly KeylolUserManager _userManager;
 
         /// <summary>
@@ -22,16 +20,12 @@ namespace Keylol.Controllers.CouponLog
         /// <param name="coupon">
         ///     <see cref="CouponProvider" />
         /// </param>
-        /// <param name="dbContext">
-        ///     <see cref="KeylolDbContext" />
-        /// </param>
         /// <param name="userManager">
         ///     <see cref="KeylolUserManager" />
         /// </param>
-        public CouponLogController(CouponProvider coupon, KeylolDbContext dbContext, KeylolUserManager userManager)
+        public CouponLogController(CouponProvider coupon, KeylolUserManager userManager)
         {
             _coupon = coupon;
-            _dbContext = dbContext;
             _userManager = userManager;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Keylol.States.Coupon.Detail;
 using Keylol.States.Coupon.Ranking;
+using Keylol.States.Coupon.Store;
 
 namespace Keylol.States.Coupon
 {
@@ -17,5 +18,10 @@ namespace Keylol.States.Coupon
         /// 排行
         /// </summary>
         public RankingPage Ranking { get; set; }
+
+        /// <summary>
+        /// 商店
+        /// </summary>
+        public StorePage Store { get; set; }
     }
 }

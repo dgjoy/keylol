@@ -78,6 +78,7 @@ namespace Keylol.Controllers.ActivityComment
                         ReplyId = comment.Id
                     });
                 }
+                await _dbContext.SaveChangesAsync();
 
                 foreach (var replyToUser in replyToComments
                     .Where(c => c.CommentatorId != comment.CommentatorId && !c.DismissReplyMessage)
@@ -86,7 +87,7 @@ namespace Keylol.Controllers.ActivityComment
                     if (replyToUser.NotifyOnCommentReplied)
                     {
                         messageNotifiedActivityAuthor = replyToUser.Id == activity.AuthorId;
-                        _dbContext.Messages.Add(new Message
+                        await _cachedData.Messages.AddAsync(new Message
                         {
                             Type = MessageType.ActivityCommentReply,
                             OperatorId = comment.CommentatorId,
@@ -108,7 +109,7 @@ namespace Keylol.Controllers.ActivityComment
             {
                 if (!messageNotifiedActivityAuthor && activity.Author.NotifyOnActivityReplied)
                 {
-                    _dbContext.Messages.Add(new Message
+                    await _cachedData.Messages.AddAsync(new Message
                     {
                         Type = MessageType.ActivityComment,
                         OperatorId = comment.CommentatorId,
@@ -123,7 +124,6 @@ namespace Keylol.Controllers.ActivityComment
                         $"{comment.Commentator.UserName} 评论了你的动态「{activityContent}」：\n\n{truncatedContent}\n\nhttps://www.keylol.com/activity/{activity.Author.IdCode}/{activity.SidForAuthor}#{comment.SidForActivity}");
                 }
             }
-            await _dbContext.SaveChangesAsync();
 
             return Ok(comment.SidForActivity);
         }

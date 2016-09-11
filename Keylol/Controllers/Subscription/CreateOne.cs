@@ -53,14 +53,13 @@ namespace Keylol.Controllers.Subscription
                     (int) await _cachedData.Subscriptions.GetSubscriberCountAsync(targetId, targetType);
                 if (targetUser.NotifyOnSubscribed)
                 {
-                    _dbContext.Messages.Add(new Message
+                    await _cachedData.Messages.AddAsync(new Message
                     {
                         Type = MessageType.NewSubscriber,
                         OperatorId = subscriberId,
                         ReceiverId = targetId,
                         Count = subscriberCount
                     });
-                    await _dbContext.SaveChangesAsync();
                 }
                 if (targetUser.SteamNotifyOnSubscribed)
                 {

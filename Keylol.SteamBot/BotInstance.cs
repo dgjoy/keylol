@@ -55,6 +55,7 @@ namespace Keylol.SteamBot
 
             _steamUser = SteamClient.GetHandler<SteamUser>();
             SteamFriends = SteamClient.GetHandler<SteamFriends>();
+            SteamApps = SteamClient.GetHandler<SteamApps>();
         }
 
         public string Id { get; set; }
@@ -62,6 +63,7 @@ namespace Keylol.SteamBot
         public SteamUser.LogOnDetails LogOnDetails { get; set; } = new SteamUser.LogOnDetails();
         public SteamClient SteamClient { get; } = new SteamClient();
         public SteamFriends SteamFriends { get; }
+        public SteamApps SteamApps { get; }
         public BotCookieManager CookieManager { get; }
 
         /// <summary>
@@ -93,13 +95,22 @@ namespace Keylol.SteamBot
                     _logger.Info($"#{SequenceNumber} Listening callbacks...");
                     while (!_disposed)
                     {
-                        _callbackManager.RunWaitCallbacks(TimeSpan.FromMilliseconds(10));
+                        _callbackManager.RunWaitAllCallbacks(TimeSpan.FromMilliseconds(10));
                     }
                     _logger.Info($"#{SequenceNumber} Stopped listening callbacks.");
                 });
             }
 
-            _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, null, false, null));
+            try
+            {
+                _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, null, false, null));
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal($"#{SequenceNumber} Cannot clear online state before start : {e.Message}");
+                Restart();
+                return;
+            }
             if (startWait)
             {
                 _logger.Info($"#{SequenceNumber} Starting in 3 seconds...");
@@ -245,17 +256,41 @@ namespace Keylol.SteamBot
             _disposed = true;
         }
 
+        public void UpdatePlayingGame()
+        {
+            var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
+            playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+            {
+                game_extra_info =
+                    $"中国 金{SteamBot.Medal.Gold} 银{SteamBot.Medal.Silver} 铜{SteamBot.Medal.Bronze} 排名{SteamBot.Medal.Rank}",
+                game_id = new GameID
+                {
+                    AppType = GameID.GameType.Shortcut,
+                    ModID = uint.MaxValue
+                }
+            });
+            SteamClient.Send(playGameMessage);
+        }
+
         #region SteamClient Callbacks
 
         private void OnConnected(SteamClient.ConnectedCallback connectedCallback)
         {
-            if (connectedCallback.Result != EResult.OK)
+            try
             {
-                _logger.Fatal($"#{SequenceNumber} Connected callback invalid result: {connectedCallback.Result}");
-                return;
+                if (connectedCallback.Result != EResult.OK)
+                {
+                    _logger.Fatal($"#{SequenceNumber} Connected callback invalid result: {connectedCallback.Result}");
+                    return;
+                }
+                _logger.Info($"#{SequenceNumber} Connected.");
+                _steamUser.LogOn(LogOnDetails);
             }
-            _logger.Info($"#{SequenceNumber} Connected.");
-            _steamUser.LogOn(LogOnDetails);
+            catch (Exception e)
+            {
+                _logger.Fatal($"#{SequenceNumber} Fatal unhandled exception (OnConnected) : {e.Message}");
+                Restart();
+            }
         }
 
         private void OnDisconnected(SteamClient.DisconnectedCallback disconnectedCallback)
@@ -271,118 +306,143 @@ namespace Keylol.SteamBot
 
         private async void OnLoggedOn(SteamUser.LoggedOnCallback loggedOnCallback)
         {
-            switch (loggedOnCallback.Result)
+            try
             {
-                case EResult.OK:
-                    CookieManager.BotSequenceNumber = SequenceNumber;
-                    CookieManager.ConnectedUniverse = SteamClient.ConnectedUniverse;
-                    CookieManager.SteamId = _steamUser.SteamID;
-                    CookieManager.WebApiUserNonce = loggedOnCallback.WebAPIUserNonce;
-                    _logger.Info($"#{SequenceNumber} logged on.");
-                    try
-                    {
-                        await SteamFriends.SetPersonaName($"其乐机器人 Keylol.com #{SequenceNumber}");
-                        await SteamFriends.SetPersonaState(EPersonaState.LookingToPlay);
-                        _coordinator.Consume(
-                            coordinator => coordinator.UpdateBot(Id, null, true, _steamUser.SteamID.Render(true)));
-                        _logger.Info($"#{SequenceNumber} is now online.");
-                        var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-                        playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                switch (loggedOnCallback.Result)
+                {
+                    case EResult.OK:
+                        CookieManager.BotSequenceNumber = SequenceNumber;
+                        CookieManager.ConnectedUniverse = SteamClient.ConnectedUniverse;
+                        CookieManager.SteamId = _steamUser.SteamID;
+                        CookieManager.WebApiUserNonce = loggedOnCallback.WebAPIUserNonce;
+                        _logger.Info($"#{SequenceNumber} logged on.");
+                        try
                         {
-                            game_id = new GameID(250820) // 默认玩 SteamVR
-                        });
-                        SteamClient.Send(playGameMessage);
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        _logger.Fatal($"#{SequenceNumber} Set online timeout.");
-                        Restart();
-                        return;
-                    }
-                    break;
+                            await SteamFriends.SetPersonaName($"其乐机器人 Keylol.com #{SequenceNumber}");
+                            await SteamFriends.SetPersonaState(EPersonaState.LookingToPlay);
+                            _coordinator.Consume(
+                                coordinator => coordinator.UpdateBot(Id, null, true, _steamUser.SteamID.Render(true)));
+                            _logger.Info($"#{SequenceNumber} is now online.");
+                            UpdatePlayingGame();
+//                            var playGameMessage = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
+//                            playGameMessage.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+//                            {
+//                                game_id = new GameID(250820) // 默认玩 SteamVR
+//                            });
+//                            SteamClient.Send(playGameMessage);
+                        }
+                        catch (TaskCanceledException)
+                        {
+                            _logger.Fatal($"#{SequenceNumber} Set online failed.");
+                            Restart();
+                            return;
+                        }
+                        break;
 
-                case EResult.AccountLogonDenied:
-                    _logger.Fatal(
-                        $"#{SequenceNumber} Need auth code (from email {loggedOnCallback.EmailDomain}) to login.");
-                    break;
+                    case EResult.AccountLogonDenied:
+                        _logger.Fatal(
+                            $"#{SequenceNumber} Need auth code (from email {loggedOnCallback.EmailDomain}) to login.");
+                        break;
 
-                case EResult.AccountLoginDeniedNeedTwoFactor:
-                    _logger.Fatal($"#{SequenceNumber} Need two-factor auth code (from authenticator app) to login.");
-                    break;
+                    case EResult.AccountLoginDeniedNeedTwoFactor:
+                        _logger.Fatal($"#{SequenceNumber} Need two-factor auth code (from authenticator app) to login.");
+                        break;
 
-                default:
-                    _logger.Fatal($"#{SequenceNumber} LoggedOnCallback invalid result: {loggedOnCallback.Result}.");
-                    break;
+                    default:
+                        _logger.Fatal($"#{SequenceNumber} LoggedOnCallback invalid result: {loggedOnCallback.Result}.");
+                        break;
+                }
+                if (_loginPending)
+                {
+                    LoginSemaphore.Release();
+                    _loginPending = false;
+                }
             }
-            if (_loginPending)
+            catch (Exception e)
             {
-                LoginSemaphore.Release();
-                _loginPending = false;
+                _logger.Fatal($"#{SequenceNumber} Fatal unhandled exception (OnLoggedOn) : {e.Message}");
+                Restart();
             }
         }
 
         private void OnUpdateMachineAuth(SteamUser.UpdateMachineAuthCallback updateMachineAuthCallback)
         {
-            int fileSize;
-            byte[] sentryHash;
-            using (
-                var fs =
-                    File.Open(
-                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", $"{LogOnDetails.Username}.sfh"),
-                        FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            try
             {
-                fs.Seek(updateMachineAuthCallback.Offset, SeekOrigin.Begin);
-                fs.Write(updateMachineAuthCallback.Data, 0, updateMachineAuthCallback.BytesToWrite);
-                fileSize = (int) fs.Length;
-
-                fs.Seek(0, SeekOrigin.Begin);
-                using (var sha = SHA1.Create())
+                int fileSize;
+                byte[] sentryHash;
+                using (
+                    var fs =
+                        File.Open(
+                            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", $"{LogOnDetails.Username}.sfh"),
+                            FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
-                    sentryHash = sha.ComputeHash(fs);
+                    fs.Seek(updateMachineAuthCallback.Offset, SeekOrigin.Begin);
+                    fs.Write(updateMachineAuthCallback.Data, 0, updateMachineAuthCallback.BytesToWrite);
+                    fileSize = (int) fs.Length;
+
+                    fs.Seek(0, SeekOrigin.Begin);
+                    using (var sha = SHA1.Create())
+                    {
+                        sentryHash = sha.ComputeHash(fs);
+                    }
                 }
+
+                LogOnDetails.SentryFileHash = sentryHash;
+                _logger.Info($"#{SequenceNumber} Sentry file hash saved to {LogOnDetails.Username}.sfh.");
+
+                _steamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
+                {
+                    JobID = updateMachineAuthCallback.JobID,
+                    FileName = updateMachineAuthCallback.FileName,
+                    BytesWritten = updateMachineAuthCallback.BytesToWrite,
+                    FileSize = fileSize,
+                    Offset = updateMachineAuthCallback.Offset,
+                    Result = EResult.OK,
+                    LastError = 0,
+                    OneTimePassword = updateMachineAuthCallback.OneTimePassword,
+                    SentryFileHash = sentryHash
+                });
             }
-
-            LogOnDetails.SentryFileHash = sentryHash;
-            _logger.Info($"#{SequenceNumber} Sentry file hash saved to {LogOnDetails.Username}.sfh.");
-
-            _steamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
+            catch (Exception e)
             {
-                JobID = updateMachineAuthCallback.JobID,
-                FileName = updateMachineAuthCallback.FileName,
-                BytesWritten = updateMachineAuthCallback.BytesToWrite,
-                FileSize = fileSize,
-                Offset = updateMachineAuthCallback.Offset,
-                Result = EResult.OK,
-                LastError = 0,
-                OneTimePassword = updateMachineAuthCallback.OneTimePassword,
-                SentryFileHash = sentryHash
-            });
+                _logger.Fatal($"#{SequenceNumber} Fatal unhandled exception (OnUpdateMachineAuth) : {e.Message}");
+                Restart();
+            }
         }
 
         private async void OnLoginKeyReceived(SteamUser.LoginKeyCallback loginKeyCallback)
         {
-            CookieManager.LoginKeyUniqueId = loginKeyCallback.UniqueID;
-            CookieManager.CookiesExpired += async (sender, args) =>
+            try
             {
-                try
+                CookieManager.LoginKeyUniqueId = loginKeyCallback.UniqueID;
+                CookieManager.CookiesExpired += async (sender, args) =>
                 {
-                    var webApiUserNonceCallback = await _steamUser.RequestWebAPIUserNonce();
-                    if (webApiUserNonceCallback.Result != EResult.OK)
-                        _logger.Warn(
-                            $"#{SequenceNumber} Invalid WebAPIUserNonceCallback result: {webApiUserNonceCallback.Result}");
-                    CookieManager.WebApiUserNonce = webApiUserNonceCallback.Nonce;
-                    await CookieManager.Refresh();
-                }
-                catch (TaskCanceledException)
-                {
-                    _logger.Warn($"#{SequenceNumber} Request new WebAPIUserNonce timeout.");
-                }
-                catch (Exception e)
-                {
-                    _logger.Fatal($"#{SequenceNumber} Request new WebAPIUserNonce unhandled exception.", e);
-                }
-            };
-            await CookieManager.Refresh();
+                    try
+                    {
+                        var webApiUserNonceCallback = await _steamUser.RequestWebAPIUserNonce();
+                        if (webApiUserNonceCallback.Result != EResult.OK)
+                            _logger.Warn(
+                                $"#{SequenceNumber} Invalid WebAPIUserNonceCallback result: {webApiUserNonceCallback.Result}");
+                        CookieManager.WebApiUserNonce = webApiUserNonceCallback.Nonce;
+                        await CookieManager.Refresh();
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        _logger.Warn($"#{SequenceNumber} Request new WebAPIUserNonce timeout.");
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Fatal($"#{SequenceNumber} Request new WebAPIUserNonce unhandled exception.", e);
+                    }
+                };
+                await CookieManager.Refresh();
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal($"#{SequenceNumber} Fatal unhandled exception (OnLoginKeyReceived) : {e.Message}");
+                Restart();
+            }
         }
 
         #endregion
@@ -391,49 +451,74 @@ namespace Keylol.SteamBot
 
         private void OnPersonaStateChanged(SteamFriends.PersonaStateCallback personaStateCallback)
         {
-            if (!personaStateCallback.FriendID.IsIndividualAccount) return;
-            if (personaStateCallback.FriendID == _steamUser.SteamID) return;
+            try
+            {
+                if (!personaStateCallback.FriendID.IsIndividualAccount) return;
+                if (personaStateCallback.FriendID == _steamUser.SteamID) return;
 
-            var steamId = personaStateCallback.FriendID.Render(true);
-            _coordinator.Consume(coordinator => coordinator.UpdateUser(steamId, personaStateCallback.Name));
+                var steamId = personaStateCallback.FriendID.Render(true);
+                _coordinator.Consume(coordinator => coordinator.UpdateUser(steamId, personaStateCallback.Name));
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal($"#{SequenceNumber} Fatal unhandled exception (OnPersonaStateChanged) : {e.Message}");
+                Restart();
+            }
         }
 
         private void OnFriendListUpdated(SteamFriends.FriendsListCallback friendsListCallback)
         {
-            foreach (var friend in friendsListCallback.FriendList.Where(f => f.SteamID.IsIndividualAccount))
+            try
             {
-                if (friendsListCallback.Incremental || friend.Relationship == EFriendRelationship.RequestRecipient ||
-                    friend.Relationship == EFriendRelationship.None)
+                foreach (var friend in friendsListCallback.FriendList.Where(f => f.SteamID.IsIndividualAccount))
                 {
-                    var friendName = SteamFriends.GetFriendPersonaName(friend.SteamID);
-                    _logger.Info(
-                        $"#{SequenceNumber} Relationship with {friendName} ({friend.SteamID.Render(true)}) changed to {friend.Relationship}.");
-                }
-                switch (friend.Relationship)
-                {
-                    case EFriendRelationship.RequestRecipient:
-                        _coordinator.Consume(
-                            coordinator => coordinator.OnBotNewFriendRequest(friend.SteamID.Render(true), Id));
-                        break;
+                    if (friendsListCallback.Incremental || friend.Relationship == EFriendRelationship.RequestRecipient ||
+                        friend.Relationship == EFriendRelationship.None)
+                    {
+                        var friendName = SteamFriends.GetFriendPersonaName(friend.SteamID);
+                        _logger.Info(
+                            $"#{SequenceNumber} Relationship with {friendName} ({friend.SteamID.Render(true)}) changed to {friend.Relationship}.");
+                    }
+                    switch (friend.Relationship)
+                    {
+                        case EFriendRelationship.RequestRecipient:
+                            _coordinator.Consume(
+                                coordinator => coordinator.OnBotNewFriendRequest(friend.SteamID.Render(true), Id));
+                            break;
 
-                    case EFriendRelationship.None:
-                        _coordinator.Consume(
-                            coordinator => coordinator.OnUserBotRelationshipNone(friend.SteamID.Render(true), Id));
-                        break;
+                        case EFriendRelationship.None:
+                            _coordinator.Consume(
+                                coordinator => coordinator.OnUserBotRelationshipNone(friend.SteamID.Render(true), Id));
+                            break;
+                    }
                 }
+                _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, SteamFriends.GetFriendCount(), null, null));
             }
-            _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, SteamFriends.GetFriendCount(), null, null));
+            catch (Exception e)
+            {
+                _logger.Fatal($"#{SequenceNumber} Fatal unhandled exception (OnFriendListUpdated) : {e.Message}");
+                Restart();
+            }
         }
 
         private void OnFriendMessageReceived(SteamFriends.FriendMsgCallback friendMsgCallback)
         {
-            if (friendMsgCallback.EntryType != EChatEntryType.ChatMsg) return;
-            var friendName = SteamFriends.GetFriendPersonaName(friendMsgCallback.Sender);
-            _logger.Info(
-                $"#{SequenceNumber} [Chat RX] {friendName} ({friendMsgCallback.Sender.Render(true)}): {friendMsgCallback.Message}");
-            _coordinator.Consume(
-                coordinator =>
-                    coordinator.OnBotNewChatMessage(friendMsgCallback.Sender.Render(true), Id, friendMsgCallback.Message));
+            try
+            {
+                if (friendMsgCallback.EntryType != EChatEntryType.ChatMsg) return;
+                var friendName = SteamFriends.GetFriendPersonaName(friendMsgCallback.Sender);
+                _logger.Info(
+                    $"#{SequenceNumber} [Chat RX] {friendName} ({friendMsgCallback.Sender.Render(true)}): {friendMsgCallback.Message}");
+                _coordinator.Consume(
+                    coordinator =>
+                        coordinator.OnBotNewChatMessage(friendMsgCallback.Sender.Render(true), Id,
+                            friendMsgCallback.Message));
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal($"#{SequenceNumber} Fatal unhandled exception (OnFriendMessageReceived) : {e.Message}");
+                Restart();
+            }
         }
 
         #endregion

@@ -89,7 +89,7 @@ namespace Keylol.States.Search.Point
                     EnglishName = p.EnglishName,
                     AvatarImage = p.AvatarImage,
                     SubscriberCount = searchAll
-                        ? await cachedData.Subscriptions.GetSubscriberCountAsync(p.Id, SubscriptionTargetType.User)
+                        ? await cachedData.Subscriptions.GetSubscriberCountAsync(p.Id, SubscriptionTargetType.Point)
                         : (long?) null,
                     ArticleCount = searchAll ? p.ArticleCount : null,
                     ActivityCount = searchAll ? p.ActivityCount : null,

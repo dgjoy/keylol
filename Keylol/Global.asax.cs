@@ -107,6 +107,9 @@ namespace Keylol
                 return new RetryPolicy<SoapFaultWebServiceTransientErrorDetectionStrategy>(strategy);
             });
 
+            // Notification
+            Container.RegisterSingleton<NotificationProvider>();
+
             // HttpConfiguration / Web API Controllers
             var httpConfiguration = new HttpConfiguration();
             Container.RegisterWebApiControllers(httpConfiguration);
