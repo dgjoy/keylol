@@ -36,7 +36,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// </summary>
         public override async Task RedeemAsync()
         {
-            if (await GetCreditAsync() < Gift.Price)
+            if (await GetCreditAsync() < Gift.Value)
                 throw new Exception(Errors.NotEnoughCredit);
 
             if (string.IsNullOrWhiteSpace(User.Email))
@@ -65,7 +65,7 @@ UIC：{User.IdCode}<br />
 用户名：{User.UserName}<br />
 Email：{User.Email}<br />
 兑换时间：{order.RedeemTime.ToString("yyyy-MM-dd HH:mm:ss")}<br />
-面值：¥{order.RedeemPrice} CNY<br />
+面值：¥{Gift.Value} CNY<br />
 价格：{order.RedeemPrice} ◆</p>"
             });
         }

@@ -38,7 +38,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// </summary>
         public override async Task RedeemAsync()
         {
-            if (await GetCreditAsync() < Gift.Price)
+            if (await GetCreditAsync() < Gift.Value)
                 throw new Exception(Errors.NotEnoughCredit);
 
             if (await _userManager.GetSteamCnUidAsync(User.Id) == null)
