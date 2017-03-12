@@ -38,7 +38,7 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// </summary>
         public override async Task RedeemAsync()
         {
-            if (await GetCreditAsync() < Gift.Price)
+            if (await GetCreditAsync() < Gift.Value)
                 throw new Exception(Errors.NotEnoughCredit);
 
             if (await _userManager.GetSteamCnUidAsync(User.Id) == null)
@@ -65,9 +65,12 @@ namespace Keylol.Controllers.CouponGiftOrder.Processors
         /// <param name="stateTreeGift">状态树商品对象</param>
         public override async Task FillPropertiesAsync(States.Coupon.Store.CouponGift stateTreeGift)
         {
-            stateTreeGift.SteamCnUserName = User.SteamCnUserName;
+            stateTreeGift.SteamCnUserName = string.IsNullOrWhiteSpace(User.SteamCnUserName)
+                ? null
+                : User.SteamCnUserName;
             stateTreeGift.SteamCnUid = await _userManager.GetSteamCnUidAsync(User.Id);
             stateTreeGift.Credit = await GetCreditAsync();
+            stateTreeGift.Value = Gift.Value;
         }
 
         private async Task<int> GetCreditAsync()

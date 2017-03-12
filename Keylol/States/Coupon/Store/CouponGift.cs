@@ -9,6 +9,7 @@ using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.ServiceBase;
 using Keylol.StateTreeManager;
 
 namespace Keylol.States.Coupon.Store
@@ -31,7 +32,8 @@ namespace Keylol.States.Coupon.Store
         /// <param name="coupon"><see cref="CouponProvider"/></param>
         /// <returns><see cref="CouponGiftList"/></returns>
         public static async Task<CouponGiftList> Get([Injected] KeylolDbContext dbContext,
-            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager,[Injected] CouponProvider coupon)
+            [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager,
+            [Injected] CouponProvider coupon)
         {
             return await CreateAsync(StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager, coupon);
         }
@@ -50,7 +52,7 @@ namespace Keylol.States.Coupon.Store
             var queryResult = await dbContext.CouponGifts.Where(g => DateTime.Now < g.EndTime)
                 .OrderByDescending(g => g.CreateTime)
                 .ToListAsync();
-            
+
             var currentUser = await userManager.FindByIdAsync(currentUserId);
 
             var result = new CouponGiftList(queryResult.Count);
@@ -78,7 +80,7 @@ namespace Keylol.States.Coupon.Store
                 {
                     Id = g.Id,
                     Name = g.Name,
-                    Descriptions = g.Descriptions,
+                    Descriptions = Helpers.SafeDeserialize<List<string>>(g.Descriptions),
                     Price = g.Price,
                     ThumbnailImage = g.ThumbnailImage,
                     Type = g.Type
@@ -109,7 +111,7 @@ namespace Keylol.States.Coupon.Store
         /// <summary>
         /// 描述
         /// </summary>
-        public string Descriptions { get; set; }
+        public List<string> Descriptions { get; set; }
 
         /// <summary>
         /// 缩略图
@@ -125,6 +127,11 @@ namespace Keylol.States.Coupon.Store
         /// 消费额度
         /// </summary>
         public int? Credit { get; set; }
+
+        /// <summary>
+        /// 价值
+        /// </summary>
+        public int? Value { get; set; }
 
         /// <summary>
         /// 类型
