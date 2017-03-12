@@ -31,6 +31,7 @@ namespace Keylol.SteamBot
         private bool _disposed;
         private bool _loginPending; // 是否处于登录过程中
         private IModel _mqChannel;
+        private object _startStopLock = new object();
 
         public BotInstance(IServiceConsumer<ISteamBotCoordinator> coordinator, ILogProvider logProvider,
             BotCookieManager cookieManager, MqClientProvider mqClientProvider)
@@ -81,64 +82,67 @@ namespace Keylol.SteamBot
         /// <param name="startWait">是否等待三秒后再启动，默认 <c>false</c></param>
         public void Start(bool startWait = false)
         {
-            if (_disposed)
+            lock (_startStopLock)
             {
-                _logger.Fatal($"#{SequenceNumber} Try to restart disposed bot.");
-                throw new InvalidOperationException("Try to restart disposed bot.");
-            }
-
-            if (!_callbackPumpStarted)
-            {
-                _callbackPumpStarted = true;
-                Task.Run(() =>
+                if (_disposed)
                 {
-                    _logger.Info($"#{SequenceNumber} Listening callbacks...");
-                    while (!_disposed)
+                    _logger.Fatal($"#{SequenceNumber} Try to restart disposed bot.");
+                    // throw new InvalidOperationException("Try to restart disposed bot.");
+                }
+
+                if (!_callbackPumpStarted)
+                {
+                    _callbackPumpStarted = true;
+                    Task.Run(() =>
                     {
-                        _callbackManager.RunWaitAllCallbacks(TimeSpan.FromMilliseconds(10));
-                    }
-                    _logger.Info($"#{SequenceNumber} Stopped listening callbacks.");
-                });
-            }
+                        _logger.Info($"#{SequenceNumber} Listening callbacks...");
+                        while (!_disposed)
+                        {
+                            _callbackManager.RunWaitAllCallbacks(TimeSpan.FromMilliseconds(10));
+                        }
+                        _logger.Info($"#{SequenceNumber} Stopped listening callbacks.");
+                    });
+                }
 
-            try
-            {
-                _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, null, false, null));
-            }
-            catch (Exception e)
-            {
-                _logger.Fatal($"#{SequenceNumber} Cannot clear online state before start : {e.Message}");
-                Restart();
-                return;
-            }
-            if (startWait)
-            {
-                _logger.Info($"#{SequenceNumber} Starting in 3 seconds...");
-                Thread.Sleep(TimeSpan.FromSeconds(3));
-            }
+                try
+                {
+                    _coordinator.Consume(coordinator => coordinator.UpdateBot(Id, null, false, null));
+                }
+                catch (Exception e)
+                {
+                    _logger.Fatal($"#{SequenceNumber} Cannot clear online state before start : {e.Message}");
+                    Restart();
+                    return;
+                }
+                if (startWait)
+                {
+                    _logger.Info($"#{SequenceNumber} Starting in 3 seconds...");
+                    Thread.Sleep(TimeSpan.FromSeconds(3));
+                }
 
-            var sfhPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", $"{LogOnDetails.Username}.sfh");
-            if (File.Exists(sfhPath))
-            {
-                LogOnDetails.SentryFileHash = File.ReadAllBytes(sfhPath);
-                _logger.Info($"#{SequenceNumber} Use sentry file hash from {LogOnDetails.Username}.sfh.");
-            }
+                var sfhPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", $"{LogOnDetails.Username}.sfh");
+                if (File.Exists(sfhPath))
+                {
+                    LogOnDetails.SentryFileHash = File.ReadAllBytes(sfhPath);
+                    _logger.Info($"#{SequenceNumber} Use sentry file hash from {LogOnDetails.Username}.sfh.");
+                }
 
-            if (!_loginPending)
-            {
-                LoginSemaphore.WaitOne();
-                _loginPending = true;
-            }
-            SteamClient.Connect();
+                if (!_loginPending)
+                {
+                    LoginSemaphore.WaitOne();
+                    _loginPending = true;
+                }
+                SteamClient.Connect();
 
-            _mqChannel = _mqClientProvider.CreateModel();
-            _mqChannel.BasicQos(0, 5, false);
-            var queueName = MqClientProvider.SteamBotDelayedActionQueue(Id);
-            _mqChannel.QueueDeclare(queueName, true, false, false, null);
-            _mqChannel.QueueBind(queueName, MqClientProvider.DelayedMessageExchange, queueName);
-            var consumer = new EventingBasicConsumer(_mqChannel);
-            consumer.Received += OnDelayedActionReceived;
-            _mqChannel.BasicConsume(queueName, false, consumer);
+                _mqChannel = _mqClientProvider.CreateModel();
+                _mqChannel.BasicQos(0, 5, false);
+                var queueName = MqClientProvider.SteamBotDelayedActionQueue(Id);
+                _mqChannel.QueueDeclare(queueName, true, false, false, null);
+                _mqChannel.QueueBind(queueName, MqClientProvider.DelayedMessageExchange, queueName);
+                var consumer = new EventingBasicConsumer(_mqChannel);
+                consumer.Received += OnDelayedActionReceived;
+                _mqChannel.BasicConsume(queueName, false, consumer);
+            }
         }
 
         /// <summary>
@@ -155,14 +159,17 @@ namespace Keylol.SteamBot
         /// </summary>
         public void Stop()
         {
-            if (_loginPending)
+            lock (_startStopLock)
             {
-                LoginSemaphore.Release();
-                _loginPending = false;
+                if (_loginPending)
+                {
+                    LoginSemaphore.Release();
+                    _loginPending = false;
+                }
+                _mqChannel?.Close();
+                SteamClient.Disconnect();
+                _logger.Info($"#{SequenceNumber} Stopped.");
             }
-            _mqChannel?.Close();
-            SteamClient.Disconnect();
-            _logger.Info($"#{SequenceNumber} Stopped.");
         }
 
         private void OnDelayedActionReceived(object sender, BasicDeliverEventArgs basicDeliverEventArgs)

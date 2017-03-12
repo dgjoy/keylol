@@ -24,10 +24,10 @@ namespace Keylol.SteamBot.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/AllocateBots", ReplyAction="http://tempuri.org/ISteamBotCoordinator/AllocateBotsResponse")]
         Keylol.Models.DTO.SteamBotDto[] AllocateBots(int count);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/UpdateUser", ReplyAction="http://tempuri.org/ISteamBotCoordinator/UpdateUserResponse")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/UpdateUser")]
         void UpdateUser(string steamId, string profileName);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/UpdateBot", ReplyAction="http://tempuri.org/ISteamBotCoordinator/UpdateBotResponse")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISteamBotCoordinator/UpdateBot")]
         void UpdateBot(string id, System.Nullable<int> friendCount, System.Nullable<bool> online, string steamId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISteamBotCoordinator/IsKeylolUser", ReplyAction="http://tempuri.org/ISteamBotCoordinator/IsKeylolUserResponse")]

@@ -36,7 +36,7 @@ namespace Keylol.Services.Contracts
         /// </summary>
         /// <param name="steamId">要更新的用户 Steam ID</param>
         /// <param name="profileName">Steam 昵称，<c>null</c> 表示不更新</param>
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         Task UpdateUser(string steamId, string profileName);
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Keylol.Services.Contracts
         /// <param name="friendCount">好友数，<c>null</c> 表示不更新</param>
         /// <param name="online">是否在线，<c>null</c> 表示不更新</param>
         /// <param name="steamId">Steam ID，<c>null</c> 表示不更新</param>
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         Task UpdateBot(string id, int? friendCount = null, bool? online = null, string steamId = null);
 
         /// <summary>

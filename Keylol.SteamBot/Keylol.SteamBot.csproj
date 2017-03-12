@@ -67,20 +67,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ChannelAdam.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b5cc5a4db964eb79, processorArchitecture=MSIL">
-      <HintPath>..\packages\ChannelAdam.Core.1.2.1\lib\net45\ChannelAdam.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\ChannelAdam.Core.1.5.2\lib\net45\ChannelAdam.Core.dll</HintPath>
     </Reference>
     <Reference Include="ChannelAdam.Wcf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=947cb12151510e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\ChannelAdam.Wcf.2.1.0\lib\net45\ChannelAdam.Wcf.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\ChannelAdam.Wcf.2.1.1\lib\net45\ChannelAdam.Wcf.dll</HintPath>
     </Reference>
     <Reference Include="CsQuery, Version=1.3.3.249, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
@@ -94,21 +91,14 @@
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RabbitMQ.Client, Version=3.6.3.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
-      <HintPath>..\packages\RabbitMQ.Client.3.6.3\lib\net45\RabbitMQ.Client.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="RabbitMQ.Client, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.4.1.1\lib\net451\RabbitMQ.Client.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleInjector, Version=3.2.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.3.2.0\lib\net45\SimpleInjector.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="SimpleInjector, Version=3.3.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.3.2\lib\net45\SimpleInjector.dll</HintPath>
     </Reference>
-    <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.1.0.488\lib\net45\StackExchange.Redis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SteamKit2, Version=1.8.0.26737, Culture=neutral, PublicKeyToken=ed3ce47ed5aad940, processorArchitecture=MSIL">
-      <HintPath>..\packages\SteamKit2.1.8.0\lib\net45\SteamKit2.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="SteamKit2, Version=1.8.1.0, Culture=neutral, PublicKeyToken=ed3ce47ed5aad940, processorArchitecture=MSIL">
+      <HintPath>..\packages\SteamKit2.1.8.1\lib\net45\SteamKit2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
@@ -148,7 +138,10 @@
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Keylol.Models.DTO.SteamBotDto.datasource" />
     <None Include="Properties\DataSources\Keylol.Models.DTO.UserDto.datasource" />
-    <None Include="Service References\ServiceReference\SteamBotCoordinator.wsdl" />
+    <None Include="Service References\ServiceReference\SteamBotCoordinator.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\SteamBotCoordinator1.wsdl" />
     <None Include="Service References\ServiceReference\SteamBotCoordinator1.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -156,9 +149,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference\SteamBotCoordinator3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference\SteamBotCoordinator4.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -198,9 +188,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\ServiceReference\SteamBotCoordinator.disco" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Keylol.Models.DTO\Keylol.Models.DTO.csproj">
       <Project>{cc333ece-41ac-4799-921f-3e597ea7b4e9}</Project>
       <Name>Keylol.Models.DTO</Name>
@@ -209,6 +196,9 @@
       <Project>{0a50005c-7faa-48d3-8f36-d48df882dcdf}</Project>
       <Name>Keylol.ServiceBase</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference\SteamBotCoordinator1.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

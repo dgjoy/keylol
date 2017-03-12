@@ -32,7 +32,14 @@ namespace Keylol.ServiceBase.TransientFaultHandling
         /// <returns>The result of the function.</returns>
         public TResult Execute<TResult>(Func<TResult> func)
         {
-            return _retryPolicy != null ? _retryPolicy.ExecuteAction(func) : func.Invoke();
+            try
+            {
+                return _retryPolicy != null ? _retryPolicy.ExecuteAction(func) : func.Invoke();
+            }
+            catch (Exception)
+            {
+                return default(TResult);
+            }
         }
 
         #region Public Static Methods

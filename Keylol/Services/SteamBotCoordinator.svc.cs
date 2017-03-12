@@ -130,7 +130,7 @@ namespace Keylol.Services
                     return;
                 if (profileName != null)
                     user.SteamProfileName = profileName;
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Keylol.Services
                     bot.Online = online.Value;
                 if (steamId != null)
                     bot.SteamId = steamId;
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
             }
         }
 
@@ -255,13 +255,13 @@ namespace Keylol.Services
                         .Where(t => t.SteamId == userSteamId && t.BotId == botId)
                         .ToListAsync();
                     dbContext.SteamBindingTokens.RemoveRange(bindingTokens);
-                    await dbContext.SaveChangesAsync();
+                    await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
                 }
                 else if (user.SteamBotId == botId)
                 {
                     // 会员与自己的机器人不再为好友时，解除机器人绑定
                     user.SteamBotId = null;
-                    await dbContext.SaveChangesAsync();
+                    await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
                 }
             }
         }
@@ -293,7 +293,7 @@ namespace Keylol.Services
                     {
                         token.BotId = botId;
                         token.SteamId = senderSteamId;
-                        await dbContext.SaveChangesAsync();
+                        await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.DatabaseWin);
                         NotificationProvider.Hub<SteamBindingHub, ISteamBindingHubClient>()
                             .Client(token.BrowserConnectionId)?
                             .OnBind(await Client.GetUserProfileName(botId, senderSteamId),
@@ -358,7 +358,7 @@ namespace Keylol.Services
                             }
                             bot.SessionId = SessionId;
                         }
-                        await dbContext.SaveChangesAsync();
+                        await dbContext.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                     }
                 }
             }
@@ -368,15 +368,13 @@ namespace Keylol.Services
             }
         }
 
-        private async void OnSessionEnd(object sender, EventArgs eventArgs)
+        private void OnSessionEnd(object sender, EventArgs eventArgs)
         {
             try
             {
                 _mqChannel.Dispose();
                 SteamBotCoordinator coordinator;
                 Sessions.TryRemove(SessionId, out coordinator);
-                if (Sessions.Count > 0)
-                    await ReallocateBots(Sessions.Values.Last());
             }
             catch (Exception)
             {
@@ -395,8 +393,8 @@ namespace Keylol.Services
                 using (var dbContext = new KeylolDbContext())
                 {
                     var botCount = await dbContext.SteamBots.CountAsync(b => b.Enabled);
-                    var averageCount = botCount/Sessions.Count;
-                    var lastCount = botCount - averageCount*(Sessions.Count - 1);
+                    var averageCount = botCount;
+                    var lastCount = botCount;
 
                     Func<List<string>, KeylolDbContext, Task> prepareDeallocatedBots = async (botIds, db) =>
                     {
@@ -405,7 +403,7 @@ namespace Keylol.Services
                         {
                             bot.SessionId = null;
                         }
-                        await db.SaveChangesAsync();
+                        await db.SaveChangesAsync(KeylolDbContext.ConcurrencyStrategy.ClientWin);
                     };
 
                     foreach (var session in Sessions.Values.Where(s => s != newSession))
