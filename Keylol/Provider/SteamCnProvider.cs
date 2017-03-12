@@ -24,12 +24,12 @@ namespace Keylol.Provider
         private static readonly HttpRequestCachePolicy NoCachePolicy =
             new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
 
-        private const string Referer = "http://steamcn.com/";
+        private const string Referer = "https://steamcn.com/";
         private const int Timeout = 20000;
         private static readonly Encoding Charset = Encoding.GetEncoding("GBK");
-        private const string UCenterEndpoint = "http://steamcn.com/uc_server/index.php";
-        private const string UCenterKey = "OcB4u207q2dAF217j8x7u8SbB0u6T3zb52Xek6M7idR0Rf0782N7l3B757l8M4J2";
-        private const string UCenterReleaseDate = "20110501";
+        private const string UCenterEndpoint = "https://steamcn.com/uc_server/index.php";
+        private const string UCenterKey = "8p6vYqDkVXEmsLF7A7mkCV5YMV88KemuCqKTKTZh5APdF3qQfr9Sd2SqNKGN9bfwGXWD7EnH";
+        private const string UCenterReleaseDate = "20170101";
         private const string UCenterAppId = "8";
 
         /// <summary>
