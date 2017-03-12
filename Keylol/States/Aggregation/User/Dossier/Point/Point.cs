@@ -7,6 +7,7 @@ using System.Web;
 using Keylol.Models;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
+using Keylol.States.Aggregation.User.Dossier.Article;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
@@ -32,44 +33,37 @@ namespace Keylol.States.Aggregation.User.Dossier.Point
         public static async Task<PointList> Get(string userId, int page, int recordsPerPage,
             [Injected] KeylolDbContext dbContext, [Injected] CachedDataProvider cachedData)
         {
-            return
-                (await
-                    CreateAsync(userId, StateTreeHelper.GetCurrentUserId(), page, recordsPerPage, false, dbContext,
-                        cachedData)).Item1;
+            return await CreateAsync(userId, page, recordsPerPage, dbContext, cachedData);
         }
 
         /// <summary>
         /// 创建用用户订阅列表
         /// </summary>
         /// <param name="userId">用户 ID</param>
-        /// <param name="currentUserId">当前用户 ID</param>
         /// <param name="page">搜索页码</param>
         /// <param name="recordsPerPage">每页显示文章数量</param>
-        /// <param name="returnCount">是否返回据点总数</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
-        /// <returns>Item1 表示 <see cref="PointList"/>，Item2 表示总数</returns>
-        public static async Task<Tuple<PointList, int>> CreateAsync(string userId, string currentUserId, int page,
-            int recordsPerPage, bool returnCount, KeylolDbContext dbContext, CachedDataProvider cachedData)
+        public static async Task<PointList> CreateAsync(string userId, int page, int recordsPerPage,
+            KeylolDbContext dbContext, CachedDataProvider cachedData)
         {
             var conditionQuery = from subscription in dbContext.Subscriptions
-                where subscription.SubscriberId == userId && subscription.TargetType == SubscriptionTargetType.Point
-                select subscription;
+                                 where subscription.SubscriberId == userId && subscription.TargetType == SubscriptionTargetType.Point
+                                 select subscription;
 
             var queryResult = await (from subscription in conditionQuery
-                join point in dbContext.Points on subscription.TargetId equals point.Id
-                orderby subscription.Sid descending
-                select new
-                {
-                    point.Id,
-                    point.Type,
-                    point.IdCode,
-                    point.AvatarImage,
-                    point.ChineseName,
-                    point.EnglishName,
-                    point.SteamAppId,
-                    Count = returnCount ? conditionQuery.Count() : 1
-                }).TakePage(page, recordsPerPage).ToListAsync();
+                                     join point in dbContext.Points on subscription.TargetId equals point.Id
+                                     orderby subscription.Sid descending
+                                     select new
+                                     {
+                                        point.Id,
+                                        point.Type,
+                                        point.IdCode,
+                                        point.AvatarImage,
+                                        point.ChineseName,
+                                        point.EnglishName,
+                                        point.SteamAppId
+                                     }).TakePage(page, recordsPerPage).ToListAsync();
 
             var result = new PointList(queryResult.Count);
             foreach (var p in queryResult)
@@ -81,29 +75,21 @@ namespace Keylol.States.Aggregation.User.Dossier.Point
                     AvatarImage = p.AvatarImage,
                     ChineseName = p.ChineseName,
                     EnglishName = p.EnglishName,
-                    InLibrary = string.IsNullOrWhiteSpace(currentUserId) || p.SteamAppId == null
-                        ? (bool?) null
-                        : await cachedData.Users.IsSteamAppInLibraryAsync(currentUserId, p.SteamAppId.Value),
-                    Subscribed =
-                        string.IsNullOrWhiteSpace(currentUserId)
-                            ? await cachedData.Subscriptions.IsSubscribedAsync(currentUserId, p.Id,
-                                SubscriptionTargetType.Point)
-                            : (bool?) null,
-                    SubscriberCount =
-                        await cachedData.Subscriptions.GetSubscriberCountAsync(p.Id, SubscriptionTargetType.Point),
-                    ArticleCount = await (from subscription in conditionQuery
-                        join articles in dbContext.Articles on subscription.TargetId equals articles.TargetPointId
-                        select articles.Id).CountAsync(),
-                    ActivityCount = await (from subscription in conditionQuery
-                        join activities in dbContext.Activities on subscription.TargetId equals activities.TargetPointId
-                        select activities.Id).CountAsync()
+                    InLibrary = string.IsNullOrWhiteSpace(userId) || p.SteamAppId == null
+                        ? (bool?)null
+                        : await cachedData.Users.IsSteamAppInLibraryAsync(userId, p.SteamAppId.Value),
+                    Subscribed = string.IsNullOrWhiteSpace(userId)? await cachedData.Subscriptions.IsSubscribedAsync(userId, p.Id,
+                            SubscriptionTargetType.Point)
+                        : (bool?)null,
+                    SubscriberCount = await cachedData.Subscriptions.GetSubscriberCountAsync(p.Id, SubscriptionTargetType.Point)
+//                    ArticleCount =  p.ArticleCount,
+//                    ActivityCount = p.ActivityCount ,
                 });
             }
-            var firstRecord = queryResult.FirstOrDefault();
-            return new Tuple<PointList, int>(result, firstRecord?.Count ?? 0);
+
+            return result;
         }
     }
-
     /// <summary>
     /// 用户订阅的据点
     /// </summary>
