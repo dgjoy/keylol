@@ -328,11 +328,6 @@
     <Compile Include="States\Aggregation\Point\Frontpage\BriefReview.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\LatestArticle.cs" />
     <Compile Include="States\Aggregation\Point\Frontpage\SelectedArticle.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\Article\ArticlePage.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\Article\Article.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\DossierLevel.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\Point\Point.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\Point\PointPage.cs" />
     <Compile Include="States\Aggregation\User\EditPage.cs" />
     <Compile Include="States\Aggregation\User\People\PeoplePage.cs" />
     <Compile Include="States\Aggregation\User\People\UserEntry.cs" />
@@ -378,9 +373,9 @@
     <Compile Include="States\Aggregation\Point\Product\ProductPage.cs" />
     <Compile Include="States\Aggregation\Point\TimelinePage.cs" />
     <Compile Include="States\Shared\UserBasicInfo.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\Default\DefaultPage.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\Default\SelectedArticle.cs" />
-    <Compile Include="States\Aggregation\User\Dossier\Default\SubscribedPoint.cs" />
+    <Compile Include="States\Aggregation\User\Dossier\DossierPage.cs" />
+    <Compile Include="States\Aggregation\User\Dossier\SelectedArticle.cs" />
+    <Compile Include="States\Aggregation\User\Dossier\SubscribedPoint.cs" />
     <Compile Include="States\Aggregation\User\UserLevel.cs" />
     <Compile Include="States\Content\Activity\ActivityComment.cs" />
     <Compile Include="States\Content\Activity\ActivityPage.cs" />

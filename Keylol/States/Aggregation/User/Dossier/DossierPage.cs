@@ -6,12 +6,12 @@ using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 
-namespace Keylol.States.Aggregation.User.Dossier.Default
+namespace Keylol.States.Aggregation.User.Dossier
 {
     /// <summary>
     /// 聚合 - 个人 - 档案
     /// </summary>
-    public class DefaultPage
+    public class DossierPage
     {
         /// <summary>
         /// 获取指定用户的档案页
@@ -20,33 +20,33 @@ namespace Keylol.States.Aggregation.User.Dossier.Default
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <returns><see cref="DefaultPage"/></returns>
-        public static async Task<DefaultPage> Get(string userIdCode, [Injected] KeylolDbContext dbContext,
+        /// <returns><see cref="DossierPage"/></returns>
+        public static async Task<DossierPage> Get(string userIdCode, [Injected] KeylolDbContext dbContext,
             [Injected] CachedDataProvider cachedData, [Injected] KeylolUserManager userManager)
         {
             var user = await userManager.FindByIdCodeAsync(userIdCode);
             if (user == null)
-                return new DefaultPage();
+                return new DossierPage();
             return await CreateAsync(user, StateTreeHelper.GetCurrentUserId(), dbContext, cachedData, userManager);
         }
 
         /// <summary>
-        /// 创建 <see cref="DefaultPage"/>
+        /// 创建 <see cref="DossierPage"/>
         /// </summary>
         /// <param name="user">用户对象</param>
         /// <param name="currentUserId">当前登录用户 ID</param>
         /// <param name="dbContext"><see cref="KeylolDbContext"/></param>
         /// <param name="cachedData"><see cref="CachedDataProvider"/></param>
         /// <param name="userManager"><see cref="KeylolUserManager"/></param>
-        /// <returns><see cref="DefaultPage"/></returns>
-        public static async Task<DefaultPage> CreateAsync(KeylolUser user, string currentUserId,
+        /// <returns><see cref="DossierPage"/></returns>
+        public static async Task<DossierPage> CreateAsync(KeylolUser user, string currentUserId,
             KeylolDbContext dbContext, CachedDataProvider cachedData, KeylolUserManager userManager)
         {
             var subscribedPoints =
                 await SubscribedPointList.CreateAsync(currentUserId, user.Id, 1, 3, true, dbContext, cachedData);
             var selectedArticles =
                 await SelectedArticleList.CreateAsync(user.Id, 1, 8, true, currentUserId, dbContext, cachedData);
-            var dossierPage = new DefaultPage
+            var dossierPage = new DossierPage
             {
                 Coupon = user.Coupon,
                 LikeCount = await cachedData.Likes.GetUserLikeCountAsync(user.Id),
@@ -112,6 +112,5 @@ namespace Keylol.States.Aggregation.User.Dossier.Default
         /// 文集文章列表
         /// </summary>
         public SelectedArticleList SelectedArticles { get; set; }
-
     }
 }

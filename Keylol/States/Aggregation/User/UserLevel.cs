@@ -4,7 +4,6 @@ using Keylol.Identity;
 using Keylol.Models.DAL;
 using Keylol.Provider.CachedDataProvider;
 using Keylol.States.Aggregation.User.Dossier;
-using Keylol.States.Aggregation.User.Dossier.Default;
 using Keylol.States.Aggregation.User.People;
 using Keylol.States.Shared;
 using Keylol.StateTreeManager;
@@ -68,18 +67,14 @@ namespace Keylol.States.Aggregation.User
 //                            await DossierPage.CreateAsync(user, currentUserId, dbContext, cachedData, userManager);
 //                        result.Current = EntrancePage.Dossier;
 //                    }
-                    result.Dossier = new DossierLevel
-                    {
-                        Default = await DefaultPage.CreateAsync(user, currentUserId, dbContext, cachedData, userManager)
-                    };
+                    result.Dossier =
+                        await DossierPage.CreateAsync(user, currentUserId, dbContext, cachedData, userManager);
                     result.Current = EntrancePage.Dossier;
                     break;
 
                 case EntrancePage.Dossier:
-                    result.Dossier = new DossierLevel
-                    {
-                        Default = await DefaultPage.CreateAsync(user, currentUserId, dbContext, cachedData,userManager)
-                    };
+                    result.Dossier =
+                        await DossierPage.CreateAsync(user, currentUserId, dbContext, cachedData, userManager);
                     break;
 
                 case EntrancePage.People:
@@ -114,7 +109,7 @@ namespace Keylol.States.Aggregation.User
         /// <summary>
         /// 档案
         /// </summary>
-        public DossierLevel Dossier { get; set; }
+        public DossierPage Dossier { get; set; }
 
         /// <summary>
         /// 人脉

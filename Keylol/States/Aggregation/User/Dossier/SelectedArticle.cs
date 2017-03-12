@@ -9,7 +9,7 @@ using Keylol.Provider.CachedDataProvider;
 using Keylol.StateTreeManager;
 using Keylol.Utilities;
 
-namespace Keylol.States.Aggregation.User.Dossier.Default
+namespace Keylol.States.Aggregation.User.Dossier
 {
     /// <summary>
     /// 文选文章列表
