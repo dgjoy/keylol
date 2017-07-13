@@ -19,6 +19,8 @@ namespace Keylol.Identity
 
             var idCode = context.Parameters["id_code"];
             var email = context.Parameters["email"];
+            // todo
+            var sms = context.Parameters["sms"];
             var userName = context.Parameters["user_name"];
             var password = context.Parameters["password"];
             KeylolUser user;
@@ -31,6 +33,11 @@ namespace Keylol.Identity
             {
                 // 邮箱登录
                 user = await userManager.FindByEmailAsync(email);
+            }
+            else if (!string.IsNullOrWhiteSpace(sms))
+            {
+                // 手机登录
+                user = await userManager.FindBySmsAsync(sms);
             }
             else if (!string.IsNullOrWhiteSpace(userName))
             {

@@ -39,11 +39,15 @@ namespace Keylol.Controllers.User
                                              await _userManager.FindByEmailAsync(requestDto.Email) != null))
                 requestDto.Email = null;
 
+            //todo 
+            // check sms 
+
             var user = new KeylolUser
             {
                 IdCode = requestDto.IdCode,
                 UserName = requestDto.UserName,
                 Email = requestDto.Email,
+                PhoneNumber = requestDto.SmsNumber,
                 RegisterIp = _owinContext.Request.RemoteIpAddress,
                 SteamBindingTime = DateTime.Now,
                 SteamBotId = steamBindingToken.BotId
@@ -76,6 +80,11 @@ namespace Keylol.Controllers.User
 
                     case Errors.InvalidEmail:
                         propertyName = nameof(requestDto.Email);
+                        break;
+
+                    case Errors.InvalidSms:
+                    case Errors.SmsUsed:
+                        propertyName = nameof(requestDto.SmsNumber);
                         break;
 
                     case Errors.AvatarImageUntrusted:
@@ -248,6 +257,11 @@ namespace Keylol.Controllers.User
             /// 邮箱
             /// </summary>
             public string Email { get; set; }
+
+            /// <summary>
+            /// 手机
+            /// </summary>
+            public string SmsNumber { get; set; }
 
             /// <summary>
             /// SteamCN 用户名

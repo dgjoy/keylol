@@ -65,7 +65,7 @@ namespace Keylol.Identity
         }
 
         /// <summary>
-        ///     根据识别码查询用户
+        ///     根据 steam Id 查询用户
         /// </summary>
         /// <param name="steamId">Steam ID 3</param>
         /// <returns>查询到的用户对象，或者 null 表示没有查到</returns>
@@ -76,6 +76,21 @@ namespace Keylol.Identity
             if (steamId == null)
                 throw new ArgumentNullException(nameof(steamId));
             return await FindAsync(new UserLoginInfo(KeylolLoginProviders.Steam, steamId));
+        }
+
+        /// <summary>
+        /// 根据 sms 号码查询用户
+        /// </summary>
+        /// <param name="smsNumber">Sms number</param>
+        /// <returns>查询到的用户对象，或者 null 表示没有查到</returns>
+        /// <exception cref="ArgumentException">smsNumber 为 null</exception>
+        [ItemCanBeNull]
+        public async Task<KeylolUser> FindBySmsAsync(string smsNumber)
+        {
+            if(smsNumber == null)
+                throw  new ArgumentException(nameof(smsNumber));
+
+            return await Users.Where(u => u.PhoneNumber == smsNumber).FirstOrDefaultAsync();
         }
 
         /// <summary>

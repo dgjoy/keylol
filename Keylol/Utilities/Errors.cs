@@ -78,6 +78,15 @@
         public const string EmailUsed = "email_used";
 
         /// <summary>
+        /// 无效的手机号码
+        /// </summary>
+        public const string InvalidSms = "invalid_sms";
+
+        /// <summary>
+        /// 手机号码已被使用
+        /// </summary>
+        public const string SmsUsed = "sms_used";
+        /// <summary>
         ///     玩家标签长度不符合规范
         /// </summary>
         public const string GamerTagInvalidLength = "gamer_tag_invalid_length";
