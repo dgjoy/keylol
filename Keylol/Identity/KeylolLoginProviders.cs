@@ -14,5 +14,10 @@
         /// SteamCN
         /// </summary>
         public const string SteamCn = "SteamCN";
+
+        /// <summary>
+        /// 用户手机号
+        /// </summary>
+        public const string Sms = "Sms";
     }
 }

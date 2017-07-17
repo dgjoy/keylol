@@ -19,47 +19,43 @@ namespace Keylol.Controllers.User
     public partial class UserController
     {
         /// <summary>
-        ///     注册一个新用户
+        ///     通过 steam 机器人注册一个新用户
         /// </summary>
-        /// <param name="requestDto">用户相关属性</param>
+        /// <param name="bySteamBotRequestDto">用户相关属性</param>
         [AllowAnonymous]
-        [Route]
+        [Route("user/steambot")]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateOne([NotNull] UserCreateOneRequestDto requestDto)
+        public async Task<IHttpActionResult> CreateOneBySteamBot([NotNull] UserCreateOneBySteamBotRequestDto bySteamBotRequestDto)
         {
-            var steamBindingToken = await _dbContext.SteamBindingTokens.FindAsync(requestDto.SteamBindingTokenId);
+            var steamBindingToken = await _dbContext.SteamBindingTokens.FindAsync(bySteamBotRequestDto.SteamBindingTokenId);
 
             if (steamBindingToken == null)
-                return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId), Errors.Invalid);
+                return this.BadRequest(nameof(bySteamBotRequestDto), nameof(bySteamBotRequestDto.SteamBindingTokenId), Errors.Invalid);
 
             if (await _userManager.FindBySteamIdAsync(steamBindingToken.SteamId) != null)
-                return this.BadRequest(nameof(requestDto), nameof(requestDto.SteamBindingTokenId), Errors.Duplicate);
+                return this.BadRequest(nameof(bySteamBotRequestDto), nameof(bySteamBotRequestDto.SteamBindingTokenId), Errors.Duplicate);
 
-            if (requestDto.Email != null && (!new EmailAddressAttribute().IsValid(requestDto.Email) ||
-                                             await _userManager.FindByEmailAsync(requestDto.Email) != null))
-                requestDto.Email = null;
-
-            //todo 
-            // check sms 
+            if (bySteamBotRequestDto.Email != null && (!new EmailAddressAttribute().IsValid(bySteamBotRequestDto.Email) ||
+                                             await _userManager.FindByEmailAsync(bySteamBotRequestDto.Email) != null))
+                bySteamBotRequestDto.Email = null;
 
             var user = new KeylolUser
             {
-                IdCode = requestDto.IdCode,
-                UserName = requestDto.UserName,
-                Email = requestDto.Email,
-                PhoneNumber = requestDto.SmsNumber,
+                IdCode = bySteamBotRequestDto.IdCode,
+                UserName = bySteamBotRequestDto.UserName,
+                Email = bySteamBotRequestDto.Email,
                 RegisterIp = _owinContext.Request.RemoteIpAddress,
                 SteamBindingTime = DateTime.Now,
                 SteamBotId = steamBindingToken.BotId
             };
 
-            if (requestDto.AvatarImage != null)
-                user.AvatarImage = requestDto.AvatarImage;
+            if (bySteamBotRequestDto.AvatarImage != null)
+                user.AvatarImage = bySteamBotRequestDto.AvatarImage;
 
-            if (requestDto.SteamProfileName != null)
-                user.SteamProfileName = requestDto.SteamProfileName;
+            if (bySteamBotRequestDto.SteamProfileName != null)
+                user.SteamProfileName = bySteamBotRequestDto.SteamProfileName;
 
-            var result = await _userManager.CreateAsync(user, requestDto.Password);
+            var result = await _userManager.CreateAsync(user, bySteamBotRequestDto.Password);
             if (!result.Succeeded)
             {
                 var error = result.Errors.First();
@@ -69,37 +65,37 @@ namespace Keylol.Controllers.User
                     case Errors.InvalidIdCode:
                     case Errors.IdCodeReserved:
                     case Errors.IdCodeUsed:
-                        propertyName = nameof(requestDto.IdCode);
+                        propertyName = nameof(bySteamBotRequestDto.IdCode);
                         break;
 
                     case Errors.UserNameInvalidCharacter:
                     case Errors.UserNameInvalidLength:
                     case Errors.UserNameUsed:
-                        propertyName = nameof(requestDto.UserName);
+                        propertyName = nameof(bySteamBotRequestDto.UserName);
                         break;
 
                     case Errors.InvalidEmail:
-                        propertyName = nameof(requestDto.Email);
+                        propertyName = nameof(bySteamBotRequestDto.Email);
                         break;
 
                     case Errors.InvalidSms:
                     case Errors.SmsUsed:
-                        propertyName = nameof(requestDto.SmsNumber);
+                        propertyName = nameof(bySteamBotRequestDto.SmsNumber);
                         break;
 
                     case Errors.AvatarImageUntrusted:
-                        propertyName = nameof(requestDto.AvatarImage);
+                        propertyName = nameof(bySteamBotRequestDto.AvatarImage);
                         break;
 
                     case Errors.PasswordAllWhitespace:
                     case Errors.PasswordTooShort:
-                        propertyName = nameof(requestDto.Password);
+                        propertyName = nameof(bySteamBotRequestDto.Password);
                         break;
 
                     default:
-                        return this.BadRequest(nameof(requestDto), error);
+                        return this.BadRequest(nameof(bySteamBotRequestDto), error);
                 }
-                return this.BadRequest(nameof(requestDto), propertyName, error);
+                return this.BadRequest(nameof(bySteamBotRequestDto), propertyName, error);
             }
 
             await _userManager.AddLoginAsync(user.Id,
@@ -107,10 +103,10 @@ namespace Keylol.Controllers.User
             _dbContext.SteamBindingTokens.Remove(steamBindingToken);
             await _dbContext.SaveChangesAsync();
 
-            if (requestDto.SteamCnUserName != null)
+            if (bySteamBotRequestDto.SteamCnUserName != null)
             {
                 var steamCnUser =
-                    await SteamCnProvider.UserLoginAsync(requestDto.SteamCnUserName, requestDto.SteamCnPassword, false);
+                    await SteamCnProvider.UserLoginAsync(bySteamBotRequestDto.SteamCnUserName, bySteamBotRequestDto.SteamCnPassword, false);
                 if (steamCnUser != null && steamCnUser.Uid > 0 &&
                     await _userManager.FindAsync(new UserLoginInfo(KeylolLoginProviders.SteamCn,
                         steamCnUser.Uid.ToString())) == null)
@@ -126,9 +122,9 @@ namespace Keylol.Controllers.User
             await _coupon.UpdateAsync(user, CouponEvent.新注册);
 
             var inviterText = string.Empty;
-            if (requestDto.InviterIdCode != null)
+            if (bySteamBotRequestDto.InviterIdCode != null)
             {
-                var inviter = await _userManager.FindByIdCodeAsync(requestDto.InviterIdCode);
+                var inviter = await _userManager.FindByIdCodeAsync(bySteamBotRequestDto.InviterIdCode);
                 if (inviter != null)
                 {
                     user.InviterId = inviter.Id;
@@ -228,7 +224,7 @@ namespace Keylol.Controllers.User
         /// <summary>
         ///     请求 DTO
         /// </summary>
-        public class UserCreateOneRequestDto
+        public class UserCreateOneBySteamBotRequestDto
         {
             /// <summary>
             ///     识别码

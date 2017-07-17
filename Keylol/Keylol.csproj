@@ -31,6 +31,7 @@
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <ApplicationInsightsResourceId>/subscriptions/94134ff1-0ee1-4929-b994-16b1070ed679/resourcegroups/keylol/providers/microsoft.insights/components/keylol</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/94134ff1-0ee1-4929-b994-16b1070ed679/resourcegroups/keylol/providers/microsoft.insights/components/keylol</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -96,6 +97,9 @@
     </Reference>
     <Reference Include="Microsoft.ApplicationInsights, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights.Log4NetAppender, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Log4NetAppender.2.2.0\lib\net45\Microsoft.ApplicationInsights.Log4NetAppender.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -279,7 +283,8 @@
     <Compile Include="Controllers\Subscription\SubscriptionController.cs" />
     <Compile Include="Controllers\UploadSignature\CreateOne.cs" />
     <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
-    <Compile Include="Controllers\User\CreateOne.cs" />
+    <Compile Include="Controllers\User\CreateOneBySms.cs" />
+    <Compile Include="Controllers\User\CreateOneBySteamBot.cs" />
     <Compile Include="Controllers\User\GetOneForEnhancedSteam.cs" />
     <Compile Include="Controllers\User\UpdateOne.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
