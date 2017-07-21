@@ -17,6 +17,8 @@ namespace Keylol.Models
         [MaxLength(11)]
         public string PhoneNumber { get; set; }
 
+        public bool PhoneNumberConfirmed { get; set; }
+
         [MaxLength(4)]
         public string Code { get; set; }
 

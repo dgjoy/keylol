@@ -197,6 +197,10 @@
     <Compile Include="Migrations\201707211948293_AddSmsvalidatingtokenTable.Designer.cs">
       <DependentUpon>201707211948293_AddSmsvalidatingtokenTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707212101095_ModifySmsValidatingTokenTable.cs" />
+    <Compile Include="Migrations\201707212101095_ModifySmsValidatingTokenTable.Designer.cs">
+      <DependentUpon>201707212101095_ModifySmsValidatingTokenTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -959,6 +963,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707211948293_AddSmsvalidatingtokenTable.resx">
       <DependentUpon>201707211948293_AddSmsvalidatingtokenTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707212101095_ModifySmsValidatingTokenTable.resx">
+      <DependentUpon>201707212101095_ModifySmsValidatingTokenTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

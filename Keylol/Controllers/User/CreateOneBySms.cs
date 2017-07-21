@@ -25,21 +25,28 @@ namespace Keylol.Controllers.User
         [HttpPost]
         public async Task<IHttpActionResult> CreateOneBySms([NotNull] UserCreateOneBySmsRequestDto bySmsRequestDto)
         {
-            if (bySmsRequestDto.Email != null && (!new EmailAddressAttribute().IsValid(bySmsRequestDto.Email) ||
-                                                       await _userManager.FindByEmailAsync(bySmsRequestDto.Email) != null))
-                bySmsRequestDto.Email = null;
+            // 检查手机是否合法
+            if (bySmsRequestDto.PhoneNumber == null || !new PhoneAttribute().IsValid(bySmsRequestDto.PhoneNumber))
+            {
+                return BadRequest(Errors.InvalidPhoneNumber);
+            }
 
-            // check sms 
-            if (bySmsRequestDto.SmsNumber != null && (!new PhoneAttribute().IsValid(bySmsRequestDto.SmsNumber) ||
-                                                           await _userManager.FindBySmsAsync(bySmsRequestDto.SmsNumber) != null))
-                bySmsRequestDto.SmsNumber = null;
+            // 检查手机是否已经注册 
+            if (bySmsRequestDto.PhoneNumber != null &&
+                await _userManager.FindByPhoneNumberAsync(bySmsRequestDto.PhoneNumber) != null)
+                return BadRequest(Errors.PhoneNumberUsed);
+
+
+            if (bySmsRequestDto.Email != null && (!new EmailAddressAttribute().IsValid(bySmsRequestDto.Email) ||
+                                                  await _userManager.FindByEmailAsync(bySmsRequestDto.Email) != null))
+                bySmsRequestDto.Email = null;
 
             var user = new KeylolUser
             {
                 IdCode = bySmsRequestDto.IdCode,
                 UserName = bySmsRequestDto.UserName,
                 Email = bySmsRequestDto.Email,
-                PhoneNumber = bySmsRequestDto.SmsNumber,
+                PhoneNumber = bySmsRequestDto.PhoneNumber,
                 RegisterIp = _owinContext.Request.RemoteIpAddress,
                 SteamBindingTime = DateTime.Now
             };
@@ -71,11 +78,6 @@ namespace Keylol.Controllers.User
 
                     case Errors.InvalidEmail:
                         propertyName = nameof(bySmsRequestDto.Email);
-                        break;
-
-                    case Errors.InvalidSms:
-                    case Errors.SmsUsed:
-                        propertyName = nameof(bySmsRequestDto.SmsNumber);
                         break;
 
                     case Errors.AvatarImageUntrusted:
@@ -180,7 +182,7 @@ namespace Keylol.Controllers.User
             /// 手机
             /// </summary>
             [Utilities.Required]
-            public string SmsNumber { get; set; }
+            public string PhoneNumber { get; set; }
 
             /// <summary>
             /// SteamCN 用户名

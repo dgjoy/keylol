@@ -81,16 +81,16 @@ namespace Keylol.Identity
         /// <summary>
         /// 根据 sms 号码查询用户
         /// </summary>
-        /// <param name="smsNumber">Sms number</param>
+        /// <param name="phoneNumber">Phone number</param>
         /// <returns>查询到的用户对象，或者 null 表示没有查到</returns>
-        /// <exception cref="ArgumentException">smsNumber 为 null</exception>
+        /// <exception cref="ArgumentException">phoneNumber 为 null</exception>
         [ItemCanBeNull]
-        public async Task<KeylolUser> FindBySmsAsync(string smsNumber)
+        public async Task<KeylolUser> FindByPhoneNumberAsync(string phoneNumber)
         {
-            if(smsNumber == null)
-                throw  new ArgumentException(nameof(smsNumber));
+            if(phoneNumber == null)
+                throw  new ArgumentException(nameof(phoneNumber));
 
-            return await Users.Where(u => u.PhoneNumber == smsNumber).FirstOrDefaultAsync();
+            return await Users.Where(u => u.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
         }
 
         /// <summary>

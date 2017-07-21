@@ -78,8 +78,8 @@ namespace Keylol.Controllers.User
                         propertyName = nameof(bySteamBotRequestDto.Email);
                         break;
 
-                    case Errors.InvalidSms:
-                    case Errors.SmsUsed:
+                    case Errors.InvalidPhoneNumber:
+                    case Errors.PhoneNumberUsed:
                         propertyName = nameof(bySteamBotRequestDto.SmsNumber);
                         break;
 

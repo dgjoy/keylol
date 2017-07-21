@@ -80,12 +80,12 @@
         /// <summary>
         /// 无效的手机号码
         /// </summary>
-        public const string InvalidSms = "invalid_sms";
+        public const string InvalidPhoneNumber = "invalid_phone_number";
 
         /// <summary>
         /// 手机号码已被使用
         /// </summary>
-        public const string SmsUsed = "sms_used";
+        public const string PhoneNumberUsed = "phone_number_used";
         /// <summary>
         ///     玩家标签长度不符合规范
         /// </summary>

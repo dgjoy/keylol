@@ -37,7 +37,7 @@ namespace Keylol.Identity
             else if (!string.IsNullOrWhiteSpace(sms))
             {
                 // 手机登录
-                user = await userManager.FindBySmsAsync(sms);
+                user = await userManager.FindByPhoneNumberAsync(sms);
             }
             else if (!string.IsNullOrWhiteSpace(userName))
             {
