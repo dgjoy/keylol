@@ -193,6 +193,10 @@
     <Compile Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.Designer.cs">
       <DependentUpon>201608031758103_CouponGiftPreviewImageNotRequired.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707211948293_AddSmsvalidatingtokenTable.cs" />
+    <Compile Include="Migrations\201707211948293_AddSmsvalidatingtokenTable.Designer.cs">
+      <DependentUpon>201707211948293_AddSmsvalidatingtokenTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointMedia.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.cs" />
     <Compile Include="Migrations\201605080759295_ModelRefactor2.Designer.cs">
@@ -573,6 +577,7 @@
     <Compile Include="Migrations\Extensions.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="ReproductionRequirement.cs" />
+    <Compile Include="SmsValidatingToken.cs" />
     <Compile Include="UserSteamFriendRecord.cs" />
     <Compile Include="SteamStoreName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -951,6 +956,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608031758103_CouponGiftPreviewImageNotRequired.resx">
       <DependentUpon>201608031758103_CouponGiftPreviewImageNotRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707211948293_AddSmsvalidatingtokenTable.resx">
+      <DependentUpon>201707211948293_AddSmsvalidatingtokenTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
