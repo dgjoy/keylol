@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using JetBrains.Annotations;
@@ -10,7 +11,7 @@ using Keylol.Models;
 using Keylol.Provider;
 using Keylol.Utilities;
 using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
+using Constants = Keylol.Utilities.Constants;
 
 namespace Keylol.Controllers.User
 {
@@ -21,21 +22,20 @@ namespace Keylol.Controllers.User
         /// </summary>
         /// <param name="bySmsRequestDto">用户相关属性</param>
         [AllowAnonymous]
-        [Route("user/sms")]
+        [Route("sms")]
         [HttpPost]
         public async Task<IHttpActionResult> CreateOneBySms([NotNull] UserCreateOneBySmsRequestDto bySmsRequestDto)
         {
             // 检查手机是否合法
-            if (bySmsRequestDto.PhoneNumber == null || !new PhoneAttribute().IsValid(bySmsRequestDto.PhoneNumber))
+            if (string.IsNullOrWhiteSpace(bySmsRequestDto.PhoneNumber) || !Regex.IsMatch(bySmsRequestDto.PhoneNumber, Constants.ChinesePhoneNumberConstraint))
             {
-                return BadRequest(Errors.InvalidPhoneNumber);
+                return this.BadRequest(nameof(bySmsRequestDto.PhoneNumber),Errors.InvalidPhoneNumber);
             }
 
             // 检查手机是否已经注册 
             if (bySmsRequestDto.PhoneNumber != null &&
                 await _userManager.FindByPhoneNumberAsync(bySmsRequestDto.PhoneNumber) != null)
-                return BadRequest(Errors.PhoneNumberUsed);
-
+                return this.BadRequest(nameof(bySmsRequestDto.PhoneNumber),Errors.PhoneNumberUsed);
 
             if (bySmsRequestDto.Email != null && (!new EmailAddressAttribute().IsValid(bySmsRequestDto.Email) ||
                                                   await _userManager.FindByEmailAsync(bySmsRequestDto.Email) != null))
@@ -95,6 +95,11 @@ namespace Keylol.Controllers.User
                 return this.BadRequest(nameof(bySmsRequestDto), propertyName, error);
             }
 
+            // 检查 SMS Code
+            if (bySmsRequestDto.SmsCode == null || bySmsRequestDto.PhoneNumber !=
+                await _oneTimeToken.Consume<string>(bySmsRequestDto.SmsCode, OneTimeTokenPurpose.UserRegister))
+                return this.BadRequest(nameof(bySmsRequestDto.SmsCode), Errors.InvalidToken);
+
             await _userManager.AddLoginAsync(user.Id,
                 new UserLoginInfo(KeylolLoginProviders.Sms, user.PhoneNumber));
             await _dbContext.SaveChangesAsync();
@@ -144,7 +149,6 @@ namespace Keylol.Controllers.User
             return Ok(await _oneTimeToken.Generate(user.Id, TimeSpan.FromMinutes(1), OneTimeTokenPurpose.UserLogin));
         }
 
-
         /// <summary>
         ///     请求 DTO
         /// </summary>
@@ -167,6 +171,11 @@ namespace Keylol.Controllers.User
             /// </summary>
             [Utilities.Required]
             public string Password { get; set; }
+
+            /// <summary>
+            /// SMS 验证码
+            /// </summary>
+            public string SmsCode { get; set; }
 
             /// <summary>
             ///     头像

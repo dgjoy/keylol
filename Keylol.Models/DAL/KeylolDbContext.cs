@@ -43,7 +43,6 @@ namespace Keylol.Models.DAL
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<UserSteamFriendRecord> UserSteamFriendRecords { get; set; }
         public DbSet<PointStaff> PointStaff{ get; set; }
-        public DbSet<SmsValidatingToken> SmsValidatingTokens { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -87,6 +87,11 @@ namespace Keylol.Provider
         public const string UserLogin = "user-login";
 
         /// <summary>
+        /// 用户注册
+        /// </summary>
+        public const string UserRegister = "user-register";
+
+        /// <summary>
         /// 通过 Steam 登录
         /// </summary>
         public const string SteamLogin = "steam-login";

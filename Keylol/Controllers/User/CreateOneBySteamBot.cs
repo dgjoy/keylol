@@ -23,7 +23,7 @@ namespace Keylol.Controllers.User
         /// </summary>
         /// <param name="bySteamBotRequestDto">用户相关属性</param>
         [AllowAnonymous]
-        [Route("user/steambot")]
+        [Route("steambot")]
         [HttpPost]
         public async Task<IHttpActionResult> CreateOneBySteamBot([NotNull] UserCreateOneBySteamBotRequestDto bySteamBotRequestDto)
         {

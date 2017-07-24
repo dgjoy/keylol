@@ -285,6 +285,7 @@
     <Compile Include="Controllers\UploadSignature\UploadSignatureController.cs" />
     <Compile Include="Controllers\User\CreateOneBySms.cs" />
     <Compile Include="Controllers\User\CreateOneBySteamBot.cs" />
+    <Compile Include="Controllers\User\CreateOneSms.cs" />
     <Compile Include="Controllers\User\GetOneForEnhancedSteam.cs" />
     <Compile Include="Controllers\User\UpdateOne.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
